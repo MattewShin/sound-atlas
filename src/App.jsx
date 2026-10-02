@@ -1,238 +1,122 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
+import { discoveryMatches, intensityOptions, moodOptions, tracks } from './data/musicData.js'
 
-const emotions = [
-  '마음을 가라앉히고 싶어요',
-  '설레는 밤을 원해요',
-  '깊게 몰입하고 싶어요',
-  '위로가 필요해요',
-  '활력을 얻고 싶어요',
-]
-
-const performances = [
-  {
-    id: 'debussy',
-    emotion: emotions[0],
-    tag: '고요한 밤',
-    title: '달빛 아래의 드뷔시',
-    intro: '잔잔한 피아노 선율로 하루의 속도를 천천히 낮춰보세요.',
-    date: '10월 12일 · 토요일 · 19:30',
-    shortDate: '10월 12일',
-    venue: '예술의전당 IBK챔버홀',
-    music: '드뷔시 〈달빛〉 · 라벨 〈죽은 왕녀를 위한 파반느〉',
-    reason: '말보다 여백이 필요한 저녁에 어울리는 프로그램이에요. 은은하게 번지는 피아노가 마음의 결을 정돈해 줍니다.',
-    program: ['드뷔시 〈영상 제1집〉 중 물의 반영', '라벨 〈죽은 왕녀를 위한 파반느〉', '드뷔시 〈달빛〉'],
-    gradient: 'moonlight',
-    point: { left: '28%', top: '64%' },
-  },
-  {
-    id: 'spring',
-    emotion: emotions[1],
-    tag: '설렘의 시작',
-    title: '봄을 깨우는 오케스트라',
-    intro: '가벼운 현의 떨림과 함께, 새로운 계절을 먼저 만나보세요.',
-    date: '10월 18일 · 금요일 · 20:00',
-    shortDate: '10월 18일',
-    venue: '롯데콘서트홀',
-    music: '멘델스존 〈한여름 밤의 꿈〉',
-    reason: '설레는 약속 전처럼 공기가 조금 들뜨는 날을 위한 무대예요. 반짝이는 목관과 현악이 밤을 환하게 채웁니다.',
-    program: ['멘델스존 〈한여름 밤의 꿈〉 서곡', '차이콥스키 〈로코코 주제에 의한 변주곡〉', '슈만 교향곡 1번 〈봄〉'],
-    gradient: 'spring',
-    point: { left: '72%', top: '34%' },
-  },
-  {
-    id: 'beethoven',
-    emotion: emotions[2],
-    tag: '집중의 시간',
-    title: '베토벤, 운명을 마주하다',
-    intro: '한 음 한 음, 가장 선명한 나의 감각으로 들어가는 시간.',
-    date: '10월 23일 · 수요일 · 19:30',
-    shortDate: '10월 23일',
-    venue: '서울아트센터',
-    music: '베토벤 교향곡 5번',
-    reason: '생각의 중심을 단단히 붙잡고 싶은 날에 추천해요. 압도적인 리듬이 주변의 소음을 밀어내고 몰입을 이끕니다.',
-    program: ['베토벤 〈코리올란〉 서곡', '베토벤 피아노 협주곡 4번', '베토벤 교향곡 5번 〈운명〉'],
-    gradient: 'fate',
-    point: { left: '48%', top: '48%' },
-  },
-  {
-    id: 'cello',
-    emotion: emotions[3],
-    tag: '다정한 위로',
-    title: '새벽의 위로, 첼로',
-    intro: '낮고 따뜻한 울림이 오늘의 마음 곁에 오래 머뭅니다.',
-    date: '10월 27일 · 일요일 · 17:00',
-    shortDate: '10월 27일',
-    venue: '세종체임버홀',
-    music: '바흐 무반주 첼로 모음곡',
-    reason: '누군가의 조용한 곁이 필요한 날, 첼로의 깊은 울림이 든든한 온기가 되어줄 거예요.',
-    program: ['바흐 무반주 첼로 모음곡 1번', '브리튼 첼로 모음곡 1번', '카살스 〈새의 노래〉'],
-    gradient: 'comfort',
-    point: { left: '42%', top: '22%' },
-  },
-  {
-    id: 'firebird',
-    emotion: emotions[4],
-    tag: '터지는 에너지',
-    title: '불꽃의 리듬',
-    intro: '심장을 두드리는 관현악의 리듬으로 에너지를 깨워보세요.',
-    date: '11월 2일 · 토요일 · 18:00',
-    shortDate: '11월 2일',
-    venue: '마포아트센터',
-    music: '스트라빈스키 〈불새〉',
-    reason: '새로운 자극이 필요한 날에 딱 맞아요. 강렬한 박자와 색채가 몸 안의 리듬을 힘차게 깨웁니다.',
-    program: ['리게티 〈로마네스크 협주곡〉', '바르톡 〈춤 모음곡〉', '스트라빈스키 〈불새〉 모음곡'],
-    gradient: 'fire',
-    point: { left: '77%', top: '69%' },
-  },
-]
-
-function Icon({ name }) {
+function Icon({ name, filled = false }) {
   const paths = {
-    bell: <><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></>,
-    compass: <><circle cx="12" cy="12" r="8" /><path d="m14.7 9.3-1.8 3.6-3.6 1.8 1.8-3.6 3.6-1.8Z" /></>,
-    map: <><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z" /><path d="M9 3v15M15 6v15" /></>,
-    bookmark: <path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4V4Z" />,
-    user: <><circle cx="12" cy="8" r="4" /><path d="M4 22a8 8 0 0 1 16 0" /></>,
-    arrow: <><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></>,
+    chevron: <path d="m7 10 5 5 5-5" />,
+    bookmark: <path d="M6.5 4.5A2.5 2.5 0 0 1 9 2h6a2.5 2.5 0 0 1 2.5 2.5V22L12 18.5 6.5 22V4.5Z" />,
+    play: <path d="m10 8 6 4-6 4V8Z" />,
+    compass: <><circle cx="12" cy="12" r="8" /><path d="m14.8 9.2-1.9 3.7-3.7 1.9 1.9-3.7 3.7-1.9Z" /></>,
+    stage: <><path d="M4 19h16M6 16V5h12v11" /><path d="M9 5v11M15 5v11" /></>,
+    bookmarkSmall: <path d="M7 4h10v16l-5-3-5 3V4Z" />,
+    user: <><circle cx="12" cy="8" r="3.5" /><path d="M4.5 21a7.5 7.5 0 0 1 15 0" /></>,
   }
-  return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>
+  return <svg className={filled ? 'filled-icon' : ''} viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>
 }
 
-function PerformanceCard({ performance, isProgramOpen, onToggleProgram }) {
-  return (
-    <article className="performance-card" aria-live="polite">
-      <div className={`artwork ${performance.gradient}`} aria-label={`${performance.title} 추상 이미지`} role="img">
-        <div className="orb orb-one" />
-        <div className="orb orb-two" />
-        <div className="staff-lines" />
-        <span className="artwork-note">오늘의 무대</span>
-      </div>
-      <div className="card-content">
-        <span className="emotion-tag">{performance.tag}</span>
-        <h2>{performance.title}</h2>
-        <p className="intro">{performance.intro}</p>
-        <dl className="details">
-          <div><dt>일시</dt><dd>{performance.date}</dd></div>
-          <div><dt>장소</dt><dd>{performance.venue}</dd></div>
-          <div><dt>대표곡</dt><dd>{performance.music}</dd></div>
-        </dl>
-        <div className="reason">
-          <span>이 공연이 어울리는 이유</span>
-          <p>{performance.reason}</p>
-        </div>
-        <button className="program-button" type="button" onClick={onToggleProgram} aria-expanded={isProgramOpen}>
-          {isProgramOpen ? '프로그램 닫기' : '프로그램 미리 보기'} <Icon name="arrow" />
-        </button>
-        {isProgramOpen && (
-          <ol className="program-list">
-            {performance.program.map((piece) => <li key={piece}>{piece}</li>)}
-          </ol>
-        )}
-      </div>
-    </article>
-  )
-}
+const getMatch = (moodId, intensityId) => discoveryMatches.find((match) => match.moodId === moodId && match.intensityId === intensityId)
 
 function App() {
-  const [selectedEmotion, setSelectedEmotion] = useState(emotions[0])
-  const [selectedId, setSelectedId] = useState(performances[0].id)
-  const [isProgramOpen, setIsProgramOpen] = useState(false)
-  const selectedPerformance = performances.find((performance) => performance.id === selectedId) ?? performances[0]
+  const [moodId, setMoodId] = useState('quiet')
+  const [intensityId, setIntensityId] = useState('gentle')
+  const [selectedTrackId, setSelectedTrackId] = useState(getMatch('quiet', 'gentle').trackId)
+  const [savedTrackIds, setSavedTrackIds] = useState([])
 
-  const selectPerformance = (performance) => {
-    setSelectedId(performance.id)
-    setSelectedEmotion(performance.emotion)
-    setIsProgramOpen(false)
-  }
+  const mood = moodOptions.find((item) => item.id === moodId)
+  const intensity = intensityOptions.find((item) => item.id === intensityId)
+  const match = getMatch(moodId, intensityId)
+  const visibleTracks = useMemo(() => {
+    const matchingIds = tracks
+      .filter((track) => track.moods.includes(moodId) || track.intensities.includes(intensityId))
+      .map((track) => track.id)
+    const ids = [...new Set([match.trackId, ...match.nearbyTrackIds, ...matchingIds])].slice(0, 5)
+    return ids.map((id) => tracks.find((track) => track.id === id)).filter(Boolean)
+  }, [moodId, intensityId, match])
+  const selectedTrack = tracks.find((track) => track.id === selectedTrackId) ?? visibleTracks[0]
+  const relatedTracks = visibleTracks.filter((track) => track.id !== selectedTrack.id).slice(0, 4)
 
-  const selectEmotion = (emotion) => {
-    const performance = performances.find((item) => item.emotion === emotion)
-    setSelectedEmotion(emotion)
-    if (performance) selectPerformance(performance)
+  const selectMood = (nextMoodId) => {
+    setMoodId(nextMoodId)
+    setSelectedTrackId(getMatch(nextMoodId, intensityId).trackId)
   }
+  const selectIntensity = (nextIntensityId) => {
+    setIntensityId(nextIntensityId)
+    setSelectedTrackId(getMatch(moodId, nextIntensityId).trackId)
+  }
+  const toggleSave = () => setSavedTrackIds((ids) => ids.includes(selectedTrack.id) ? ids.filter((id) => id !== selectedTrack.id) : [...ids, selectedTrack.id])
 
   return (
     <div className="app-shell">
-      <header className="hero">
+      <header className="top-header" id="top">
         <div className="topbar">
-          <a className="brand" href="#top" aria-label="Sound Atlas 첫 화면">Sound Atlas</a>
-          <button className="icon-button" type="button" aria-label="알림 보기"><Icon name="bell" /></button>
+          <a className="brand" href="#top">SOUND ATLAS</a>
+          <button className="location-button" type="button" aria-label="현재 지역 서울">서울 <Icon name="chevron" /></button>
         </div>
-        <div className="hero-copy" id="top">
-          <p>오늘, 어떤 음악이 필요하세요?</p>
-          <h1>지금의 기분에서<br />공연을 찾아보세요.</h1>
-        </div>
+        <p className="date-note">10월 첫째 주 · 오늘의 소리 탐색</p>
+        <h1>오늘은 어떤 소리를<br />만나고 싶나요?</h1>
+        <div className="header-orbit orbit-one" /><div className="header-orbit orbit-two" />
       </header>
 
       <main>
-        <section className="emotion-section" aria-labelledby="emotion-title">
-          <div className="section-heading">
-            <p className="eyebrow">MOOD SELECT</p>
-            <h2 id="emotion-title">마음의 방향</h2>
-          </div>
-          <div className="emotion-scroll" role="list" aria-label="감정 선택">
-            {emotions.map((emotion) => (
-              <button
-                className={`emotion-chip ${selectedEmotion === emotion ? 'selected' : ''}`}
-                key={emotion}
-                onClick={() => selectEmotion(emotion)}
-                type="button"
-                role="listitem"
-                aria-pressed={selectedEmotion === emotion}
-              >{emotion}</button>
+        <section className="mood-section" aria-labelledby="mood-title">
+          <div className="section-heading"><p>MOOD</p><h2 id="mood-title">마음의 결을 골라보세요</h2></div>
+          <div className="mood-list" role="list" aria-label="감정 선택">
+            {moodOptions.map((item) => (
+              <button className={`mood-chip ${item.id === moodId ? 'selected' : ''}`} key={item.id} type="button" role="listitem" aria-pressed={item.id === moodId} onClick={() => selectMood(item.id)}>{item.label}</button>
             ))}
           </div>
         </section>
 
-        <section className="recommendation-section" aria-labelledby="recommendation-title">
-          <div className="section-heading inline-heading">
-            <div>
-              <p className="eyebrow">FOR YOUR MOOD</p>
-              <h2 id="recommendation-title">오늘의 추천 공연</h2>
-            </div>
-            <span className="page-indicator">01 / 05</span>
-          </div>
-          <PerformanceCard performance={selectedPerformance} isProgramOpen={isProgramOpen} onToggleProgram={() => setIsProgramOpen((value) => !value)} />
-        </section>
-
-        <section className="map-section" aria-labelledby="map-title">
-          <div className="section-heading inline-heading">
-            <div>
-              <p className="eyebrow">SEOUL, TODAY</p>
-              <h2 id="map-title">오늘 서울의 공연</h2>
-            </div>
-            <span className="map-hint">점을 눌러보세요</span>
-          </div>
-          <div className="city-map" role="group" aria-label="서울 공연 위치 지도">
-            <div className="map-grid" />
-            <div className="river" />
-            <span className="district district-north">북촌</span>
-            <span className="district district-west">마포</span>
-            <span className="district district-center">광화문</span>
-            <span className="district district-east">잠실</span>
-            {performances.map((performance, index) => (
-              <button
-                className={`map-point ${selectedId === performance.id ? 'active' : ''}`}
-                key={performance.id}
-                style={performance.point}
-                type="button"
-                onClick={() => selectPerformance(performance)}
-                aria-label={`${performance.title}, ${performance.venue} 선택`}
-                aria-pressed={selectedId === performance.id}
-              ><span>{index + 1}</span></button>
+        <section className="intensity-section" aria-labelledby="intensity-title">
+          <div className="section-heading compact-heading"><div><p>INTENSITY</p><h2 id="intensity-title">얼마나 깊게 느끼고 싶나요?</h2></div><span>{intensity.description}</span></div>
+          <div className="intensity-control" role="group" aria-label="오늘의 강도">
+            {intensityOptions.map((item, index) => (
+              <button className={`intensity-option ${item.id === intensityId ? 'selected' : ''}`} type="button" key={item.id} aria-pressed={item.id === intensityId} onClick={() => selectIntensity(item.id)}>
+                <i className={`intensity-dot dot-${index + 1}`} /><span>{item.label}</span>
+              </button>
             ))}
           </div>
-          <button className="map-selection" type="button" onClick={() => setIsProgramOpen(false)}>
-            <div><span className="map-selection-label">선택한 공연</span><strong>{selectedPerformance.title}</strong></div>
-            <div className="map-selection-meta">{selectedPerformance.venue}<br />{selectedPerformance.shortDate}</div>
-          </button>
         </section>
+
+        <section className="sound-map-section" aria-labelledby="map-title">
+          <div className="section-heading"><p>SOUND MAP</p><h2 id="map-title">{mood.label} 감정 안에서</h2></div>
+          <p className="map-guide">점 하나를 눌러 새로운 결의 음악을 만나보세요</p>
+          <div className={`sound-map mood-${moodId}`} role="group" aria-label="선택 가능한 음악 지도">
+            <div className="orbit orbit-large" /><div className="orbit orbit-medium" /><div className="orbit orbit-small" />
+            <span className="wave wave-one" /><span className="wave wave-two" /><span className="map-caption">{intensity.label} 흐름</span>
+            {visibleTracks.map((track, index) => (
+              <button className={`sound-point point-${index + 1} ${selectedTrack.id === track.id ? 'active' : ''} ${track.tone}`} type="button" key={track.id} onClick={() => setSelectedTrackId(track.id)} aria-label={`${track.composer} ${track.title} 선택`} aria-pressed={selectedTrack.id === track.id}><span>{track.mapLabel}</span></button>
+            ))}
+          </div>
+        </section>
+
+        <section className="track-section" aria-labelledby="track-title">
+          <article className={`featured-track ${selectedTrack.tone}`}>
+            <div className="track-card-top"><span>나와의 결이 {match.affinity}% 닮았어요</span><button type="button" onClick={toggleSave} aria-label={`${selectedTrack.title} 보관함에 저장`} aria-pressed={savedTrackIds.includes(selectedTrack.id)}><Icon name="bookmark" filled={savedTrackIds.includes(selectedTrack.id)} /></button></div>
+            <div className="track-disc" aria-hidden="true"><span /></div>
+            <div className="track-copy"><p className="track-kicker">오늘의 대표 곡</p><h2 id="track-title">{selectedTrack.title}</h2><p className="composer">{selectedTrack.composer}</p><p className="track-description">{selectedTrack.description}</p><div className="tag-list">{selectedTrack.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div></div>
+            <button className="play-button" type="button" aria-label={`${selectedTrack.title} 재생 미리보기`}><Icon name="play" /></button>
+          </article>
+        </section>
+
+        <section className="similar-section" aria-labelledby="similar-title">
+          <div className="section-heading inline-heading"><div><p>MORE TO EXPLORE</p><h2 id="similar-title">비슷한 결의 음악</h2></div><span>옆으로 넘겨보세요</span></div>
+          <div className="similar-list">
+            {relatedTracks.map((track) => (
+              <button className="mini-track" type="button" key={track.id} onClick={() => setSelectedTrackId(track.id)}>
+                <span className={`mini-art ${track.tone}`}><i /></span><span className="mini-copy"><b>{track.composer}</b><strong>{track.title}</strong><small>{track.duration} · {track.miniTag}</small></span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="concert-link" aria-label="관련 공연 안내"><span className="concert-mark">♬</span><div><p>이 곡을 무대에서 듣고 싶다면</p><strong>이번 달 서울에서 2개의 관련 공연을 찾았어요 <span>→</span></strong></div></section>
       </main>
 
       <nav className="bottom-nav" aria-label="주요 메뉴">
-        <a className="nav-item active" href="#top"><Icon name="compass" /><span>발견하기</span></a>
-        <a className="nav-item" href="#map-title"><Icon name="map" /><span>공연 지도</span></a>
-        <button className="nav-item" type="button"><Icon name="bookmark" /><span>보관함</span></button>
+        <a className="nav-item active" href="#top"><Icon name="compass" /><span>소리 탐색</span></a>
+        <button className="nav-item" type="button"><Icon name="stage" /><span>공연 찾기</span></button>
+        <button className="nav-item" type="button"><Icon name="bookmarkSmall" /><span>보관함</span></button>
         <button className="nav-item" type="button"><Icon name="user" /><span>내 정보</span></button>
       </nav>
     </div>
