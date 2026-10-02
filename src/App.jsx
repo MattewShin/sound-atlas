@@ -17,11 +17,20 @@ function Icon({ name, filled = false }) {
 
 const getMatch = (moodId, intensityId) => discoveryMatches.find((match) => match.moodId === moodId && match.intensityId === intensityId)
 
+const mapMoodNodes = [
+  { id: 'dreamy', label: '몽환적인', moodId: 'quiet', tone: 'dreamy' },
+  { id: 'quiet', label: '고요한', moodId: 'quiet', tone: 'quiet' },
+  { id: 'excited', label: '설레는', moodId: 'excited', tone: 'excited' },
+  { id: 'tender', label: '애잔한', moodId: 'comfort', tone: 'tender' },
+  { id: 'majestic', label: '장엄한', moodId: 'awe', tone: 'majestic' },
+]
+
 function App() {
   const [moodId, setMoodId] = useState('quiet')
   const [intensityId, setIntensityId] = useState('gentle')
   const [selectedTrackId, setSelectedTrackId] = useState(getMatch('quiet', 'gentle').trackId)
   const [savedTrackIds, setSavedTrackIds] = useState([])
+  const [selectedMapMoodId, setSelectedMapMoodId] = useState('dreamy')
 
   const mood = moodOptions.find((item) => item.id === moodId)
   const intensity = intensityOptions.find((item) => item.id === intensityId)
@@ -36,10 +45,12 @@ function App() {
   const selectedTrack = tracks.find((track) => track.id === selectedTrackId) ?? visibleTracks[0]
   const relatedTracks = visibleTracks.filter((track) => track.id !== selectedTrack.id).slice(0, 4)
 
-  const selectMood = (nextMoodId) => {
+  const selectMood = (nextMoodId, nextMapMoodId) => {
     setMoodId(nextMoodId)
     setSelectedTrackId(getMatch(nextMoodId, intensityId).trackId)
+    setSelectedMapMoodId(nextMapMoodId ?? mapMoodNodes.find((node) => node.moodId === nextMoodId && node.id !== 'dreamy')?.id ?? 'dreamy')
   }
+  const selectMapMood = (node) => selectMood(node.moodId, node.id)
   const selectIntensity = (nextIntensityId) => {
     setIntensityId(nextIntensityId)
     setSelectedTrackId(getMatch(moodId, nextIntensityId).trackId)
@@ -80,13 +91,13 @@ function App() {
         </section>
 
         <section className="sound-map-section" aria-labelledby="map-title">
-          <div className="section-heading"><p>SOUND MAP</p><h2 id="map-title">{mood.label} 감정 안에서</h2></div>
-          <p className="map-guide">점 하나를 눌러 새로운 결의 음악을 만나보세요</p>
+          <div className="section-heading"><p>SOUND MAP</p><h2 id="map-title">지금 끌리는 분위기는?</h2></div>
+          <p className="map-guide">분위기를 눌러 어울리는 클래식 음악을 찾아보세요</p>
           <div className={`sound-map mood-${moodId}`} role="group" aria-label="선택 가능한 음악 지도">
             <div className="orbit orbit-large" /><div className="orbit orbit-medium" /><div className="orbit orbit-small" />
-            <span className="wave wave-one" /><span className="wave wave-two" /><span className="map-caption">{intensity.label} 흐름</span>
-            {visibleTracks.map((track, index) => (
-              <button className={`sound-point point-${index + 1} ${selectedTrack.id === track.id ? 'active' : ''} ${track.tone}`} type="button" key={track.id} onClick={() => setSelectedTrackId(track.id)} aria-label={`${track.composer} ${track.title} 선택`} aria-pressed={selectedTrack.id === track.id}><span>{track.mapLabel}</span></button>
+            <span className="wave wave-one" /><span className="wave wave-two" /><span className="map-caption">분위기로 음악 찾기</span>
+            {mapMoodNodes.map((node, index) => (
+              <button className={`sound-point point-${index + 1} ${selectedMapMoodId === node.id ? 'active' : ''} ${node.tone}`} type="button" key={node.id} onClick={() => selectMapMood(node)} aria-pressed={selectedMapMoodId === node.id}><span>{node.label}</span></button>
             ))}
           </div>
         </section>
