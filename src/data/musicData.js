@@ -71,15 +71,22 @@ export const trackDetails = {
       title: '고요한 밤에 번지는 잔잔한 파도',
       description: '낮게 반복되는 반주 위로 선율이 천천히 떠오르는 느낌을 따라 들어보세요.',
     },
-  shortPreview: {
-    provider: 'youtube',
-    videoId: 'uTjOXAzUTQA',
-    startSeconds: 7,
-    endSeconds: 37,
-    sourceLabel: '다니엘 하리토노프 · MBC TV예술무대',
-  },  
+    shortPreview: {
+      provider: 'youtube',
+      videoId: 'uTjOXAzUTQA',
+      startSeconds: 7,
+      endSeconds: 339,
+      sourceLabel: '다니엘 하리토노프 · MBC TV예술무대',
+    },
   },
   'beethoven-moonlight-3': {
+    shortPreview: {
+      provider: 'youtube',
+      videoId: 'uTjOXAzUTQA',
+      startSeconds: 459,
+      endSeconds: 788,
+      sourceLabel: '다니엘 하리토노프 · MBC TV예술무대',
+    },
     highlight: { title: '어둠을 가르는 빠른 파도', description: '짧고 날카롭게 밀려오는 음형이 점점 커지는 흐름에 귀 기울여 보세요.' },
   },
   'chopin-fantaisie-impromptu': {
