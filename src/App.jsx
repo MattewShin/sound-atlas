@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { energyOptions, getRecommendationResult, moodOptions, trackDetails, tracks } from './data/musicData.js'
+import { energyOptions, getLibraryPreferenceProfile, getRecommendationResult, moodOptions, trackDetails, tracks } from './data/musicData.js'
 
 function Icon({ name, filled = false }) {
   const paths = {
@@ -21,12 +21,6 @@ const formatTrackTitle = ({ title, movement }) => {
 }
 
 const STORAGE_KEY = 'classic-atlas-track-reactions-v1'
-
-const reactionOptions = [
-  { key: 'liked', label: '좋아요', icon: '♥' },
-  { key: 'listenAgain', label: '다시 듣고 싶어요', icon: '↻' },
-  { key: 'concertWish', label: '공연에서 듣고 싶어요', icon: '♬' },
-]
 
 const readTrackReactions = () => {
   if (typeof window === 'undefined') return {}
@@ -72,7 +66,7 @@ function MiniArtwork({ track }) {
   )
 }
 
-function TrackDetailSheet({ track, detail, reactions, selectedMoods, selectedEnergy, isOpen, onClose, onOpenShort, onToggleReaction, reactionFeedback }) {
+function TrackDetailSheet({ track, detail, isSaved, selectedMoods, selectedEnergy, isOpen, onClose, onOpenShort, onToggleSave, saveFeedback }) {
   if (!track) return null
 
   const imageSrc = detail?.composerImage || composerImages[track.composer]
@@ -102,9 +96,9 @@ function TrackDetailSheet({ track, detail, reactions, selectedMoods, selectedEne
           <section className="track-detail-section"><h3>당신에게 이 곡을 추천하는 이유</h3><p>{recommendationReason}</p></section>
           <section className="track-detail-section"><h3>이 곡은 어떤 곡인가요?</h3><p>{about}</p></section>
           {highlight && <section className="track-detail-section track-detail-highlight"><h3>감상 하이라이트</h3><div className="track-detail-highlight-card"><strong>{highlight.title}</strong><p>{highlight.description}</p></div></section>}
-          <section className="track-reaction-section" aria-labelledby="track-reaction-title"><h3 id="track-reaction-title">이 곡은 어떠셨나요?</h3><p>남긴 반응은 다음 추천에 활용될 예정이에요.</p><div className="track-reaction-list">{reactionOptions.map((reaction) => { const isSelected = Boolean(reactions?.[reaction.key]); return <button className={`track-reaction-button ${isSelected ? 'selected' : ''}`} type="button" key={reaction.key} aria-pressed={isSelected} onClick={() => onToggleReaction(track.id, reaction.key)}><span aria-hidden="true">{isSelected ? '✓' : reaction.icon}</span>{reaction.label}</button> })}</div>{reactionFeedback && <p className="track-reaction-feedback" role="status">{reactionFeedback}</p>}</section>
+          <section className="library-save-section" aria-label="보관함에 곡 저장"><p>다시 찾아 듣고 싶은 곡을 보관해보세요.</p><button className={`library-save-button ${isSaved ? 'saved' : ''}`} type="button" aria-pressed={isSaved} onClick={() => onToggleSave(track.id)}>{isSaved ? '✓ 보관됨' : '보관함에 담기'}</button>{saveFeedback && <p className="library-save-feedback" role="status">{saveFeedback}</p>}<div className="concert-preview"><button type="button" disabled aria-disabled="true">공연에서 듣고 싶어요 (예정)</button><p>공연 찾기 기능이 열리면, 이 곡이 포함된 무대를 추천해드릴게요.</p></div></section>
           <section className="track-detail-section"><h3>이럴 때 들어보세요</h3><p>{listeningTip}</p></section>
-          {canOpenShort ? <div className="highlight-short-cta"><p>이 곡의 한 장면을 짧은 영상으로 만나보세요.</p><button type="button" onClick={() => onOpenShort(track)}>하이라이트 감상하기</button></div> : <div className="track-detail-coming-soon" aria-disabled="true">이 곡의 하이라이트 감상은 준비 중이에요.</div>}
+          {canOpenShort ? <div className="highlight-short-cta"><p>이 곡을 영상으로 만나보세요.</p><button type="button" onClick={() => onOpenShort(track)}>음원 감상하기</button></div> : <div className="track-detail-coming-soon" aria-disabled="true">이 곡의 하이라이트 감상은 준비 중이에요.</div>}
         </div>
       </section>
     </div>
@@ -196,6 +190,62 @@ function HighlightShortView({ track, detail, isOpen, onClose }) {
   )
 }
 
+function LibraryScreen({ savedTracks, onOpenTrack, onRemoveTrack, onGoExplore }) {
+  return (
+    <>
+      <header className="library-header" id="library-top">
+        <p>MY LIBRARY</p>
+        <h1>보관함</h1>
+        <span>다시 찾아 듣고 싶은 곡을 모아두었어요.</span>
+        <strong>{savedTracks.length}곡 보관 중</strong>
+      </header>
+      <main className="library-main">
+        {savedTracks.length > 0 ? (
+          <section className="library-list" aria-label="보관한 곡 목록">
+            {savedTracks.map((track) => (
+              <article className={`saved-track-card ${track.tone}`} key={track.id}>
+                <button className="saved-track-open" type="button" onClick={() => onOpenTrack(track)} aria-label={`${formatTrackTitle(track)} 상세 보기`}>
+                  <MiniArtwork track={track} />
+                  <span className="saved-track-copy"><b>{track.composer}</b><strong>{formatTrackTitle(track)}</strong><span className="saved-track-tags">{track.moods.map((mood) => <i key={mood}>#{mood}</i>)}</span></span>
+                </button>
+                <button className="saved-track-remove" type="button" onClick={() => onRemoveTrack(track.id)}>보관 해제</button>
+              </article>
+            ))}
+          </section>
+        ) : (
+          <section className="library-empty" aria-labelledby="library-empty-title">
+            <span aria-hidden="true">♬</span>
+            <h2 id="library-empty-title">아직 보관한 곡이 없어요</h2>
+            <p>마음에 남는 곡을 발견하면 보관함에 담아보세요.</p>
+            <button type="button" onClick={onGoExplore}>음악 탐색으로 가기</button>
+          </section>
+        )}
+      </main>
+    </>
+  )
+}
+
+function ConcertComingScreen({ onGoExplore }) {
+  const features = ['내 취향에 맞는 공연 찾기', '공연 프로그램 쉽게 읽기', '곡별 감상 포인트 미리 보기']
+
+  return (
+    <>
+      <header className="concert-coming-header" id="concert-top">
+        <p>COMING SOON</p>
+        <h1>공연에서 만나는 클래식</h1>
+        <span>내 취향과 연결되는 클래식 공연을 준비하고 있어요.<br />곡을 먼저 발견하고, 나에게 맞는 무대를 찾아보세요.</span>
+      </header>
+      <main className="concert-coming-main">
+        <div className="concert-coming-visual" aria-hidden="true"><i className="concert-coming-light light-one" /><i className="concert-coming-light light-two" /><i className="concert-coming-note note-one">♪</i><i className="concert-coming-note note-two">♫</i><span><Icon name="piano" /></span></div>
+        <section className="concert-coming-features" aria-label="준비 중인 공연 기능">
+          {features.map((feature, index) => <article key={feature}><i>{index + 1}</i><strong>{feature}</strong><span>준비 중</span></article>)}
+        </section>
+        <button className="concert-coming-return" type="button" onClick={onGoExplore}>소리 탐색으로 돌아가기</button>
+      </main>
+    </>
+  )
+}
+
 const starterTrackIds = [
   'satie-gymnopedie-1',
   'chopin-nocturne-op9-2',
@@ -205,35 +255,65 @@ const starterTrackIds = [
 ]
 
 function App() {
+  const [activeView, setActiveView] = useState('explore')
+  const [recommendationMode, setRecommendationMode] = useState('mood')
   const [energy, setEnergy] = useState(null)
   const [selectedTrackId, setSelectedTrackId] = useState(null)
-  const [savedTrackIds, setSavedTrackIds] = useState([])
   const [selectedMoodIds, setSelectedMoodIds] = useState([])
   const [detailTrack, setDetailTrack] = useState(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [shortTrack, setShortTrack] = useState(null)
   const [isShortOpen, setIsShortOpen] = useState(false)
   const [trackReactions, setTrackReactions] = useState(readTrackReactions)
-  const [reactionFeedback, setReactionFeedback] = useState(null)
+  const [saveFeedback, setSaveFeedback] = useState(null)
   const detailCloseTimer = useRef(null)
   const shortCloseTimer = useRef(null)
-  const reactionFeedbackTimer = useRef(null)
+  const saveFeedbackTimer = useRef(null)
 
   const selectedEnergy = energyOptions.find((item) => item.value === energy)
-  const isInitialExploration = selectedMoodIds.length === 0 && energy === null
+  const hasMoodOrEnergySelection = selectedMoodIds.length > 0 || energy !== null
   const starterTracks = useMemo(
     () => starterTrackIds.map((id) => tracks.find((track) => track.id === id)).filter(Boolean),
     [],
   )
+  const savedTrackIds = useMemo(
+    () => Object.keys(trackReactions).filter((trackId) => trackReactions[trackId]?.listenAgain === true),
+    [trackReactions],
+  )
+  const libraryPreference = useMemo(
+    () => getLibraryPreferenceProfile(tracks, savedTrackIds),
+    [savedTrackIds],
+  )
+  const canUseLibraryRecommendation = libraryPreference.isActive
+  const isLibraryRecommendationMode = recommendationMode === 'library' && canUseLibraryRecommendation
+  const isInitialExploration = !isLibraryRecommendationMode && !hasMoodOrEnergySelection
   const recommendation = useMemo(
-    () => getRecommendationResult(tracks, selectedMoodIds, energy),
-    [selectedMoodIds, energy],
+    () => getRecommendationResult(tracks, selectedMoodIds, energy, isLibraryRecommendationMode ? libraryPreference : null),
+    [selectedMoodIds, energy, isLibraryRecommendationMode, libraryPreference],
   )
   const recommendedTracks = recommendation.tracks
   const visibleTracks = isInitialExploration ? starterTracks : recommendedTracks
   const selectedTrack = visibleTracks.find((track) => track.id === selectedTrackId) ?? visibleTracks[0]
   const relatedTracks = recommendedTracks.filter((track) => track.id !== selectedTrack.id)
   const matchedMoods = selectedMoodIds.filter((mood) => selectedTrack.moods.includes(mood))
+  const savedTracks = useMemo(() => tracks
+    .filter((track) => trackReactions[track.id]?.listenAgain === true)
+    .sort((first, second) => {
+      const firstUpdatedAt = Date.parse(trackReactions[first.id]?.updatedAt) || 0
+      const secondUpdatedAt = Date.parse(trackReactions[second.id]?.updatedAt) || 0
+      return secondUpdatedAt - firstUpdatedAt
+    }), [trackReactions])
+  const personalizationMessage = useMemo(() => {
+    if (!isLibraryRecommendationMode || !recommendation.isPersonalized) return null
+
+    const topMood = libraryPreference.topMoods.length === 1 ? libraryPreference.topMoods[0] : null
+    if (topMood && selectedMoodIds.includes(topMood)) return `보관한 곡에서 ‘${topMood}’ 분위기를 자주 선택했어요.`
+
+    const topEnergy = libraryPreference.topEnergies.length === 1 ? libraryPreference.topEnergies[0] : null
+    if (topEnergy && energy === topEnergy) return `‘${topEnergy}’ 에너지의 곡을 보관한 취향을 함께 반영했어요.`
+
+    return '보관한 곡의 분위기를 함께 반영했어요.'
+  }, [energy, isLibraryRecommendationMode, libraryPreference, recommendation.isPersonalized, selectedMoodIds])
 
   const selectMood = (mood) => {
     const isSelected = selectedMoodIds.includes(mood)
@@ -242,10 +322,12 @@ function App() {
     setSelectedMoodIds((moods) => isSelected
       ? moods.filter((selectedMood) => selectedMood !== mood)
       : [...moods, mood])
+    setRecommendationMode('mood')
     setSelectedTrackId(null)
   }
   const selectEnergy = (nextEnergy) => {
     setEnergy((currentEnergy) => currentEnergy === nextEnergy ? null : nextEnergy)
+    setRecommendationMode('mood')
     setSelectedTrackId(null)
   }
   const openTrackDetail = (track) => {
@@ -267,32 +349,31 @@ function App() {
     setIsShortOpen(false)
     shortCloseTimer.current = window.setTimeout(() => setShortTrack(null), 240)
   }
-  const toggleTrackReaction = (trackId, reactionKey) => {
+  const toggleTrackSave = (trackId) => {
     const currentTrackReactions = trackReactions[trackId] || {}
-    const isSelected = !currentTrackReactions[reactionKey]
+    const isSaved = !currentTrackReactions.listenAgain
     const nextReactions = {
       ...trackReactions,
       [trackId]: {
-        liked: Boolean(currentTrackReactions.liked),
-        listenAgain: Boolean(currentTrackReactions.listenAgain),
-        concertWish: Boolean(currentTrackReactions.concertWish),
-        [reactionKey]: isSelected,
+        ...currentTrackReactions,
+        listenAgain: isSaved,
         updatedAt: new Date().toISOString(),
       },
     }
 
     setTrackReactions(nextReactions)
     saveTrackReactions(nextReactions)
-    setReactionFeedback({ trackId, message: isSelected ? '저장했어요.' : '반응을 취소했어요.' })
-    window.clearTimeout(reactionFeedbackTimer.current)
-    reactionFeedbackTimer.current = window.setTimeout(() => setReactionFeedback(null), 1800)
+    setSaveFeedback({ trackId, message: isSaved ? '보관함에 담았어요.' : '보관을 해제했어요.' })
+    window.clearTimeout(saveFeedbackTimer.current)
+    saveFeedbackTimer.current = window.setTimeout(() => setSaveFeedback(null), 1800)
   }
   const startWith = (mood, nextEnergy) => {
     setSelectedMoodIds([mood])
     setEnergy(nextEnergy)
+    setRecommendationMode('mood')
     setSelectedTrackId(null)
   }
-  const toggleSave = () => setSavedTrackIds((ids) => ids.includes(selectedTrack.id) ? ids.filter((id) => id !== selectedTrack.id) : [...ids, selectedTrack.id])
+  const isTrackSaved = (trackId) => trackReactions[trackId]?.listenAgain === true
 
   useEffect(() => {
     if (!isDetailOpen) return undefined
@@ -319,20 +400,25 @@ function App() {
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [isShortOpen])
 
+  useEffect(() => {
+    if (recommendationMode === 'library' && !canUseLibraryRecommendation) setRecommendationMode('mood')
+  }, [canUseLibraryRecommendation, recommendationMode])
+
   useEffect(() => () => {
     window.clearTimeout(detailCloseTimer.current)
     window.clearTimeout(shortCloseTimer.current)
-    window.clearTimeout(reactionFeedbackTimer.current)
+    window.clearTimeout(saveFeedbackTimer.current)
   }, [])
 
   return (
     <div className="app-shell">
+      {activeView === 'explore' ? <>
       <header className="top-header" id="top">
         <div className="topbar">
           <a className="brand" href="#top">CLASSIC ATLAS</a>
           <button className="location-button" type="button" aria-label="현재 지역 서울">서울 <Icon name="chevron" /></button>
         </div>
-        <p className="date-note">10월 첫째 주 · 오늘의 소리 탐색</p>
+        <p className="date-note">10월 첫째 주 · 오늘의 음악 탐색</p>
         <h1>오늘은 어떤 음악을<br />만나고 싶나요?</h1>
         <div className="header-orbit orbit-one" /><div className="header-orbit orbit-two" />
       </header>
@@ -360,7 +446,9 @@ function App() {
         </section>
 
         <section className="track-section" aria-labelledby="recommendation-title">
-          <div className="section-heading recommendation-heading"><p>{isInitialExploration ? 'START HERE' : 'FOR YOU'}</p><h2 id="recommendation-title">{isInitialExploration ? '어떤 음악이 끌리나요?' : '지금의 추천'}</h2>{isInitialExploration && <span>분위기와 에너지를 고르면 지금의 취향에 맞춰 추천해드릴게요.</span>}</div>
+          <div className="section-heading recommendation-heading"><p>{isInitialExploration ? 'START HERE' : 'FOR YOU'}</p><h2 id="recommendation-title">{isInitialExploration ? '어떤 음악이 끌리나요?' : isLibraryRecommendationMode ? '내 취향 추천' : '지금의 추천'}</h2>{isInitialExploration && <span>지금의 기분과 강도를 선택하면 어울리는 곡을 찾아드릴게요.</span>}</div>
+          <div className="recommendation-mode-control" role="group" aria-label="추천 방식 선택"><button className={recommendationMode === 'mood' || !canUseLibraryRecommendation ? 'selected' : ''} type="button" aria-pressed={recommendationMode === 'mood' || !canUseLibraryRecommendation} onClick={() => setRecommendationMode('mood')}>지금의 기분</button><button className={isLibraryRecommendationMode ? 'selected' : ''} type="button" aria-pressed={isLibraryRecommendationMode} disabled={!canUseLibraryRecommendation} onClick={() => setRecommendationMode('library')}>내 취향</button></div>
+          {!canUseLibraryRecommendation && <p className="recommendation-mode-guide">보관함에 3곡 이상 담으면 내 취향 추천을 볼 수 있어요.</p>}
           {isInitialExploration ? <>
             <p className="starter-label">처음 듣기 좋은 곡</p>
             <div className="similar-list starter-carousel">
@@ -376,7 +464,7 @@ function App() {
               <button type="button" onClick={() => startWith('긴장감 있는', '강렬하게')}>강렬하게 몰입하기</button>
             </div>
           </> : <article className={`featured-track ${selectedTrack.tone}`} role="button" tabIndex="0" aria-label={`${formatTrackTitle(selectedTrack)} 상세 보기`} onClick={() => openTrackDetail(selectedTrack)} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openTrackDetail(selectedTrack) } }}>
-            <div className="track-card-top"><div className="recommendation-basis"><span>선택한 분위기: {selectedMoodIds.length > 0 ? selectedMoodIds.join(' · ') : '전체'}</span><small>일치한 감정: {matchedMoods.length > 0 ? matchedMoods.join(' · ') : '전체'}</small>{energy && <small>에너지: {energy}{selectedTrack.energy === energy ? ' · 일치' : ''}</small>}{recommendation.isEnergyFallback && <small className="energy-fallback-notice">선택한 에너지와 정확히 일치하는 곡은 없어요. 비슷한 분위기의 곡을 보여드릴게요.</small>}</div><button type="button" onClick={(event) => { event.stopPropagation(); toggleSave() }} aria-label={`${formatTrackTitle(selectedTrack)} 보관함에 저장`} aria-pressed={savedTrackIds.includes(selectedTrack.id)}><Icon name="bookmark" filled={savedTrackIds.includes(selectedTrack.id)} /></button></div>
+            <div className="track-card-top"><div className="recommendation-basis">{recommendation.isPersonalized && <small className="library-recommendation-label">보관함 기반 추천</small>}<span>선택한 분위기: {selectedMoodIds.length > 0 ? selectedMoodIds.join(' · ') : '전체'}</span><small>일치한 감정: {matchedMoods.length > 0 ? matchedMoods.join(' · ') : '전체'}</small>{energy && <small>에너지: {energy}{selectedTrack.energy === energy ? ' · 일치' : ''}</small>}{recommendation.isEnergyFallback && <small className="energy-fallback-notice">선택한 에너지와 정확히 일치하는 곡은 없어요. 비슷한 분위기의 곡을 보여드릴게요.</small>}{personalizationMessage && <small className="library-recommendation-note">{personalizationMessage}</small>}</div><button type="button" onClick={(event) => { event.stopPropagation(); toggleTrackSave(selectedTrack.id) }} aria-label={`${formatTrackTitle(selectedTrack)} ${isTrackSaved(selectedTrack.id) ? '보관 해제' : '보관함에 담기'}`} aria-pressed={isTrackSaved(selectedTrack.id)}><Icon name="bookmark" filled={isTrackSaved(selectedTrack.id)} /></button></div>
             <div className="track-disc" aria-hidden="true"><span /></div>
             <div className="track-copy"><p className="track-kicker">오늘의 대표 곡</p><p className="composer">{selectedTrack.composer}</p><h2>{formatTrackTitle(selectedTrack)}</h2><p className="track-description">{selectedTrack.description}</p><div className="tag-list">{selectedTrack.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div></div>
             <button className="play-button" type="button" onClick={(event) => event.stopPropagation()} aria-label={`${formatTrackTitle(selectedTrack)} 재생 미리보기`}><Icon name="play" /></button>
@@ -396,14 +484,15 @@ function App() {
 
         <section className="concert-link" aria-label="관련 공연 안내"><span className="concert-mark"><Icon name="piano" /></span><div><p>이 곡을 무대에서 듣고 싶다면</p><strong>이번 달 서울에서 2개의 관련 공연을 찾았어요 <span>→</span></strong></div></section>
       </main>
+      </> : activeView === 'concert' ? <ConcertComingScreen onGoExplore={() => setActiveView('explore')} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} />}
 
       <nav className="bottom-nav" aria-label="주요 메뉴">
-        <a className="nav-item active" href="#top"><Icon name="compass" /><span>소리 탐색</span></a>
-        <button className="nav-item" type="button"><Icon name="stage" /><span>공연 찾기</span></button>
-        <button className="nav-item" type="button"><Icon name="bookmarkSmall" /><span>보관함</span></button>
+        <button className={`nav-item ${activeView === 'explore' ? 'active' : ''}`} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
+        <button className={`nav-item ${activeView === 'concert' ? 'active' : ''}`} type="button" onClick={() => setActiveView('concert')}><Icon name="stage" /><span>공연 찾기</span></button>
+        <button className={`nav-item ${activeView === 'library' ? 'active' : ''}`} type="button" onClick={() => setActiveView('library')}><Icon name="bookmarkSmall" /><span>보관함</span></button>
         <button className="nav-item" type="button"><Icon name="user" /><span>내 정보</span></button>
       </nav>
-      <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} reactions={detailTrack ? trackReactions[detailTrack.id] : null} selectedMoods={selectedMoodIds} selectedEnergy={energy} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleReaction={toggleTrackReaction} reactionFeedback={reactionFeedback?.trackId && reactionFeedback.trackId === detailTrack?.id ? reactionFeedback.message : null} />
+      <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedMoods={selectedMoodIds} selectedEnergy={energy} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId && saveFeedback.trackId === detailTrack?.id ? saveFeedback.message : null} />
       <HighlightShortView track={shortTrack} detail={shortTrack ? trackDetails[shortTrack.id] : null} isOpen={isShortOpen} onClose={closeHighlightShort} />
     </div>
   )

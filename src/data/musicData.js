@@ -155,7 +155,41 @@ export const trackDetails = {
 
 const getMoodMatchCount = (track, selectedMoods) => selectedMoods.filter((mood) => track.moods.includes(mood)).length
 
-export const getRecommendationResult = (trackList, selectedMoods, selectedEnergy) => {
+export const getLibraryPreferenceProfile = (trackList, savedTrackIds) => {
+  const savedIdSet = savedTrackIds instanceof Set ? savedTrackIds : new Set(savedTrackIds)
+  const savedTracks = trackList.filter((track) => savedIdSet.has(track.id))
+  const moodCounts = {}
+  const energyCounts = {}
+
+  savedTracks.forEach((track) => {
+    track.moods.forEach((mood) => { moodCounts[mood] = (moodCounts[mood] || 0) + 1 })
+    energyCounts[track.energy] = (energyCounts[track.energy] || 0) + 1
+  })
+
+  const getTopValues = (counts, valuesInStableOrder) => {
+    const highestCount = Math.max(0, ...Object.values(counts))
+    return highestCount > 0 ? valuesInStableOrder.filter((value) => counts[value] === highestCount) : []
+  }
+
+  return {
+    isActive: savedTracks.length >= 3,
+    savedIdSet,
+    moodCounts,
+    energyCounts,
+    topMoods: getTopValues(moodCounts, moodOptions),
+    topEnergies: getTopValues(energyCounts, energyOptions.map(({ value }) => value)),
+  }
+}
+
+const getLibraryPreferenceScore = (track, preferenceProfile) => {
+  if (!preferenceProfile?.isActive) return 0
+
+  const moodScore = track.moods.reduce((total, mood) => total + (preferenceProfile.moodCounts[mood] || 0), 0)
+  const energyScore = preferenceProfile.energyCounts[track.energy] || 0
+  return moodScore + energyScore
+}
+
+export const getRecommendationResult = (trackList, selectedMoods, selectedEnergy, preferenceProfile = null) => {
   const allMoodMatches = selectedMoods.length > 0
     ? trackList.filter((track) => selectedMoods.every((mood) => track.moods.includes(mood)))
     : trackList
@@ -169,15 +203,26 @@ export const getRecommendationResult = (trackList, selectedMoods, selectedEnergy
     : []
   const finalCandidates = energyMatchedSongs.length > 0 ? energyMatchedSongs : moodCandidates
 
-  const recommendedTracks = finalCandidates
+  const unseenCandidates = preferenceProfile?.isActive
+    ? finalCandidates.filter((track) => !preferenceProfile.savedIdSet.has(track.id))
+    : finalCandidates
+  const candidatesForSorting = unseenCandidates.length > 0 ? unseenCandidates : finalCandidates
+
+  const recommendedTracks = candidatesForSorting
     .map((track, index) => ({ track, index }))
     .sort((first, second) => {
+      const energyMatchDifference = Number(second.track.energy === selectedEnergy) - Number(first.track.energy === selectedEnergy)
+      if (energyMatchDifference !== 0) return energyMatchDifference
+
       const moodMatchDifference = getMoodMatchCount(second.track, selectedMoods) - getMoodMatchCount(first.track, selectedMoods)
       if (moodMatchDifference !== 0) return moodMatchDifference
 
       const firstHasAllMoods = selectedMoods.length > 0 && selectedMoods.every((mood) => first.track.moods.includes(mood))
       const secondHasAllMoods = selectedMoods.length > 0 && selectedMoods.every((mood) => second.track.moods.includes(mood))
       if (firstHasAllMoods !== secondHasAllMoods) return Number(secondHasAllMoods) - Number(firstHasAllMoods)
+
+      const preferenceScoreDifference = getLibraryPreferenceScore(second.track, preferenceProfile) - getLibraryPreferenceScore(first.track, preferenceProfile)
+      if (preferenceScoreDifference !== 0) return preferenceScoreDifference
 
       return first.index - second.index
     })
@@ -187,6 +232,7 @@ export const getRecommendationResult = (trackList, selectedMoods, selectedEnergy
     tracks: recommendedTracks,
     hasExactEnergyMatch: !selectedEnergy || energyMatchedSongs.length > 0,
     isEnergyFallback: Boolean(selectedEnergy) && energyMatchedSongs.length === 0,
+    isPersonalized: Boolean(preferenceProfile?.isActive),
   }
 }
 
