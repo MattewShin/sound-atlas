@@ -113,11 +113,48 @@ function TrackDetailSheet({ track, detail, reactions, selectedMoods, selectedEne
 
 function YouTubeShortEmbed({ track, preview }) {
   const [hasVideoError, setHasVideoError] = useState(false)
+  const iframeRef = useRef(null)
   const startSeconds = Number.isFinite(preview.startSeconds) ? preview.startSeconds : 0
   const endSeconds = Number.isFinite(preview.endSeconds) ? preview.endSeconds : ''
   const videoId = encodeURIComponent(preview.videoId)
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?start=${startSeconds}&end=${endSeconds}&autoplay=0&playsinline=1&rel=0`
+  const playerOrigin = typeof window === 'undefined' ? '' : `&origin=${encodeURIComponent(window.location.origin)}`
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?start=${startSeconds}&end=${endSeconds}&autoplay=0&playsinline=1&rel=0&enablejsapi=1${playerOrigin}`
   const watchUrl = `https://www.youtube.com/watch?v=${videoId}${startSeconds ? `&t=${startSeconds}` : ''}`
+
+  useEffect(() => {
+    if (!Number.isFinite(endSeconds)) return undefined
+
+    let hasReachedEnd = false
+    const playerTarget = 'https://www.youtube-nocookie.com'
+    const sendPlayerCommand = (func, args = []) => {
+      iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args }), playerTarget)
+    }
+    const stopAtHighlightEnd = (currentTime) => {
+      if (hasReachedEnd || currentTime < endSeconds) return
+      hasReachedEnd = true
+      sendPlayerCommand('pauseVideo')
+      sendPlayerCommand('seekTo', [endSeconds, true])
+    }
+    const handlePlayerMessage = (event) => {
+      if (event.origin !== 'https://www.youtube-nocookie.com' && event.origin !== 'https://www.youtube.com') return
+
+      try {
+        const message = typeof event.data === 'string' ? JSON.parse(event.data) : event.data
+        if (typeof message?.info?.currentTime === 'number') stopAtHighlightEnd(message.info.currentTime)
+      } catch {
+        // YouTube 외 메시지는 무시합니다.
+      }
+    }
+    const timeCheck = window.setInterval(() => {
+      if (!hasReachedEnd) sendPlayerCommand('getCurrentTime')
+    }, 400)
+
+    window.addEventListener('message', handlePlayerMessage)
+    return () => {
+      window.clearInterval(timeCheck)
+      window.removeEventListener('message', handlePlayerMessage)
+    }
+  }, [endSeconds])
 
   if (hasVideoError) {
     return (
@@ -131,6 +168,7 @@ function YouTubeShortEmbed({ track, preview }) {
   return (
     <iframe
       src={embedUrl}
+      ref={iframeRef}
       title={`${track.composer} ${track.title} 하이라이트 감상`}
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowFullScreen
