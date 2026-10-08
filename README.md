@@ -34,7 +34,7 @@ npm run diagnose:recommendations
 
 - `src/data/manualRatings.js`: 확정 수동 평가 62곡. `ratingSource: manual`, `ratingVersion: manual-emotions-1`.
 - `data/manual/manual-emotions-v1.csv`: 사용자가 제공한 확정 입력 대조본. 작곡가 확장에 맞춰 기존 `chopin-emotions-v1.csv`를 이름 변경했습니다.
-- `src/data/musicData.js`: 활성 목록·공용 이미지 맵·상세·구 ID 매핑. 별칭은 제목과 별도로 다음 줄에 표시합니다.
+- `src/data/musicData.js`: 활성 목록·공용 이미지 맵·상세·구 ID 매핑. 별칭은 별도 데이터로 관리하고, 화면에서는 곡명 뒤에 공백 한 칸을 두고 강제 줄바꿈 없이 같은 서식으로 표시합니다.
 - `src/data/recommendations.js`: 점수 추천·취향 프로필·코사인 유사도.
 - `src/data/storage.js`: 음악 저장 상태만 버전별 정리.
 - `data/emma/`: 앱과 분리된 과거 EMMA 검증 참고 자료. 원본 CSV는 사용자 요청으로 삭제했으며, `archive/`는 교체 전 매칭·검토 기록입니다.

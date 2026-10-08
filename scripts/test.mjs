@@ -27,7 +27,7 @@ test('첫 화면에는 새 9개 선택과 활성곡만 있으며 Energy 선택�
   emotions.forEach(({ label }) => assert.ok(html.includes(label)))
   assert.ok(html.includes('느낌으로 시작하기') && html.includes('기분에서 시작하기'))
   assert.ok(html.includes('쇼팽 연습곡 Op.10 No.3'))
-  assert.ok(html.includes('<span class="track-alias">이별의 곡</span></strong>'))
+  assert.ok(html.includes('<span class="track-alias"> 이별의 곡</span></strong>'))
   assert.ok(!/ENERGY|얼마나 깊게|강렬하게|녹턴/.test(html))
 })
 test('전체 활성곡 상세·보관함은 제목·별칭·점수·이미지와 정확한 영상 상태를 렌더링한다', () => {
@@ -40,7 +40,7 @@ test('전체 활성곡 상세·보관함은 제목·별칭·점수·이미지와
     assert.ok(html.includes(composerImages[track.composer]))
     assert.ok(!html.includes('<iframe'))
     if (track.movement) assert.equal((html.match(new RegExp(track.movement, 'g')) ?? []).length, 1)
-    if (track.alias) assert.ok(html.includes(`<span class="track-alias">${track.alias}</span></h2>`))
+    if (track.alias) assert.ok(html.includes(`<span class="track-alias"> ${track.alias}</span></h2>`))
     assert.ok(!html.includes('별칭:'))
   }
   const library = render(components.LibraryScreen, { savedTracks: tracks })

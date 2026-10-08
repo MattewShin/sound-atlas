@@ -27,7 +27,7 @@ const describeRecommendationMatch = (track, selectedKeys) => {
 }
 
 function TrackAlias({ track }) {
-  return track.alias ? <span className="track-alias">{track.alias}</span> : null
+  return track.alias ? <span className="track-alias">{' '}{track.alias}</span> : null
 }
 
 function MiniArtwork({ track }) {

@@ -57,7 +57,7 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .region-choice-list { margin: 0; }
 .region-choice-list button { min-height: 44px; }
 .region-choice-list button:focus-visible, .region-picker-close:focus-visible { outline: 2px solid #31534d; outline-offset: 2px; }
-.track-alias { display: block; margin-top: 5px; color: inherit; font: inherit; letter-spacing: inherit; }
+.track-alias { display: inline; margin: 0; color: inherit; font: inherit; letter-spacing: inherit; }
 .recommendations-see-all, .recommendations-load-more { display: flex; width: 100%; min-height: 44px; align-items: center; justify-content: center; gap: 12px; border: 1px solid #cbd8ca; border-radius: 12px; padding: 11px 14px; color: #31534d; background: #edf2ea; font-size: 12px; font-weight: 700; }
 .recommendations-see-all { margin-top: 14px; }.recommendations-see-all > span { font-size: 18px; }.recommendations-single-link { padding: 0 20px; }
 .recommendation-list-header { padding-top: 20px; }.recommendation-back { min-height: 36px; margin: 0 0 18px; border: 0; padding: 0; color: #fffaf0; background: transparent; font-size: 12px; }.recommendation-list-header h1:focus-visible { outline: 2px solid #fffaf0; outline-offset: 4px; }
