@@ -243,7 +243,7 @@ export function PreferenceScreen({ profile, onGoExplore }) {
           </div>
         })}</div>
         <p>0~100 고정 척도예요. 각 감정은 독립적이며 합계가 100일 필요는 없어요.</p>
-        <p>현재 목록은 쇼팽 36곡으로 구성되어 있어요.</p>
+        <p>현재 목록은 {tracks.length}곡이며, {Array.from(new Set(tracks.map((track) => track.composer))).join(' · ')}의 작품으로 구성되어 있어요.</p>
         <button className="library-save-button" type="button" onClick={onGoExplore}>내 취향 추천 보기</button>
       </section> : <section className="library-empty"><span aria-hidden="true">♬</span><h2>아직 취향이 형성되지 않았어요</h2><p>마음에 남는 곡을 보관하면 감정 성향을 볼 수 있어요.</p><button type="button" onClick={onGoExplore}>음악 탐색으로 가기</button></section>}
     </main>
@@ -377,7 +377,7 @@ function App() {
           {!isLibraryMode && currentFeeling && recommendationInput === 'feeling' && <p className="feeling-result-path">{currentFeeling} 기분에 어울리는 {activeKeys.map(emotionLabel).join(' · ')} 음악</p>}
           {!isInitialExploration && !isLibraryMode && recommendation.hasFewCandidates && <p className="recommendation-result-notice">이 느낌의 곡은 {recommendedTracks.length}곡이에요. 다른 느낌도 골라보세요.</p>}
           {isInitialExploration ? <>
-            <p className="starter-label">쇼팽의 음악 만나기</p><div className="similar-list starter-carousel">{starterTracks.map(miniCard)}</div>
+            <p className="starter-label">피아노 음악 만나기</p><div className="similar-list starter-carousel">{starterTracks.map(miniCard)}</div>
           </> : selectedTrack ? <article className={'featured-track ' + selectedTrack.tone} role="button" tabIndex="0" aria-label={formatTrackTitle(selectedTrack) + ' 상세 보기'} onClick={() => openTrackDetail(selectedTrack)} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openTrackDetail(selectedTrack) } }}>
             <div className="track-card-top"><div className="recommendation-basis">{isLibraryMode ? <small className="library-recommendation-label">보관함 기반 추천 · 감정 성향 유사도</small> : <span>선택한 음악 느낌: {activeKeys.map(emotionLabel).join(' · ')}</span>}<small>{isLibraryMode ? '보관한 곡과 비슷한 감정의 새로운 곡이에요.' : describeRecommendationMatch(selectedTrack, activeKeys)}</small></div><button type="button" onClick={(event) => { event.stopPropagation(); toggleTrackSave(selectedTrack.id) }} aria-label={formatTrackTitle(selectedTrack) + (isTrackSaved(selectedTrack.id) ? ' 보관 해제' : ' 보관함에 담기')} aria-pressed={isTrackSaved(selectedTrack.id)}><Icon name="bookmark" filled={isTrackSaved(selectedTrack.id)} /></button></div>
             <div className="featured-artwork"><MiniArtwork track={selectedTrack} /></div>

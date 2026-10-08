@@ -1,6 +1,6 @@
 // 앱 운영 명칭. EMMA 실험 점수와 사용자 수동 평가는 별개입니다.
 export const RATING_VERSION = 'manual-emotions-1'
-export const DATA_VERSION = 'chopin-36-emotions-1'
+export const DATA_VERSION = 'manual-catalog-2'
 export const emotions = [
   { key: 'wonder', label: '감동적인', definition: '감동과 경이로움' },
   { key: 'transcendence', label: '압도적인', definition: '일상을 넘어서는 듯한 압도감' },

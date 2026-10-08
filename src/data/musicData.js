@@ -15,12 +15,15 @@ export const composerImages = {
 }
 export const tracks = manualRatings.map((track) => ({
   ...track, ratingStatus: isFullyRated(track) ? 'complete' : 'needs-review', tone: 'sage',
-  description: '사용자가 직접 평가한 아홉 가지 감정으로 만나보는 쇼팽의 피아노 작품이에요.',
+  description: `사용자가 직접 평가한 아홉 가지 감정으로 만나보는 ${track.composer}의 피아노 작품이에요.`,
   tags: getRepresentativeEmotions(track).map(({ label }) => label),
 }))
 export const legacyTrackIdMap = {
   'chopin-sonata-2-1': 'chopin-sonata-op35-no2-m1',
   'chopin-sonata-3-4': 'chopin-sonata-op58-no3-m4',
+  'rachmaninoff-prelude-op23-5': 'rachmaninoff-prelude-op23-no5',
+  'satie-gymnopedie-1': 'satie-gymnopedie-no1',
+  'liszt-liebestraum-3': 'liszt-liebestraum-s541-no3',
 }
 // 정확히 같은 작품·악장에만 연결합니다. 기존 쇼팽 두 악장에는 등록 영상이 없었습니다.
 export const trackDetails = {

@@ -76,3 +76,33 @@ test('저장 용량 부족으로 쓰기가 차단돼도 읽을 수 있는 보관
   assert.equal(migrateMusicStorage(storage).reactions['chopin-sonata-op35-no2-m1'].listenAgain, true)
   assert.equal(storage.getItem(VERSION_KEY), null)
 })
+
+test('36곡 버전에서 44곡 버전으로 확장해도 기존 보관과 선택을 모두 유지한다', () => {
+  const reactions = Object.fromEntries(tracks.filter((track) => track.composer === '쇼팽').map((track) => [track.id, { listenAgain: true, liked: true }]))
+  const storage = memoryStorage({
+    [VERSION_KEY]: 'chopin-36-emotions-1',
+    [STORAGE_KEY]: JSON.stringify(reactions),
+    [SELECTION_KEY]: JSON.stringify(['wonder', 'nostalgia']),
+    [RECENT_KEY]: JSON.stringify(Object.keys(reactions)),
+    'auth-token': 'preserve-auth',
+  })
+  const state = migrateMusicStorage(storage)
+  assert.deepEqual(state.reactions, reactions)
+  assert.deepEqual(state.selectedKeys, ['wonder', 'nostalgia'])
+  assert.equal(state.notice, null)
+  assert.equal(storage.getItem(VERSION_KEY), DATA_VERSION)
+  assert.equal(storage.getItem('auth-token'), 'preserve-auth')
+  assert.deepEqual(migrateMusicStorage(storage), state)
+})
+
+test('재추가된 동일 작품만 구 ID로 연결하고 잘못된 작품번호는 추정하지 않는다', () => {
+  const storage = memoryStorage({ [STORAGE_KEY]: JSON.stringify({
+    'rachmaninoff-prelude-op23-5': { listenAgain: true },
+    'satie-gymnopedie-1': { listenAgain: true },
+    'liszt-liebestraum-3': { listenAgain: true },
+    'rachmaninoff-prelude-op3': { listenAgain: true },
+  }) })
+  assert.deepEqual(Object.keys(migrateMusicStorage(storage).reactions), [
+    'rachmaninoff-prelude-op23-no5', 'satie-gymnopedie-no1', 'liszt-liebestraum-s541-no3',
+  ])
+})

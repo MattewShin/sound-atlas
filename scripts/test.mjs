@@ -8,7 +8,7 @@ import { build } from 'esbuild'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { emotions, formatTrackTitle } from '../src/data/emotions.js'
-import { tracks, trackDetails } from '../src/data/musicData.js'
+import { composerImages, tracks, trackDetails } from '../src/data/musicData.js'
 import { getLibraryPreferenceProfile } from '../src/data/recommendations.js'
 
 // JSX를 실제 컴파일해 화면의 렌더링 경로와 카탈로그 연결을 확인합니다.
@@ -28,22 +28,23 @@ test('첫 화면에는 새 9개 선택과 활성곡만 있으며 Energy 선택�
   assert.ok(html.includes('느낌으로 시작하기') && html.includes('기분에서 시작하기'))
   assert.ok(html.includes('쇼팽 연습곡 Op.10 No.3'))
   assert.ok(html.includes('별칭: 이별의 곡'))
-  assert.ok(!/ENERGY|얼마나 깊게|강렬하게|베토벤|짐노페디|녹턴/.test(html))
+  assert.ok(!/ENERGY|얼마나 깊게|강렬하게|베토벤|녹턴/.test(html))
 })
-test('36곡 상세·보관함은 정식 제목, 별칭, 9개 점수, 공용 이미지를 렌더링한다', () => {
+test('44곡 상세·보관함은 정식 제목, 별칭, 9개 점수, 공용 이미지를 렌더링한다', () => {
   for (const track of tracks) {
     const html = render(components.TrackDetailSheet, { track, detail: trackDetails[track.id], selectedKeys: [], isOpen: true })
     assert.ok(html.includes(formatTrackTitle(track)))
     assert.equal((html.match(/<dt>/g) ?? []).length, 9)
     assert.ok(html.includes('미리듣기 준비 중'))
-    assert.ok(html.includes('/composers/chopin-wodzinska-card-800x600.jpg'))
+    assert.ok(html.includes(composerImages[track.composer]))
     assert.ok(!html.includes('<iframe'))
     if (track.movement) assert.equal((html.match(new RegExp(track.movement, 'g')) ?? []).length, 1)
     if (track.alias) assert.ok(html.includes('별칭: ' + track.alias))
   }
   const library = render(components.LibraryScreen, { savedTracks: tracks })
-  assert.equal((library.match(/class="saved-track-card/g) ?? []).length, 36)
-  assert.ok(!/베토벤|짐노페디|녹턴/.test(library))
+  assert.equal((library.match(/class="saved-track-card/g) ?? []).length, tracks.length)
+  assert.ok(!/베토벤|녹턴/.test(library))
+  tracks.slice(36).forEach((track) => assert.ok(library.includes(formatTrackTitle(track))))
   const missing = render(components.TrackDetailSheet, { track: { ...tracks[0], emotionScores: undefined }, selectedKeys: [], isOpen: true })
   assert.equal((missing.match(/미평가/g) ?? []).length, 9)
   assert.ok(missing.includes('평가 검토 중'))

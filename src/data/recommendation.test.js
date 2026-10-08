@@ -7,12 +7,16 @@ import { cosineSimilarity, emotionVector, getLibraryPreferenceProfile, getLibrar
 import { feelingOptions, getSuggestedEmotions } from './feelingSuggestions.js'
 import { buildRecommendationDiagnosis } from '../../scripts/diagnoseRecommendations.js'
 
-test('36곡 구성, 제목·별칭, 324개 점수, 평가 출처가 확정 CSV와 전부 일치한다', () => {
-  const rows = readFileSync(new URL('../../data/manual/chopin-emotions-v1.csv', import.meta.url), 'utf8').trim().split(/\r?\n/)
+test('44곡 구성, 제목·별칭, 396개 점수, 평가 출처가 확정 CSV와 전부 일치한다', () => {
+  const rows = readFileSync(new URL('../../data/manual/manual-emotions-v1.csv', import.meta.url), 'utf8').trim().split(/\r?\n/)
   assert.deepEqual(rows.shift().split(',').slice(2), emotionKeys)
-  assert.equal(rows.length, 36)
-  assert.equal(tracks.length, 36)
-  assert.equal(new Set(tracks.map(({ id }) => id)).size, 36)
+  assert.equal(rows.length, 44)
+  assert.equal(tracks.length, rows.length)
+  assert.equal(new Set(tracks.map(({ id }) => id)).size, rows.length)
+  assert.equal(tracks.filter((track) => track.composer === '쇼팽').length, 36)
+  assert.equal(tracks.filter((track) => track.composer === '라흐마니노프').length, 4)
+  assert.equal(tracks.filter((track) => track.composer === '사티').length, 3)
+  assert.equal(tracks.filter((track) => track.composer === '리스트').length, 1)
   assert.equal(tracks.filter((track) => track.type === 'etude' && track.opus === 10).length, 12)
   assert.equal(tracks.filter((track) => track.type === 'etude' && track.opus === 25).length, 12)
   assert.equal(tracks.filter((track) => track.type === 'sonata').length, 8)
@@ -29,7 +33,7 @@ test('36곡 구성, 제목·별칭, 324개 점수, 평가 출처가 확정 CSV�
     assert.equal(track.ratingVersion, RATING_VERSION)
     assert.equal(track.ratingUnit, track.movement ? 'whole-movement' : 'whole-work')
     assert.ok(!('moods' in track) && !('energy' in track))
-    assert.ok(track.id.startsWith('chopin-'))
+    assert.match(track.id, /^(chopin|rachmaninoff|satie|liszt)-/)
   })
   assert.equal(emotions.find(({ key }) => key === 'peacefulness').label, '평안한')
 })
@@ -107,7 +111,7 @@ test('빈 보관함·0벡터·NaN은 개인화 미형성이고 모두 보관하�
 test('취향 추천은 보관곡을 제외하고 코사인 유사도로 안정 정렬한다', () => {
   const profile = getLibraryPreferenceProfile(tracks, [tracks[0].id, tracks[2].id])
   const result = getLibraryRecommendations(tracks, profile)
-  assert.equal(result.length, 34)
+  assert.equal(result.length, tracks.length - profile.savedIdSet.size)
   assert.ok(result.every((track) => !profile.savedIdSet.has(track.id)))
   const values = result.map((track) => cosineSimilarity(emotionVector(track), profile.vector))
   assert.ok(values.every((value, i) => !i || values[i - 1] >= value))
@@ -123,8 +127,36 @@ test('기분 정책은 새 감정 키에 명시적으로 연결하고 직접 선
 })
 
 test('작곡가 이미지와 활성 상세 연결이 유효하고 진단도 새 9개 감정을 사용한다', () => {
-  assert.ok(existsSync(new URL('../../public' + composerImages.쇼팽, import.meta.url)))
+  for (const track of tracks) {
+    assert.ok(composerImages[track.composer])
+    assert.ok(existsSync(new URL('../../public' + composerImages[track.composer], import.meta.url)))
+    assert.ok(track.description.includes(track.composer))
+  }
   assert.ok(Object.keys(trackDetails).every((id) => tracks.some((track) => track.id === id)))
   assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview).length, 0)
   assert.deepEqual(buildRecommendationDiagnosis().emotions.map(({ key }) => key), emotionKeys)
+})
+
+test('새 8곡의 72개 점수와 작품번호가 사용자 입력 그대로이며 추천·취향에 반영된다', () => {
+  const expected = [
+    ['rachmaninoff-prelude-op23-no1', [2,1,2,3,2,1,1,1,4]],
+    ['rachmaninoff-prelude-op23-no5', [1,3,1,1,1,4,4,3,2]],
+    ['rachmaninoff-elegy-op3-no1', [4,2,1,2,1,1,3,3,5]],
+    ['rachmaninoff-prelude-op3-no2', [3,4,1,1,1,1,4,4,3]],
+    ['satie-gymnopedie-no1', [1,1,4,3,3,1,1,1,2]],
+    ['satie-gymnopedie-no2', [1,1,4,3,3,1,1,3,1]],
+    ['satie-gymnopedie-no3', [1,1,4,3,2,1,1,2,3]],
+    ['liszt-liebestraum-s541-no3', [3,1,1,3,3,1,2,2,4]],
+  ]
+  for (const [id, scores] of expected) {
+    const track = tracks.find((track) => track.id === id)
+    assert.deepEqual(Object.values(track.emotionScores), scores)
+    assert.deepEqual(getLibraryPreferenceProfile(tracks, [id]).vector, scores.map((score) => (score - 1) / 4))
+  }
+  const liszt = tracks.find((track) => track.id === 'liszt-liebestraum-s541-no3')
+  assert.equal(liszt.catalogue, 'S')
+  assert.equal(liszt.catalogueNumber, 541)
+  assert.equal(liszt.opus, null)
+  const nostalgic = getRecommendationResult(tracks, ['nostalgia']).tracks
+  assert.deepEqual(nostalgic.slice(0, 3).map((track) => track.id), ['satie-gymnopedie-no1', 'satie-gymnopedie-no2', 'satie-gymnopedie-no3'])
 })
