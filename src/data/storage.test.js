@@ -15,10 +15,10 @@ test('정확히 같은 두 악장은 보관·좋아요를 유지하고 삭제 �
       'chopin-sonata-2-1': { listenAgain: true, liked: true, updatedAt: '2026-10-01' },
       'chopin-sonata-3-4': { listenAgain: true },
       'chopin-sonata-2': { listenAgain: true },
-      'beethoven-moonlight-1': { listenAgain: true },
+      'debussy-clair-de-lune': { listenAgain: true },
     }),
     [SELECTION_KEY]: JSON.stringify(['편안한', '따뜻한', '장엄한', '몽환적인']),
-    [RECENT_KEY]: JSON.stringify(['chopin-sonata-2-1', 'beethoven-moonlight-1', 'chopin-sonata-2-1']),
+    [RECENT_KEY]: JSON.stringify(['chopin-sonata-2-1', 'debussy-clair-de-lune', 'chopin-sonata-2-1']),
     'classic-atlas-preference-profile-v1': '{"moods":{}}',
     'classic-atlas-energy-preference-v1': 'old',
     'classic-atlas-recommendation-cache-v1': 'old',
@@ -77,7 +77,7 @@ test('저장 용량 부족으로 쓰기가 차단돼도 읽을 수 있는 보관
   assert.equal(storage.getItem(VERSION_KEY), null)
 })
 
-test('36곡 버전에서 44곡 버전으로 확장해도 기존 보관과 선택을 모두 유지한다', () => {
+test('36곡 버전에서 확장해도 기존 보관과 선택을 모두 유지한다', () => {
   const reactions = Object.fromEntries(tracks.filter((track) => track.composer === '쇼팽').map((track) => [track.id, { listenAgain: true, liked: true }]))
   const storage = memoryStorage({
     [VERSION_KEY]: 'chopin-36-emotions-1',
@@ -105,4 +105,29 @@ test('재추가된 동일 작품만 구 ID로 연결하고 잘못된 작품번�
   assert.deepEqual(Object.keys(migrateMusicStorage(storage).reactions), [
     'rachmaninoff-prelude-op23-no5', 'satie-gymnopedie-no1', 'liszt-liebestraum-s541-no3',
   ])
+})
+
+test('44곡 버전의 전체 보관 기록을 보존하고 정확한 베토벤 구 악장 ID를 연결한다', () => {
+  const reactions = Object.fromEntries(tracks.filter((track) => track.composer !== '베토벤').map((track) => [track.id, { listenAgain: true, liked: true }]))
+  assert.equal(Object.keys(reactions).length, 44)
+  const mappings = {
+    'beethoven-moonlight-1': 'beethoven-sonata-op27-2-no14-m1',
+    'beethoven-moonlight-3': 'beethoven-sonata-op27-2-no14-m3',
+    'beethoven-waldstein-1': 'beethoven-sonata-op53-no21-m1',
+    'beethoven-appassionata-3': 'beethoven-sonata-op57-no23-m3',
+  }
+  const storage = memoryStorage({
+    [VERSION_KEY]: 'manual-catalog-2',
+    [STORAGE_KEY]: JSON.stringify({ ...reactions, ...Object.fromEntries(Object.keys(mappings).map((id) => [id, { listenAgain: true, liked: true }])) }),
+    [SELECTION_KEY]: JSON.stringify(['wonder', 'joy']),
+    [RECENT_KEY]: JSON.stringify(Object.keys(mappings)),
+  })
+  const state = migrateMusicStorage(storage)
+  for (const [id, reaction] of Object.entries(reactions)) assert.deepEqual(state.reactions[id], reaction)
+  for (const id of Object.values(mappings)) assert.deepEqual(state.reactions[id], { listenAgain: true, liked: true })
+  assert.deepEqual(JSON.parse(storage.getItem(RECENT_KEY)), Object.values(mappings))
+  assert.deepEqual(state.selectedKeys, ['wonder', 'joy'])
+  assert.equal(state.notice, null)
+  assert.equal(storage.getItem(VERSION_KEY), DATA_VERSION)
+  assert.deepEqual(migrateMusicStorage(storage), state)
 })

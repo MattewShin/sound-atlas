@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { composerImages, trackDetails, tracks } from './data/musicData.js'
 import { emotionLabel, emotions, formatTrackTitle, getRepresentativeEmotions, isFullyRated } from './data/emotions.js'
-import { getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult } from './data/recommendations.js'
+import { getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation } from './data/recommendations.js'
 import { feelingOptions, getSuggestedEmotions } from './data/feelingSuggestions.js'
+import { readConcertRegion, saveConcertRegion } from './data/concertRegions.js'
+import ConcertRegionPicker from './components/ConcertRegionPicker.jsx'
 import { getInitialMusicState, saveMusicValue, STORAGE_KEY, SELECTION_KEY, NOTICE_KEY } from './data/storage.js'
 
 function Icon({ name, filled = false }) {
@@ -25,7 +27,7 @@ const describeRecommendationMatch = (track, selectedKeys) => {
 }
 
 function TrackAlias({ track }) {
-  return track.alias ? <small className="track-alias">별칭: {track.alias}</small> : null
+  return track.alias ? <span className="track-alias">{track.alias}</span> : null
 }
 
 function MiniArtwork({ track }) {
@@ -36,6 +38,51 @@ function MiniArtwork({ track }) {
       {imageSrc ? <img src={imageSrc} alt={`${track.composer} 초상`} /> : <i />}
     </span>
   )
+}
+
+function MiniTrackCard({ track, onOpenTrack }) {
+  return <button className="mini-track" type="button" onClick={() => onOpenTrack(track)}>
+    <MiniArtwork track={track} /><span className="mini-copy"><b>{track.composer}</b><strong>{formatTrackTitle(track)}<TrackAlias track={track} /></strong><small>{track.tags.join(' · ')}</small></span>
+  </button>
+}
+
+export function RelatedRecommendations({ relatedTracks, onOpenTrack, onSeeAll }) {
+  if (!relatedTracks.length) return null
+  return <section className="similar-section" aria-labelledby="similar-title">
+    <div className="section-heading inline-heading"><div><p>MORE TO EXPLORE</p><h2 id="similar-title">비슷한 결의 음악</h2></div><span>옆으로 넘겨보세요</span></div>
+    <div className="similar-list">{relatedTracks.slice(0, 8).map((track) => <MiniTrackCard key={track.id} track={track} onOpenTrack={onOpenTrack} />)}</div>
+    <button className="recommendations-see-all" type="button" onClick={onSeeAll}>추천곡 더 보기 <span aria-hidden="true">→</span></button>
+  </section>
+}
+
+export function RecommendationListScreen({ recommendedTracks, selectedKeys = [], isLibraryMode = false, visibleCount = 20, onLoadMore, onBack, onOpenTrack, isTrackSaved, onToggleSave }) {
+  const headingRef = useRef(null)
+  useEffect(() => { headingRef.current?.focus({ preventScroll: true }) }, [])
+  const visibleTracks = recommendedTracks.slice(0, visibleCount)
+  const hasMore = visibleTracks.length < recommendedTracks.length
+  return <>
+    <header className="library-header recommendation-list-header">
+      <button className="recommendation-back" type="button" onClick={onBack}>← 음악 탐색으로</button>
+      <p>FOR YOU</p><h1 ref={headingRef} tabIndex={-1}>전체 추천곡</h1>
+      <span>{isLibraryMode ? '보관한 곡과 비슷한 음악을 모았어요.' : selectedKeys.map(emotionLabel).join(' · ')}</span>
+      <strong>총 {recommendedTracks.length}곡</strong>
+    </header>
+    <main className="library-main recommendation-list-main">
+      {visibleTracks.length ? <>
+        <ol className="recommendation-list" aria-label="전체 추천곡 목록">
+          {visibleTracks.map((track, index) => <li className="recommendation-list-card" key={track.id}>
+            <button className="saved-track-open recommendation-track-open" type="button" onClick={() => onOpenTrack(track)}>
+              <span className="recommendation-rank" aria-hidden="true">{index + 1}</span><MiniArtwork track={track} />
+              <span className="saved-track-copy"><b>{track.composer}</b><strong>{formatTrackTitle(track)}<TrackAlias track={track} /></strong><span className="saved-track-tags">{track.tags.map((tag) => <i key={tag}>#{tag}</i>)}</span></span>
+            </button>
+            <button className="recommendation-save" type="button" aria-label={`${formatTrackTitle(track)} ${isTrackSaved?.(track.id) ? '보관 해제' : '보관함에 담기'}`} aria-pressed={Boolean(isTrackSaved?.(track.id))} onClick={() => onToggleSave(track.id)}><Icon name="bookmark" filled={isTrackSaved?.(track.id)} /></button>
+          </li>)}
+        </ol>
+        <p className="recommendation-list-count" role="status">{recommendedTracks.length}곡 중 {visibleTracks.length}곡 표시</p>
+        {hasMore ? <button className="recommendations-load-more" type="button" onClick={onLoadMore}>더 불러오기 <span>다음 {Math.min(20, recommendedTracks.length - visibleTracks.length)}곡</span></button> : <p className="recommendation-list-end">추천곡을 모두 확인했어요.</p>}
+      </> : <section className="library-empty"><h2>추천할 곡이 아직 없어요</h2><p>음악 탐색에서 다른 느낌을 골라보세요.</p><button type="button" onClick={onBack}>음악 탐색으로 돌아가기</button></section>}
+    </main>
+  </>
 }
 
 export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen, onClose, onOpenShort, onToggleSave, saveFeedback }) {
@@ -62,8 +109,7 @@ export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen,
         </div>
         <div className="track-detail-content">
           <p className="track-detail-composer">{track.composer}</p>
-          <h2 id="track-detail-title">{formatTrackTitle(track)}</h2>
-          <TrackAlias track={track} />
+          <h2 id="track-detail-title">{formatTrackTitle(track)}<TrackAlias track={track} /></h2>
           <div className="track-detail-tags" aria-label="대표 감정">{keywords.map(({ key, label }) => <span key={key}>#{label}</span>)}</div>
           <section className="track-detail-section"><h3>이 곡의 감정 평가</h3><p>수동 평가 · 1 거의 느껴지지 않음 ~ 5 매우 강하게 느껴짐</p><dl className="emotion-score-list">{emotions.map(({ key, label }) => <div key={key}><dt>{label}</dt><dd>{track.emotionScores?.[key] ?? '미평가'}</dd></div>)}</dl>{!isFullyRated(track) && <p>평가 검토 중 · 추천 대상에서 제외된 곡이에요.</p>}</section>
           {(track.miniTag || track.duration) && <p className="track-detail-meta">{[track.miniTag, track.duration].filter(Boolean).join(' · ')}</p>}
@@ -180,7 +226,7 @@ export function LibraryScreen({ savedTracks, onOpenTrack, onRemoveTrack, onGoExp
               <article className={`saved-track-card ${track.tone}`} key={track.id}>
                 <button className="saved-track-open" type="button" onClick={() => onOpenTrack(track)} aria-label={`${formatTrackTitle(track)} 상세 보기`}>
                   <MiniArtwork track={track} />
-                  <span className="saved-track-copy"><b>{track.composer}</b><strong>{formatTrackTitle(track)}</strong><TrackAlias track={track} /><span className="saved-track-tags">{track.tags.map((tag) => <i key={tag}>#{tag}</i>)}</span></span>
+                  <span className="saved-track-copy"><b>{track.composer}</b><strong>{formatTrackTitle(track)}<TrackAlias track={track} /></strong><span className="saved-track-tags">{track.tags.map((tag) => <i key={tag}>#{tag}</i>)}</span></span>
                 </button>
                 <button className="saved-track-remove" type="button" onClick={() => onRemoveTrack(track.id)}>보관 해제</button>
               </article>
@@ -199,13 +245,16 @@ export function LibraryScreen({ savedTracks, onOpenTrack, onRemoveTrack, onGoExp
   )
 }
 
-function ConcertComingScreen({ onGoExplore }) {
+function ConcertComingScreen({ region, onSelectRegion, onGoExplore }) {
   const features = ['내 취향에 맞는 공연 찾기', '공연 프로그램 쉽게 읽기', '곡별 감상 포인트 미리 보기']
 
   return (
     <>
       <header className="concert-coming-header" id="concert-top">
-        <p>COMING SOON</p>
+        <div className="concert-topbar">
+          <p>COMING SOON</p>
+          <ConcertRegionPicker region={region} onSelectRegion={onSelectRegion} />
+        </div>
         <h1>공연에서 만나는 클래식</h1>
         <span>내 취향과 연결되는 클래식 공연을 준비하고 있어요.<br />곡을 먼저 발견하고, 나에게 맞는 무대를 찾아보세요.</span>
       </header>
@@ -253,11 +302,14 @@ export function PreferenceScreen({ profile, onGoExplore }) {
 function App() {
   const [initialMusicState] = useState(getInitialMusicState)
   const [activeView, setActiveView] = useState('explore')
+  const [concertRegion, setConcertRegion] = useState(readConcertRegion)
   const [recommendationMode, setRecommendationMode] = useState('keyword')
   const [recommendationInput, setRecommendationInput] = useState('music')
   const [currentFeeling, setCurrentFeeling] = useState(null)
   const [selectedKeys, setSelectedKeys] = useState(initialMusicState.selectedKeys)
+  const [recommendationDraw, setRecommendationDraw] = useState(Math.random)
   const [selectedTrackId, setSelectedTrackId] = useState(null)
+  const [recommendationListState, setRecommendationListState] = useState({ query: null, count: 20 })
   const [detailTrack, setDetailTrack] = useState(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [shortTrack, setShortTrack] = useState(null)
@@ -274,14 +326,21 @@ function App() {
   const isLibraryMode = recommendationMode === 'library' && libraryPreference.isActive
   const isInitialExploration = !isLibraryMode && activeKeys.length === 0
   const recommendation = useMemo(() => getRecommendationResult(tracks, activeKeys), [activeKeys])
+  const featuredKeywordTrack = useMemo(() => pickRandomTopRecommendation(recommendation, recommendationDraw), [recommendation, recommendationDraw])
   const recommendedTracks = useMemo(() => isLibraryMode ? getLibraryRecommendations(tracks, libraryPreference) : recommendation.tracks, [isLibraryMode, libraryPreference, recommendation])
   const starterTracks = useMemo(() => starterTrackIds.map((id) => tracks.find((track) => track.id === id)).filter(Boolean), [])
-  const selectedTrack = recommendedTracks.find((track) => track.id === selectedTrackId) ?? recommendedTracks[0]
+  const selectedTrack = isLibraryMode
+    ? recommendedTracks.find((track) => track.id === selectedTrackId) ?? recommendedTracks[0]
+    : featuredKeywordTrack
   const relatedTracks = recommendedTracks.filter((track) => track.id !== selectedTrack?.id)
+  const recommendationQuery = JSON.stringify(isLibraryMode ? ['library', savedTrackIds] : ['keyword', activeKeys])
+  const recommendationVisibleCount = recommendationListState.query === recommendationQuery ? recommendationListState.count : 20
   const savedTracks = useMemo(() => tracks.filter((track) => trackReactions[track.id]?.listenAgain === true).sort((a, b) => (Date.parse(trackReactions[b.id]?.updatedAt) || 0) - (Date.parse(trackReactions[a.id]?.updatedAt) || 0)), [trackReactions])
   const isTrackSaved = (id) => trackReactions[id]?.listenAgain === true
 
   useEffect(() => { saveMusicValue(SELECTION_KEY, selectedKeys) }, [selectedKeys])
+  useEffect(() => { setRecommendationListState({ query: recommendationQuery, count: 20 }) }, [recommendationQuery])
+  useEffect(() => { saveConcertRegion(concertRegion) }, [concertRegion])
   useEffect(() => {
     if (!initialMusicState.notice) return undefined
     try { window.localStorage.removeItem(NOTICE_KEY) } catch { /* 저장 차단 */ }
@@ -313,7 +372,11 @@ function App() {
 
   const selectEmotion = (key) => {
     setSelectedKeys((keys) => keys.includes(key) ? keys.filter((item) => item !== key) : keys.length < 3 ? [...keys, key] : keys)
+    setRecommendationDraw(Math.random())
     setSelectedTrackId(null)
+  }
+  const selectFeeling = (feeling) => {
+    setCurrentFeeling(feeling); setRecommendationDraw(Math.random()); setSelectedTrackId(null)
   }
   const selectInput = (input) => {
     setRecommendationInput(input); setCurrentFeeling(null); setSelectedKeys([]); setSelectedTrackId(null)
@@ -342,16 +405,18 @@ function App() {
     saveFeedbackTimer.current = window.setTimeout(() => setSaveFeedback(null), 1800)
   }
   const showTasteRecommendations = () => { setActiveView('explore'); setRecommendationMode(libraryPreference.isActive ? 'library' : 'keyword'); setSelectedTrackId(null) }
-  const miniCard = (track) => <button className="mini-track" type="button" key={track.id} onClick={() => openTrackDetail(track)}>
-    <MiniArtwork track={track} /><span className="mini-copy"><b>{track.composer}</b><strong>{formatTrackTitle(track)}</strong><TrackAlias track={track} />
-      <small>{track.tags.join(' · ')}</small></span>
-  </button>
+  const openRecommendationList = () => {
+    setRecommendationListState({ query: recommendationQuery, count: 20 })
+    setActiveView('recommendations'); window.scrollTo({ top: 0 })
+  }
+  const returnToExplore = () => { setActiveView('explore'); window.scrollTo({ top: 0 }) }
+  const loadMoreRecommendations = () => setRecommendationListState((state) => ({ query: recommendationQuery, count: Math.min((state.query === recommendationQuery ? state.count : 20) + 20, recommendedTracks.length) }))
 
   return <div className="app-shell">
     {migrationNotice && <div className="migration-notice" role="status">{migrationNotice}<button type="button" aria-label="보관함 정리 안내 닫기" onClick={() => setMigrationNotice(null)}>×</button></div>}
     {activeView === 'explore' ? <>
       <header className="top-header" id="top">
-        <div className="topbar"><a className="brand" href="#top">CLASSIC ATLAS</a><button className="location-button" type="button" aria-label="현재 지역 서울">서울 <Icon name="chevron" /></button></div>
+        <div className="topbar"><a className="brand" href="#top">MY PIANO MOOD</a></div>
         <p className="date-note">오늘의 음악 탐색</p><h1>오늘은 어떤 음악을<br />만나고 싶나요?</h1><div className="header-orbit orbit-one" /><div className="header-orbit orbit-two" />
       </header>
       <main>
@@ -365,7 +430,7 @@ function App() {
             <h3>{recommendationInput === 'music' ? '지금 듣고 싶은 음악의 느낌을 골라주세요.' : '지금 기분은 어떤가요?'}</h3>
             {recommendationInput === 'music' && <p className="mood-guide">최대 3개까지 선택할 수 있어요</p>}
             <div className="keyword-choice-list" role="group" aria-label={recommendationInput === 'music' ? '음악 느낌 선택' : '지금 기분 선택'}>
-              {recommendationInput === 'music' ? emotions.map(({ key, label }) => <button key={key} type="button" className={selectedKeys.includes(key) ? 'selected' : ''} aria-pressed={selectedKeys.includes(key)} disabled={selectedKeys.length === 3 && !selectedKeys.includes(key)} onClick={() => selectEmotion(key)}>{label}</button>) : feelingOptions.map((feeling) => <button key={feeling} type="button" className={currentFeeling === feeling ? 'selected' : ''} aria-pressed={currentFeeling === feeling} onClick={() => { setCurrentFeeling(feeling); setSelectedTrackId(null) }}>{feeling}</button>)}
+              {recommendationInput === 'music' ? emotions.map(({ key, label }) => <button key={key} type="button" className={selectedKeys.includes(key) ? 'selected' : ''} aria-pressed={selectedKeys.includes(key)} disabled={selectedKeys.length === 3 && !selectedKeys.includes(key)} onClick={() => selectEmotion(key)}>{label}</button>) : feelingOptions.map((feeling) => <button key={feeling} type="button" className={currentFeeling === feeling ? 'selected' : ''} aria-pressed={currentFeeling === feeling} onClick={() => selectFeeling(feeling)}>{feeling}</button>)}
             </div>
           </div>
           <button className="recommendation-input-reset" type="button" onClick={resetInputs}>선택 초기화</button>
@@ -377,25 +442,26 @@ function App() {
           {!isLibraryMode && currentFeeling && recommendationInput === 'feeling' && <p className="feeling-result-path">{currentFeeling} 기분에 어울리는 {activeKeys.map(emotionLabel).join(' · ')} 음악</p>}
           {!isInitialExploration && !isLibraryMode && recommendation.hasFewCandidates && <p className="recommendation-result-notice">이 느낌의 곡은 {recommendedTracks.length}곡이에요. 다른 느낌도 골라보세요.</p>}
           {isInitialExploration ? <>
-            <p className="starter-label">피아노 음악 만나기</p><div className="similar-list starter-carousel">{starterTracks.map(miniCard)}</div>
+            <p className="starter-label">피아노 음악 만나기</p><div className="similar-list starter-carousel">{starterTracks.map((track) => <MiniTrackCard key={track.id} track={track} onOpenTrack={openTrackDetail} />)}</div>
           </> : selectedTrack ? <article className={'featured-track ' + selectedTrack.tone} role="button" tabIndex="0" aria-label={formatTrackTitle(selectedTrack) + ' 상세 보기'} onClick={() => openTrackDetail(selectedTrack)} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openTrackDetail(selectedTrack) } }}>
             <div className="track-card-top"><div className="recommendation-basis">{isLibraryMode ? <small className="library-recommendation-label">보관함 기반 추천 · 감정 성향 유사도</small> : <span>선택한 음악 느낌: {activeKeys.map(emotionLabel).join(' · ')}</span>}<small>{isLibraryMode ? '보관한 곡과 비슷한 감정의 새로운 곡이에요.' : describeRecommendationMatch(selectedTrack, activeKeys)}</small></div><button type="button" onClick={(event) => { event.stopPropagation(); toggleTrackSave(selectedTrack.id) }} aria-label={formatTrackTitle(selectedTrack) + (isTrackSaved(selectedTrack.id) ? ' 보관 해제' : ' 보관함에 담기')} aria-pressed={isTrackSaved(selectedTrack.id)}><Icon name="bookmark" filled={isTrackSaved(selectedTrack.id)} /></button></div>
             <div className="featured-artwork"><MiniArtwork track={selectedTrack} /></div>
-            <div className="track-copy"><p className="track-kicker">오늘의 대표 곡</p><p className="composer">{selectedTrack.composer}</p><h2>{formatTrackTitle(selectedTrack)}</h2><TrackAlias track={selectedTrack} /><p className="track-description">{selectedTrack.description}</p><div className="tag-list">{selectedTrack.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div></div>
+            <div className="track-copy"><p className="track-kicker">오늘의 대표 곡</p><p className="composer">{selectedTrack.composer}</p><h2>{formatTrackTitle(selectedTrack)}<TrackAlias track={selectedTrack} /></h2><p className="track-description">{selectedTrack.description}</p><div className="tag-list">{selectedTrack.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div></div>
             {trackDetails[selectedTrack.id]?.shortPreview ? <button className="play-button" type="button" aria-label="미리듣기" onClick={(event) => { event.stopPropagation(); openHighlightShort(selectedTrack) }}><Icon name="play" /></button> : <p className="preview-pending">미리듣기 준비 중</p>}
           </article> : <div className="library-empty"><h2>{isLibraryMode ? '모든 곡을 보관했어요' : '이 느낌에 맞는 곡이 아직 없어요'}</h2><p>{isLibraryMode ? '보관함에서 담아둔 곡을 만나보세요.' : '다른 음악 느낌을 골라보세요.'}</p><button type="button" onClick={resetInputs}>음악 키워드로 돌아가기</button></div>}
         </section>
-        {!isInitialExploration && relatedTracks.length > 0 && <section className="similar-section" aria-labelledby="similar-title"><div className="section-heading inline-heading"><div><p>MORE TO EXPLORE</p><h2 id="similar-title">비슷한 결의 음악</h2></div><span>옆으로 넘겨보세요</span></div><div className="similar-list">{relatedTracks.map(miniCard)}</div></section>}
+        {!isInitialExploration && <RelatedRecommendations key={recommendationQuery} relatedTracks={relatedTracks} onOpenTrack={openTrackDetail} onSeeAll={openRecommendationList} />}
+        {!isInitialExploration && selectedTrack && relatedTracks.length === 0 && <div className="recommendations-single-link"><button className="recommendations-see-all" type="button" onClick={openRecommendationList}>추천곡 더 보기 <span aria-hidden="true">→</span></button></div>}
         <section className="concert-link" aria-label="관련 공연 안내"><span className="concert-mark"><Icon name="piano" /></span><div><p>이 곡을 무대에서 듣고 싶다면</p><strong>관련 공연 찾기를 준비하고 있어요</strong></div></section>
       </main>
-    </> : activeView === 'concert' ? <ConcertComingScreen onGoExplore={() => setActiveView('explore')} /> : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} />}
+    </> : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? <ConcertComingScreen region={concertRegion} onSelectRegion={setConcertRegion} onGoExplore={() => setActiveView('explore')} /> : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} />}
     <nav className="bottom-nav" aria-label="주요 메뉴">
-      <button className={'nav-item ' + (activeView === 'explore' ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
+      <button className={'nav-item ' + (activeView === 'explore' || activeView === 'recommendations' ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
       <button className={'nav-item ' + (activeView === 'concert' ? 'active' : '')} type="button" onClick={() => setActiveView('concert')}><Icon name="stage" /><span>공연 찾기</span></button>
       <button className={'nav-item ' + (activeView === 'library' ? 'active' : '')} type="button" onClick={() => setActiveView('library')}><Icon name="bookmarkSmall" /><span>보관함</span></button>
       <button className={'nav-item ' + (activeView === 'taste' ? 'active' : '')} type="button" onClick={() => setActiveView('taste')}><Icon name="user" /><span>나의 취향</span></button>
     </nav>
-    <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={activeView === 'explore' && !isInitialExploration && !isLibraryMode ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} />
+    <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={(activeView === 'explore' || activeView === 'recommendations') && !isInitialExploration && !isLibraryMode ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} />
     <HighlightShortView track={shortTrack} detail={shortTrack ? trackDetails[shortTrack.id] : null} isOpen={isShortOpen} onClose={closeHighlightShort} />
   </div>
 }

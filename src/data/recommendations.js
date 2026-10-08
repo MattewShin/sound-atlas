@@ -27,10 +27,19 @@ export const getRecommendationResult = (trackList, selectedKeys = [], preference
   const fit = (track) => keys.length ? keys.reduce((sum, key) => sum + normalizeScore(track.emotionScores[key]), 0) / keys.length : 0
   const matchCount = (track) => keys.filter((key) => track.emotionScores[key] >= 3).length
   const similarity = (track) => preferenceProfile?.isActive ? cosineSimilarity(emotionVector(track), preferenceProfile.vector) : 0
+  const rankedTracks = [...candidates].sort((a, b) => fit(b) - fit(a) || matchCount(b) - matchCount(a) || similarity(b) - similarity(a) || stableIdOrder(a, b))
   return {
-    tracks: [...candidates].sort((a, b) => fit(b) - fit(a) || matchCount(b) - matchCount(a) || similarity(b) - similarity(a) || stableIdOrder(a, b)),
+    tracks: rankedTracks,
+    topScoreTracks: rankedTracks.filter((track) => fit(track) === fit(rankedTracks[0])),
     isPersonalized: Boolean(preferenceProfile?.isActive), hasFewCandidates: candidates.length < 3,
   }
+}
+// 선택 시 만든 난수를 전달해 일반 화면 갱신에는 대표곡을 유지합니다.
+export const pickRandomTopRecommendation = (result, randomValue) => {
+  const candidates = result.topScoreTracks
+  if (candidates.length === 0) return undefined
+  const draw = Number.isFinite(randomValue) ? Math.max(0, Math.min(1, randomValue)) : 0
+  return candidates[Math.min(candidates.length - 1, Math.floor(draw * candidates.length))]
 }
 export const getLibraryRecommendations = (trackList, profile) => !profile?.isActive ? [] : trackList
   .filter((track) => isFullyRated(track) && !profile.savedIdSet.has(track.id))

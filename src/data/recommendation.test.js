@@ -3,23 +3,24 @@ import test from 'node:test'
 import { readFileSync, existsSync } from 'node:fs'
 import { emotionKeys, emotions, formatTrackTitle, getRepresentativeEmotions, isFullyRated, RATING_VERSION } from './emotions.js'
 import { composerImages, tracks, trackDetails } from './musicData.js'
-import { cosineSimilarity, emotionVector, getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult } from './recommendations.js'
+import { cosineSimilarity, emotionVector, getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation } from './recommendations.js'
 import { feelingOptions, getSuggestedEmotions } from './feelingSuggestions.js'
 import { buildRecommendationDiagnosis } from '../../scripts/diagnoseRecommendations.js'
 
-test('44곡 구성, 제목·별칭, 396개 점수, 평가 출처가 확정 CSV와 전부 일치한다', () => {
+test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출처가 확정 CSV와 전부 일치한다', () => {
   const rows = readFileSync(new URL('../../data/manual/manual-emotions-v1.csv', import.meta.url), 'utf8').trim().split(/\r?\n/)
   assert.deepEqual(rows.shift().split(',').slice(2), emotionKeys)
-  assert.equal(rows.length, 44)
+  assert.equal(rows.length, 62)
   assert.equal(tracks.length, rows.length)
   assert.equal(new Set(tracks.map(({ id }) => id)).size, rows.length)
   assert.equal(tracks.filter((track) => track.composer === '쇼팽').length, 36)
   assert.equal(tracks.filter((track) => track.composer === '라흐마니노프').length, 4)
   assert.equal(tracks.filter((track) => track.composer === '사티').length, 3)
   assert.equal(tracks.filter((track) => track.composer === '리스트').length, 1)
+  assert.equal(tracks.filter((track) => track.composer === '베토벤').length, 18)
   assert.equal(tracks.filter((track) => track.type === 'etude' && track.opus === 10).length, 12)
   assert.equal(tracks.filter((track) => track.type === 'etude' && track.opus === 25).length, 12)
-  assert.equal(tracks.filter((track) => track.type === 'sonata').length, 8)
+  assert.equal(tracks.filter((track) => track.type === 'sonata' && track.composer === '쇼팽').length, 8)
   assert.equal(tracks.filter((track) => track.type === 'ballade').length, 4)
   rows.forEach((row, i) => {
     const [title, alias, ...scores] = row.split(',')
@@ -33,7 +34,7 @@ test('44곡 구성, 제목·별칭, 396개 점수, 평가 출처가 확정 CSV�
     assert.equal(track.ratingVersion, RATING_VERSION)
     assert.equal(track.ratingUnit, track.movement ? 'whole-movement' : 'whole-work')
     assert.ok(!('moods' in track) && !('energy' in track))
-    assert.match(track.id, /^(chopin|rachmaninoff|satie|liszt)-/)
+    assert.match(track.id, /^(chopin|rachmaninoff|satie|liszt|beethoven)-/)
   })
   assert.equal(emotions.find(({ key }) => key === 'peacefulness').label, '평안한')
 })
@@ -44,12 +45,44 @@ test('단일 감정의 높은 원점수는 항상 먼저 추천된다', () => {
     assert.ok(result.every((track) => track.emotionScores[key] >= 3))
     assert.ok(result.every((track, i) => !i || result[i - 1].emotionScores[key] >= track.emotionScores[key]))
   }
-  assert.equal(getRecommendationResult(tracks, ['power']).tracks[0].id, 'chopin-etude-op25-no10')
-  assert.equal(getRecommendationResult(tracks, ['peacefulness']).tracks[0].id, 'chopin-ballade-op47-no3')
+  assert.ok(getRecommendationResult(tracks, ['power']).topScoreTracks.some((track) => track.id === 'chopin-etude-op25-no10'))
+  assert.ok(getRecommendationResult(tracks, ['peacefulness']).topScoreTracks.some((track) => track.id === 'chopin-ballade-op47-no3'))
   assert.equal(getRecommendationResult(tracks, ['transcendence']).tracks[0].emotionScores.transcendence, 5)
 })
 
 const song = (id, overrides = {}) => ({ id, emotionScores: Object.fromEntries(emotionKeys.map((key) => [key, overrides[key] ?? 1])) })
+test('대표곡은 최고 점수 동점 후보에서만 추첨하고 동일 추첨값에는 같은 곡을 유지한다', () => {
+  const songs = [song('a', { power: 5 }), song('b', { power: 5 }), song('c', { power: 4 })]
+  const result = getRecommendationResult(songs, ['power'])
+  assert.deepEqual(result.topScoreTracks.map(({ id }) => id), ['a', 'b'])
+  assert.equal(pickRandomTopRecommendation(result, 0).id, 'a')
+  assert.equal(pickRandomTopRecommendation(result, 0.99).id, 'b')
+  assert.equal(pickRandomTopRecommendation(result, 0.99).id, 'b')
+  assert.deepEqual(result.tracks.map(({ id }) => id), ['a', 'b', 'c'])
+  assert.equal(pickRandomTopRecommendation(getRecommendationResult([], ['power']), 0.5), undefined)
+})
+
+test('다중 선택은 평균 점수가 같은 최고 후보 전체에서 대표곡을 추첨한다', () => {
+  const result = getRecommendationResult([
+    song('a', { power: 3, joy: 3 }), song('z', { power: 5, joy: 1 }), song('low', { power: 3, joy: 1 }),
+  ], ['power', 'joy'])
+  assert.deepEqual(result.topScoreTracks.map(({ id }) => id), ['a', 'z'])
+  assert.equal(pickRandomTopRecommendation(result, 0).id, 'a')
+  assert.equal(pickRandomTopRecommendation(result, 0.75).id, 'z')
+})
+
+test('실제 키워드마다 최고 점수 동점곡 모두가 대표곡이 될 수 있으며 단독 최고점은 유지한다', () => {
+  for (const key of emotionKeys) {
+    const result = getRecommendationResult(tracks, [key])
+    const highest = Math.max(...result.tracks.map((track) => track.emotionScores[key]))
+    const picked = result.topScoreTracks.map((_, i) => pickRandomTopRecommendation(result, (i + 0.5) / result.topScoreTracks.length))
+    assert.ok(picked.every((track) => track.emotionScores[key] === highest))
+    assert.equal(new Set(picked.map(({ id }) => id)).size, result.topScoreTracks.length)
+  }
+  const power = getRecommendationResult([song('only-highest', { power: 5 }), song('lower', { power: 4 })], ['power'])
+  assert.equal(pickRandomTopRecommendation(power, 0.99).id, 'only-highest')
+})
+
 test('다중 선택은 평균→3 이상 개수→취향 유사도→ID 순서이며 입력 순서에 독립적이다', () => {
   const songs = [song('z', { power: 5, joy: 1 }), song('a', { power: 3, joy: 3 }), song('higher', { power: 5, joy: 3 }), song('low', { joy: 2, power: 2 })]
   assert.deepEqual(getRecommendationResult(songs, ['power', 'joy']).tracks.map(({ id }) => id), ['higher', 'a', 'z'])
@@ -133,7 +166,7 @@ test('작곡가 이미지와 활성 상세 연결이 유효하고 진단도 새 
     assert.ok(track.description.includes(track.composer))
   }
   assert.ok(Object.keys(trackDetails).every((id) => tracks.some((track) => track.id === id)))
-  assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview).length, 0)
+  assert.deepEqual(tracks.filter((track) => trackDetails[track.id]?.shortPreview).map((track) => track.id), ['beethoven-sonata-op27-2-no14-m1', 'beethoven-sonata-op27-2-no14-m3'])
   assert.deepEqual(buildRecommendationDiagnosis().emotions.map(({ key }) => key), emotionKeys)
 })
 
@@ -159,4 +192,43 @@ test('새 8곡의 72개 점수와 작품번호가 사용자 입력 그대로이�
   assert.equal(liszt.opus, null)
   const nostalgic = getRecommendationResult(tracks, ['nostalgia']).tracks
   assert.deepEqual(nostalgic.slice(0, 3).map((track) => track.id), ['satie-gymnopedie-no1', 'satie-gymnopedie-no2', 'satie-gymnopedie-no3'])
+})
+
+test('베토벤 18악장의 162개 점수와 작품번호를 보존하고 악장별 추천·취향에 반영한다', () => {
+  const groups = [
+    ['op13-no8', '비창', [[2,4,1,1,1,3,4,5,1], [5,2,2,3,3,1,1,1,4], [1,2,1,1,1,4,3,3,1]]],
+    ['op27-2-no14', '월광', [[4,1,3,3,3,1,1,3,4], [2,1,1,4,4,3,1,1,1], [1,5,1,1,1,4,4,4,1]]],
+    ['op31-2-no17', '템페스트', [[1,4,1,1,1,3,4,4,1], [3,1,1,3,3,1,1,1,2], [2,4,1,1,1,4,3,4,1]]],
+    ['op53-no21', '발트슈타인', [[1,3,1,2,2,5,4,3,1], [3,1,1,3,4,1,1,1,1], [3,4,1,1,2,4,4,3,1]]],
+    ['op57-no23', '열정', [[2,5,1,1,1,2,4,4,3], [4,1,1,3,3,2,1,1,4], [2,4,1,1,1,3,5,4,1]]],
+    ['op81a-no26', '고별', [[2,1,1,2,2,4,4,1,1], [3,1,1,3,2,1,1,1,3], [1,4,1,1,1,4,4,3,1]]],
+  ]
+  for (const [work, alias, movements] of groups) movements.forEach((scores, i) => {
+    const id = `beethoven-sonata-${work}-m${i + 1}`
+    const track = tracks.find((track) => track.id === id)
+    assert.equal(track.movementNumber, i + 1)
+    assert.equal(track.movement, `${i + 1}악장`)
+    assert.equal(track.alias, alias)
+    assert.deepEqual(Object.values(track.emotionScores), scores)
+    assert.deepEqual(getLibraryPreferenceProfile(tracks, [id]).vector, scores.map((score) => (score - 1) / 4))
+    emotionKeys.forEach((key, j) => {
+      assert.equal(getRecommendationResult(tracks, [key]).tracks.some((track) => track.id === id), scores[j] >= 3)
+    })
+  })
+  for (const number of [14, 17]) {
+    const track = tracks.find((track) => track.composer === '베토벤' && track.number === number)
+    assert.equal(track.opus, number === 14 ? 27 : 31)
+    assert.equal(track.opusPart, 2)
+  }
+  assert.equal(tracks.find((track) => track.id === 'beethoven-sonata-op81a-no26-m1').opusSuffix, 'a')
+  assert.ok(getRecommendationResult(tracks, ['tension']).topScoreTracks.some((track) => track.id === 'beethoven-sonata-op13-no8-m1'))
+  assert.ok(getRecommendationResult(tracks, ['joy']).topScoreTracks.some((track) => track.id === 'beethoven-sonata-op53-no21-m1'))
+})
+
+test('월광 영상은 기존에 등록된 정확한 두 악장의 재생 구간만 재사용한다', () => {
+  const legacy = JSON.parse(readFileSync(new URL('../../data/manual/legacy-media.json', import.meta.url), 'utf8'))
+  for (const movement of [1, 3]) {
+    assert.deepEqual(trackDetails[`beethoven-sonata-op27-2-no14-m${movement}`].shortPreview, legacy[`beethoven-moonlight-${movement}`])
+  }
+  assert.equal(trackDetails['beethoven-sonata-op27-2-no14-m2']?.shortPreview, undefined)
 })
