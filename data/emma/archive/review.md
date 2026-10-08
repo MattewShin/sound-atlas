@@ -1,0 +1,21 @@
+# EMMA 곡·구간·태그 검토표
+
+원본: 사용자 제공 `EMMA__filtered_2026-10-07.csv` · 인코딩 windows-1252 · SHA-256 `2ac4ae54123f518f9d86dab81d036f81e9e00f3e2dffa4347ce08a4412e17d2e`
+전체 87행 / 정상 86행 / 오류 1행. 원점수는 확률이나 백분율이 아닙니다. 괄호 속 순위는 **각 감정 열 안에서만** 비교합니다.
+
+아래의 작품·악장 대응은 후보이며 동일 연주·평가 구간은 확인하지 않았습니다. EMMA는 특정 연주의 발췌 구간 평가입니다. 기존 곡의 태그·강도·재생 링크는 변경하지 않았습니다.
+
+태그 제안 기준은 `scripts/emma/emmaTagRules.js`의 앱 초기 검토 가설입니다. `장엄한`, `설레는`, `몽환적인`, `격정적인`은 단일 EMMA 점수로 판정하지 않습니다. `Power`를 `강렬하게`로 변환하지 않습니다. ICC는 평가자 간 일치도 참고값으로, 낮다고 오류나 낮은 곡 품질을 뜻하지 않습니다.
+
+검토 결과는 아래 표의 마지막 세 칸에 기록할 수 있습니다. 재가져오기 후에도 남길 확정 기록은 별도의 `data/emma/humanReviews.json`에 곡 ID와 EMMA ID를 함께 기록하세요. 원본 점수와 제안은 `emmaReference.json`, 오류는 `importErrors.json`에 있습니다.
+
+| 기존 곡 ID | 한글 곡명 | EMMA 작곡가·곡명 | 기존 태그 | 제안 태그·이유 | 원점수·감정 내 순위 | ICC / 평가자 | 평가 클립 | 시작–종료 | 앱 미리듣기 | 작품·악장·연주·구간 | 매칭 메모 | 청취 상태 | 사람이 확정한 태그 | 검토 메모 | EMMA ID |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| beethoven-moonlight-1 | 베토벤 피아노 소나타 14번 「월광」 1악장 | Beethoven — Mondscheinsonate | 애잔한, 긴장감 있는, 장엄한 | 애잔한 — 악장 확인 전 보류: 기존 태그 지지 여부 검토: Sadness 원점수 28.17, 해당 감정 내 3/86위; Nostalgia 39.4, 10/86위는 참고만. 발췌 구간의 상대 순위이며 청취 확정 아님 | Wonder: 37.4 (2/86위)<br>Transcendence: 33.17 (11/86위)<br>Nostalgia: 39.4 (10/86위)<br>Tenderness: 21.47 (32/86위)<br>Peacefulness: 44.4 (24/86위)<br>Joy: 18.07 (53/86위)<br>Power: 7.13 (56/86위)<br>Tension: 10.8 (37/86위)<br>Sadness: 28.17 (3/86위) | 0.78 / 30 | [평가 클립](https://youtube.com/clip/UgkxyBxVVsTTWAT-_fcdCX5fDYRneqptEysx) | 3:35–4:20 | youtube videoId uTjOXAzUTQA; 7–339초 | 작품 candidate; 악장 not_stated; 연주 unverified; 구간 unverified | EMMA 제목에 악장이 없어 월광 1·3악장 중 어느 구간인지 알 수 없음 | 미검토 | 미입력 | 미입력 | emma-b70539d0116c3f3ee63a |
+| beethoven-moonlight-3 | 베토벤 피아노 소나타 14번 「월광」 3악장 | Beethoven — Mondscheinsonate | 경쾌한, 긴장감 있는, 격정적인 | 애잔한 — 악장 확인 전 보류: 기존 태그와 교체 여부 검토: Sadness 원점수 28.17, 해당 감정 내 3/86위; Nostalgia 39.4, 10/86위는 참고만. 발췌 구간의 상대 순위이며 청취 확정 아님 | Wonder: 37.4 (2/86위)<br>Transcendence: 33.17 (11/86위)<br>Nostalgia: 39.4 (10/86위)<br>Tenderness: 21.47 (32/86위)<br>Peacefulness: 44.4 (24/86위)<br>Joy: 18.07 (53/86위)<br>Power: 7.13 (56/86위)<br>Tension: 10.8 (37/86위)<br>Sadness: 28.17 (3/86위) | 0.78 / 30 | [평가 클립](https://youtube.com/clip/UgkxyBxVVsTTWAT-_fcdCX5fDYRneqptEysx) | 3:35–4:20 | youtube videoId uTjOXAzUTQA; 459–788초 | 작품 candidate; 악장 not_stated; 연주 unverified; 구간 unverified | EMMA 제목에 악장이 없어 월광 1·3악장 중 어느 구간인지 알 수 없음 | 미검토 | 미입력 | 미입력 | emma-b70539d0116c3f3ee63a |
+| debussy-clair-de-lune | 드뷔시 베르가마스크 모음곡 3번 「달빛」 | Debussy — Clair de lune | 몽환적인, 따뜻한, 편안한 | 따뜻한 — 기존 태그 지지 여부 검토: Tenderness 원점수 31.94, 해당 감정 내 18/86위. 발췌 구간의 상대 순위이며 청취 확정 아님<br>애잔한 — 기존 태그와 교체 여부 검토: Sadness 원점수 9.68, 해당 감정 내 13/86위; Nostalgia 41.45, 8/86위는 참고만. 발췌 구간의 상대 순위이며 청취 확정 아님 | Wonder: 25.55 (45/86위)<br>Transcendence: 24.06 (43/86위)<br>Nostalgia: 41.45 (8/86위)<br>Tenderness: 31.94 (18/86위)<br>Peacefulness: 40.45 (28/86위)<br>Joy: 5.9 (84/86위)<br>Power: 5.81 (64/86위)<br>Tension: 7.26 (56/86위)<br>Sadness: 9.68 (13/86위) | 0.87 / 31 | [평가 클립](https://youtube.com/clip/UgkxZqA9R-IZ4NlEqnnscZRcW-NU-PSfWw-Y) | 2:03–2:32 | 등록 없음 | 작품 candidate; 악장 not_applicable; 연주 unverified; 구간 unverified | 달빛 작품 후보. 동일 연주·평가 구간은 확인되지 않음 | 미검토 | 미입력 | 미입력 | emma-d254fcd63f6d9f60a367 |
+| chopin-sonata-3-4 | 쇼팽 피아노 소나타 3번 4악장 | Chopin — 3. Klaviersonate, 4. Satz | 경쾌한, 긴장감 있는, 격정적인 | 경쾌한 — 기존 태그 지지 여부 검토: Joy 원점수 40.54, 해당 감정 내 19/86위. 발췌 구간의 상대 순위이며 청취 확정 아님<br>긴장감 있는 — 기존 태그 지지 여부 검토: Tension 원점수 26.38, 해당 감정 내 15/86위. 발췌 구간의 상대 순위이며 청취 확정 아님 | Wonder: 30.31 (22/86위)<br>Transcendence: 46.58 (1/86위)<br>Nostalgia: 24.62 (40/86위)<br>Tenderness: 8.88 (59/86위)<br>Peacefulness: 17.69 (61/86위)<br>Joy: 40.54 (19/86위)<br>Power: 23.92 (34/86위)<br>Tension: 26.38 (15/86위)<br>Sadness: 7.69 (19/86위) | 0.79 / 26 | [평가 클립](https://youtube.com/clip/UgkxuXKh_Cg-_ifVwhYq5x_Tka3iMqPQkOIb) | 20:50–21:41 | 등록 없음 | 작품 candidate; 악장 candidate; 연주 unverified; 구간 unverified | 피아노 소나타 3번 4악장 제목 대응 후보. 동일 연주·구간은 미확인 | 미검토 | 미입력 | 미입력 | emma-44c5db701afb50e8fd04 |
+
+대응 EMMA 항목 3개 / 앱 곡 연결 4건. 나머지 항목과 제목 손상 표기는 `emmaReference.json`의 `match.status`를 확인하세요.
+
+월광의 EMMA 제목은 악장을 명시하지 않아 1·3악장 모두 **미확정 후보**입니다. EMMA의 `Youtube ID`는 Clip ID일 수 있으므로 앱의 일반 영상 ID에 넣지 마세요. 앱의 기존 미리듣기 영상과 평가 클립이 같은 연주/구간이라는 확인도 없습니다.

@@ -1,0 +1,49 @@
+{
+  "source": {
+    "label": "사용자 제공 EMMA CSV",
+    "filename": "EMMA__filtered_2026-10-07.csv",
+    "encoding": "windows-1252",
+    "sha256": "2ac4ae54123f518f9d86dab81d036f81e9e00f3e2dffa4347ce08a4412e17d2e"
+  },
+  "counts": {
+    "dataRows": 87,
+    "validRows": 86,
+    "errorRows": 1
+  },
+  "errors": [
+    {
+      "sourceLine": 81,
+      "issues": [
+        "작곡가 열에 작품번호가 섞여 열 손상 의심"
+      ],
+      "rawFields": [
+        "80",
+        "Dvo,9. Sinfonie",
+        " 4. Satz\"",
+        "27.94",
+        "23.41",
+        "14.44",
+        "0",
+        "12.66",
+        "24.34",
+        "44.5",
+        "20.84",
+        "4.66",
+        "15.69",
+        "34.42",
+        "12.75",
+        "0.88",
+        "1.88",
+        "3.09",
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "32",
+        "gems-45_mx"
+      ],
+      "rawRow": "80,\"Dvo,9. Sinfonie\",\" 4. Satz\"\"\",27.94,23.41,14.44,0,12.66,24.34,44.5,20.84,4.66,15.69,34.42,12.75,0.88,1.88,3.09,NA,NA,NA,NA,NA,32,gems-45_mx"
+    }
+  ]
+}

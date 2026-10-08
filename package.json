@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test": "node scripts/test.mjs",
+    "import:emma": "node scripts/emma/importEmma.js",
+    "diagnose:recommendations": "node scripts/diagnoseRecommendations.js",
     "preview": "vite preview"
   },
   "dependencies": {

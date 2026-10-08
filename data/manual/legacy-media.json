@@ -1,0 +1,5 @@
+{
+  "purpose": "활성 목록에서 제외된 베토벤 영상 등록의 참고 보존. 앱은 읽지 않음.",
+  "beethoven-moonlight-1": { "provider": "youtube", "videoId": "uTjOXAzUTQA", "startSeconds": 7, "endSeconds": 339, "sourceLabel": "다니엘 하리토노프 · MBC TV예술무대" },
+  "beethoven-moonlight-3": { "provider": "youtube", "videoId": "uTjOXAzUTQA", "startSeconds": 459, "endSeconds": 788, "sourceLabel": "다니엘 하리토노프 · MBC TV예술무대" }
+}
