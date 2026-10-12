@@ -1,6 +1,12 @@
 import { emotionKeys, isFullyRated, normalizeScore } from './emotions.js'
 
 const stableIdOrder = (a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0
+export const getSelectedEmotionKeys = (selectedKeys = []) => [...new Set(selectedKeys)].filter((key) => emotionKeys.includes(key))
+export const getEmotionFit = (track, selectedKeys = []) => {
+  const keys = getSelectedEmotionKeys(selectedKeys)
+  return isFullyRated(track) && keys.length
+    ? keys.reduce((sum, key) => sum + normalizeScore(track.emotionScores[key]), 0) / keys.length : 0
+}
 export const emotionVector = (track) => emotionKeys.map((key) => normalizeScore(track.emotionScores[key]))
 export const cosineSimilarity = (a, b) => {
   if (!Array.isArray(a) || !Array.isArray(b) || a.length !== 9 || b.length !== 9 || [...a, ...b].some((value) => !Number.isFinite(value))) return 0
@@ -22,9 +28,9 @@ export const getLibraryPreferenceProfile = (trackList, savedTrackIds = []) => {
   }
 }
 export const getRecommendationResult = (trackList, selectedKeys = [], preferenceProfile = null) => {
-  const keys = [...new Set(selectedKeys)].filter((key) => emotionKeys.includes(key))
+  const keys = getSelectedEmotionKeys(selectedKeys)
   const candidates = trackList.filter(isFullyRated).filter((track) => keys.length === 0 || keys.some((key) => track.emotionScores[key] >= 3))
-  const fit = (track) => keys.length ? keys.reduce((sum, key) => sum + normalizeScore(track.emotionScores[key]), 0) / keys.length : 0
+  const fit = (track) => getEmotionFit(track, keys)
   const matchCount = (track) => keys.filter((key) => track.emotionScores[key] >= 3).length
   const similarity = (track) => preferenceProfile?.isActive ? cosineSimilarity(emotionVector(track), preferenceProfile.vector) : 0
   const rankedTracks = [...candidates].sort((a, b) => fit(b) - fit(a) || matchCount(b) - matchCount(a) || similarity(b) - similarity(a) || stableIdOrder(a, b))

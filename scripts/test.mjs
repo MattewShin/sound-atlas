@@ -1,6 +1,11 @@
 import './emma/emma.test.js'
 import '../src/data/recommendation.test.js'
 import '../src/data/storage.test.js'
+import '../src/data/concertRecommendations.test.js'
+import '../src/data/concertSearch.test.js'
+import '../server/kopis.test.mjs'
+import '../server/programMatching.test.mjs'
+import '../server/programOcr.test.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { writeFileSync, unlinkSync } from 'node:fs'
@@ -10,6 +15,10 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { emotions, formatTrackTitle } from '../src/data/emotions.js'
 import { composerImages, tracks, trackDetails } from '../src/data/musicData.js'
 import { getLibraryPreferenceProfile, getRecommendationResult } from '../src/data/recommendations.js'
+import { analyzeConcert, getConcertRecommendations } from '../src/data/concertRecommendations.js'
+import { concertWorks } from '../src/data/concerts.js'
+import { verifyConcertSearchInteractions } from './concertSearchDomTest.mjs'
+import { verifyTargetConcertInteractions } from './targetConcertDomTest.mjs'
 
 // JSX를 실제 컴파일해 화면의 렌더링 경로와 카탈로그 연결을 확인합니다.
 const compiledPath = new URL('../src/.App.ssr.local.mjs', import.meta.url)
@@ -22,6 +31,70 @@ try {
   try { unlinkSync(compiledPath) } catch { /* 컴파일 실패 시 파일 없음 */ }
 }
 const render = (component, props = {}) => renderToStaticMarkup(React.createElement(component, props))
+const testUnanalysedId = 'test-unanalysed-work'
+const testConcertWorks = { ...concertWorks, [testUnanalysedId]: { id: testUnanalysedId, title: '미등록 교향곡', composer: '베토벤', type: 'symphony', opus: 125, number: 9, trackIds: [] } }
+const testConcert = { id: 'test-registered-concert', title: '테스트 등록 공연', programStatus: 'verified', programVerification: 'manual',
+  startsAt: '2026-12-24T20:00:00+09:00', endsAt: '2026-12-24T22:00:00+09:00', region: '서울', venue: '테스트홀',
+  ticketOpensAt: '2026-10-15T14:00:00+09:00', sourceUrl: 'https://example.com/concert', sourceLabel: '테스트 출처', verifiedOn: '2026-10-12',
+  programWorkIds: ['beethoven-piano-concerto-op73-no5', testUnanalysedId] }
+test('실제 React 검색 화면은 사용자 버튼에서만 조회하고 모드·감정 변경에는 API를 호출하지 않는다', async () => {
+  await verifyConcertSearchInteractions(components.default)
+})
+test('보관한 특정 곡의 캐시 결과·10건 자동 확인·추가 확인·중단·조건 변경·상태 집계를 검증한다', async () => {
+  await verifyTargetConcertInteractions(components.default)
+})
+test('검색에 병합된 등록 공연이나 반복 API 행은 카드를 중복 표시하지 않는다', () => {
+  const now = Date.parse('2026-10-12T12:00:00+09:00')
+  const result = analyzeConcert({ ...testConcert, kopisId: 'PF999111' }, tracks, {}, testConcertWorks)
+  const html = render(components.ConcertScreen, { results: [result], searchResults: [result, result], now, region: '서울', mode: 'keyword', selectedKeys: [], searchControls: { period: { from: '2026-12-01', to: '2026-12-31' }, search: { status: 'success', data: { concerts: [result.concert], query: { region: '서울', from: '2026-12-01', to: '2026-12-31' }, fetchedAt: new Date(now).toISOString() } } } })
+  assert.equal((html.match(/class="concert-card"/g) || []).length, 1)
+})
+test('공연 카드·전체 프로그램은 공식 링크·확인일·분석 범위·악장 상세·실제 영상 상태를 렌더링한다', () => {
+  const now = Date.parse('2026-10-12T12:00:00+09:00')
+  const result = analyzeConcert(testConcert, tracks, { mode: 'library', savedTrackIds: ['beethoven-piano-concerto-op73-no5-m2'] }, testConcertWorks)
+  const card = render(components.ConcertCard, { result, now })
+  assert.ok(card.includes('보관한 2악장'))
+  assert.ok(card.includes('분석된 작품 기준'))
+  assert.ok(card.includes('예매 오픈 예정'))
+  assert.ok(card.includes('2026-10-12'))
+  assert.ok(card.includes(`href="${testConcert.sourceUrl}" target="_blank" rel="noopener noreferrer"`))
+  const detail = render(components.ConcertDetailScreen, { result, now, details: trackDetails, isTrackSaved: (id) => id.endsWith('-m2') })
+  assert.equal((detail.match(/class="concert-work"/g) ?? []).length, 2)
+  assert.equal((detail.match(/곡 상세·보관/g) ?? []).length, 3)
+  assert.equal((detail.match(/미리듣기 준비 중/g) ?? []).length, 3)
+  assert.ok(detail.includes('아직 분석하지 않은 작품'))
+  assert.ok(detail.includes('부드러운 4/5'))
+  assert.ok(!/세 악장 연주 확정|취향 일치|95%/.test(detail + card))
+  const linkedTrack = result.program[0].linkedTracks[1]
+  // 기존 미리듣기가 후속 등록될 때 동일 악장 버튼으로 전달되는 경로를 검증합니다.
+  const withPreview = render(components.ConcertDetailScreen, { result, now, details: { [linkedTrack.id]: { shortPreview: { provider: 'youtube', videoId: 'test-preview' } } } })
+  assert.equal((withPreview.match(/>미리듣기<\/button>/g) ?? []).length, 1)
+  assert.ok(withPreview.includes('2악장 미리듣기'))
+  const screen = render(components.ConcertScreen, { results: getConcertRecommendations(tracks, { now }, [testConcert], testConcertWorks), now, region: '서울', mode: 'keyword', selectedKeys: [] })
+  assert.equal((screen.match(/class="concert-card"/g) ?? []).length, 1)
+  assert.ok(screen.includes('공연 음악 느낌 선택'))
+})
+test('악장 상세·미리듣기와 공연 상세 버튼은 선택한 실제 곡·공연 ID를 전달한다', () => {
+  const result = analyzeConcert(testConcert, tracks, {}, testConcertWorks)
+  const buttonsIn = (node) => Array.isArray(node) ? node.flatMap(buttonsIn)
+    : !node || typeof node !== 'object' ? [] : [...(node.type === 'button' ? [node] : []), ...buttonsIn(node.props?.children)]
+  for (const track of result.program[0].linkedTracks) {
+    const clicked = []
+    const node = components.ConcertMovement({ work: result.program[0], track,
+      detail: { shortPreview: { provider: 'youtube', videoId: 'test-preview' } },
+      onOpenTrack: (value) => clicked.push(['detail', value]), onOpenShort: (value) => clicked.push(['preview', value]) })
+    const buttons = buttonsIn(node)
+    assert.equal(buttons.length, 2)
+    buttons.forEach((button) => button.props.onClick())
+    assert.deepEqual(clicked, [['detail', track], ['preview', track]])
+    const pending = components.ConcertMovement({ work: result.program[0], track, detail: trackDetails[track.id] })
+    assert.equal(buttonsIn(pending).length, 1)
+  }
+  let openedId
+  const card = components.ConcertCard({ result, onOpenConcert: (id) => { openedId = id } })
+  buttonsIn(card)[0].props.onClick()
+  assert.equal(openedId, testConcert.id)
+})
 test('첫 화면에는 새 9개 선택과 활성곡만 있으며 Energy 선택은 없다', () => {
   const html = render(components.default)
   emotions.forEach(({ label }) => assert.ok(html.includes(label)))

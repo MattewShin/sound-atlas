@@ -1560,5 +1560,80 @@ export const manualRatings = [
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
     "ratingUnit": "whole-movement"
+  },
+  {
+    "id": "beethoven-piano-concerto-op73-no5-m1",
+    "composer": "베토벤",
+    "type": "piano-concerto",
+    "opus": 73,
+    "number": 5,
+    "movementNumber": 1,
+    "title": "베토벤 피아노 협주곡 No.5 Op.73",
+    "movement": "1악장",
+    "alias": "황제",
+    "emotionScores": {
+      "wonder": 4,
+      "transcendence": 4,
+      "nostalgia": 1,
+      "tenderness": 1,
+      "peacefulness": 2,
+      "joy": 3,
+      "power": 3,
+      "tension": 3,
+      "sadness": 1
+    },
+    "ratingSource": "manual",
+    "ratingVersion": "manual-emotions-1",
+    "ratingUnit": "whole-movement"
+  },
+  {
+    "id": "beethoven-piano-concerto-op73-no5-m2",
+    "composer": "베토벤",
+    "type": "piano-concerto",
+    "opus": 73,
+    "number": 5,
+    "movementNumber": 2,
+    "title": "베토벤 피아노 협주곡 No.5 Op.73",
+    "movement": "2악장",
+    "alias": "황제",
+    "emotionScores": {
+      "wonder": 3,
+      "transcendence": 2,
+      "nostalgia": 2,
+      "tenderness": 4,
+      "peacefulness": 3,
+      "joy": 3,
+      "power": 1,
+      "tension": 1,
+      "sadness": 3
+    },
+    "ratingSource": "manual",
+    "ratingVersion": "manual-emotions-1",
+    "ratingUnit": "whole-movement"
+  },
+  {
+    "id": "beethoven-piano-concerto-op73-no5-m3",
+    "composer": "베토벤",
+    "type": "piano-concerto",
+    "opus": 73,
+    "number": 5,
+    "movementNumber": 3,
+    "title": "베토벤 피아노 협주곡 No.5 Op.73",
+    "movement": "3악장",
+    "alias": "황제",
+    "emotionScores": {
+      "wonder": 4,
+      "transcendence": 4,
+      "nostalgia": 1,
+      "tenderness": 1,
+      "peacefulness": 1,
+      "joy": 4,
+      "power": 4,
+      "tension": 1,
+      "sadness": 1
+    },
+    "ratingSource": "manual",
+    "ratingVersion": "manual-emotions-1",
+    "ratingUnit": "whole-movement"
   }
 ]
