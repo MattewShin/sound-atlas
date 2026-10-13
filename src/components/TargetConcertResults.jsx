@@ -23,7 +23,7 @@ export default function TargetConcertResults({ search, results, renderCard, onCh
     {matched.length ? matched.map(renderCard) : <p>{candidates.length === 0 ? '선택한 지역·기간의 예정 공연 후보가 0건이에요.' : progress.unresolved ? '현재까지 확인된 일치 공연이 없어요. 판단하지 못한 후보도 아래에서 확인해주세요.' : '확인한 프로그램에서 해당 작품을 포함한 공연을 찾지 못했어요.'}</p>}
     {Object.entries(matchLabels).filter(([status]) => status !== 'matched').map(([status, label]) => {
       const group = candidates.filter(({ targetMatch }) => getMatchStatus(targetMatch) === status)
-      return group.length ? <details className="concert-candidate-group" key={status} data-match-status={status}><summary>{label} · {group.length}건</summary><ul>{group.map((concert) => <li key={concert.kopisId || concert.id}><button type="button" onClick={() => onOpenConcert(concert.id)}>{concert.title}</button><p>{concert.dateFrom || concert.startsAt?.slice(0, 10)} · {concert.venue}</p><p>{concert.targetMatch?.reason || '프로그램 자료를 아직 조회하지 않았어요.'}</p></li>)}</ul></details> : null
+      return group.length ? <details className="concert-candidate-group" key={status} data-match-status={status}><summary>{label} · {group.length}건</summary><ul>{group.map((concert) => <li key={concert.kopisId || concert.id}><button type="button" onClick={() => onOpenConcert(concert.id)}>{concert.title}</button><p>{concert.dateFrom || concert.startsAt?.slice(0, 10)} · {concert.venue}{concert.saleState ? ` · 예매 ${concert.saleState}` : ''}</p><p>{concert.targetMatch?.reason || '프로그램 자료를 아직 조회하지 않았어요.'}</p>{concert.sacId && <a href={concert.sourceUrl} target="_blank" rel="noopener noreferrer">예술의전당 공연·예매 정보 ↗</a>}</li>)}</ul></details> : null
     })}
   </section>
 }
