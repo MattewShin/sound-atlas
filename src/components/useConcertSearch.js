@@ -29,7 +29,7 @@ export default function useConcertSearch() {
     client.status().then((config) => {
       if (!mounted) return
       settings.current = { initialCheckLimit: Math.min(10, Math.max(1, config.initialCheckLimit || 10)), moreCheckLimit: Math.min(10, Math.max(1, config.moreCheckLimit || 10)), programBatchSize: Math.min(5, Math.max(1, config.programBatchSize || 2)) }
-      setConnection({ status: config.configured ? 'ready' : 'needs-setup', ...config })
+      setConnection({ status: config.configured ? 'ready' : config.sacAvailable ? 'partial' : 'needs-setup', ...config })
     }).catch(() => { if (mounted) setConnection({ status: 'needs-setup' }) })
     return () => { mounted = false; requestId.current += 1; controller.current?.abort() }
   }, [client])
