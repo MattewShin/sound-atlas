@@ -21,6 +21,7 @@ import { concertWorks } from '../src/data/concerts.js'
 import { searchConcertTracks } from '../src/data/concertTrackSearch.js'
 import { verifyConcertSearchInteractions } from './concertSearchDomTest.mjs'
 import { verifyTargetConcertInteractions } from './targetConcertDomTest.mjs'
+import { verifyMusicSelectionInteractions } from './musicSelectionDomTest.mjs'
 
 // JSX를 실제 컴파일해 화면의 렌더링 경로와 카탈로그 연결을 확인합니다.
 const compiledPath = new URL('../src/.App.ssr.local.mjs', import.meta.url)
@@ -52,6 +53,9 @@ test('곡 검색은 한글·영문·별칭·작품번호로 기존 ID만 선택�
 })
 test('공연 화면은 곡 선택 전 API를 호출하지 않고 카탈로그에서 실제 곡 ID를 선택한다', async () => {
   await verifyConcertSearchInteractions(components.default)
+})
+test('느낌·기분의 선택 해제와 탭별 초기화·기분 후보 확대·직전 추천 제외·보관 시 대표곡 유지를 검증한다', async () => {
+  await verifyMusicSelectionInteractions(components.default)
 })
 test('보관한 특정 곡의 캐시 결과·10건 자동 확인·추가 확인·중단·조건 변경·상태 집계를 검증한다', async () => {
   await verifyTargetConcertInteractions(components.default)

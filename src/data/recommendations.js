@@ -41,11 +41,25 @@ export const getRecommendationResult = (trackList, selectedKeys = [], preference
   }
 }
 // 선택 시 만든 난수를 전달해 일반 화면 갱신에는 대표곡을 유지합니다.
-export const pickRandomTopRecommendation = (result, randomValue) => {
-  const candidates = result.topScoreTracks
+const pickRandomCandidate = (candidates, randomValue) => {
   if (candidates.length === 0) return undefined
   const draw = Number.isFinite(randomValue) ? Math.max(0, Math.min(1, randomValue)) : 0
   return candidates[Math.min(candidates.length - 1, Math.floor(draw * candidates.length))]
+}
+export const pickRandomTopRecommendation = (result, randomValue) => pickRandomCandidate(result.topScoreTracks, randomValue)
+
+export const getFeelingRecommendationCandidates = (result, selectedKeys) => {
+  const keys = getSelectedEmotionKeys(selectedKeys)
+  if (!keys.length || !result.tracks.length) return []
+  // 원점수 평균 1점 차이는 정규화된 평균에서 0.25입니다.
+  const minimumFit = getEmotionFit(result.tracks[0], keys) - 0.25
+  return result.tracks.filter((track) => keys.every((key) => track.emotionScores[key] >= 3)
+    && getEmotionFit(track, keys) >= minimumFit)
+}
+export const pickRandomFeelingRecommendation = (result, selectedKeys, randomValue, previousTrackId) => {
+  const candidates = getFeelingRecommendationCandidates(result, selectedKeys)
+  const available = candidates.length > 1 ? candidates.filter(({ id }) => id !== previousTrackId) : candidates
+  return pickRandomCandidate(available, randomValue)
 }
 export const getLibraryRecommendations = (trackList, profile) => !profile?.isActive ? [] : trackList
   .filter((track) => isFullyRated(track) && !profile.savedIdSet.has(track.id))

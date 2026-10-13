@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { composerImages, trackDetails, tracks } from './data/musicData.js'
 import { emotionLabel, emotions, formatTrackTitle, getRepresentativeEmotions } from './data/emotions.js'
-import { getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation } from './data/recommendations.js'
+import { getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation, pickRandomFeelingRecommendation } from './data/recommendations.js'
 import { feelingOptions, getSuggestedEmotions } from './data/feelingSuggestions.js'
 import { readConcertRegion, saveConcertRegion } from './data/concertRegions.js'
 import { ConcertScreen, ConcertDetailScreen } from './components/ConcertScreens.jsx'
@@ -296,6 +296,8 @@ function App() {
   const [currentFeeling, setCurrentFeeling] = useState(null)
   const [selectedKeys, setSelectedKeys] = useState([])
   const [recommendationDraw, setRecommendationDraw] = useState(Math.random)
+  const [excludedFeelingTrackId, setExcludedFeelingTrackId] = useState(null)
+  const lastFeelingRecommendations = useRef({})
   const [selectedTrackId, setSelectedTrackId] = useState(null)
   const [recommendationListState, setRecommendationListState] = useState({ query: null, count: 20 })
   const [detailTrack, setDetailTrack] = useState(null)
@@ -314,7 +316,10 @@ function App() {
   const isLibraryMode = recommendationMode === 'library' && libraryPreference.isActive
   const isInitialExploration = !isLibraryMode && activeKeys.length === 0
   const recommendation = useMemo(() => getRecommendationResult(tracks, activeKeys), [activeKeys])
-  const featuredKeywordTrack = useMemo(() => pickRandomTopRecommendation(recommendation, recommendationDraw), [recommendation, recommendationDraw])
+  const featuredKeywordTrack = useMemo(() => recommendationInput === 'feeling'
+    ? pickRandomFeelingRecommendation(recommendation, activeKeys, recommendationDraw, excludedFeelingTrackId)
+    : pickRandomTopRecommendation(recommendation, recommendationDraw),
+  [recommendation, recommendationInput, activeKeys, recommendationDraw, excludedFeelingTrackId])
   const recommendedTracks = useMemo(() => isLibraryMode ? getLibraryRecommendations(tracks, libraryPreference) : recommendation.tracks, [isLibraryMode, libraryPreference, recommendation])
   const starterTracks = useMemo(() => starterTrackIds.map((id) => tracks.find((track) => track.id === id)).filter(Boolean), [])
   const selectedRecommendationTrack = recommendedTracks.find((track) => track.id === selectedTrackId)
@@ -353,6 +358,11 @@ function App() {
   useEffect(() => { setRecommendationListState({ query: recommendationQuery, count: 20 }) }, [recommendationQuery])
   useEffect(() => { saveConcertRegion(concertRegion) }, [concertRegion])
   useEffect(() => {
+    if (recommendationInput === 'feeling' && !isLibraryMode && currentFeeling && selectedTrack) {
+      lastFeelingRecommendations.current[currentFeeling] = selectedTrack.id
+    }
+  }, [recommendationInput, isLibraryMode, currentFeeling, selectedTrack])
+  useEffect(() => {
     if (!initialMusicState.notice) return undefined
     try { window.localStorage.removeItem(NOTICE_KEY) } catch { /* 저장 차단 */ }
     const timer = window.setTimeout(() => setMigrationNotice(null), 5000)
@@ -387,12 +397,23 @@ function App() {
     setSelectedTrackId(null)
   }
   const selectFeeling = (feeling) => {
-    setCurrentFeeling(feeling); setRecommendationDraw(Math.random()); setSelectedTrackId(null)
+    setCurrentFeeling((current) => current === feeling ? null : feeling)
+    setExcludedFeelingTrackId(lastFeelingRecommendations.current[feeling] || null)
+    setRecommendationDraw(Math.random()); setSelectedTrackId(null)
   }
   const selectInput = (input) => {
-    setRecommendationInput(input); setCurrentFeeling(null); setSelectedKeys([]); setSelectedTrackId(null)
+    if (input === recommendationInput) return
+    if (input === 'feeling') setExcludedFeelingTrackId(lastFeelingRecommendations.current[currentFeeling] || null)
+    setRecommendationInput(input); setSelectedTrackId(null); setRecommendationDraw(Math.random())
   }
-  const resetInputs = () => { selectInput('music'); setRecommendationMode('keyword') }
+  const resetInputs = () => {
+    if (recommendationInput === 'feeling') setCurrentFeeling(null)
+    else setSelectedKeys([])
+    setSelectedTrackId(null); setRecommendationMode('keyword')
+  }
+  const returnToMusicKeywords = () => {
+    selectInput('music'); setSelectedKeys([]); setRecommendationMode('keyword')
+  }
   const openTrackDetail = (track) => {
     window.clearTimeout(detailCloseTimer.current)
     if (isLibraryMode) setSelectedTrackId(track.id)
@@ -465,11 +486,10 @@ function App() {
             <div className="featured-artwork"><MiniArtwork track={selectedTrack} /></div>
             <div className="track-copy"><p className="track-kicker">{selectedRecommendationTrack ? '선택한 추천 곡' : '오늘의 대표 곡'}</p><p className="composer">{selectedTrack.composer}</p><h2>{formatTrackTitle(selectedTrack)}<TrackAlias track={selectedTrack} /></h2><p className="track-description">{selectedTrack.description}</p><div className="tag-list">{selectedTrack.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div></div>
             {trackDetails[selectedTrack.id]?.shortPreview ? <button className="play-button" type="button" aria-label="미리듣기" onClick={(event) => { event.stopPropagation(); openHighlightShort(selectedTrack) }}><Icon name="play" /></button> : <p className="preview-pending">미리듣기 준비 중</p>}
-          </article> : <div className="library-empty"><h2>{isLibraryMode ? '모든 곡을 보관했어요' : '이 느낌에 맞는 곡이 아직 없어요'}</h2><p>{isLibraryMode ? '보관함에서 담아둔 곡을 만나보세요.' : '다른 음악 느낌을 골라보세요.'}</p><button type="button" onClick={resetInputs}>음악 키워드로 돌아가기</button></div>}
+          </article> : <div className="library-empty"><h2>{isLibraryMode ? '모든 곡을 보관했어요' : '이 느낌에 맞는 곡이 아직 없어요'}</h2><p>{isLibraryMode ? '보관함에서 담아둔 곡을 만나보세요.' : '다른 음악 느낌을 골라보세요.'}</p><button type="button" onClick={returnToMusicKeywords}>음악 키워드로 돌아가기</button></div>}
         </section>
         {!isInitialExploration && <RelatedRecommendations key={recommendationQuery} relatedTracks={relatedTracks} onOpenTrack={selectRelatedTrack} onSeeAll={openRecommendationList} />}
         {!isInitialExploration && selectedTrack && relatedTracks.length === 0 && <div className="recommendations-single-link"><button className="recommendations-see-all" type="button" onClick={openRecommendationList}>추천곡 더 보기 <span aria-hidden="true">→</span></button></div>}
-        <section className="concert-link" aria-label="관련 공연 안내"><span className="concert-mark"><Icon name="piano" /></span><div><p>음악을 무대에서 만나고 싶다면</p><button type="button" onClick={showConcerts}>프로그램과 연결된 공연 찾기 →</button></div></section>
       </main>
     </> : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetail
       ? <ConcertDetailScreen result={concertDetail} now={concertNow} onBack={showConcerts} onOpenTrack={openTrackDetail} onOpenShort={openHighlightShort} details={trackDetails} isTrackSaved={isTrackSaved} onLoadProgram={concertSearch.loadProgram} programRequest={concertSearch.programRequests[detailConcert.kopisId]} />

@@ -3,7 +3,7 @@ import test from 'node:test'
 import { readFileSync, existsSync } from 'node:fs'
 import { emotionKeys, emotions, formatTrackTitle, getRepresentativeEmotions, isFullyRated, RATING_VERSION } from './emotions.js'
 import { composerImages, tracks, trackDetails } from './musicData.js'
-import { cosineSimilarity, emotionVector, getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation } from './recommendations.js'
+import { cosineSimilarity, emotionVector, getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation, getFeelingRecommendationCandidates, pickRandomFeelingRecommendation } from './recommendations.js'
 import { feelingOptions, getSuggestedEmotions } from './feelingSuggestions.js'
 import { buildRecommendationDiagnosis } from '../../scripts/diagnoseRecommendations.js'
 
@@ -82,6 +82,44 @@ test('단일 감정의 높은 원점수는 항상 먼저 추천된다', () => {
 })
 
 const song = (id, overrides = {}) => ({ id, emotionScores: Object.fromEntries(emotionKeys.map((key) => [key, overrides[key] ?? 1])) })
+
+test('기분 대표곡 후보는 평균 1점 경계를 포함하고 두 감정이 모두 3 이상이어야 한다', () => {
+  const keys = ['joy', 'wonder']
+  const incomplete = song('incomplete', { joy: 5, wonder: 5 }); incomplete.emotionScores.power = null
+  const result = getRecommendationResult([
+    song('top', { joy: 5, wonder: 4 }),
+    song('boundary', { joy: 4, wonder: 3 }),
+    song('below', { joy: 3, wonder: 3 }),
+    song('unbalanced', { joy: 5, wonder: 2 }), incomplete,
+  ], keys)
+  assert.deepEqual(getFeelingRecommendationCandidates(result, keys).map(({ id }) => id), ['top', 'boundary'])
+  assert.deepEqual(getFeelingRecommendationCandidates(result, []), [])
+  assert.equal(pickRandomFeelingRecommendation(result, keys, 0, 'top').id, 'boundary')
+  assert.equal(pickRandomFeelingRecommendation(result, keys, 0.99, 'boundary').id, 'top')
+  assert.equal(pickRandomTopRecommendation(result, 0.99).id, 'top', '느낌 추천은 최고점만 추첨')
+})
+
+test('현재 기분별 후보 11~18곡을 고르게 추첨하고 후보 부족과 직전곡 제외를 처리한다', () => {
+  const counts = [12, 12, 11, 18, 14, 16]
+  feelingOptions.forEach((feeling, index) => {
+    const keys = getSuggestedEmotions(feeling)
+    const result = getRecommendationResult(tracks, keys)
+    const candidates = getFeelingRecommendationCandidates(result, keys)
+    assert.equal(candidates.length, counts[index], feeling)
+    const picked = candidates.map((_, i) => pickRandomFeelingRecommendation(result, keys, (i + 0.5) / candidates.length))
+    assert.equal(new Set(picked.map(({ id }) => id)).size, candidates.length)
+    const previous = candidates[0].id
+    const afterExclusion = candidates.slice(1).map((_, i) => pickRandomFeelingRecommendation(result, keys, (i + 0.5) / (candidates.length - 1), previous))
+    assert.ok(afterExclusion.every(({ id }) => id !== previous))
+    assert.equal(new Set(afterExclusion.map(({ id }) => id)).size, candidates.length - 1)
+  })
+  const keys = ['joy', 'wonder']
+  const one = getRecommendationResult([song('only', { joy: 3, wonder: 3 })], keys)
+  assert.equal(pickRandomFeelingRecommendation(one, keys, 0, 'only').id, 'only')
+  const noBalanced = getRecommendationResult([song('unbalanced', { joy: 5, wonder: 1 })], keys)
+  assert.equal(pickRandomFeelingRecommendation(noBalanced, keys, 0), undefined)
+  assert.equal(pickRandomFeelingRecommendation(getRecommendationResult([], keys), keys, 0), undefined)
+})
 test('대표곡은 최고 점수 동점 후보에서만 추첨하고 동일 추첨값에는 같은 곡을 유지한다', () => {
   const songs = [song('a', { power: 5 }), song('b', { power: 5 }), song('c', { power: 4 })]
   const result = getRecommendationResult(songs, ['power'])

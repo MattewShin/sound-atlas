@@ -58,7 +58,7 @@ export function ConcertScreen({ searchResults = [], now, region, onSelectRegion,
   return <>
     <header className="concert-coming-header" id="concert-top">
       <div className="concert-topbar"><p>ON STAGE</p></div>
-      <h1>이 곡의 공연 찾기</h1><span>듣고 싶은 곡을 고르면<br />실제 공연의 프로그램을 확인해요.</span>
+      <h1>이 곡의 공연 찾기</h1><span>듣고 싶은 곡을 선택하면,<br />그 곡이 프로그램에 포함된 공연을 찾아드려요.</span>
     </header>
     <main className="concert-main">
       {searchControls?.targetTrack ? <>
