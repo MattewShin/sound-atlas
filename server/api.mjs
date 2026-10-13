@@ -18,7 +18,7 @@ export const createConcertApiHandler = (service) => async (req, res, next) => {
       const abort = () => { if (!res.writableEnded) controller.abort() }
       req.once('aborted', abort); res.once('close', abort)
       try {
-        const result = await service.matchBatch({ targetTrackId: data.targetTrackId, kopisIds: data.kopisIds, refresh: data.refresh === true, signal: controller.signal })
+        const result = await service.matchBatch({ targetTrackId: data.targetTrackId, kopisIds: data.kopisIds, sacIds: data.sacIds || [], refresh: data.refresh === true, signal: controller.signal })
         if (!controller.signal.aborted) return respond(200, result)
       } finally { req.removeListener('aborted', abort); res.removeListener('close', abort) }
       return
