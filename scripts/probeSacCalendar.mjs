@@ -49,6 +49,8 @@ try {
       saleState: sample.SALE_STATE_CODE_NAME || null,
       place: sample.PLACE_NAME || sample.PLACE_NAME_ENG || null,
       detailUrl: `https://www.sac.or.kr/site/main/show/show_view?SN=${sample.SN}`,
+      fieldNames: Object.keys(sample).sort(),
+      scheduleFields: Object.fromEntries(Object.entries(sample).filter(([name]) => /DATE|TIME|DAY|SCHEDULE|PERIOD|SALE|PLACE/i.test(name))),
     } : null,
   }, null, 2))
   if (!sample && year === 2026 && month === 12) process.exitCode = 3
