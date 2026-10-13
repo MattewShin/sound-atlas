@@ -88,8 +88,11 @@ export const identifyEntry = (entry, work) => {
     ? { state: 'ambiguous', reason: '별칭과 작품번호가 서로 다른 작품을 가리켜 확인해야 해요.' } : { state: 'different' }
   const catalogue = text.match(/\bs\.?\s*(\d+)/i)
   if (work.opus !== null && work.opus !== undefined) {
-    if (!op) return { state: 'ambiguous', reason: aliases.length ? '별칭은 연결되지만 작품번호를 확인하지 못해 확정하지 않았어요.' : '작품번호가 없어 작품을 확정할 수 없어요.' }
-    if (Number(op[1]) !== work.opus || (op[2] || '').toLowerCase() !== (work.opusSuffix || '')) {
+    // 협주곡 번호와 고유 별칭이 모두 일치하는 경우에는 작품번호 표기가 없어도 식별합니다.
+    const uniqueNamedConcerto = !op && work.type === 'piano-concerto' && aliases.length === 1
+      && aliases[0].id === work.id && numbers.includes(work.number)
+    if (!op && !uniqueNamedConcerto) return { state: 'ambiguous', reason: aliases.length ? '별칭은 연결되지만 작품번호를 확인하지 못해 확정하지 않았어요.' : '작품번호가 없어 작품을 확정할 수 없어요.' }
+    if (op && (Number(op[1]) !== work.opus || (op[2] || '').toLowerCase() !== (work.opusSuffix || ''))) {
       return { state: aliases.length || (['sonata', 'ballade', 'piano-concerto'].includes(work.type) && numbers.includes(work.number)) ? 'ambiguous' : 'different', reason: '곡번호·별칭과 작품번호의 조합을 확인해야 해요.' }
     }
     if (work.opusPart) {
