@@ -40,9 +40,9 @@ export const normalizeSacConcert = (row, fetchedAt) => {
 
 export const createSacService = ({ fetchImpl = fetch, now = Date.now, ttl = CONCERT_CACHE_TTL_MS } = {}) => {
   const cache = new Map(), pending = new Map()
-  const month = async (year, monthNumber) => {
+  const month = async (year, monthNumber, refresh = false) => {
     const key = `${year}-${monthNumber}`, entry = cache.get(key)
-    if (entry && now() - entry.at < ttl) return entry.concerts
+    if (!refresh && entry && now() - entry.at < ttl) return entry.concerts
     if (pending.has(key)) return pending.get(key)
     const request = (async () => {
       const body = new URLSearchParams({
@@ -66,9 +66,9 @@ export const createSacService = ({ fetchImpl = fetch, now = Date.now, ttl = CONC
     pending.set(key, request)
     try { return await request } finally { if (pending.get(key) === request) pending.delete(key) }
   }
-  const search = async ({ region, from, to }) => {
+  const search = async ({ region, from, to }, refresh = false) => {
     if (region !== '서울' && region !== '전국') return []
-    const results = await Promise.all(monthsIn(from, to).map(({ year, month: number }) => month(year, number)))
+    const results = await Promise.all(monthsIn(from, to).map(({ year, month: number }) => month(year, number, refresh)))
     return [...new Map(results.flat().filter((item) => item.dateFrom <= to && item.dateTo >= from)
       .map((item) => [item.id, item])).values()]
   }
