@@ -112,3 +112,16 @@ test('실제 HTTP 요청의 곡 ID가 서버까지 도달하며 조회 실패는
     assert.equal((await fetch(url, { method: 'POST', body: 'null' })).status, 400)
   } finally { await new Promise((resolve) => server.close(resolve)) }
 })
+
+test('KOPIS 키 없이 SAC 공식 프로그램에서 황제 협주곡을 확인한다', async () => {
+  const service = createKopisService({ env: {}, persistAnalyses: false,
+    sacService: { search: async () => [], program: async (id) => {
+      assert.equal(id, '81233')
+      return "[PROGRAM]\\n베토벤 / 피아노 협주곡 제5번 '황제'\\nL. v. Beethoven / Piano Concerto No.5 'Emperor'"
+    } } })
+  const result = await service.matchBatch({ targetTrackId: emperor2, kopisIds: [], sacIds: ['81233'] })
+  assert.equal(result.results[0].sacId, '81233')
+  assert.equal(result.results[0].concert.targetMatch.status, 'matched')
+  assert.deepEqual(result.results[0].concert.programWorkIds, ['beethoven-piano-concerto-op73-no5'])
+  await assert.rejects(service.matchBatch({ targetTrackId: emperor2, kopisIds: [], sacIds: ['../bad'] }), (error) => error.code === 'INVALID_BATCH')
+})
