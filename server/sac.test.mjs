@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { createSacService, normalizeSacConcert } from './sac.mjs'
+import { createSacService, normalizeSacConcert, extractSacProgramText } from './sac.mjs'
 
 const query = { region: '서울', from: '2026-12-01', to: '2026-12-31' }
 const sample = { SN: 81233, PROGRAM_SUBJECT: 'KBS교향악단 70주년 기념 송년음악회 <합창>',
@@ -28,4 +28,23 @@ test('예술의전당 달력 공연은 공식 URL과 날짜·예매 상태를 �
 test('잘못된 공연 날짜와 ID는 표시하지 않는다', () => {
   assert.equal(normalizeSacConcert({ ...sample, BEGIN_DATE: '2026.02.30' }, ''), null)
   assert.equal(normalizeSacConcert({ ...sample, SN: '../bad' }, ''), null)
+})
+
+test('공식 상세 HTML에서 프로그램 구역만 읽고 스크립트·할인 문구를 제외한다', async () => {
+  const html = '<head><script>[프로그램]<br>Chopin Ballade No.1 Op.23</script></head>' +
+    '<section><p>[프로그램]</p><p>베토벤 / 피아노 협주곡 제5번 황제<br>L. v. Beethoven / Piano Concerto No.5 Emperor</p><p>※ C석은 할인 제외</p></section>'
+  const text = extractSacProgramText(html)
+  assert.ok(text.startsWith('[PROGRAM]'))
+  assert.ok(text.includes('피아노 협주곡 제5번'))
+  assert.ok(!text.includes('Chopin Ballade') && !text.includes('할인'))
+  let calls = 0
+  const service = createSacService({ fetchImpl: async (url) => {
+    calls++
+    assert.equal(url, 'https://www.sac.or.kr/site/main/show/show_view?SN=81233')
+    return { ok: true, headers: { get: () => 'text/html;charset=UTF-8' }, text: async () => html }
+  } })
+  assert.equal(await service.program('81233'), text)
+  assert.equal(await service.program('81233'), text)
+  assert.equal(calls, 1)
+  await assert.rejects(service.program('../bad'))
 })
