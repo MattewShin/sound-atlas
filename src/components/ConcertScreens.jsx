@@ -94,10 +94,10 @@ export function ConcertDetailScreen({ result, now, onBack, onOpenTrack, onOpenSh
       <section className="concert-program" aria-labelledby="concert-program-title"><h2 id="concert-program-title">{['text', 'ocr'].includes(concert.programVerification) ? '확보한 프로그램과 연결 작품' : '전체 프로그램'}</h2>
         <p>{program.length ? '공식 안내는 작품 단위예요. 아래 악장은 앱에 등록된 평가와 감상 자료를 연결한 목록이에요.' : '공연 기본 정보와 프로그램 확인은 별도 단계예요. 소개 자료만으로 작품과 악장 연결을 확정하지 않아요.'}</p>
         {!program.length && <p>{concert.programStatus === 'needs-review' ? '프로그램 자료 확인 필요 · 일반 검색 결과' : '프로그램 미확보 · 일반 검색 결과'}</p>}
-        {concert.kopisId && onLoadProgram && <div className="concert-program-request"><button className="concert-official-link" type="button" disabled={programRequest?.status === 'loading'} onClick={() => onLoadProgram(concert, false)}>{programRequest?.status === 'loading' ? '자료 조회 중…' : '상세·프로그램 자료 확인'}</button>
+        {(concert.kopisId || concert.sacId) && onLoadProgram && <div className="concert-program-request"><button className="concert-official-link" type="button" disabled={programRequest?.status === 'loading'} onClick={() => onLoadProgram(concert, false)}>{programRequest?.status === 'loading' ? '자료 조회 중…' : '상세·프로그램 자료 확인'}</button>
           {concert.programFetchedAt && <><p>자료 조회 · {formatConcertDate(concert.programFetchedAt)} · 한국 시간</p><button className="concert-official-link" type="button" disabled={programRequest?.status === 'loading'} onClick={() => onLoadProgram(concert, true)}>프로그램 자료 새로고침</button></>}
           {programRequest?.error && <p role="alert" className="concert-search-error">{programRequest.error}</p>}</div>}
-        {concert.programEvidence && <section className="concert-program-evidence"><h3>KOPIS 소개 자료</h3><p>프로그램이 포함되어 있는지 원문에서 확인해주세요. 작품 연결을 검증하기 전에는 추천 점수에 반영하지 않아요.</p>
+        {concert.programEvidence && <section className="concert-program-evidence"><h3>{concert.sacId ? '예술의전당 공식 프로그램' : 'KOPIS 소개 자료'}</h3><p>프로그램이 포함되어 있는지 원문에서 확인해주세요. 작품 연결을 검증하기 전에는 추천 점수에 반영하지 않아요.</p>
           {concert.programEvidence.text && <p className="concert-evidence-text">{concert.programEvidence.text}</p>}
           {concert.programEvidence.imageUrls.map((url, i) => <a key={url} className="concert-official-link" href={url} target="_blank" rel="noopener noreferrer">공연 소개 이미지 {i + 1} 보기 ↗</a>)}
           {!concert.programEvidence.text && !concert.programEvidence.imageUrls.length && <p>API에 소개 텍스트나 이미지가 없어요.</p>}
