@@ -13,7 +13,7 @@ const instant = async () => {}
 
 test('서비스키 미설정은 상태와 503 설정 안내를 제공하고 KOPIS 호출은 하지 않는다', async () => {
   let calls = 0
-  const service = createKopisService({ env: {}, fetchImpl: async () => { calls += 1 }, delay: instant })
+  const service = createKopisService({ sacService: { search: async () => [] }, env: {}, fetchImpl: async () => { calls += 1 }, delay: instant })
   assert.equal(service.config().configured, false)
   assert.equal(service.config().cacheTtlMs, 21600000)
   await assert.rejects(service.search(query), (error) => error.code === 'KOPIS_NOT_CONFIGURED' && error.status === 503)
@@ -22,7 +22,7 @@ test('서비스키 미설정은 상태와 503 설정 안내를 제공하고 KOPI
 
 test('지역·기간·클래식 코드·페이지를 서버에서 지정하고 목록 조회는 상세 프로그램을 호출하지 않는다', async () => {
   const urls = []
-  const service = createKopisService({ env: { KOPIS_SERVICE_KEY: 'test-secret' }, delay: instant,
+  const service = createKopisService({ sacService: { search: async () => [] }, env: { KOPIS_SERVICE_KEY: 'test-secret' }, delay: instant,
     fetchImpl: async (url) => { urls.push(url); return xmlResponse(`<dbs>${fixture()}</dbs>`) } })
   const result = await service.search(query)
   assert.equal(urls.length, 1)
@@ -40,7 +40,7 @@ test('지역·기간·클래식 코드·페이지를 서버에서 지정하고 �
 
 test('서버 검색 캐시는 같은 조건을 6시간 재사용하고 만료·강제 새로고침·다른 지역은 재조회한다', async () => {
   let now = Date.parse('2026-10-12T00:00:00Z'), calls = 0
-  const service = createKopisService({ env: { KOPIS_SERVICE_KEY: 'test-key' }, now: () => now, delay: instant,
+  const service = createKopisService({ sacService: { search: async () => [] }, env: { KOPIS_SERVICE_KEY: 'test-key' }, now: () => now, delay: instant,
     fetchImpl: async () => { calls += 1; return xmlResponse('<dbs/>') } })
   const first = await service.search(query)
   now += 21600000 - 1
@@ -63,7 +63,7 @@ test('정상 0건과 잘못된 XML·인증 오류·네트워크 오류를 구별
     (error) => error.code === 'KOPIS_AUTH_ERROR')
   for (const bad of ['<error>invalid key</error>', '<dbs><error>invalid key</error></dbs>', '<dbs><db>', '<!DOCTYPE dbs><dbs/>']) assert.throws(() => parseKopisXml(bad))
   let calls = 0
-  const service = createKopisService({ env: { KOPIS_SERVICE_KEY: 'never-return-key' }, delay: instant,
+  const service = createKopisService({ sacService: { search: async () => [] }, env: { KOPIS_SERVICE_KEY: 'never-return-key' }, delay: instant,
     fetchImpl: async () => { calls += 1; if (calls === 1) throw new Error('https://kopis.or.kr/?service=never-return-key'); return xmlResponse('<dbs/>') } })
   await assert.rejects(service.search(query), (error) => error.code === 'KOPIS_UNAVAILABLE' && !error.message.includes('never-return-key'))
   assert.deepEqual((await service.search(query)).concerts, [])
@@ -72,14 +72,14 @@ test('정상 0건과 잘못된 XML·인증 오류·네트워크 오류를 구별
 
 test('100건 페이지 뒤의 결과도 가져오고 중복 ID는 한 번만 표시한다', async () => {
   let calls = 0
-  const service = createKopisService({ env: { KOPIS_SERVICE_KEY: 'test-key' }, delay: instant,
+  const service = createKopisService({ sacService: { search: async () => [] }, env: { KOPIS_SERVICE_KEY: 'test-key' }, delay: instant,
     fetchImpl: async () => { calls += 1; return xmlResponse(`<dbs>${calls === 1 ? Array.from({ length: 100 }, (_, i) => fixture(`PF${900000 + i}`)).join('') : fixture('PF900000') + fixture('PF900100')}</dbs>`) } })
   assert.equal((await service.search(query)).concerts.length, 101)
   assert.equal(calls, 2)
 })
 
 test('상세·프로그램 자료 조회는 별도 요청이며 텍스트·이미지가 있어도 추천용 확정 작품을 만들지 않는다', async () => {
-  const service = createKopisService({ env: { KOPIS_SERVICE_KEY: 'test-key' }, delay: instant,
+  const service = createKopisService({ sacService: { search: async () => [] }, env: { KOPIS_SERVICE_KEY: 'test-key' }, delay: instant,
     fetchImpl: async (url) => {
       assert.equal(url.pathname, '/openApi/restful/pblprfr/PF999001')
       return xmlResponse(`<dbs>${fixture('PF999001', '<mt13id>TEST-HALL</mt13id><sty><![CDATA[베토벤 황제 프로그램 소개]]></sty><styurls><styurl>https://kopis.or.kr/upload/example.jpg</styurl><styurl>javascript:bad</styurl></styurls><relates><relate><relateurl>https://example.com/concert</relateurl></relate></relates>')}</dbs>`)
@@ -97,7 +97,7 @@ test('운영 서버는 같은 출처 API·정적 앱을 제공하며 키 없는 
   const testDist = await mkdtemp(join(tmpdir(), 'sound-atlas-api-test-'))
   await writeFile(join(testDist, 'index.html'), '<html>test-app</html>')
   await writeFile(join(testDist, '.env'), 'SERVER_SECRET=test-only')
-  const server = createAppServer({ service: createKopisService({ env: {} }), distDirectory: testDist })
+  const server = createAppServer({ service: createKopisService({ sacService: { search: async () => [] }, env: {} }), distDirectory: testDist })
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
   try {
     const base = `http://127.0.0.1:${server.address().port}`
