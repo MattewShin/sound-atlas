@@ -11,13 +11,22 @@ const fixture = (id = 'PF999001', extra = '') => `<db><mt20id>${id}</mt20id><prf
 const xmlResponse = (xml) => ({ ok: true, text: async () => xml })
 const instant = async () => {}
 
-test('서비스키 미설정은 상태와 503 설정 안내를 제공하고 KOPIS 호출은 하지 않는다', async () => {
+test('KOPIS 키가 없어도 예술의전당 공연은 검색하고 KOPIS 요청은 하지 않는다', async () => {
   let calls = 0
   const service = createKopisService({ sacService: { search: async () => [] }, env: {}, fetchImpl: async () => { calls += 1 }, delay: instant })
   assert.equal(service.config().configured, false)
+  assert.equal(service.config().sacAvailable, true)
   assert.equal(service.config().cacheTtlMs, 21600000)
-  await assert.rejects(service.search(query), (error) => error.code === 'KOPIS_NOT_CONFIGURED' && error.status === 503)
+  const result = await service.search(query)
+  assert.deepEqual(result.concerts, [])
+  assert.equal(result.sourceWarnings.length, 1)
   assert.equal(calls, 0)
+})
+
+test('키가 없고 SAC도 실패하면 빈 공연 목록 대신 오류를 반환한다', async () => {
+  const service = createKopisService({ env: {}, delay: instant,
+    sacService: { search: async () => { throw new Error('SAC unavailable') } } })
+  await assert.rejects(service.search(query), (error) => error.code === 'CONCERT_SOURCES_UNAVAILABLE' && error.status === 503)
 })
 
 test('지역·기간·클래식 코드·페이지를 서버에서 지정하고 목록 조회는 상세 프로그램을 호출하지 않는다', async () => {
@@ -114,7 +123,7 @@ test('상세·프로그램 자료 조회는 별도 요청이며 텍스트·이�
   await assert.rejects(service.program('../secrets'), (error) => error.status === 400)
 })
 
-test('운영 서버는 같은 출처 API·정적 앱을 제공하며 키 없는 검색 오류를 JSON으로 응답한다', async () => {
+test('운영 서버는 같은 출처 API·정적 앱을 제공하며 키 없이 SAC 검색을 허용한다', async () => {
   const testDist = await mkdtemp(join(tmpdir(), 'sound-atlas-api-test-'))
   await writeFile(join(testDist, 'index.html'), '<html>test-app</html>')
   await writeFile(join(testDist, '.env'), 'SERVER_SECRET=test-only')
@@ -125,8 +134,10 @@ test('운영 서버는 같은 출처 API·정적 앱을 제공하며 키 없는 
     const status = await fetch(`${base}/api/concerts/status`)
     assert.equal((await status.json()).configured, false)
     const response = await fetch(`${base}/api/concerts?${new URLSearchParams(query)}`)
-    assert.equal(response.status, 503)
-    assert.equal((await response.json()).message, '공연 검색 연동 설정 필요')
+    assert.equal(response.status, 200)
+    const result = await response.json()
+    assert.deepEqual(result.concerts, [])
+    assert.equal(result.sourceWarnings.length, 1)
     assert.equal(response.headers.get('cache-control'), 'no-store')
     const missing = await fetch(`${base}/.env`)
     assert.equal(missing.status, 404)
