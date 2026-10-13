@@ -117,7 +117,7 @@ test('KOPIS 키 없이 SAC 공식 프로그램에서 황제 협주곡을 확인�
   const service = createKopisService({ env: {}, persistAnalyses: false,
     sacService: { search: async () => [], program: async (id) => {
       assert.equal(id, '81233')
-      return "[PROGRAM]\\n베토벤 / 피아노 협주곡 제5번 '황제'\\nL. v. Beethoven / Piano Concerto No.5 'Emperor'"
+      return "[PROGRAM]\n베토벤 / 피아노 협주곡 제5번 '황제'\nL. v. Beethoven / Piano Concerto No.5 'Emperor'"
     } } })
   const result = await service.matchBatch({ targetTrackId: emperor2, kopisIds: [], sacIds: ['81233'] })
   assert.equal(result.results[0].sacId, '81233')
