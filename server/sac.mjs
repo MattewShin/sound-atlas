@@ -4,6 +4,7 @@ const endpoint = 'https://www.sac.or.kr/site/main/program/getProgramCalList'
 const date = (value) => {
   const formatted = String(value || '').trim().replaceAll('.', '-')
   return /^\d{4}-\d{2}-\d{2}$/.test(formatted)
+    && Number.isFinite(Date.parse(formatted + 'T00:00:00Z'))
     && new Date(formatted + 'T00:00:00Z').toISOString().slice(0, 10) === formatted ? formatted : null
 }
 const monthsIn = (from, to) => {
@@ -56,8 +57,7 @@ export const createSacService = ({ fetchImpl = fetch, now = Date.now, ttl = CONC
       if (raw.length > 3_000_000) throw new Error('SAC calendar response too large')
       const data = JSON.parse(raw), rows = []
       collect(data, rows)
-      // A valid empty month can have no rows, but a changed response structure should never masquerade as an empty calendar.
-      if (!Array.isArray(data) && !rows.length && !JSON.stringify(data).includes('[]')) throw new Error('SAC calendar response changed')
+      if (!data || typeof data !== 'object') throw new Error('SAC calendar response changed')
       const concerts = [...new Map(rows.map((row) => normalizeSacConcert(row, new Date(now()).toISOString()))
         .filter(Boolean).map((concert) => [concert.id, concert])).values()]
       cache.set(key, { at: now(), concerts })
