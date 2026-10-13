@@ -10,7 +10,7 @@ export const formatConcertDate = (value) => new Intl.DateTimeFormat('ko-KR', {
 }).format(new Date(value))
 
 export const getConcertTicketStatus = (concert, now = Date.now()) => {
-  if (!concert.ticketOpensAt) return '예매 현황은 공연 정보에서 확인'
+  if (!concert.ticketOpensAt) return concert.saleState === '예정' ? '예매 오픈 예정 · 시간은 공식 페이지에서 확인' : '예매 현황은 공식 페이지에서 확인'
   if (Number(now) >= Date.parse(concert.endsAt)) return '공연 종료'
   if (Number(now) >= Date.parse(concert.startsAt)) return '공연 시작 시각 경과'
   return Number(now) < Date.parse(concert.ticketOpensAt)
