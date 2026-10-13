@@ -1,6 +1,6 @@
 # KOPIS 공연 검색 설정
 
-현재 앱은 사용자가 기존 곡 DB에서 곡을 선택한 뒤 **공연 찾기**를 누를 때 클래식 공연을 조회합니다. 곡을 고르기 전에는 목록·상세·OCR 요청을 보내지 않습니다. 정기 수집이나 예약 실행은 없습니다. 프로젝트의 운영 구성을 확인한 범위는 로컬 Node 서버이며, 이 저장소에는 별도의 호스팅 배포 설정이 없습니다. 순수 정적 파일 배포만으로는 서버 API와 OCR이 작동하지 않습니다.
+현재 앱은 사용자가 기존 곡 DB에서 곡을 선택한 뒤 **공연 찾기**를 누를 때 클래식 공연을 조회합니다. 곡을 고르기 전에는 목록·상세·OCR 요청을 보내지 않습니다. 정기 수집이나 예약 실행은 없습니다. 로컬 Node 서버와 Vercel 함수용 진입점을 제공합니다. 순수 정적 파일 배포만으로는 서버 API와 OCR이 작동하지 않습니다.
 
 1. [KOPIS OpenAPI 안내](https://kopis.or.kr/por/cs/openapi/openApiInfo.do?menuId=MNU_00074)에서 서비스키를 발급받습니다.
 2. 프로젝트 루트의 `.env.example`을 `.env`로 복사하고 `KOPIS_SERVICE_KEY`에 키를 넣습니다. `.env`는 Git에서 제외됩니다. 공개 `VITE_` 환경변수나 브라우저 코드에는 입력하지 않습니다.
@@ -14,6 +14,20 @@
 | `HOST` | `0.0.0.0` | 운영 서버 바인딩 주소 |
 
 서비스키가 없어도 기존 곡과 악장 상세·보관함은 볼 수 있습니다. 검색 화면은 **공연 검색 연동 설정 필요**를 표시합니다. 조회 오류를 0건으로 표시하거나 가짜 공연으로 대체하지 않습니다. 현재 직접 등록된 공연은 없습니다. 프로그램 이미지 OCR의 추가 설정·실행·캐시 한계는 [프로그램 OCR 안내](PROGRAM_OCR.md)에 있습니다.
+
+## Vercel 배포
+
+1. Vercel 프로젝트의 **Settings → Environment Variables**에서 이름을 `KOPIS_SERVICE_KEY`, 값을 발급받은 실제 키로 등록합니다. **Production**을 선택하고, 미리보기에서도 검색하려면 **Preview**도 선택합니다. 로컬 `.env`는 업로드하지 않으며 `VITE_` 접두사를 붙이지 않습니다.
+2. 수정한 프로젝트를 Git에 커밋하고 Vercel에 연결된 배포 브랜치로 push합니다. 이 새 코드가 포함된 배포가 필요합니다. 이전 커밋을 Redeploy하는 것만으로는 추가한 API가 반영되지 않습니다. Git 연동이 없는 경우 프로젝트 루트에서 Vercel CLI로 배포합니다.
+3. Framework는 **Vite**, Build Command는 `npm run build`, Output Directory는 `dist`입니다. 저장소의 `vercel.json`에 지정되어 있습니다. Node.js는 `package.json`의 `22.x`를 사용합니다. **Settings → Functions**에서 Fluid compute가 활성화되어 있는지 확인합니다. 함수 실행 한도는 300초로 지정되어 있습니다.
+4. 배포 완료 후 `https://배포주소/api/concerts/status`에 접속합니다. JSON에 `"configured": true`가 나오면 서버가 키를 인식한 것입니다. `false`면 해당 배포 환경의 키를 확인하고 새로 배포합니다. 404나 앱 HTML이면 새 API 코드가 배포되지 않았거나 Root Directory가 프로젝트 루트와 다릅니다. `true`는 인증 성공 확인이 아니므로 실제 공연 검색도 확인합니다.
+5. 모바일에서 곡·지역·기간을 선택하고 **공연 찾기**를 실행합니다. 오류가 있으면 Vercel 함수 로그에서 검색 요청의 상태를 확인합니다. 키나 키가 들어간 KOPIS URL은 로그에 출력하지 않습니다.
+
+`api/index.js`가 Vercel 함수 진입점이며, `vercel.json`은 `/api/*`를 그 함수로 전달합니다. `server/vercel.mjs`는 원래 API 경로와 검색 조건을 복원하여 기존 KOPIS·작품 확인 API를 실행합니다. 화면과 API가 같은 출처이므로 별도 API 주소나 CORS 설정이 필요하지 않습니다. Vercel에서 `npm start`로 상시 서버를 띄울 필요도 없습니다.
+
+OCR worker와 WASM 파일은 함수에 포함하며, 언어 모델은 최초 OCR 시 내려받습니다. 언어 모델·OCR 결과·공연 분석은 임시 디렉터리(`tmpdir()/sound-atlas-ocr`)에 저장합니다. 같은 인스턴스의 캐시는 재사용하지만 재배포·인스턴스 교체·다른 인스턴스에서는 재사용을 보장하지 않습니다. 여러 이미지의 OCR이 300초를 넘으면 Vercel이 요청을 종료할 수 있습니다. 지속 캐시나 더 긴 처리 시간이 필요하면 지속 볼륨이 있는 Node 서버를 사용합니다.
+
+로컬 자동 테스트는 rewrite 경로·상태·목록·상세·POST 작품 확인·캐시·JSON 오류를 검증합니다. 실제 Vercel 배포와 모바일 OCR 실행은 배포 후 확인해야 합니다. 참고: [Vercel Node 함수](https://vercel.com/docs/functions/runtimes/node-js), [함수 실행 시간](https://vercel.com/docs/functions/configuring-functions/duration), [환경변수 등록과 재배포](https://vercel.com/docs/environment-variables/managing-environment-variables).
 
 ## 검색 동작
 
@@ -33,7 +47,7 @@
 | `GET /api/concerts/{KOPIS_ID}/program` | 별도 공연 상세·소개 자료 |
 | `POST /api/concerts/match-batch` | 실제 `targetTrackId`, KOPIS ID 최대 5개, 선택적 `cacheOnly`·`refresh`로 작품 비교 |
 
-목록·프로그램 GET 경로의 `refresh=1`과 POST의 `refresh`는 캐시를 건너뜁니다. 정상 0건은 HTTP 200과 빈 `concerts` 배열입니다. 미설정은 503 `KOPIS_NOT_CONFIGURED`, 인증 오류는 `KOPIS_AUTH_ERROR`, 조회 오류는 별도 오류 코드와 메시지입니다. 서버는 서비스키가 포함된 요청 URL·원문 오류·스택을 브라우저로 전달하지 않습니다. API와 앱은 같은 Node 서버에서 제공됩니다. 정적 호스팅을 쓰려면 별도의 Node API를 운영하고 `/api/*`를 같은 출처로 프록시해야 합니다.
+목록·프로그램 GET 경로의 `refresh=1`과 POST의 `refresh`는 캐시를 건너뜁니다. 정상 0건은 HTTP 200과 빈 `concerts` 배열입니다. 미설정은 503 `KOPIS_NOT_CONFIGURED`, 인증 오류는 `KOPIS_AUTH_ERROR`, 조회 오류는 별도 오류 코드와 메시지입니다. 서버는 서비스키가 포함된 요청 URL·원문 오류·스택을 브라우저로 전달하지 않습니다. 로컬 운영에서는 API와 앱을 같은 Node 서버에서 제공하고, Vercel에서는 같은 출처의 함수로 API를 제공합니다. 다른 정적 호스팅을 쓰려면 별도의 Node API를 운영하고 `/api/*`를 같은 출처로 프록시해야 합니다.
 
 ## 실제 KOPIS 검증 이력과 현재 범위
 

@@ -64,6 +64,6 @@ npm run diagnose:recommendations
 
 선택값은 `classic-atlas-music-selection-v1`에 감정 키로 저장합니다. 유효한 키·현재 한글명은 유지하고 이전 편안한만 평안한으로 변환합니다. 따뜻한·장엄한 등으로 새 평가를 추정하지 않습니다. 최근 곡 키 `classic-atlas-recent-tracks-v1`이 있으면 ID 매핑·중복 제거를 적용합니다. 과거 취향·강도·추천 캐시 키만 폐기합니다. 정리된 보관곡이 있으면 한 번 안내하며 동일 버전 재실행은 추가 삭제를 하지 않습니다. `localStorage.clear()`는 사용하지 않습니다.
 
-로그인·서버 DB·외부 음원 API·실제 공연 예매는 현재 범위에 포함되어 있지 않습니다. KOPIS 검색은 서버 전용 서비스키와 이번에 추가한 Node API를 사용합니다. `.env.example`을 참고하고 개발은 `npm run dev`, 운영은 `npm run build` 후 `npm start`로 실행합니다.
+로그인·서버 DB·외부 음원 API·실제 공연 예매는 현재 범위에 포함되어 있지 않습니다. KOPIS 검색은 서버 전용 서비스키와 Node API를 사용합니다. `.env.example`을 참고하고 개발은 `npm run dev`, Node 운영은 `npm run build` 후 `npm start`로 실행합니다. Vercel에서는 `api/index.js`와 `vercel.json`이 공연 API를 연결합니다. Vercel 환경변수에 `KOPIS_SERVICE_KEY`를 등록하고 이 코드가 포함된 새 배포를 실행하세요. 단계별 확인 방법은 [Vercel 배포 안내](docs/KOPIS_SETUP.md#vercel-배포)에 있습니다.
 
 지역 선택은 공연 찾기에서 곡을 선택한 뒤 검색 조건 안에 표시합니다. 화면 폭에 맞는 선택 창에 전국·시도 목록을 3열 버튼으로 배치하며, 선택하면 창이 닫힙니다. 닫기 버튼·바깥 영역·Escape 키로도 닫을 수 있습니다. 기본값은 서울이며 선택은 `classic-atlas-concert-region-v1`에 별도로 저장해 탭 이동과 새로고침 후에도 유지합니다. 선택한 지역·기간은 검색 버튼을 누를 때만 조회 조건으로 적용합니다.
