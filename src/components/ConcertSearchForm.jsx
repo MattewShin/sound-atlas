@@ -21,7 +21,8 @@ export default function ConcertSearchForm({ region, onSelectRegion, period, onCh
     {loading && <button className="concert-official-link" type="button" onClick={onStop}>중단</button>}
     <div aria-live="polite">
       {connection.status === 'checking' && <p>공연 검색 연동을 확인하고 있어요.</p>}
-      {connection.status === 'needs-setup' && <p className="concert-search-setup" role="status">공연 검색 연동 설정 필요<span>서버의 KOPIS 서비스키와 API 실행 환경을 설정해주세요.</span></p>}
+      {connection.status === 'partial' && <p className="concert-search-setup" role="status">예술의전당 공연 검색 가능<span>KOPIS 연동이 없어 다른 공연장의 정보는 아직 포함되지 않아요.</span></p>}
+      {connection.status === 'needs-setup' && <p className="concert-search-setup" role="status">공연 검색 연동 설정 필요<span>공연 검색 서버의 실행 환경을 확인해주세요.</span></p>}
       {search.error && <p className="concert-search-error" role="alert">{search.error}{search.data && <span>마지막으로 조회한 목록을 유지하고 있어요.</span>}</p>}
       {search.data && !search.data.localOnly && <p className="concert-search-time">마지막 조회 · <time dateTime={search.data.fetchedAt}>{formatConcertDate(search.data.fetchedAt)}</time> · 한국 시간<br />{search.data.query.region} · {search.data.query.from} ~ {search.data.query.to} {search.data.fromCache ? '· 최근 검색 결과 재사용' : ''}</p>}
       {changed && <p>검색 조건이 바뀌었어요. ‘공연 찾기’를 누르면 새 조건으로 조회해요. 아래 검색 목록은 마지막 조회 조건의 결과예요.</p>}

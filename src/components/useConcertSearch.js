@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { createConcertSearchClient, mergeSearchConcerts } from '../data/concertSearch.js'
+import { createConcertSearchClient, keepRecentSacPrograms, mergeSearchConcerts } from '../data/concertSearch.js'
 import { getTrackTarget } from '../data/workCatalog.js'
 import { concertFitsQuery, getRegisteredTargetConcerts } from '../data/concertTargetSearch.js'
 import { getMatchStatus, INITIAL_CONCERT_CHECK_LIMIT } from '../data/concertMatchStates.js'
@@ -29,7 +29,7 @@ export default function useConcertSearch() {
     client.status().then((config) => {
       if (!mounted) return
       settings.current = { initialCheckLimit: Math.min(10, Math.max(1, config.initialCheckLimit || 10)), moreCheckLimit: Math.min(10, Math.max(1, config.moreCheckLimit || 10)), programBatchSize: Math.min(5, Math.max(1, config.programBatchSize || 2)) }
-      setConnection({ status: config.configured ? 'ready' : 'needs-setup', ...config })
+      setConnection({ status: config.configured ? 'ready' : config.sacAvailable ? 'partial' : 'needs-setup', ...config })
     }).catch(() => { if (mounted) setConnection({ status: 'needs-setup' }) })
     return () => { mounted = false; requestId.current += 1; controller.current?.abort() }
   }, [client])
@@ -42,11 +42,11 @@ export default function useConcertSearch() {
     setSearch({ status: 'error', data, error: error.message })
   }
   const applyBatch = (data, response) => {
-    const byId = new Map(response.results.map((item) => [item.kopisId, item]))
+    const byId = new Map(response.results.map((item) => [item.kopisId || item.sacId, item]))
     return { ...data, target: response.target, checkedAt: response.checkedAt, concerts: data.concerts.map((concert) => {
-      const item = byId.get(concert.kopisId)
+      const item = byId.get(concert.kopisId || concert.sacId)
       if (!item) return concert
-      if (item.concert && !concertFitsQuery(item.concert, data.query)) {
+      if (item.concert?.dateFrom && !concertFitsQuery(item.concert, data.query)) {
         if (item.fromCache) return { ...concert, needsFreshProgram: true, targetMatch: { status: 'pending', attempted: false, completed: false, reason: '목록과 저장된 상세 일정이 달라 다시 확인할 예정이에요.' } }
         return { ...concert, needsFreshProgram: false, targetMatch: { status: 'needs-review', attempted: true, completed: true, reason: '목록과 상세 일정 또는 지역이 달라 공연 정보를 다시 확인해야 해요.' } }
       }
@@ -86,6 +86,7 @@ export default function useConcertSearch() {
       setSearch({ status: 'error', data: null, error: '먼저 등록된 곡을 선택해주세요.' })
       return
     }
+    const previousSac = !refresh && snapshot.current?.targetTrackId === target.trackId ? snapshot.current.concerts : []
     const { id, current } = begin()
     setSearch((previous) => ({ ...previous, status: 'loading', error: null }))
     try {
@@ -94,9 +95,11 @@ export default function useConcertSearch() {
       const data = await client.search(query, { refresh, signal: current.signal })
       if (id !== requestId.current || current.signal.aborted) return
       const unique = [...new Map(data.concerts.map((concert) => [concert.kopisId || concert.id, concert])).values()]
-      const candidates = mergeSearchConcerts(unique.filter((concert) => concertFitsQuery(concert, query)), registered)
+      const candidates = keepRecentSacPrograms(mergeSearchConcerts(unique.filter((concert) => concertFitsQuery(concert, query)), registered), previousSac, target.trackId)
       publish({ ...data, apiTotal: unique.length, targetTrackId: target.trackId, target, query: { ...data.query, targetTrackId: target.trackId },
-        concerts: candidates.map((concert) => ({ ...concert, ...(!concert.targetMatch ? { targetMatch: { status: 'pending', targetTrackId: target.trackId, attempted: false, completed: false, reason: '프로그램을 아직 확인하지 않았어요.' } } : {}) })),
+        concerts: candidates.map((concert) => ({ ...concert, ...(!concert.targetMatch ? { targetMatch: concert.sacId
+          ? { status: 'needs-review', targetTrackId: target.trackId, attempted: false, completed: false, reason: '예술의전당 일정에서 확인했어요. 선택한 작품의 연주 여부는 공식 프로그램에서 확인해주세요.' }
+          : { status: 'pending', targetTrackId: target.trackId, attempted: false, completed: false, reason: '프로그램을 아직 확인하지 않았어요.' } } : {}) })),
       }, 'checking')
       const ids = candidates.filter(({ kopisId }) => kopisId).map(({ kopisId }) => kopisId)
       if (!refresh) for (let offset = 0; offset < ids.length; offset += 100) {
@@ -115,12 +118,12 @@ export default function useConcertSearch() {
   const loadProgram = async (concert, refresh = false) => {
     if (busy.current || !snapshot.current?.targetTrackId) return
     const { id, current } = begin()
-    setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'loading' } }))
+    setProgramRequests((previous) => ({ ...previous, [concert.kopisId || concert.sacId]: { status: 'loading' } }))
     try {
-      const response = await client.matchBatch(snapshot.current.targetTrackId, [concert.kopisId], { refresh, signal: current.signal })
+      const response = await client.matchBatch(snapshot.current.targetTrackId, concert.kopisId ? [concert.kopisId] : [], { sacIds: concert.sacId ? [concert.sacId] : [], refresh, signal: current.signal })
       if (id === requestId.current) publish(applyBatch(snapshot.current, response))
-      if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'success' } }))
-    } catch (error) { if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'error', error: error.message } })) }
+      if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId || concert.sacId]: { status: 'success' } }))
+    } catch (error) { if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId || concert.sacId]: { status: 'error', error: error.message } })) }
     finally { if (id === requestId.current) busy.current = false }
   }
   return { connection, search, runSearch, programRequests, loadProgram, checkNext, clear, stop }

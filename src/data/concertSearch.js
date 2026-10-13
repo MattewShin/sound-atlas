@@ -54,9 +54,9 @@ export const createConcertSearchClient = ({ fetchImpl = (...args) => fetch(...ar
         return data
       })
     },
-    async matchBatch(targetTrackId, kopisIds, { refresh = false, cacheOnly = false, signal } = {}) {
+    async matchBatch(targetTrackId, kopisIds, { sacIds = [], refresh = false, cacheOnly = false, signal } = {}) {
       const data = await request('/api/concerts/match-batch', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ targetTrackId, kopisIds, refresh, cacheOnly }), signal })
+        body: JSON.stringify({ targetTrackId, kopisIds, sacIds, refresh, cacheOnly }), signal })
       if (data.targetTrackId !== targetTrackId || !Array.isArray(data.results) || !data.target) throw new Error('대상 곡의 프로그램 확인 응답을 확인할 수 없습니다.')
       return data
     },
@@ -94,4 +94,20 @@ export const mergeSearchConcerts = (incomingList, knownList) => {
     } else result.set(incoming.id, incoming)
   }
   return [...result.values()]
+}
+
+export const keepRecentSacPrograms = (concerts, previous, targetTrackId, now = Date.now()) => {
+  const recent = new Map(previous.filter((item) => {
+    const checkedAt = Date.parse(item.programFetchedAt)
+    return item.sacId && item.targetMatch?.targetTrackId === targetTrackId
+      && Number.isFinite(checkedAt) && now - checkedAt >= 0 && now - checkedAt < CONCERT_CACHE_TTL_MS
+  }).map((item) => [item.sacId, item]))
+  return concerts.map((concert) => {
+    const known = concert.sacId && recent.get(concert.sacId)
+    if (!known || concert.dateFrom !== known.dateFrom || concert.dateTo !== known.dateTo) return concert
+    return { ...concert, programEvidence: known.programEvidence, programExtraction: known.programExtraction,
+      programFetchedAt: known.programFetchedAt, programWorkIds: known.programWorkIds, programScopes: known.programScopes,
+      programStatus: known.programStatus, programVerification: known.programVerification, programCoverage: known.programCoverage,
+      targetMatch: known.targetMatch }
+  })
 }

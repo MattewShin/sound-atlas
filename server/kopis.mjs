@@ -7,6 +7,7 @@ import { mergeSearchConcerts } from '../src/data/concertSearch.js'
 import { extractProgram, getExtractedWorkLinks, matchConcertToTrack } from './programMatching.mjs'
 import { createProgramOcrService, OCR_VERSION } from './programOcr.mjs'
 import { combineOcrProgram, matchAnalyzedConcert } from './ocrProgramEvidence.mjs'
+import { createSacService } from './sac.mjs'
 import { mkdir, readFile, writeFile, rename } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -64,15 +65,16 @@ export const normalizeKopisConcert = (row, fetchedAt) => {
   }
 }
 
-export const createKopisService = ({ env = process.env, fetchImpl = fetch, now = Date.now, ocrService, persistAnalyses = true, delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) } = {}) => {
+export const createKopisService = ({ env = process.env, fetchImpl = fetch, now = Date.now, ocrService, persistAnalyses = true, sacService, delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) } = {}) => {
   const ocr = ocrService || createProgramOcrService({ env, now })
+  const sac = sacService || createSacService({ fetchImpl, now })
   const analyses = new Map()
   const key = env.KOPIS_SERVICE_KEY?.trim()
   const ttl = env.CONCERT_CACHE_TTL_MS === undefined ? CONCERT_CACHE_TTL_MS : Number(env.CONCERT_CACHE_TTL_MS)
   if (!Number.isSafeInteger(ttl) || ttl < 0) throw new Error('CONCERT_CACHE_TTL_MS must be a non-negative integer')
   const cache = new Map(), pending = new Map()
   let upstreamQueue = Promise.resolve()
-  const config = () => ({ configured: Boolean(key), cacheTtlMs: ttl, maxSearchDays: MAX_CONCERT_SEARCH_DAYS,
+  const config = () => ({ configured: Boolean(key), sacAvailable: true, cacheTtlMs: ttl, maxSearchDays: MAX_CONCERT_SEARCH_DAYS,
     programBatchSize: ocr.config.programBatchSize, initialCheckLimit: ocr.config.initialCheckLimit, moreCheckLimit: ocr.config.moreCheckLimit, ocrWorkers: ocr.config.workers })
   const requireKey = () => { if (!key) throw new ConcertApiError('KOPIS_NOT_CONFIGURED', '공연 검색 연동 설정 필요', 503) }
   const requestXml = (path, params = {}) => {
@@ -96,7 +98,6 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
     return request
   }
   const cached = async (cacheKey, refresh, loader) => {
-    requireKey()
     const entry = cache.get(cacheKey)
     if (!refresh && entry && now() - Date.parse(entry.fetchedAt) >= 0 && now() - Date.parse(entry.fetchedAt) < ttl) return { ...entry, fromCache: true, cacheTtlMs: ttl }
     if (!refresh && pending.has(cacheKey)) return pending.get(cacheKey)
@@ -117,7 +118,9 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
     try { query = validateConcertQuery(input) } catch (error) { throw new ConcertApiError('INVALID_QUERY', error.message, 400) }
     return cached(`list:${JSON.stringify(query)}`, refresh, async () => {
       const unique = new Map()
-      for (let page = 1; page <= 50; page += 1) {
+      const sourceWarnings = []
+      if (!key) sourceWarnings.push('KOPIS 연동이 없어 예술의전당 공연만 조회했어요.')
+      for (let page = 1; key && page <= 50; page += 1) {
         const rows = await requestXml('pblprfr', {
           stdate: query.from.replaceAll('-', ''), eddate: query.to.replaceAll('-', ''), cpage: String(page), rows: '100', shcate: 'CCCA',
           ...(query.region === '전국' ? {} : { signgucode: KOPIS_REGION_CODES[query.region] }),
@@ -127,9 +130,22 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
           const concert = normalizeKopisConcert(row, new Date(now()).toISOString())
           if (concert.dateFrom <= query.to && concert.dateTo >= query.from && (query.region === '전국' || concert.region === query.region)) unique.set(concert.id, concert)
         }
-        if (rows.length < 100) return { query, concerts: [...unique.values()] }
+        if (rows.length < 100) break
+        if (page === 50) throw new ConcertApiError('SEARCH_TOO_LARGE', '검색 결과가 많습니다. 지역이나 기간을 좁혀 다시 조회해주세요.')
       }
-      throw new ConcertApiError('SEARCH_TOO_LARGE', '검색 결과가 많습니다. 지역이나 기간을 좁혀 다시 조회해주세요.')
+      try {
+        for (const concert of await sac.search(query, refresh)) {
+          // Same official event can arrive from both sources. Keep the KOPIS copy when its title, dates and venue agree.
+          const duplicate = [...unique.values()].some((known) => known.dateFrom === concert.dateFrom && known.dateTo === concert.dateTo
+            && known.title.replace(/\s/g, '') === concert.title.replace(/\s/g, '')
+            && /예술의전당/.test(known.venue))
+          if (!duplicate) unique.set(concert.id, concert)
+        }
+      } catch {
+        if (!key) throw new ConcertApiError('CONCERT_SOURCES_UNAVAILABLE', '예술의전당 공연 정보를 조회하지 못했습니다. 잠시 후 다시 검색해주세요.', 503)
+        sourceWarnings.push('예술의전당 일정은 현재 조회하지 못했습니다. 다시 검색하면 재시도합니다.')
+      }
+      return { query, concerts: [...unique.values()], sourceWarnings }
     })
   }
   const program = async (kopisId, refresh = false) => {
@@ -176,13 +192,16 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
     }
     return { targetTrackId, target, results, checkedAt: new Date(now()).toISOString() }
   }
-  const matchBatch = async ({ targetTrackId, kopisIds, refresh = false, signal }) => {
+  const matchBatch = async ({ targetTrackId, kopisIds, sacIds = [], refresh = false, signal }) => {
     const target = getTrackTarget(targetTrackId)
     if (!target) throw new ConcertApiError('INVALID_TARGET', '등록된 곡 ID를 선택해주세요.', 400)
     if (!Array.isArray(kopisIds) || kopisIds.length > CONCERT_PROGRAM_BATCH_SIZE || kopisIds.some((id) => typeof id !== 'string' || !/^PF\d{1,12}$/.test(id))) {
       throw new ConcertApiError('INVALID_BATCH', `공연 자료는 최대 ${CONCERT_PROGRAM_BATCH_SIZE}건씩 확인할 수 있어요.`, 400)
     }
-    requireKey()
+    if (!Array.isArray(sacIds) || kopisIds.length + sacIds.length > CONCERT_PROGRAM_BATCH_SIZE || sacIds.some((id) => typeof id !== 'string' || !/^\d{1,12}$/.test(id))) {
+      throw new ConcertApiError('INVALID_BATCH', `공연 자료는 최대 ${CONCERT_PROGRAM_BATCH_SIZE}건씩 확인할 수 있어요.`, 400)
+    }
+    if (kopisIds.length) requireKey()
     const results = []
     for (const kopisId of [...new Set(kopisIds)]) {
       try {
@@ -215,6 +234,27 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
         if (error.code === 'KOPIS_AUTH_ERROR' || error.code === 'KOPIS_NOT_CONFIGURED') throw error
         results.push({ kopisId, targetMatch: { targetTrackId, workId: target.workId, status: 'failed', attempted: true, completed: false,
           retryable: true, reason: '자료 조회에 실패했어요. 아직 불일치로 판단하지 않았으며 다시 확인할 수 있어요.' } })
+      }
+    }
+    for (const sacId of [...new Set(sacIds)]) {
+      try {
+        signal?.throwIfAborted()
+        const programText = await sac.program(sacId, refresh)
+        signal?.throwIfAborted()
+        const programEvidence = { text: programText, imageUrls: [] }
+        const programExtraction = extractProgram(programText)
+        const links = getExtractedWorkLinks(programExtraction)
+        const concert = { sacId, programEvidence, programExtraction, programFetchedAt: new Date(now()).toISOString(),
+          programWorkIds: links.map(({ workId }) => workId),
+          programScopes: Object.fromEntries(links.map(({ workId, scope }) => [workId, scope])),
+          programStatus: links.length ? 'verified' : programText ? 'needs-review' : 'unavailable',
+          programVerification: links.length ? 'text' : undefined,
+          programCoverage: { complete: programExtraction.complete, explicitComplete: programExtraction.explicitComplete, extractedEntries: programExtraction.entries.length } }
+        results.push({ sacId, concert: { ...concert, targetMatch: matchConcertToTrack(concert, targetTrackId) }, fromCache: false })
+      } catch {
+        if (signal?.aborted) throw Object.assign(new Error('검색을 중단했어요.'), { code: 'ABORTED' })
+        results.push({ sacId, targetMatch: { targetTrackId, workId: target.workId, status: 'failed', attempted: true, completed: false,
+          retryable: true, reason: '예술의전당 프로그램을 읽지 못했어요. 공식 페이지에서 확인하거나 다시 시도해주세요.' } })
       }
     }
     return { targetTrackId, target, results, checkedAt: new Date(now()).toISOString(), batchSize: CONCERT_PROGRAM_BATCH_SIZE }
