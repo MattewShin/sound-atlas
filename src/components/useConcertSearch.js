@@ -42,11 +42,11 @@ export default function useConcertSearch() {
     setSearch({ status: 'error', data, error: error.message })
   }
   const applyBatch = (data, response) => {
-    const byId = new Map(response.results.map((item) => [item.kopisId, item]))
+    const byId = new Map(response.results.map((item) => [item.kopisId || item.sacId, item]))
     return { ...data, target: response.target, checkedAt: response.checkedAt, concerts: data.concerts.map((concert) => {
-      const item = byId.get(concert.kopisId)
+      const item = byId.get(concert.kopisId || concert.sacId)
       if (!item) return concert
-      if (item.concert && !concertFitsQuery(item.concert, data.query)) {
+      if (item.concert?.dateFrom && !concertFitsQuery(item.concert, data.query)) {
         if (item.fromCache) return { ...concert, needsFreshProgram: true, targetMatch: { status: 'pending', attempted: false, completed: false, reason: '목록과 저장된 상세 일정이 달라 다시 확인할 예정이에요.' } }
         return { ...concert, needsFreshProgram: false, targetMatch: { status: 'needs-review', attempted: true, completed: true, reason: '목록과 상세 일정 또는 지역이 달라 공연 정보를 다시 확인해야 해요.' } }
       }
@@ -117,12 +117,12 @@ export default function useConcertSearch() {
   const loadProgram = async (concert, refresh = false) => {
     if (busy.current || !snapshot.current?.targetTrackId) return
     const { id, current } = begin()
-    setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'loading' } }))
+    setProgramRequests((previous) => ({ ...previous, [concert.kopisId || concert.sacId]: { status: 'loading' } }))
     try {
-      const response = await client.matchBatch(snapshot.current.targetTrackId, [concert.kopisId], { refresh, signal: current.signal })
+      const response = await client.matchBatch(snapshot.current.targetTrackId, concert.kopisId ? [concert.kopisId] : [], { sacIds: concert.sacId ? [concert.sacId] : [], refresh, signal: current.signal })
       if (id === requestId.current) publish(applyBatch(snapshot.current, response))
-      if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'success' } }))
-    } catch (error) { if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'error', error: error.message } })) }
+      if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId || concert.sacId]: { status: 'success' } }))
+    } catch (error) { if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId || concert.sacId]: { status: 'error', error: error.message } })) }
     finally { if (id === requestId.current) busy.current = false }
   }
   return { connection, search, runSearch, programRequests, loadProgram, checkNext, clear, stop }
