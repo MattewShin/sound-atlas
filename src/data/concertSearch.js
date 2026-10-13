@@ -95,3 +95,19 @@ export const mergeSearchConcerts = (incomingList, knownList) => {
   }
   return [...result.values()]
 }
+
+export const keepRecentSacPrograms = (concerts, previous, targetTrackId, now = Date.now()) => {
+  const recent = new Map(previous.filter((item) => {
+    const checkedAt = Date.parse(item.programFetchedAt)
+    return item.sacId && item.targetMatch?.targetTrackId === targetTrackId
+      && Number.isFinite(checkedAt) && now - checkedAt >= 0 && now - checkedAt < CONCERT_CACHE_TTL_MS
+  }).map((item) => [item.sacId, item]))
+  return concerts.map((concert) => {
+    const known = concert.sacId && recent.get(concert.sacId)
+    if (!known || concert.dateFrom !== known.dateFrom || concert.dateTo !== known.dateTo) return concert
+    return { ...concert, programEvidence: known.programEvidence, programExtraction: known.programExtraction,
+      programFetchedAt: known.programFetchedAt, programWorkIds: known.programWorkIds, programScopes: known.programScopes,
+      programStatus: known.programStatus, programVerification: known.programVerification, programCoverage: known.programCoverage,
+      targetMatch: known.targetMatch }
+  })
+}
