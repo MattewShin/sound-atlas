@@ -9,7 +9,8 @@ export default function TargetConcertResults({ search, results, renderCard, onCh
   const retryable = candidates.some(({ targetMatch }) => getMatchStatus(targetMatch) === 'failed' && targetMatch?.retryable)
   return <section className="concert-search-results" aria-label="대상 곡 공연 검색 결과">
     <h2>대상 작품 포함 확인</h2>
-    <div className="concert-match-progress" aria-live="polite"><p>{search.data.localOnly ? '직접 등록한 프로그램 먼저 표시' : `API 기본 정보 ${search.data.apiTotal}건`} · 검색 조건에 맞는 후보 {candidates.length}건</p>
+    <div className="concert-match-progress" aria-live="polite"><p>{search.data.localOnly ? '직접 등록한 프로그램 먼저 표시' : `공연 기본 정보 ${search.data.apiTotal}건`} · 검색 조건에 맞는 후보 {candidates.length}건</p>
+      {search.data.sourceWarnings?.map((warning) => <p key={warning} role="status">{warning}</p>)}
       <p>자료 조회 시도 {progress.attempted}건 / 자료 처리 완료 {progress.completed}건</p>
       <dl className="concert-status-counts" aria-label="후보별 대표 상태 집계">{Object.entries(matchLabels).map(([status, label]) => <div key={status}><dt>{label}</dt><dd>{progress[status]}건</dd></div>)}</dl>
       {busy && <p>{matched.length ? `일치 공연 ${matched.length}개 발견 · 다른 후보 확인 중…` : '프로그램 확인 중…'}</p>}
