@@ -192,13 +192,16 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
     }
     return { targetTrackId, target, results, checkedAt: new Date(now()).toISOString() }
   }
-  const matchBatch = async ({ targetTrackId, kopisIds, refresh = false, signal }) => {
+  const matchBatch = async ({ targetTrackId, kopisIds, sacIds = [], refresh = false, signal }) => {
     const target = getTrackTarget(targetTrackId)
     if (!target) throw new ConcertApiError('INVALID_TARGET', '등록된 곡 ID를 선택해주세요.', 400)
     if (!Array.isArray(kopisIds) || kopisIds.length > CONCERT_PROGRAM_BATCH_SIZE || kopisIds.some((id) => typeof id !== 'string' || !/^PF\d{1,12}$/.test(id))) {
       throw new ConcertApiError('INVALID_BATCH', `공연 자료는 최대 ${CONCERT_PROGRAM_BATCH_SIZE}건씩 확인할 수 있어요.`, 400)
     }
-    requireKey()
+    if (!Array.isArray(sacIds) || kopisIds.length + sacIds.length > CONCERT_PROGRAM_BATCH_SIZE || sacIds.some((id) => typeof id !== 'string' || !/^\d{1,12}$/.test(id))) {
+      throw new ConcertApiError('INVALID_BATCH', `공연 자료는 최대 ${CONCERT_PROGRAM_BATCH_SIZE}건씩 확인할 수 있어요.`, 400)
+    }
+    if (kopisIds.length) requireKey()
     const results = []
     for (const kopisId of [...new Set(kopisIds)]) {
       try {
@@ -231,6 +234,27 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
         if (error.code === 'KOPIS_AUTH_ERROR' || error.code === 'KOPIS_NOT_CONFIGURED') throw error
         results.push({ kopisId, targetMatch: { targetTrackId, workId: target.workId, status: 'failed', attempted: true, completed: false,
           retryable: true, reason: '자료 조회에 실패했어요. 아직 불일치로 판단하지 않았으며 다시 확인할 수 있어요.' } })
+      }
+    }
+    for (const sacId of [...new Set(sacIds)]) {
+      try {
+        signal?.throwIfAborted()
+        const programText = await sac.program(sacId, refresh)
+        signal?.throwIfAborted()
+        const programEvidence = { text: programText, imageUrls: [] }
+        const programExtraction = extractProgram(programText)
+        const links = getExtractedWorkLinks(programExtraction)
+        const concert = { sacId, programEvidence, programExtraction, programFetchedAt: new Date(now()).toISOString(),
+          programWorkIds: links.map(({ workId }) => workId),
+          programScopes: Object.fromEntries(links.map(({ workId, scope }) => [workId, scope])),
+          programStatus: links.length ? 'verified' : programText ? 'needs-review' : 'unavailable',
+          programVerification: links.length ? 'text' : undefined,
+          programCoverage: { complete: programExtraction.complete, explicitComplete: programExtraction.explicitComplete, extractedEntries: programExtraction.entries.length } }
+        results.push({ sacId, concert: { ...concert, targetMatch: matchConcertToTrack(concert, targetTrackId) }, fromCache: false })
+      } catch {
+        if (signal?.aborted) throw Object.assign(new Error('검색을 중단했어요.'), { code: 'ABORTED' })
+        results.push({ sacId, targetMatch: { targetTrackId, workId: target.workId, status: 'failed', attempted: true, completed: false,
+          retryable: true, reason: '예술의전당 프로그램을 읽지 못했어요. 공식 페이지에서 확인하거나 다시 시도해주세요.' } })
       }
     }
     return { targetTrackId, target, results, checkedAt: new Date(now()).toISOString(), batchSize: CONCERT_PROGRAM_BATCH_SIZE }
