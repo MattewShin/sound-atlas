@@ -14,7 +14,7 @@ function MatchBasis({ concert }) {
 
 function OfficialSource({ concert }) {
   return <div className="concert-source">
-    <a className="concert-official-link" href={concert.sourceUrl} target="_blank" rel="noopener noreferrer">{concert.programStatus === 'verified' ? '공식 공연 정보' : 'KOPIS 공연 정보'} <span aria-hidden="true">↗</span></a>
+    <a className="concert-official-link" href={concert.sourceUrl} target="_blank" rel="noopener noreferrer">{concert.sourceLabel || '공연 정보'} <span aria-hidden="true">↗</span></a>
     <p>{concert.sourceLabel} · {concert.verifiedOn ? <>정보 확인일 <time dateTime={concert.verifiedOn}>{concert.verifiedOn}</time></> : <>정보 조회 <time dateTime={concert.fetchedAt}>{formatConcertDate(concert.fetchedAt)}</time> · 한국 시간</>}</p>
   </div>
 }
