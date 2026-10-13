@@ -96,7 +96,9 @@ export default function useConcertSearch() {
       const unique = [...new Map(data.concerts.map((concert) => [concert.kopisId || concert.id, concert])).values()]
       const candidates = mergeSearchConcerts(unique.filter((concert) => concertFitsQuery(concert, query)), registered)
       publish({ ...data, apiTotal: unique.length, targetTrackId: target.trackId, target, query: { ...data.query, targetTrackId: target.trackId },
-        concerts: candidates.map((concert) => ({ ...concert, ...(!concert.targetMatch ? { targetMatch: { status: 'pending', targetTrackId: target.trackId, attempted: false, completed: false, reason: '프로그램을 아직 확인하지 않았어요.' } } : {}) })),
+        concerts: candidates.map((concert) => ({ ...concert, ...(!concert.targetMatch ? { targetMatch: concert.sacId
+          ? { status: 'needs-review', targetTrackId: target.trackId, attempted: false, completed: false, reason: '예술의전당 일정에서 확인했어요. 선택한 작품의 연주 여부는 공식 프로그램에서 확인해주세요.' }
+          : { status: 'pending', targetTrackId: target.trackId, attempted: false, completed: false, reason: '프로그램을 아직 확인하지 않았어요.' } } : {}) })),
       }, 'checking')
       const ids = candidates.filter(({ kopisId }) => kopisId).map(({ kopisId }) => kopisId)
       if (!refresh) for (let offset = 0; offset < ids.length; offset += 100) {
