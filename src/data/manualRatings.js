@@ -1,3 +1,5 @@
+import { tchaikovskySeasons } from './tchaikovskySeasons.js'
+
 // 사용자 확정 입력. data/manual/manual-emotions-v1.csv와 전체 점수를 대조합니다.
 export const manualRatings = [
   {
@@ -1571,6 +1573,7 @@ export const manualRatings = [
     "title": "베토벤 피아노 협주곡 No.5 Op.73",
     "movement": "1악장",
     "alias": "황제",
+    "summary": "장대한 관현악과 화려한 피아노가 당당한 기세와 경이로움을 펼치는 악장.",
     "emotionScores": {
       "wonder": 4,
       "transcendence": 4,
@@ -1578,7 +1581,7 @@ export const manualRatings = [
       "tenderness": 1,
       "peacefulness": 2,
       "joy": 3,
-      "power": 3,
+      "power": 4,
       "tension": 3,
       "sadness": 1
     },
@@ -1596,13 +1599,14 @@ export const manualRatings = [
     "title": "베토벤 피아노 협주곡 No.5 Op.73",
     "movement": "2악장",
     "alias": "황제",
+    "summary": "고요한 현악과 다정한 피아노 선율에 평안함과 애틋함이 함께 머무는 악장.",
     "emotionScores": {
       "wonder": 3,
       "transcendence": 2,
       "nostalgia": 2,
       "tenderness": 4,
-      "peacefulness": 3,
-      "joy": 3,
+      "peacefulness": 4,
+      "joy": 2,
       "power": 1,
       "tension": 1,
       "sadness": 3
@@ -1621,6 +1625,7 @@ export const manualRatings = [
     "title": "베토벤 피아노 협주곡 No.5 Op.73",
     "movement": "3악장",
     "alias": "황제",
+    "summary": "도약하는 리듬과 힘찬 추진력이 밝은 환희로 이어지는 피날레.",
     "emotionScores": {
       "wonder": 4,
       "transcendence": 4,
@@ -1635,5 +1640,6 @@ export const manualRatings = [
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
     "ratingUnit": "whole-movement"
-  }
+  },
+  ...tchaikovskySeasons
 ]

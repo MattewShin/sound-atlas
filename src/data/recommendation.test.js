@@ -10,7 +10,7 @@ import { buildRecommendationDiagnosis } from '../../scripts/diagnoseRecommendati
 test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출처가 확정 CSV와 전부 일치한다', () => {
   const rows = readFileSync(new URL('../../data/manual/manual-emotions-v1.csv', import.meta.url), 'utf8').trim().split(/\r?\n/)
   assert.deepEqual(rows.shift().split(',').slice(2), emotionKeys)
-  assert.equal(rows.length, 65)
+  assert.equal(rows.length, 77)
   assert.equal(tracks.length, rows.length)
   assert.equal(new Set(tracks.map(({ id }) => id)).size, rows.length)
   assert.equal(tracks.filter((track) => track.composer === '쇼팽').length, 36)
@@ -18,6 +18,7 @@ test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출�
   assert.equal(tracks.filter((track) => track.composer === '사티').length, 3)
   assert.equal(tracks.filter((track) => track.composer === '리스트').length, 1)
   assert.equal(tracks.filter((track) => track.composer === '베토벤').length, 21)
+  assert.equal(tracks.filter((track) => track.composer === '차이콥스키').length, 12)
   assert.equal(tracks.filter((track) => track.type === 'piano-concerto' && track.opus === 73 && track.number === 5).length, 3)
   assert.equal(tracks.filter((track) => track.type === 'etude' && track.opus === 10).length, 12)
   assert.equal(tracks.filter((track) => track.type === 'etude' && track.opus === 25).length, 12)
@@ -35,7 +36,7 @@ test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출�
     assert.equal(track.ratingVersion, RATING_VERSION)
     assert.equal(track.ratingUnit, track.movement ? 'whole-movement' : 'whole-work')
     assert.ok(!('moods' in track) && !('energy' in track))
-    assert.match(track.id, /^(chopin|rachmaninoff|satie|liszt|beethoven)-/)
+    assert.match(track.id, /^(chopin|rachmaninoff|satie|liszt|beethoven|tchaikovsky)-/)
   })
   assert.equal(emotions.find(({ key }) => key === 'peacefulness').label, '평안한')
 })
@@ -164,10 +165,14 @@ test('작곡가 이미지와 활성 상세 연결이 유효하고 진단도 새 
   for (const track of tracks) {
     assert.ok(composerImages[track.composer])
     assert.ok(existsSync(new URL('../../public' + composerImages[track.composer], import.meta.url)))
-    assert.ok(track.description.includes(track.composer))
+    assert.ok(track.summary ? track.description === track.summary : track.description.includes(track.composer))
   }
   assert.ok(Object.keys(trackDetails).every((id) => tracks.some((track) => track.id === id)))
-  assert.deepEqual(tracks.filter((track) => trackDetails[track.id]?.shortPreview).map((track) => track.id), ['beethoven-sonata-op27-2-no14-m1', 'beethoven-sonata-op27-2-no14-m3'])
+  assert.deepEqual(tracks.filter((track) => trackDetails[track.id]?.shortPreview && track.composer === '베토벤').map((track) => track.id), [
+    'beethoven-sonata-op27-2-no14-m1', 'beethoven-sonata-op27-2-no14-m3',
+    'beethoven-piano-concerto-op73-no5-m1', 'beethoven-piano-concerto-op73-no5-m2', 'beethoven-piano-concerto-op73-no5-m3',
+  ])
+  assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview).length, 17)
   assert.deepEqual(buildRecommendationDiagnosis().emotions.map(({ key }) => key), emotionKeys)
 })
 
@@ -232,4 +237,61 @@ test('월광 영상은 기존에 등록된 정확한 두 악장의 재생 구간
     assert.deepEqual(trackDetails[`beethoven-sonata-op27-2-no14-m${movement}`].shortPreview, legacy[`beethoven-moonlight-${movement}`])
   }
   assert.equal(trackDetails['beethoven-sonata-op27-2-no14-m2']?.shortPreview, undefined)
+})
+
+test('황제 협주곡 세 악장은 기존 ID와 수정된 점수·설명·각각의 영상 구간을 보존한다', () => {
+  const cases = [
+    { scores: [4,4,1,1,2,3,4,3,1], videoId: 'MlrNjdYnheM', endSeconds: 1259 },
+    { scores: [3,2,2,4,4,2,1,1,3], videoId: 'QsrnBnnoQ00', endSeconds: 501 },
+    { scores: [4,4,1,1,1,4,4,1,1], videoId: 'DRPhtnden5g', endSeconds: 623 },
+  ]
+  cases.forEach(({ scores, videoId, endSeconds }, index) => {
+    const id = `beethoven-piano-concerto-op73-no5-m${index + 1}`
+    const track = tracks.find((item) => item.id === id)
+    const detail = trackDetails[id]
+    assert.equal(track.movementNumber, index + 1)
+    assert.deepEqual(Object.values(track.emotionScores), scores)
+    assert.equal(track.description, track.summary)
+    assert.ok(track.summary && detail.about && detail.listeningTip)
+    assert.deepEqual(detail.shortPreview, { provider: 'youtube', videoId, startSeconds: 0, endSeconds,
+      sourceLabel: 'Krystian Zimerman · London Symphony Orchestra · Sir Simon Rattle / Krystian Zimerman - Topic / 《Beethoven: Complete Piano Concertos》 · Deutsche Grammophon (2021)' })
+  })
+})
+
+test('차이콥스키 사계 12곡은 사용자 점수·영문 제목·감상 설명·월별 영상 구간을 보존한다', () => {
+  const rows = [
+    [[3,1,3,4,4,2,1,1,3], '난롯가에서', 'IDUCeZW7Vqs', 297],
+    [[3,2,1,1,1,4,4,3,1], '사육제', '9yv1b-OJaY0', 190],
+    [[3,1,3,4,3,2,1,2,4], '종달새의 노래', 'BffmJzn-M1g', 148],
+    [[3,1,2,4,3,3,2,1,2], '스노드롭', 'v2YieM-Ga8E', 163],
+    [[4,2,4,4,3,3,2,2,2], '백야', 'ovaKRK5A_Ms', 239],
+    [[4,2,4,4,3,2,2,2,4], '뱃노래', '1OE9j6mcviU', 252],
+    [[2,1,1,2,2,3,3,2,1], '풀 베는 사람의 노래', 'dybRB0rpumc', 118],
+    [[3,2,1,2,1,3,4,4,1], '수확', 'JwJmhCme3M4', 215],
+    [[3,3,1,1,1,4,4,3,1], '사냥', 'hqmLglbqlPg', 171],
+    [[3,1,3,4,2,1,1,2,5], '가을의 노래', 'N8pcv5HmL24', 286],
+    [[3,2,3,3,2,4,3,1,3], '트로이카', 'yXejWsfggFs', 183],
+    [[3,1,2,4,3,4,2,1,2], '크리스마스', '3fJ0oVboB0w', 273],
+  ]
+  rows.forEach(([scores, alias, videoId, endSeconds], index) => {
+    const month = index + 1
+    const id = `tchaikovsky-seasons-op37a-no${month}`
+    const track = tracks.find((item) => item.id === id)
+    const detail = trackDetails[id]
+    assert.equal(track.alias, alias)
+    assert.equal(track.opus, 37)
+    assert.equal(track.opusSuffix, 'a')
+    assert.equal(track.number, month)
+    assert.equal(track.cycleId, 'tchaikovsky-seasons-op37a')
+    assert.ok(track.titleEn.startsWith('Tchaikovsky Four Seasons '))
+    assert.deepEqual(Object.values(track.emotionScores), scores)
+    assert.equal(track.ratingUnit, 'whole-work')
+    assert.equal(track.description, track.summary)
+    assert.ok(detail.about && detail.listeningTip)
+    assert.deepEqual(detail.shortPreview, { provider: 'youtube', videoId, startSeconds: 0, endSeconds,
+      sourceLabel: 'Alexander Malofeev · Mariinsky Theatre · 2019.12.26 리사이틀' })
+  })
+  assert.equal(new Set(rows.map(([, , videoId]) => videoId)).size, 12)
+  assert.deepEqual(getLibraryPreferenceProfile(tracks, ['tchaikovsky-seasons-op37a-no10']).vector,
+    rows[9][0].map((score) => (score - 1) / 4))
 })

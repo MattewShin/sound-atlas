@@ -40,6 +40,14 @@ test('OCR의 원본·전처리 문맥과 식별 단어·번호를 함께 검증�
   assert.equal(matchAnalyzedConcert(partial, id).status, 'needs-review')
   assert.equal(matchAnalyzedConcert(partial, id).completed, false)
 })
+test('사계 OCR은 영문 월명까지 판독해야 월별 작품으로 확정한다', () => {
+  const text = '[PROGRAM]\nP. Tchaikovsky The Seasons October: Autumn Song, Op.37a'
+  assert.deepEqual(imageRecord(text).links.map(({ workId }) => workId), ['tchaikovsky-seasons-op37a-no10'])
+  const blurry = reading(text)
+  blurry.words.find(({ text: word }) => word.includes('October')).confidence = 30
+  assert.deepEqual(assessOcrReadings(blurry, reading(text)).links, [])
+  assert.equal(imageRecord(text, text.replace('October', 'November')).reviewRequired, true)
+})
 test('소개·경력, 날짜가 다른 프로그램, 시리즈 불일치는 OCR 일치로 승격하지 않는다', () => {
   const biography = imageRecord('PROFILE\n대학교 교수 수상 경력\nF. Chopin Ballade No.1 Op.23')
   assert.deepEqual(biography.links, [])

@@ -15,8 +15,9 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { emotions, formatTrackTitle } from '../src/data/emotions.js'
 import { composerImages, tracks, trackDetails } from '../src/data/musicData.js'
 import { getLibraryPreferenceProfile, getRecommendationResult } from '../src/data/recommendations.js'
-import { analyzeConcert, getConcertRecommendations } from '../src/data/concertRecommendations.js'
+import { analyzeConcert } from '../src/data/concertRecommendations.js'
 import { concertWorks } from '../src/data/concerts.js'
+import { searchConcertTracks } from '../src/data/concertTrackSearch.js'
 import { verifyConcertSearchInteractions } from './concertSearchDomTest.mjs'
 import { verifyTargetConcertInteractions } from './targetConcertDomTest.mjs'
 
@@ -37,7 +38,18 @@ const testConcert = { id: 'test-registered-concert', title: '테스트 등록 �
   startsAt: '2026-12-24T20:00:00+09:00', endsAt: '2026-12-24T22:00:00+09:00', region: '서울', venue: '테스트홀',
   ticketOpensAt: '2026-10-15T14:00:00+09:00', sourceUrl: 'https://example.com/concert', sourceLabel: '테스트 출처', verifiedOn: '2026-10-12',
   programWorkIds: ['beethoven-piano-concerto-op73-no5', testUnanalysedId] }
-test('실제 React 검색 화면은 사용자 버튼에서만 조회하고 모드·감정 변경에는 API를 호출하지 않는다', async () => {
+test('곡 검색은 한글·영문·별칭·작품번호로 기존 ID만 선택한다', () => {
+  const ids = (query) => searchConcertTracks(tracks, query).map(({ id }) => id)
+  assert.ok(ids('Chopin Ballade Op.23').includes('chopin-ballade-op23-no1'))
+  assert.ok(ids('쇼팽 발라드 1').includes('chopin-ballade-op23-no1'))
+  assert.ok(ids('Emperor Beethoven Op.73').includes('beethoven-piano-concerto-op73-no5-m2'))
+  assert.ok(ids('Tchaikovsky Four Seasons June Barcarolle').includes('tchaikovsky-seasons-op37a-no6'))
+  assert.ok(ids('차이콥스키 사계 10월').includes('tchaikovsky-seasons-op37a-no10'))
+  assert.ok(!ids('Chopin Ballade Op.28').includes('chopin-ballade-op23-no1'))
+  assert.deepEqual(ids('존재하지 않는 작품'), [])
+  assert.deepEqual(ids(''), [])
+})
+test('공연 화면은 곡 선택 전 API를 호출하지 않고 카탈로그에서 실제 곡 ID를 선택한다', async () => {
   await verifyConcertSearchInteractions(components.default)
 })
 test('보관한 특정 곡의 캐시 결과·10건 자동 확인·추가 확인·중단·조건 변경·상태 집계를 검증한다', async () => {
@@ -45,8 +57,9 @@ test('보관한 특정 곡의 캐시 결과·10건 자동 확인·추가 확인�
 })
 test('검색에 병합된 등록 공연이나 반복 API 행은 카드를 중복 표시하지 않는다', () => {
   const now = Date.parse('2026-10-12T12:00:00+09:00')
-  const result = analyzeConcert({ ...testConcert, kopisId: 'PF999111' }, tracks, {}, testConcertWorks)
-  const html = render(components.ConcertScreen, { results: [result], searchResults: [result, result], now, region: '서울', mode: 'keyword', selectedKeys: [], searchControls: { period: { from: '2026-12-01', to: '2026-12-31' }, search: { status: 'success', data: { concerts: [result.concert], query: { region: '서울', from: '2026-12-01', to: '2026-12-31' }, fetchedAt: new Date(now).toISOString() } } } })
+  const targetTrack = tracks.find(({ id }) => id === 'beethoven-piano-concerto-op73-no5-m2')
+  const result = analyzeConcert({ ...testConcert, kopisId: 'PF999111', targetMatch: { status: 'matched', reason: '테스트 프로그램 확인' } }, tracks, {}, testConcertWorks)
+  const html = render(components.ConcertScreen, { searchResults: [result, result], now, region: '서울', searchControls: { targetTrack, period: { from: '2026-12-01', to: '2026-12-31' }, search: { status: 'success', data: { targetTrackId: targetTrack.id, concerts: [result.concert], query: { region: '서울', from: '2026-12-01', to: '2026-12-31' }, fetchedAt: new Date(now).toISOString() } } } })
   assert.equal((html.match(/class="concert-card"/g) || []).length, 1)
 })
 test('공연 카드·전체 프로그램은 공식 링크·확인일·분석 범위·악장 상세·실제 영상 상태를 렌더링한다', () => {
@@ -61,18 +74,19 @@ test('공연 카드·전체 프로그램은 공식 링크·확인일·분석 범
   const detail = render(components.ConcertDetailScreen, { result, now, details: trackDetails, isTrackSaved: (id) => id.endsWith('-m2') })
   assert.equal((detail.match(/class="concert-work"/g) ?? []).length, 2)
   assert.equal((detail.match(/곡 상세·보관/g) ?? []).length, 3)
-  assert.equal((detail.match(/미리듣기 준비 중/g) ?? []).length, 3)
+  assert.equal((detail.match(/>미리듣기<\/button>/g) ?? []).length, 3)
   assert.ok(detail.includes('아직 분석하지 않은 작품'))
   assert.ok(detail.includes('부드러운 4/5'))
   assert.ok(!/세 악장 연주 확정|취향 일치|95%/.test(detail + card))
   const linkedTrack = result.program[0].linkedTracks[1]
-  // 기존 미리듣기가 후속 등록될 때 동일 악장 버튼으로 전달되는 경로를 검증합니다.
+  // 악장별 미리듣기 버튼이 각 곡에 연결되는 경로를 검증합니다.
   const withPreview = render(components.ConcertDetailScreen, { result, now, details: { [linkedTrack.id]: { shortPreview: { provider: 'youtube', videoId: 'test-preview' } } } })
   assert.equal((withPreview.match(/>미리듣기<\/button>/g) ?? []).length, 1)
   assert.ok(withPreview.includes('2악장 미리듣기'))
-  const screen = render(components.ConcertScreen, { results: getConcertRecommendations(tracks, { now }, [testConcert], testConcertWorks), now, region: '서울', mode: 'keyword', selectedKeys: [] })
-  assert.equal((screen.match(/class="concert-card"/g) ?? []).length, 1)
-  assert.ok(screen.includes('공연 음악 느낌 선택'))
+  const screen = render(components.ConcertScreen, { now, region: '서울', tracks, savedTracks: [] })
+  assert.equal((screen.match(/class="concert-card"/g) ?? []).length, 0)
+  assert.ok(screen.includes('어떤 곡의 공연을 찾으시나요?'))
+  assert.ok(!screen.includes('공연 음악 느낌 선택'))
 })
 test('악장 상세·미리듣기와 공연 상세 버튼은 선택한 실제 곡·공연 ID를 전달한다', () => {
   const result = analyzeConcert(testConcert, tracks, {}, testConcertWorks)
@@ -87,8 +101,8 @@ test('악장 상세·미리듣기와 공연 상세 버튼은 선택한 실제 �
     assert.equal(buttons.length, 2)
     buttons.forEach((button) => button.props.onClick())
     assert.deepEqual(clicked, [['detail', track], ['preview', track]])
-    const pending = components.ConcertMovement({ work: result.program[0], track, detail: trackDetails[track.id] })
-    assert.equal(buttonsIn(pending).length, 1)
+    const registered = components.ConcertMovement({ work: result.program[0], track, detail: trackDetails[track.id] })
+    assert.equal(buttonsIn(registered).length, 2)
   }
   let openedId
   const card = components.ConcertCard({ result, onOpenConcert: (id) => { openedId = id } })
@@ -103,17 +117,23 @@ test('첫 화면에는 새 9개 선택과 활성곡만 있으며 Energy 선택�
   assert.ok(html.includes('<span class="track-alias"> [이별의 곡]</span></strong>'))
   assert.ok(!/ENERGY|얼마나 깊게|강렬하게|녹턴/.test(html))
 })
-test('전체 활성곡 상세·보관함은 제목·별칭·점수·이미지와 정확한 영상 상태를 렌더링한다', () => {
+test('전체 활성곡 상세·보관함은 제목·별칭·감상 정보·이미지와 정확한 영상 상태를 렌더링한다', () => {
   for (const track of tracks) {
     const html = render(components.TrackDetailSheet, { track, detail: trackDetails[track.id], selectedKeys: [], isOpen: true })
     assert.ok(html.includes(formatTrackTitle(track)))
-    assert.equal((html.match(/<dt>/g) ?? []).length, 9)
+    assert.ok(!html.includes('이 곡의 감정 평가'))
+    assert.ok(!html.includes('emotion-score-list'))
     const preview = trackDetails[track.id]?.shortPreview
     assert.ok(html.includes(preview ? '음원 감상하기' : '미리듣기 준비 중'))
     assert.ok(html.includes(composerImages[track.composer]))
     assert.ok(!html.includes('<iframe'))
     if (track.movement) assert.equal((html.match(new RegExp(track.movement, 'g')) ?? []).length, 1)
     if (track.alias) assert.ok(html.includes(`<span class="track-alias"> [${track.alias}]</span></h2>`))
+    if (track.summary) {
+      assert.ok(html.includes(`<p class="track-detail-summary">${track.summary}</p>`))
+      assert.ok(html.includes(trackDetails[track.id].about))
+      assert.ok(html.includes(trackDetails[track.id].listeningTip))
+    }
     assert.ok(!html.includes('별칭:'))
   }
   const library = render(components.LibraryScreen, { savedTracks: tracks })
@@ -121,8 +141,8 @@ test('전체 활성곡 상세·보관함은 제목·별칭·점수·이미지와
   assert.ok(!/녹턴/.test(library))
   tracks.slice(36).forEach((track) => assert.ok(library.includes(formatTrackTitle(track))))
   const missing = render(components.TrackDetailSheet, { track: { ...tracks[0], emotionScores: undefined }, selectedKeys: [], isOpen: true })
-  assert.equal((missing.match(/미평가/g) ?? []).length, 9)
-  assert.ok(missing.includes('평가 검토 중'))
+  assert.ok(!missing.includes('미평가'))
+  assert.ok(!missing.includes('평가 검토 중'))
 })
 test('취향 미형성에는 차트를 만들지 않고 활성 프로필은 9개 고정 축을 사용한다', () => {
   const empty = render(components.PreferenceScreen, { profile: getLibraryPreferenceProfile(tracks, []) })

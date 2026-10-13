@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react'
-import ConcertRegionPicker from './ConcertRegionPicker.jsx'
-import { emotions, emotionLabel, getRepresentativeEmotions } from '../data/emotions.js'
+import { getRepresentativeEmotions } from '../data/emotions.js'
 import { formatConcertDate, getConcertTicketStatus } from '../data/concertRecommendations.js'
 import ConcertSearchForm from './ConcertSearchForm.jsx'
 import TargetConcertResults from './TargetConcertResults.jsx'
+import ConcertTrackPicker from './ConcertTrackPicker.jsx'
 import { matchLabels, getMatchStatus } from '../data/concertMatchStates.js'
+import { getTrackTarget } from '../data/workCatalog.js'
 
 function MatchBasis({ concert }) {
   const match = concert.targetMatch
@@ -37,52 +38,34 @@ function AnalysisReason({ result }) {
 
 export function ConcertCard({ result, now, onOpenConcert }) {
   const { concert, program } = result
+  const target = concert.targetMatch?.targetTrackId && getTrackTarget(concert.targetMatch.targetTrackId)
   return <article className="concert-card">
-    <p className="concert-eyebrow">{result.isRecommended ? '음악과 연결된 공연' : '예정 공연'}</p>
+    <p className="concert-eyebrow">{concert.targetMatch?.status === 'matched' ? '선택한 작품 포함 확인' : result.isRecommended ? '음악과 연결된 공연' : '예정 공연'}</p>
     <h2>{concert.title}</h2>
+    {target && <p className="concert-card-target-song">연결된 곡 · {target.title}{target.movement ? ` · ${target.movement}` : ''}</p>}
     <MatchBasis concert={concert} />
     <ConcertFacts concert={concert} now={now} />
     <div className="concert-card-program"><h3>프로그램과 연결된 작품</h3>{program.length ? program.map((work) => <p key={work.id}>{work.title}<small>{work.ratedTracks.length ? '등록된 악장 평가와 연결' : '아직 분석하지 않은 작품'}</small></p>) : <p>{concert.programStatus === 'needs-review' ? '소개 자료 확보 · 작품 연결 확인 필요' : '프로그램 미확보'}<small>일반 검색 결과 · 취향 적합도 미계산</small></p>}</div>
-    <AnalysisReason result={result} />
+    {!concert.targetMatch && <AnalysisReason result={result} />}
     <button className="concert-detail-button" type="button" onClick={() => onOpenConcert(concert.id)}>{program.length ? '프로그램과 악장 살펴보기' : '공연 상세·프로그램 자료 보기'} <span aria-hidden="true">→</span></button>
     <OfficialSource concert={concert} />
   </article>
 }
 
-export function ConcertScreen({ results, searchResults = [], now, region, onSelectRegion, mode, onSelectMode, selectedKeys, onToggleEmotion, onGoExplore, onOpenConcert, searchControls }) {
+export function ConcertScreen({ searchResults = [], now, region, onSelectRegion, onGoExplore, onOpenConcert, searchControls, tracks = [], savedTracks = [], onSelectTrack }) {
   const uniqueSearch = [...new Map(searchResults.map((result) => [result.concert.kopisId || result.concert.id, result])).values()]
-  const searchIds = new Set(uniqueSearch.map(({ concert }) => concert.id))
-  const registered = results.filter(({ concert }) => !searchIds.has(concert.id))
   const renderCard = (result) => <ConcertCard key={result.concert.id} result={result} now={now} onOpenConcert={onOpenConcert} />
   return <>
     <header className="concert-coming-header" id="concert-top">
-      <div className="concert-topbar"><p>ON STAGE</p><ConcertRegionPicker region={region} onSelectRegion={onSelectRegion} /></div>
-      <h1>공연에서 만나는 클래식</h1><span>고른 감정과 보관한 음악에서<br />무대와의 연결을 찾아보세요.</span>
+      <div className="concert-topbar"><p>ON STAGE</p></div>
+      <h1>이 곡의 공연 찾기</h1><span>듣고 싶은 곡을 고르면<br />실제 공연의 프로그램을 확인해요.</span>
     </header>
     <main className="concert-main">
-      {searchControls && <ConcertSearchForm region={region} {...searchControls} />}
-      <section className="concert-controls" aria-label="공연 추천 설정">
-        <div className="recommendation-mode-control" role="group" aria-label="공연 추천 방식 선택">
-          <button type="button" className={mode !== 'library' ? 'selected' : ''} aria-pressed={mode !== 'library'} onClick={() => onSelectMode('keyword')}>선택한 감정 기반</button>
-          <button type="button" className={mode === 'library' ? 'selected' : ''} aria-pressed={mode === 'library'} onClick={() => onSelectMode('library')}>보관함 기반</button>
-        </div>
-        {mode !== 'library' && <><p>음악 탐색에서 고른 느낌을 이어서 사용해요. 최대 3개까지 바꿀 수 있어요.</p>
-          <div className="keyword-choice-list" role="group" aria-label="공연 음악 느낌 선택">{emotions.map(({ key, label }) => <button key={key} type="button" className={selectedKeys.includes(key) ? 'selected' : ''} aria-pressed={selectedKeys.includes(key)} disabled={selectedKeys.length === 3 && !selectedKeys.includes(key)} onClick={() => onToggleEmotion(key)}>{label}</button>)}</div>
-          <p>{selectedKeys.length ? `선택한 느낌: ${selectedKeys.map(emotionLabel).join(' · ')}` : '감정을 고르기 전에는 일반 공연 정보를 보여드려요.'}</p>
-        </>}
-      </section>
-      {searchControls?.search.data?.targetTrackId ? <TargetConcertResults search={searchControls.search} results={uniqueSearch} renderCard={renderCard} onCheckMore={searchControls.onCheckMore} onStop={searchControls.onStop} moreCheckLimit={searchControls.connection?.moreCheckLimit} onOpenConcert={onOpenConcert} /> : searchControls?.search.data && <section className="concert-search-results" aria-label="KOPIS 검색 결과"><h2>KOPIS 검색 결과</h2>
-        {searchControls.search.status === 'error' && <p>아래는 마지막 성공 조회의 결과예요. 이번 요청은 실패했어요.</p>}
-        <p>조회 결과 {searchControls.search.data.concerts.length}건 · 예정·진행 중인 일반 결과 {searchResults.length}개</p>
-        {searchControls.search.data.concerts.length === 0 ? <p>선택한 지역·기간의 클래식 공연 검색 결과가 0건이에요.</p>
-          : uniqueSearch.length ? uniqueSearch.map(renderCard)
-            : <p>검색 공연이 확인된 등록 공연과 병합되었거나 종료되어, 아래 등록 공연 또는 다른 기간을 살펴보세요.</p>}
-      </section>}
-      {!searchControls?.targetTrack && registered.length > 0 && <details className="concert-known-section" open><summary>직접 등록한 공연 · {registered.length}개</summary>
-      <h2 className="concert-known-heading">직접 등록한 공연</h2><p className="concert-known-guide">확인된 프로그램과 악장 연결을 볼 수 있어요. API 검색 조건과 별도로 유지해요.</p>
-      <p className="concert-list-count">직접 등록한 예정 공연 {registered.length}개</p>
-      {registered.map(renderCard)}
-      </details>}<button className="concert-coming-return" type="button" onClick={onGoExplore}>음악 탐색으로 돌아가기</button>
+      {searchControls?.targetTrack ? <>
+        <ConcertSearchForm region={region} onSelectRegion={onSelectRegion} {...searchControls} />
+        {searchControls.search.data?.targetTrackId === searchControls.targetTrack.id && <TargetConcertResults search={searchControls.search} results={uniqueSearch} renderCard={renderCard} onCheckMore={searchControls.onCheckMore} onStop={searchControls.onStop} moreCheckLimit={searchControls.connection?.moreCheckLimit} onOpenConcert={onOpenConcert} />}
+      </> : <ConcertTrackPicker tracks={tracks} savedTracks={savedTracks} onSelectTrack={onSelectTrack} />}
+      <button className="concert-coming-return" type="button" onClick={onGoExplore}>음악 탐색으로 돌아가기</button>
     </main>
   </>
 }
@@ -107,7 +90,7 @@ export function ConcertDetailScreen({ result, now, onBack, onOpenTrack, onOpenSh
     <header className="library-header concert-detail-header"><button className="recommendation-back" type="button" onClick={onBack}>← 공연 목록으로</button><p>PROGRAM</p><h1 ref={headingRef} tabIndex={-1}>{concert.title}</h1><span>{concert.venue}</span></header>
     <main className="concert-main concert-detail-main">
       <MatchBasis concert={concert} />
-      <section className="concert-details-panel"><ConcertFacts concert={concert} now={now} />{(concert.conductor || concert.pianist) && <p>{concert.conductor && <>지휘 · {concert.conductor}<br /></>}{concert.pianist && <>피아노 협연 · {concert.pianist}</>}</p>}{concert.scheduleText && <p>공연 시간 안내 · {concert.scheduleText}</p>}<AnalysisReason result={result} /></section>
+      <section className="concert-details-panel"><ConcertFacts concert={concert} now={now} />{(concert.conductor || concert.pianist) && <p>{concert.conductor && <>지휘 · {concert.conductor}<br /></>}{concert.pianist && <>피아노 협연 · {concert.pianist}</>}</p>}{concert.scheduleText && <p>공연 시간 안내 · {concert.scheduleText}</p>}{!concert.targetMatch && <AnalysisReason result={result} />}</section>
       <section className="concert-program" aria-labelledby="concert-program-title"><h2 id="concert-program-title">{['text', 'ocr'].includes(concert.programVerification) ? '확보한 프로그램과 연결 작품' : '전체 프로그램'}</h2>
         <p>{program.length ? '공식 안내는 작품 단위예요. 아래 악장은 앱에 등록된 평가와 감상 자료를 연결한 목록이에요.' : '공연 기본 정보와 프로그램 확인은 별도 단계예요. 소개 자료만으로 작품과 악장 연결을 확정하지 않아요.'}</p>
         {!program.length && <p>{concert.programStatus === 'needs-review' ? '프로그램 자료 확인 필요 · 일반 검색 결과' : '프로그램 미확보 · 일반 검색 결과'}</p>}

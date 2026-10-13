@@ -68,10 +68,7 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .track-copy { max-width: none; }
 .track-copy h2 { overflow-wrap: anywhere; font-size: 22px; }
 .preview-pending { clear: both; margin: 18px 0 0; border-top: 1px solid #cbd6ca; padding-top: 12px; color: #65766c; font-size: 11px; }
-.emotion-score-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin: 12px 0 0; }
-.emotion-score-list > div { border: 1px solid #d8dfd3; border-radius: 10px; padding: 10px 5px; background: #edf2ea; text-align: center; }
-.emotion-score-list dt { color: #52675d; font-size: 11px; overflow-wrap: anywhere; }
-.emotion-score-list dd { margin: 5px 0 0; color: #24534d; font-size: 18px; }
+.track-detail-summary { margin: 12px 0 0; color: #405d55; font-size: 13px; line-height: 1.7; }
 .preference-panel h2 { margin: 0; color: #31534d; font-size: 21px; }
 .preference-panel p { color: #64756a; font-size: 12px; line-height: 1.7; }
 .preference-chart { display: grid; gap: 15px; margin: 12px 0 20px; }
@@ -136,6 +133,23 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-search-setup span, .concert-search-error span { display: block; font-size: 11px; }
 .concert-search-panel .concert-search-error, .concert-search-error { color: #a04d3b; }
 .concert-search-time { overflow-wrap: anywhere; }
+.concert-track-picker { margin-bottom: 26px; border: 1px solid #d5ddcf; border-radius: 18px; padding: 20px 14px; background: #fbf8f1; }
+.concert-track-picker h2 { margin: 0 0 10px; color: #31594e; font-size: 21px; line-height: 1.45; }
+.concert-track-picker h3 { margin: 24px 0 10px; color: #31594e; font-size: 14px; }
+.concert-track-picker p { color: #65756b; font-size: 12px; line-height: 1.8; }
+.concert-card-target-song { margin: 8px 0; color: #31594e; font-size: 12px; font-weight: 700; line-height: 1.6; }
+.concert-track-options { display: grid; gap: 8px; max-height: 310px; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+.concert-track-options button { display: block; width: 100%; min-height: 52px; border: 1px solid #d3ddd0; border-radius: 12px; padding: 10px 12px; color: #31594e; background: #f3f6ed; text-align: left; overflow-wrap: anywhere; }
+.concert-track-options button:hover, .concert-track-options button:focus-visible { border-color: #31594e; outline: 2px solid #a9c3ae; outline-offset: 2px; }
+.concert-track-options strong, .concert-target strong { display: block; font-size: 12px; line-height: 1.5; }
+.concert-track-options small, .concert-target small { display: block; margin-top: 3px; color: #65756b; font-size: 11px; line-height: 1.5; }
+.concert-track-search-label { display: block; margin: 22px 0 8px; color: #456757; font-size: 12px; font-weight: 700; }
+.concert-track-picker input[type="search"] { width: 100%; min-height: 44px; border: 1px solid #c3d0bc; border-radius: 9px; padding: 10px 12px; color: #365d4b; background: #f5f7ed; font: inherit; }
+.concert-catalog-options { margin-top: 12px; }
+.concert-region-field { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; color: #456757; font-size: 12px; }
+.concert-region-field .concert-location-control { min-height: 44px; color: #31594e; border: 1px solid #c3d0bc; background: #f5f7ed; }
+.concert-region-field .concert-location-control:focus-visible { outline-color: #31594e; }
+.concert-target > span { display: block; margin-bottom: 5px; font-size: 11px; }
 .concert-search-results { margin: 26px 0; }
 .concert-known-heading { margin-top: 28px; }
 .concert-evidence-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 400px; overflow-y: auto; }

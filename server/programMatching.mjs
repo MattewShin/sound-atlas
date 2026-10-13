@@ -50,6 +50,11 @@ export const extractProgram = (rawText) => {
 }
 
 const numbersIn = (text) => [...text.matchAll(/\b(?:nos?\.?|nr\.?)\s*(\d+)|제?\s*(\d+)\s*번/gi)].map((match) => Number(match[1] || match[2]))
+const seasonMonths = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+const seasonNumbersIn = (text) => [
+  ...[...text.matchAll(/(?:^|[^\d])(1[0-2]|[1-9])\s*월/g)].map((match) => Number(match[1])),
+  ...seasonMonths.flatMap((month, index) => new RegExp(`\\b${month}\\b`, 'i').test(text) ? [index + 1] : []),
+]
 const aliasIn = (text, alias) => new RegExp(`(^|[^\\p{L}\\p{N}])${alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?=$|[^\\p{L}\\p{N}])`, 'iu').test(text)
 const movementScope = (text) => {
   const numbers = [...text.matchAll(/제?\s*(\d+)\s*악장|(?:movement|mov\.)\s*(\d+)|\b(IV|III|II|I)\s*[.)]/gi)]
@@ -72,7 +77,12 @@ export const identifyEntry = (entry, work) => {
   if (entry.composer !== work.composer) return { state: 'different' }
   const text = entry.signature
   const aliases = Object.values(workCatalog).filter((candidate) => candidate.composer === work.composer && candidate.type === work.type && candidate.aliases.some((alias) => aliasIn(text, alias)))
-  const numbers = numbersIn(text)
+  const numbers = [...numbersIn(text), ...(work.type === 'seasons' ? seasonNumbersIn(text) : [])]
+  const explicitMonths = work.type === 'seasons' ? seasonNumbersIn(text) : []
+  if (explicitMonths.length && !explicitMonths.includes(work.number)) return {
+    state: aliases.some(({ id }) => id === work.id) ? 'ambiguous' : 'different',
+    reason: '월명과 곡의 별칭이 서로 다른 달을 가리켜 확인해야 해요.',
+  }
   const op = text.match(/\bop\.?\s*(\d+)([a-z]?)(?:\s*[-/]\s*(\d+))?/i)
   if (aliases.length && !aliases.some(({ id }) => id === work.id)) return Number(op?.[1]) === work.opus
     ? { state: 'ambiguous', reason: '별칭과 작품번호가 서로 다른 작품을 가리켜 확인해야 해요.' } : { state: 'different' }
@@ -94,9 +104,10 @@ export const identifyEntry = (entry, work) => {
     if (!catalogue) return { state: 'ambiguous', reason: '작품목록 번호를 확인해야 해요.' }
     if (Number(catalogue[1]) !== work.catalogueNumber) return { state: 'different' }
   }
-  const needsNumber = ['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum'].includes(work.type)
-  const allSet = /전곡|complete|all\s+(?:etudes|preludes)/i.test(text)
-  if (needsNumber && !numbers.includes(work.number) && !allSet) {
+  const needsNumber = ['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'seasons'].includes(work.type)
+  const allSet = /전곡|complete|all\s+(?:etudes|preludes|seasons)|(?:all|twelve|12)\s+(?:the\s+)?(?:months|pieces)|전\s*12곡/i.test(text)
+  const uniqueAlias = work.type === 'seasons' && !explicitMonths.length && aliases.length === 1 && aliases[0].id === work.id
+  if (needsNumber && !numbers.includes(work.number) && !allSet && !uniqueAlias) {
     return { state: numbers.length ? 'different' : 'ambiguous', reason: '작품집의 개별 곡번호를 확인해야 해요.' }
   }
   if (!needsNumber && numbers.length && !numbers.includes(work.number) && !work.opusPart) return { state: 'ambiguous', reason: '작품번호와 곡번호의 조합을 확인해야 해요.' }

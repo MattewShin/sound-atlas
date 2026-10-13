@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { composerImages, trackDetails, tracks } from './data/musicData.js'
-import { emotionLabel, emotions, formatTrackTitle, getRepresentativeEmotions, isFullyRated } from './data/emotions.js'
+import { emotionLabel, emotions, formatTrackTitle, getRepresentativeEmotions } from './data/emotions.js'
 import { getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation } from './data/recommendations.js'
 import { feelingOptions, getSuggestedEmotions } from './data/feelingSuggestions.js'
 import { readConcertRegion, saveConcertRegion } from './data/concertRegions.js'
@@ -101,7 +101,7 @@ export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen,
     ? `선택한 ‘${matched.map(emotionLabel).join('·')}’ 감정이 분명하게 느껴진다고 평가된 곡이에요.`
     : '아홉 가지 감정에 대한 사용자의 수동 평가를 참고해 선율의 흐름을 따라 들어보세요.'
   const about = detail?.about || '이 곡의 이야기와 감상 포인트는 차례로 채워갈 예정이에요. 지금은 제목보다 먼저, 선율이 만들어내는 분위기에 집중해 들어보세요.'
-  const listeningTip = detail?.listeningTip || '각 감정 점수는 독립적인 평가예요. 곡 전체의 흐름을 따라 나에게 어떤 느낌이 남는지 들어보세요.'
+  const listeningTip = detail?.listeningTip || '곡 전체의 흐름을 따라 나에게 어떤 느낌이 남는지 들어보세요.'
   const highlight = detail?.highlight
   const shortPreview = detail?.shortPreview
   const canOpenShort = shortPreview?.provider === 'youtube' && Boolean(shortPreview.videoId)
@@ -116,14 +116,14 @@ export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen,
         <div className="track-detail-content">
           <p className="track-detail-composer">{track.composer}</p>
           <h2 id="track-detail-title">{formatTrackTitle(track)}<TrackAlias track={track} /></h2>
+          {track.summary && <p className="track-detail-summary">{track.summary}</p>}
           <div className="track-detail-tags" aria-label="대표 감정">{keywords.map(({ key, label }) => <span key={key}>#{label}</span>)}</div>
-          <section className="track-detail-section"><h3>이 곡의 감정 평가</h3><p>수동 평가 · 1 거의 느껴지지 않음 ~ 5 매우 강하게 느껴짐</p><dl className="emotion-score-list">{emotions.map(({ key, label }) => <div key={key}><dt>{label}</dt><dd>{track.emotionScores?.[key] ?? '미평가'}</dd></div>)}</dl>{!isFullyRated(track) && <p>평가 검토 중 · 추천 대상에서 제외된 곡이에요.</p>}</section>
           {(track.miniTag || track.duration) && <p className="track-detail-meta">{[track.miniTag, track.duration].filter(Boolean).join(' · ')}</p>}
           <section className="track-detail-section"><h3>당신에게 이 곡을 추천하는 이유</h3><p>{recommendationReason}</p></section>
           <section className="track-detail-section"><h3>이 곡은 어떤 곡인가요?</h3><p>{about}</p></section>
+          <section className="track-detail-section"><h3>감상 포인트</h3><p>{listeningTip}</p></section>
           {highlight && <section className="track-detail-section track-detail-highlight"><h3>감상 하이라이트</h3><div className="track-detail-highlight-card"><strong>{highlight.title}</strong><p>{highlight.description}</p></div></section>}
           <section className="library-save-section" aria-label="보관함에 곡 저장"><p>다시 찾아 듣고 싶은 곡을 보관해보세요.</p><button className={`library-save-button ${isSaved ? 'saved' : ''}`} type="button" aria-pressed={isSaved} onClick={() => onToggleSave(track.id)}>{isSaved ? '✓ 보관됨' : '보관함에 담기'}</button>{saveFeedback && <p className="library-save-feedback" role="status">{saveFeedback}</p>}<div className="concert-preview">{onFindTrackConcert && <button type="button" onClick={() => onFindTrackConcert(track)}>이 곡의 공연 찾기</button>}{onFindConcert ? <><button type="button" onClick={onFindConcert}>이 작품이 포함된 공연 보기</button><p>등록된 악장과 공연 프로그램의 작품을 연결했어요.</p></> : <p>이 작품과 연결된 예정 공연은 아직 등록되지 않았어요.</p>}</div></section>
-          <section className="track-detail-section"><h3>이럴 때 들어보세요</h3><p>{listeningTip}</p></section>
           {canOpenShort ? <div className="highlight-short-cta"><p>이 곡을 영상으로 만나보세요.</p><button type="button" onClick={() => onOpenShort(track)}>음원 감상하기</button></div> : <div className="track-detail-coming-soon">미리듣기 준비 중</div>}
         </div>
       </section>
@@ -317,18 +317,15 @@ function App() {
   const featuredKeywordTrack = useMemo(() => pickRandomTopRecommendation(recommendation, recommendationDraw), [recommendation, recommendationDraw])
   const recommendedTracks = useMemo(() => isLibraryMode ? getLibraryRecommendations(tracks, libraryPreference) : recommendation.tracks, [isLibraryMode, libraryPreference, recommendation])
   const starterTracks = useMemo(() => starterTrackIds.map((id) => tracks.find((track) => track.id === id)).filter(Boolean), [])
-  const selectedTrack = isLibraryMode
-    ? recommendedTracks.find((track) => track.id === selectedTrackId) ?? recommendedTracks[0]
-    : featuredKeywordTrack
+  const selectedRecommendationTrack = recommendedTracks.find((track) => track.id === selectedTrackId)
+  const selectedTrack = selectedRecommendationTrack ?? (isLibraryMode ? recommendedTracks[0] : featuredKeywordTrack)
   const relatedTracks = recommendedTracks.filter((track) => track.id !== selectedTrack?.id)
   const recommendationQuery = JSON.stringify(isLibraryMode ? ['library', savedTrackIds] : ['keyword', activeKeys])
   const recommendationVisibleCount = recommendationListState.query === recommendationQuery ? recommendationListState.count : 20
   const savedTracks = useMemo(() => tracks.filter((track) => trackReactions[track.id]?.listenAgain === true).sort((a, b) => (Date.parse(trackReactions[b.id]?.updatedAt) || 0) - (Date.parse(trackReactions[a.id]?.updatedAt) || 0)), [trackReactions])
   const isTrackSaved = (id) => trackReactions[id]?.listenAgain === true
-  const concertOptions = { mode: recommendationMode, selectedKeys: activeKeys, savedTrackIds, now: concertNow, region: concertRegion }
+  const concertOptions = { mode: 'keyword', selectedKeys: [], savedTrackIds: [], now: concertNow, region: concertRegion }
   const allConcerts = mergeSearchConcerts(concertSearch.search.data?.concerts || [], concerts)
-  const knownIds = new Set(concerts.map(({ id }) => id))
-  const concertResults = getConcertRecommendations(tracks, { ...concertOptions, region: undefined }, allConcerts.filter(({ id }) => knownIds.has(id)))
   const searchedKopisIds = new Set((concertSearch.search.data?.concerts || []).map(({ kopisId }) => kopisId))
   const searchedIds = new Set((concertSearch.search.data?.concerts || []).map(({ id }) => id))
   const searchedConcertResults = getConcertRecommendations(tracks, { ...concertOptions, region: concertSearch.search.data?.query.region }, allConcerts.filter(({ id, kopisId }) => searchedIds.has(id) || (kopisId && searchedKopisIds.has(kopisId))))
@@ -342,13 +339,6 @@ function App() {
   const clearConcertTarget = () => { concertSearch.clear(); setConcertTargetTrackId(null) }
   const changeConcertRegion = (value) => { if (value !== concertRegion) concertSearch.clear(); setConcertRegion(value) }
   const changeConcertPeriod = (value) => { concertSearch.clear(); setConcertPeriod(value) }
-  const selectConcertEmotion = (key) => {
-    if (recommendationInput === 'feeling') {
-      setRecommendationInput('music'); setCurrentFeeling(null)
-      setSelectedKeys(activeKeys.includes(key) ? activeKeys.filter((item) => item !== key) : [...activeKeys, key].slice(0, 3))
-      setRecommendationDraw(Math.random()); setSelectedTrackId(null)
-    } else selectEmotion(key)
-  }
 
   useEffect(() => {
     const refresh = () => setConcertNow(Date.now())
@@ -401,8 +391,14 @@ function App() {
   }
   const resetInputs = () => { selectInput('music'); setRecommendationMode('keyword') }
   const openTrackDetail = (track) => {
-    window.clearTimeout(detailCloseTimer.current); setSelectedTrackId(track.id); setDetailTrack(track)
+    window.clearTimeout(detailCloseTimer.current)
+    if (isLibraryMode) setSelectedTrackId(track.id)
+    setDetailTrack(track)
     window.requestAnimationFrame(() => setIsDetailOpen(true))
+  }
+  const selectRelatedTrack = (track) => {
+    setSelectedTrackId(track.id)
+    document.querySelector('.track-section')?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
   }
   const closeTrackDetail = () => {
     setIsDetailOpen(false); detailCloseTimer.current = window.setTimeout(() => setDetailTrack(null), 240)
@@ -464,17 +460,17 @@ function App() {
           </> : selectedTrack ? <article className={'featured-track ' + selectedTrack.tone} role="button" tabIndex="0" aria-label={formatTrackTitle(selectedTrack) + ' 상세 보기'} onClick={() => openTrackDetail(selectedTrack)} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openTrackDetail(selectedTrack) } }}>
             <div className="track-card-top"><div className="recommendation-basis">{isLibraryMode ? <small className="library-recommendation-label">보관함 기반 추천 · 감정 성향 유사도</small> : <span>선택한 음악 느낌: {activeKeys.map(emotionLabel).join(' · ')}</span>}<small>{isLibraryMode ? '보관한 곡과 비슷한 감정의 새로운 곡이에요.' : describeRecommendationMatch(selectedTrack, activeKeys)}</small></div><button type="button" onClick={(event) => { event.stopPropagation(); toggleTrackSave(selectedTrack.id) }} aria-label={formatTrackTitle(selectedTrack) + (isTrackSaved(selectedTrack.id) ? ' 보관 해제' : ' 보관함에 담기')} aria-pressed={isTrackSaved(selectedTrack.id)}><Icon name="bookmark" filled={isTrackSaved(selectedTrack.id)} /></button></div>
             <div className="featured-artwork"><MiniArtwork track={selectedTrack} /></div>
-            <div className="track-copy"><p className="track-kicker">오늘의 대표 곡</p><p className="composer">{selectedTrack.composer}</p><h2>{formatTrackTitle(selectedTrack)}<TrackAlias track={selectedTrack} /></h2><p className="track-description">{selectedTrack.description}</p><div className="tag-list">{selectedTrack.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div></div>
+            <div className="track-copy"><p className="track-kicker">{selectedRecommendationTrack ? '선택한 추천 곡' : '오늘의 대표 곡'}</p><p className="composer">{selectedTrack.composer}</p><h2>{formatTrackTitle(selectedTrack)}<TrackAlias track={selectedTrack} /></h2><p className="track-description">{selectedTrack.description}</p><div className="tag-list">{selectedTrack.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div></div>
             {trackDetails[selectedTrack.id]?.shortPreview ? <button className="play-button" type="button" aria-label="미리듣기" onClick={(event) => { event.stopPropagation(); openHighlightShort(selectedTrack) }}><Icon name="play" /></button> : <p className="preview-pending">미리듣기 준비 중</p>}
           </article> : <div className="library-empty"><h2>{isLibraryMode ? '모든 곡을 보관했어요' : '이 느낌에 맞는 곡이 아직 없어요'}</h2><p>{isLibraryMode ? '보관함에서 담아둔 곡을 만나보세요.' : '다른 음악 느낌을 골라보세요.'}</p><button type="button" onClick={resetInputs}>음악 키워드로 돌아가기</button></div>}
         </section>
-        {!isInitialExploration && <RelatedRecommendations key={recommendationQuery} relatedTracks={relatedTracks} onOpenTrack={openTrackDetail} onSeeAll={openRecommendationList} />}
+        {!isInitialExploration && <RelatedRecommendations key={recommendationQuery} relatedTracks={relatedTracks} onOpenTrack={selectRelatedTrack} onSeeAll={openRecommendationList} />}
         {!isInitialExploration && selectedTrack && relatedTracks.length === 0 && <div className="recommendations-single-link"><button className="recommendations-see-all" type="button" onClick={openRecommendationList}>추천곡 더 보기 <span aria-hidden="true">→</span></button></div>}
         <section className="concert-link" aria-label="관련 공연 안내"><span className="concert-mark"><Icon name="piano" /></span><div><p>음악을 무대에서 만나고 싶다면</p><button type="button" onClick={showConcerts}>프로그램과 연결된 공연 찾기 →</button></div></section>
       </main>
     </> : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetail
       ? <ConcertDetailScreen result={concertDetail} now={concertNow} onBack={showConcerts} onOpenTrack={openTrackDetail} onOpenShort={openHighlightShort} details={trackDetails} isTrackSaved={isTrackSaved} onLoadProgram={concertSearch.loadProgram} programRequest={concertSearch.programRequests[detailConcert.kopisId]} />
-      : <ConcertScreen results={concertResults} searchResults={searchedConcertResults} now={concertNow} region={concertRegion} onSelectRegion={changeConcertRegion} mode={recommendationMode} onSelectMode={setRecommendationMode} selectedKeys={activeKeys} onToggleEmotion={selectConcertEmotion} onGoExplore={returnToExplore} onOpenConcert={openConcert} searchControls={{ period: concertPeriod, onChangePeriod: changeConcertPeriod, onSearch: concertSearch.runSearch, search: concertSearch.search, connection: concertSearch.connection, targetTrack: concertTargetTrack, onClearTarget: clearConcertTarget, onCheckMore: concertSearch.checkNext, onStop: concertSearch.stop }} />
+      : <ConcertScreen searchResults={searchedConcertResults} now={concertNow} region={concertRegion} onSelectRegion={changeConcertRegion} onGoExplore={returnToExplore} onOpenConcert={openConcert} tracks={tracks} savedTracks={savedTracks} onSelectTrack={findTrackConcert} searchControls={{ period: concertPeriod, onChangePeriod: changeConcertPeriod, onSearch: concertSearch.runSearch, search: concertSearch.search, connection: concertSearch.connection, targetTrack: concertTargetTrack, onClearTarget: clearConcertTarget, onCheckMore: concertSearch.checkNext, onStop: concertSearch.stop }} />
       : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} onFindTrackConcert={findTrackConcert} />}
     <nav className="bottom-nav" aria-label="주요 메뉴">
       <button className={'nav-item ' + (activeView === 'explore' || activeView === 'recommendations' ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>

@@ -8,7 +8,7 @@ import { getOcrConfig } from './ocrConfig.mjs'
 import { extractProgram, getExtractedWorkLinks, identifyEntry } from './programMatching.mjs'
 import { workCatalog, composerPatterns, workTypePatterns } from '../src/data/workCatalog.js'
 
-export const OCR_VERSION = 'program-ocr-2'
+export const OCR_VERSION = 'program-ocr-3'
 const hash = (value) => createHash('sha256').update(value).digest('hex')
 const aborted = () => Object.assign(new Error('처리를 중단했어요.'), { code: 'ABORTED' })
 const checkAbort = (signal) => { if (signal?.aborted) throw aborted() }
@@ -39,7 +39,14 @@ const criticalWords = (reading, entry, work) => {
   const opusWords = words.filter(({ text }) => new RegExp(`^(?:(?:op|s)\\.?)?\\s*${work.opus ?? work.catalogueNumber}(?:\\D|$)`, 'i').test(text))
   const numberInEntry = entry.signature.match(/\bNo\.?\s*(\d+)/i)?.[1]
   const numberWords = numberInEntry ? words.filter(({ text }) => new RegExp(`^(?:nos?\\.?)?\\s*${numberInEntry}(?:\\D|$)`, 'i').test(text)) : []
-  return [composerWords, typeWords, opusWords, ...(numberInEntry ? [numberWords] : [])].every((group) => group.some(({ confidence }) => confidence >= 85))
+  const seasonLabel = work.type === 'seasons' ? (
+    new RegExp(`\\b${work.monthEn}\\b`, 'i').test(entry.signature) ? work.monthEn
+      : work.aliases.find((alias) => entry.signature.toLowerCase().includes(alias.toLowerCase()))
+  ) : undefined
+  const seasonKeyword = seasonLabel?.split(/\s+/).filter((word) => word.length >= 3).at(-1)
+  const seasonWords = seasonKeyword ? words.filter(({ text }) => text.toLowerCase().includes(seasonKeyword.toLowerCase())) : []
+  return [composerWords, typeWords, opusWords, ...(numberInEntry ? [numberWords] : []), ...(seasonKeyword ? [seasonWords] : [])]
+    .every((group) => group.some(({ confidence }) => confidence >= 85))
 }
 const numberSignature = (reading) => [...reading.extraction.programText.matchAll(/\b(?:op\.?|s\.)\s*(\d+)|\bno\.?\s*(\d+)/gi)].map((match) => match[0].toLowerCase().replace(/[\s.]/g, '')).sort().join('|')
 export const assessOcrReadings = (original, preprocessed) => {

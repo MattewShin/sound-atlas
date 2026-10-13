@@ -25,7 +25,7 @@ test('황제 작품 연결은 실제 세 악장 ID·점수를 재사용하고 �
   result.program[0].linkedTracks.forEach((track) => assert.equal(track, tracks.find(({ id }) => id === track.id)))
   assert.equal(result.program[1].linkedTracks.length, 0)
   assert.equal(result.program[1].emotionFit, null)
-  assert.equal(result.score, (0.5 + 0 + 0.75) / 3)
+  assert.equal(result.score, (0.75 + 0 + 0.75) / 3)
   assert.match(result.scope, /분석된 작품 기준/)
   assert.match(result.scope, /2작품 중 1작품/)
 })

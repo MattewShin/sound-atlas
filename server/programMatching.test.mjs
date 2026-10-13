@@ -7,6 +7,8 @@ import { getTrackTarget } from '../src/data/workCatalog.js'
 
 const chopin = 'chopin-ballade-op23-no1'
 const emperor2 = 'beethoven-piano-concerto-op73-no5-m2'
+const january = 'tchaikovsky-seasons-op37a-no1'
+const september = 'tchaikovsky-seasons-op37a-no9'
 const concert = (text, images = []) => ({ programEvidence: { text, imageUrls: images } })
 const state = (text, id = chopin, images = []) => matchConcertToTrack(concert(text, images), id)
 test('실제 곡 ID와 부모 작품을 보존하고 프로그램 구역의 작곡가·작품번호·곡번호로 연결한다', () => {
@@ -21,6 +23,17 @@ test('실제 곡 ID와 부모 작품을 보존하고 프로그램 구역의 작�
   assert.equal(state('[PROGRAM]\nBallade No.1 Op.23').status, 'ambiguous')
   assert.equal(state('[PROGRAM]\nChopin\nEtude Op.10 No.3\nSchubert Ballade No.1 Op.23').status, 'ambiguous')
   assert.equal(state('[PROGRAM]\nChopin\nBallade No.1 Op.23').status, 'matched')
+})
+test('차이콥스키 사계의 영문 월명·한글 월명·검증된 별칭을 개별 곡에만 연결한다', () => {
+  assert.equal(getTrackTarget(january).work.opusSuffix, 'a')
+  assert.equal(state('[PROGRAM]\nP. Tchaikovsky Four Seasons January: At the Fireside, Op.37a', january).status, 'matched')
+  assert.equal(state('프로그램\n차이콥스키 사계 Op.37a 1월 난롯가에서', january).status, 'matched')
+  assert.equal(state('[PROGRAM]\nTchaikovsky The Seasons September: Hunting, Op.37a', september).status, 'matched')
+  assert.notEqual(state('[PROGRAM]\nTchaikovsky The Seasons February: Carnival, Op.37a', january).status, 'matched')
+  assert.notEqual(state('[PROGRAM]\nTchaikovsky The Seasons January: At the Fireside, Op.37b', january).status, 'matched')
+  assert.equal(state('[PROGRAM]\nTchaikovsky The Seasons Op.37a', january).status, 'ambiguous')
+  assert.equal(state('[PROFILE]\nTchaikovsky The Seasons January: At the Fireside Op.37a', january).status, 'no-material')
+  assert.equal(getExtractedWorkLinks(extractProgram('[Full Program]\nTchaikovsky Complete The Seasons, Op.37a')).length, 12)
 })
 test('소개·경력 언급과 편곡을 자동 확정하지 않고 자료 없음·이미지·부분 자료를 구분한다', () => {
   assert.equal(state('지난 공연에서 Chopin Ballade No.1 Op.23을 연주했다.').status, 'no-material')
@@ -51,7 +64,7 @@ test('작품 안내·전곡·악장 발췌 범위를 구분하고 같은 작품�
   assert.equal(state('[PROGRAM]\nBeethoven Piano Concerto No.5 Op.73\n발췌', emperor2).status, 'ambiguous')
   assert.equal(state('[PROGRAM]\nBeethoven Piano Concerto No.5 Op.73 1~3악장 발췌', emperor2).status, 'matched')
   assert.equal(state('[PROGRAM]\nBeethoven Piano Concerto No.5 Op.73 2nd movement only', emperor2).status, 'ambiguous')
-  const manual = { programVerification: 'manual', programWorkIds: ['beethoven-piano-concerto-op73-no5'], sourceUrl: 'https://example.com/concert' }
+  const manual = { programStatus: 'verified', programVerification: 'manual', programWorkIds: ['beethoven-piano-concerto-op73-no5'], sourceUrl: 'https://example.com/concert' }
   assert.equal(matchConcertToTrack(manual, emperor2).status, 'matched')
   assert.ok(matchConcertToTrack(manual, emperor2).evidence.includes('example.com/concert'))
 })

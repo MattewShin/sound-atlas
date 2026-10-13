@@ -108,7 +108,7 @@ test('재추가된 동일 작품만 구 ID로 연결하고 잘못된 작품번�
 })
 
 test('44곡 버전의 전체 보관 기록을 보존하고 정확한 베토벤 구 악장 ID를 연결한다', () => {
-  const reactions = Object.fromEntries(tracks.filter((track) => track.composer !== '베토벤').map((track) => [track.id, { listenAgain: true, liked: true }]))
+  const reactions = Object.fromEntries(tracks.filter((track) => !['베토벤', '차이콥스키'].includes(track.composer)).map((track) => [track.id, { listenAgain: true, liked: true }]))
   assert.equal(Object.keys(reactions).length, 44)
   const mappings = {
     'beethoven-moonlight-1': 'beethoven-sonata-op27-2-no14-m1',
@@ -130,4 +130,18 @@ test('44곡 버전의 전체 보관 기록을 보존하고 정확한 베토벤 �
   assert.equal(state.notice, null)
   assert.equal(storage.getItem(VERSION_KEY), DATA_VERSION)
   assert.deepEqual(migrateMusicStorage(storage), state)
+})
+
+test('65곡 목록에서 77곡 목록으로 늘려도 기존 보관·좋아요·선택을 유지한다', () => {
+  const existing = 'beethoven-piano-concerto-op73-no5-m2'
+  const storage = memoryStorage({
+    [VERSION_KEY]: 'manual-catalog-4',
+    [STORAGE_KEY]: JSON.stringify({ [existing]: { listenAgain: true, liked: true } }),
+    [SELECTION_KEY]: JSON.stringify(['tenderness']),
+  })
+  const state = migrateMusicStorage(storage)
+  assert.deepEqual(state.reactions[existing], { listenAgain: true, liked: true })
+  assert.deepEqual(state.selectedKeys, ['tenderness'])
+  assert.equal(state.notice, null)
+  assert.equal(storage.getItem(VERSION_KEY), DATA_VERSION)
 })

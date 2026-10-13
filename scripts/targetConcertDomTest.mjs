@@ -15,7 +15,7 @@ export async function verifyTargetConcertInteractions(App) {
   dom.window.HTMLDialogElement.prototype.showModal = function () { this.open = true }
   dom.window.HTMLDialogElement.prototype.close = function () { this.open = false }
   const songId = 'chopin-ballade-op23-no1', emperorId = 'beethoven-piano-concerto-op73-no5-m2'
-  dom.window.localStorage.setItem('classic-atlas-music-data-version', 'manual-catalog-4')
+  dom.window.localStorage.setItem('classic-atlas-music-data-version', 'manual-catalog-5')
   dom.window.localStorage.setItem('classic-atlas-track-reactions-v1', JSON.stringify({ [songId]: { listenAgain: true }, [emperorId]: { listenAgain: true } }))
   let listCalls = 0, detailCalls = 0, root, candidates = [], hold = true, release, lastSignal
   const batches = [], cache = new Map()
@@ -67,6 +67,7 @@ export async function verifyTargetConcertInteractions(App) {
     assert.equal(batches[0].kopisIds.length, 2)
     assert.equal(batches[0].refresh, true, '목록과 날짜가 다른 저장 상세는 새로 조회')
     assert.equal(main().querySelectorAll('.concert-card').length, 1, '캐시된 일치 결과를 처리 전에 먼저 표시')
+    assert.ok(main().textContent.includes('일치 공연 1개 발견 · 다른 후보 확인 중'))
     assert.ok(main().querySelector('[data-match-status="processing"]'))
     await flush(submit)
     assert.equal(batches.length, 1, '동일 검색을 중복 실행하지 않음')
@@ -78,7 +79,7 @@ export async function verifyTargetConcertInteractions(App) {
     assert.ok(!dom.window.document.body.textContent.includes('직접 등록한 공연'), '곡 검색에 별도 등록 공연을 표시하지 않음')
     assert.equal([...main().querySelectorAll('.concert-status-counts dd')].reduce((sum, node) => sum + parseInt(node.textContent), 0), 13)
     assert.equal(detailCalls, 0)
-    await click('보관함 기반'); await click('선택한 감정 기반'); await click('부드러운')
+    assert.ok(!dom.window.document.body.textContent.includes('선택한 감정 기반'))
     assert.equal(batches.length, 5); assert.equal(listCalls, 1)
     hold = true
     await click('더 찾아보기')
@@ -107,6 +108,15 @@ export async function verifyTargetConcertInteractions(App) {
     await flush(() => emperorCard.querySelector('.saved-track-concert').click())
     assert.equal(dom.window.document.querySelector('.concert-target').dataset.targetTrackId, emperorId)
     assert.ok(!main(), '곡 변경 후 이전 결과와 섞이지 않음')
+    await click('곡 변경')
+    assert.ok(dom.window.document.querySelector('.concert-track-picker'))
+    assert.ok(!dom.window.document.querySelector('.concert-search-panel'))
+    assert.ok(!main())
+    const savedEmperor = dom.window.document.querySelector(`.concert-track-options [data-track-id="${emperorId}"]`)
+    assert.ok(savedEmperor, '공연 화면에서도 보관한 곡 선택')
+    await flush(() => savedEmperor.click())
+    assert.equal(dom.window.document.querySelector('.concert-target').dataset.targetTrackId, emperorId)
+    assert.equal(listCalls, 1, '곡 변경·선택만으로 자동 재검색하지 않음')
   } finally {
     if (root) await React.act(async () => root.unmount())
     dom.window.close()

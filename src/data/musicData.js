@@ -1,5 +1,6 @@
 import { manualRatings } from './manualRatings.js'
 import { getRepresentativeEmotions, isFullyRated } from './emotions.js'
+import { tchaikovskySeasonDetails } from './tchaikovskySeasons.js'
 
 export const composerImages = {
   바흐: '/composers/bach-card-800x600.jpg',
@@ -12,10 +13,11 @@ export const composerImages = {
   사티: '/composers/satie-card-800x600.jpg',
   슈베르트: '/composers/schubert-card-800x600.jpg',
   슈만: '/composers/schumann-card-800x600.jpg',
+  차이콥스키: '/composers/tchaikovsky-portrait-card-800x600.jpg',
 }
 export const tracks = manualRatings.map((track) => ({
   ...track, ratingStatus: isFullyRated(track) ? 'complete' : 'needs-review', tone: 'sage',
-  description: `사용자가 직접 평가한 아홉 가지 감정으로 만나보는 ${track.composer}의 피아노 작품이에요.`,
+  description: track.summary || `사용자가 직접 평가한 아홉 가지 감정으로 만나보는 ${track.composer}의 피아노 작품이에요.`,
   tags: getRepresentativeEmotions(track).map(({ label }) => label),
 }))
 export const legacyTrackIdMap = {
@@ -31,6 +33,25 @@ export const legacyTrackIdMap = {
 }
 // 정확히 같은 작품·악장에만 연결합니다. 기존 쇼팽 두 악장에는 등록 영상이 없었습니다.
 export const trackDetails = {
+  ...tchaikovskySeasonDetails,
+  'beethoven-piano-concerto-op73-no5-m1': {
+    about: '1809년에 작곡된 협주곡의 첫 악장으로, 관현악의 강한 화음에 피아노가 자유로운 독주처럼 응답하며 시작한다.',
+    listeningTip: '힘찬 주제와 조용한 선율의 대비, 피아노와 관현악이 주고받는 흐름에 집중해 보자. 화려함 속에서 부드러운 표정도 발견할 수 있다.',
+    shortPreview: { provider: 'youtube', videoId: 'MlrNjdYnheM', startSeconds: 0, endSeconds: 1259,
+      sourceLabel: 'Krystian Zimerman · London Symphony Orchestra · Sir Simon Rattle / Krystian Zimerman - Topic / 《Beethoven: Complete Piano Concertos》 · Deutsche Grammophon (2021)' },
+  },
+  'beethoven-piano-concerto-op73-no5-m2': {
+    about: '약음기를 사용한 현악의 선율로 시작하는 느린 악장으로, 마지막에는 다음 악장으로 쉼 없이 이어진다.',
+    listeningTip: '현악의 긴 호흡과 피아노의 작은 응답을 따라가 보자. 끝부분에서 다음 악장의 주제가 조심스럽게 모습을 드러내는 순간도 귀 기울일 만하다.',
+    shortPreview: { provider: 'youtube', videoId: 'QsrnBnnoQ00', startSeconds: 0, endSeconds: 501,
+      sourceLabel: 'Krystian Zimerman · London Symphony Orchestra · Sir Simon Rattle / Krystian Zimerman - Topic / 《Beethoven: Complete Piano Concertos》 · Deutsche Grammophon (2021)' },
+  },
+  'beethoven-piano-concerto-op73-no5-m3': {
+    about: '활기찬 주제가 되돌아오는 론도 피날레로, 피아노가 주제를 힘차게 제시하며 출발한다.',
+    listeningTip: '엇박이 만드는 탄력과 주제가 돌아올 때의 변화를 들어보자. 마지막 부근에서 피아노와 팀파니가 조용히 호흡을 맞춘 뒤 다시 활력이 터지는 대비가 인상적이다.',
+    shortPreview: { provider: 'youtube', videoId: 'DRPhtnden5g', startSeconds: 0, endSeconds: 623,
+      sourceLabel: 'Krystian Zimerman · London Symphony Orchestra · Sir Simon Rattle / Krystian Zimerman - Topic / 《Beethoven: Complete Piano Concertos》 · Deutsche Grammophon (2021)' },
+  },
   'chopin-sonata-op35-no2-m1': {
     highlight: { title: '강한 걸음과 섬세한 숨결', description: '단단한 리듬 사이로 갑자기 부드러워지는 선율의 대비를 느껴보세요.' },
   },
