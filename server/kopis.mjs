@@ -7,6 +7,7 @@ import { mergeSearchConcerts } from '../src/data/concertSearch.js'
 import { extractProgram, getExtractedWorkLinks, matchConcertToTrack } from './programMatching.mjs'
 import { createProgramOcrService, OCR_VERSION } from './programOcr.mjs'
 import { combineOcrProgram, matchAnalyzedConcert } from './ocrProgramEvidence.mjs'
+import { createSacService } from './sac.mjs'
 import { mkdir, readFile, writeFile, rename } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -64,8 +65,9 @@ export const normalizeKopisConcert = (row, fetchedAt) => {
   }
 }
 
-export const createKopisService = ({ env = process.env, fetchImpl = fetch, now = Date.now, ocrService, persistAnalyses = true, delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) } = {}) => {
+export const createKopisService = ({ env = process.env, fetchImpl = fetch, now = Date.now, ocrService, persistAnalyses = true, sacService, delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) } = {}) => {
   const ocr = ocrService || createProgramOcrService({ env, now })
+  const sac = sacService || createSacService({ fetchImpl, now })
   const analyses = new Map()
   const key = env.KOPIS_SERVICE_KEY?.trim()
   const ttl = env.CONCERT_CACHE_TTL_MS === undefined ? CONCERT_CACHE_TTL_MS : Number(env.CONCERT_CACHE_TTL_MS)
@@ -127,9 +129,20 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
           const concert = normalizeKopisConcert(row, new Date(now()).toISOString())
           if (concert.dateFrom <= query.to && concert.dateTo >= query.from && (query.region === '전국' || concert.region === query.region)) unique.set(concert.id, concert)
         }
-        if (rows.length < 100) return { query, concerts: [...unique.values()] }
+        if (rows.length < 100) break
+        if (page === 50) throw new ConcertApiError('SEARCH_TOO_LARGE', '검색 결과가 많습니다. 지역이나 기간을 좁혀 다시 조회해주세요.')
       }
-      throw new ConcertApiError('SEARCH_TOO_LARGE', '검색 결과가 많습니다. 지역이나 기간을 좁혀 다시 조회해주세요.')
+      const sourceWarnings = []
+      try {
+        for (const concert of await sac.search(query)) {
+          // Same official event can arrive from both sources. Keep the KOPIS copy when its title, dates and venue agree.
+          const duplicate = [...unique.values()].some((known) => known.dateFrom === concert.dateFrom && known.dateTo === concert.dateTo
+            && known.title.replace(/\s/g, '') === concert.title.replace(/\s/g, '')
+            && /예술의전당/.test(known.venue))
+          if (!duplicate) unique.set(concert.id, concert)
+        }
+      } catch { sourceWarnings.push('예술의전당 일정은 현재 조회하지 못했습니다. 다시 검색하면 재시도합니다.') }
+      return { query, concerts: [...unique.values()], sourceWarnings }
     })
   }
   const program = async (kopisId, refresh = false) => {
