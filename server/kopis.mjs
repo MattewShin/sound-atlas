@@ -74,7 +74,7 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
   if (!Number.isSafeInteger(ttl) || ttl < 0) throw new Error('CONCERT_CACHE_TTL_MS must be a non-negative integer')
   const cache = new Map(), pending = new Map()
   let upstreamQueue = Promise.resolve()
-  const config = () => ({ configured: Boolean(key), cacheTtlMs: ttl, maxSearchDays: MAX_CONCERT_SEARCH_DAYS,
+  const config = () => ({ configured: Boolean(key), sacAvailable: true, cacheTtlMs: ttl, maxSearchDays: MAX_CONCERT_SEARCH_DAYS,
     programBatchSize: ocr.config.programBatchSize, initialCheckLimit: ocr.config.initialCheckLimit, moreCheckLimit: ocr.config.moreCheckLimit, ocrWorkers: ocr.config.workers })
   const requireKey = () => { if (!key) throw new ConcertApiError('KOPIS_NOT_CONFIGURED', '공연 검색 연동 설정 필요', 503) }
   const requestXml = (path, params = {}) => {
@@ -98,7 +98,6 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
     return request
   }
   const cached = async (cacheKey, refresh, loader) => {
-    requireKey()
     const entry = cache.get(cacheKey)
     if (!refresh && entry && now() - Date.parse(entry.fetchedAt) >= 0 && now() - Date.parse(entry.fetchedAt) < ttl) return { ...entry, fromCache: true, cacheTtlMs: ttl }
     if (!refresh && pending.has(cacheKey)) return pending.get(cacheKey)
@@ -119,7 +118,9 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
     try { query = validateConcertQuery(input) } catch (error) { throw new ConcertApiError('INVALID_QUERY', error.message, 400) }
     return cached(`list:${JSON.stringify(query)}`, refresh, async () => {
       const unique = new Map()
-      for (let page = 1; page <= 50; page += 1) {
+      const sourceWarnings = []
+      if (!key) sourceWarnings.push('KOPIS 연동이 없어 예술의전당 공연만 조회했어요.')
+      for (let page = 1; key && page <= 50; page += 1) {
         const rows = await requestXml('pblprfr', {
           stdate: query.from.replaceAll('-', ''), eddate: query.to.replaceAll('-', ''), cpage: String(page), rows: '100', shcate: 'CCCA',
           ...(query.region === '전국' ? {} : { signgucode: KOPIS_REGION_CODES[query.region] }),
@@ -132,7 +133,6 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
         if (rows.length < 100) break
         if (page === 50) throw new ConcertApiError('SEARCH_TOO_LARGE', '검색 결과가 많습니다. 지역이나 기간을 좁혀 다시 조회해주세요.')
       }
-      const sourceWarnings = []
       try {
         for (const concert of await sac.search(query, refresh)) {
           // Same official event can arrive from both sources. Keep the KOPIS copy when its title, dates and venue agree.
@@ -141,7 +141,10 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
             && /예술의전당/.test(known.venue))
           if (!duplicate) unique.set(concert.id, concert)
         }
-      } catch { sourceWarnings.push('예술의전당 일정은 현재 조회하지 못했습니다. 다시 검색하면 재시도합니다.') }
+      } catch {
+        if (!key) throw new ConcertApiError('CONCERT_SOURCES_UNAVAILABLE', '예술의전당 공연 정보를 조회하지 못했습니다. 잠시 후 다시 검색해주세요.', 503)
+        sourceWarnings.push('예술의전당 일정은 현재 조회하지 못했습니다. 다시 검색하면 재시도합니다.')
+      }
       return { query, concerts: [...unique.values()], sourceWarnings }
     })
   }
