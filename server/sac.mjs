@@ -40,7 +40,7 @@ export const normalizeSacConcert = (row, fetchedAt) => {
 
 export const extractSacProgramText = (html) => {
   if (typeof html !== 'string') return ''
-  const plain = html.replace(/<(?:script|style|head|svg)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+  const plain = html.replace(/<(script|style|head|svg)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
     .replace(/<br\s*\/?\s*>|<\/(?:p|div|li|h[1-6]|section|tr)>/gi, '\n')
     .replace(/<[^>]*>/g, ' ')
     .replace(/&nbsp;|&#160;/gi, ' ').replace(/&amp;/gi, '&')
