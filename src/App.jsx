@@ -189,7 +189,7 @@ function YouTubeShortEmbed({ track, preview }) {
     <iframe
       src={embedUrl}
       ref={iframeRef}
-      title={`${track.composer} ${track.title} 하이라이트 감상`}
+      title={`${track.composer} ${track.title} 음원 감상하기`}
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowFullScreen
       onError={() => setHasVideoError(true)}
@@ -207,7 +207,7 @@ function HighlightShortView({ track, detail, isOpen, onClose }) {
   return (
     <div className={`highlight-short-backdrop ${isOpen ? 'is-open' : ''}`} aria-hidden={!isOpen}>
       <section className="highlight-short-view" role="dialog" aria-modal="true" aria-labelledby="highlight-short-title">
-        <header className="highlight-short-top"><button type="button" onClick={onClose} aria-label="하이라이트 감상 닫기">←</button><h2 id="highlight-short-title">하이라이트 감상</h2><span aria-hidden="true" /></header>
+        <header className="highlight-short-top"><button type="button" onClick={onClose} aria-label="음원 감상하기 닫기">←</button><h2 id="highlight-short-title">음원 감상하기</h2><span aria-hidden="true" /></header>
         <div className="highlight-short-video">{isOpen && <YouTubeShortEmbed track={track} preview={preview} />}</div>
         <div className="highlight-short-info"><p>{track.composer}</p><h3>{formatTrackTitle(track)}</h3>{detail?.highlight && <><strong>{detail.highlight.title}</strong><span>{detail.highlight.description}</span></>}{preview.sourceLabel && <small>{preview.sourceLabel}</small>}</div>
         <button className="highlight-short-return" type="button" onClick={onClose}>곡 상세로 돌아가기</button>
@@ -294,7 +294,7 @@ function App() {
   const [recommendationMode, setRecommendationMode] = useState('keyword')
   const [recommendationInput, setRecommendationInput] = useState('music')
   const [currentFeeling, setCurrentFeeling] = useState(null)
-  const [selectedKeys, setSelectedKeys] = useState(initialMusicState.selectedKeys)
+  const [selectedKeys, setSelectedKeys] = useState([])
   const [recommendationDraw, setRecommendationDraw] = useState(Math.random)
   const [selectedTrackId, setSelectedTrackId] = useState(null)
   const [recommendationListState, setRecommendationListState] = useState({ query: null, count: 20 })
@@ -346,7 +346,10 @@ function App() {
     document.addEventListener('visibilitychange', refresh)
     return () => { window.clearInterval(timer); document.removeEventListener('visibilitychange', refresh) }
   }, [])
-  useEffect(() => { saveMusicValue(SELECTION_KEY, selectedKeys) }, [selectedKeys])
+  useEffect(() => {
+    // 키워드는 현재 화면에서만 유지하며 이전 버전의 저장된 선택도 제거합니다.
+    try { window.localStorage.removeItem(SELECTION_KEY) } catch { /* 저장 차단 */ }
+  }, [])
   useEffect(() => { setRecommendationListState({ query: recommendationQuery, count: 20 }) }, [recommendationQuery])
   useEffect(() => { saveConcertRegion(concertRegion) }, [concertRegion])
   useEffect(() => {

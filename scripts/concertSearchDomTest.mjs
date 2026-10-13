@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import React from 'react'
 import { JSDOM } from 'jsdom'
+import { DATA_VERSION } from '../src/data/emotions.js'
+import { SELECTION_KEY, STORAGE_KEY, VERSION_KEY } from '../src/data/storage.js'
 
 // 합성 응답을 통한 곡 선택 전 네트워크 차단과 설정 오류 검증.
 export async function verifyConcertSearchInteractions(App) {
@@ -23,9 +25,25 @@ export async function verifyConcertSearchInteractions(App) {
   const flush = async (action) => React.act(async () => { action?.(); await new Promise((resolve) => setTimeout(resolve, 15)) })
   const findButton = (label) => [...dom.window.document.querySelectorAll('button')].find((button) => button.textContent.trim() === label)
   try {
+    const saved = { 'chopin-ballade-op23-no1': { listenAgain: true, liked: true } }
+    dom.window.localStorage.setItem(VERSION_KEY, DATA_VERSION)
+    dom.window.localStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
+    dom.window.localStorage.setItem(SELECTION_KEY, JSON.stringify(['wonder', 'peacefulness']))
     const { createRoot } = await import('react-dom/client')
     root = createRoot(dom.window.document.getElementById('root'))
     await flush(() => root.render(React.createElement(App)))
+    assert.equal(findButton('감동적인').getAttribute('aria-pressed'), 'false', '이전 저장 키워드를 복원하지 않음')
+    assert.equal(findButton('평안한').getAttribute('aria-pressed'), 'false')
+    assert.equal(dom.window.localStorage.getItem(SELECTION_KEY), null)
+    await flush(() => findButton('감동적인').click())
+    assert.equal(findButton('감동적인').getAttribute('aria-pressed'), 'true')
+    assert.equal(dom.window.localStorage.getItem(SELECTION_KEY), null, '새 선택도 영구 저장하지 않음')
+    await flush(() => root.unmount())
+    root = createRoot(dom.window.document.getElementById('root'))
+    await flush(() => root.render(React.createElement(App)))
+    assert.equal(findButton('감동적인').getAttribute('aria-pressed'), 'false', '새로 시작하면 키워드 초기화')
+    assert.equal(dom.window.document.querySelector('.featured-track'), null, '이전 키워드의 추천도 복원하지 않음')
+    assert.deepEqual(JSON.parse(dom.window.localStorage.getItem(STORAGE_KEY)), saved, '보관·좋아요 기록 유지')
     await flush(() => findButton('감동적인').click())
     const featuredBefore = dom.window.document.querySelector('.featured-track h2').textContent
     const relatedChoice = dom.window.document.querySelector('.similar-section .mini-track')

@@ -61,7 +61,7 @@ npm run diagnose:recommendations
 
 ## 로컬 저장 마이그레이션
 
-`classic-atlas-track-reactions-v1`의 `listenAgain` 보관 상태와 `liked` 기록을 사용합니다. 데이터 버전 `manual-catalog-5`는 `classic-atlas-music-data-version`에 저장합니다. 기존 36곡·44곡·65곡 버전의 ID와 보관·좋아요·선택은 유지합니다. 더 오래된 구 ID는 정확한 두 쇼팽 악장과 라흐마니노프 Op.23 No.5, 사티 짐노페디 No.1, 리스트 사랑의 꿈 No.3, 베토벤 월광 1·3악장·발트슈타인 1악장·열정 3악장을 명시적으로 연결합니다. 구 라흐마니노프 Op.3의 잘못된 곡번호는 추정 매칭하지 않습니다. 이미 삭제된 보관 기록을 복구하지는 않습니다. 다른 구 곡 참조는 제거하며 인증·다른 설정은 보존합니다.
+`classic-atlas-track-reactions-v1`의 `listenAgain` 보관 상태와 `liked` 기록을 사용합니다. 데이터 버전 `manual-catalog-5`는 `classic-atlas-music-data-version`에 저장합니다. 기존 36곡·44곡·65곡 버전의 ID와 보관·좋아요는 유지합니다. 키워드 선택은 현재 화면에서만 유지하고 새로고침하면 초기화합니다. 이전 `classic-atlas-music-selection-v1` 저장값은 앱 시작 시 제거합니다. 더 오래된 구 ID는 정확한 두 쇼팽 악장과 라흐마니노프 Op.23 No.5, 사티 짐노페디 No.1, 리스트 사랑의 꿈 No.3, 베토벤 월광 1·3악장·발트슈타인 1악장·열정 3악장을 명시적으로 연결합니다. 구 라흐마니노프 Op.3의 잘못된 곡번호는 추정 매칭하지 않습니다. 이미 삭제된 보관 기록을 복구하지는 않습니다. 다른 구 곡 참조는 제거하며 인증·다른 설정은 보존합니다.
 
 선택값은 `classic-atlas-music-selection-v1`에 감정 키로 저장합니다. 유효한 키·현재 한글명은 유지하고 이전 편안한만 평안한으로 변환합니다. 따뜻한·장엄한 등으로 새 평가를 추정하지 않습니다. 최근 곡 키 `classic-atlas-recent-tracks-v1`이 있으면 ID 매핑·중복 제거를 적용합니다. 과거 취향·강도·추천 캐시 키만 폐기합니다. 정리된 보관곡이 있으면 한 번 안내하며 동일 버전 재실행은 추가 삭제를 하지 않습니다. `localStorage.clear()`는 사용하지 않습니다.
 
