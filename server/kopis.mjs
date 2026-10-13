@@ -134,7 +134,7 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
       }
       const sourceWarnings = []
       try {
-        for (const concert of await sac.search(query)) {
+        for (const concert of await sac.search(query, refresh)) {
           // Same official event can arrive from both sources. Keep the KOPIS copy when its title, dates and venue agree.
           const duplicate = [...unique.values()].some((known) => known.dateFrom === concert.dateFrom && known.dateTo === concert.dateTo
             && known.title.replace(/\s/g, '') === concert.title.replace(/\s/g, '')
