@@ -17,15 +17,17 @@ export const manualRatings = [
       "transcendence": 4,
       "nostalgia": 1,
       "tenderness": 1,
-      "peacefulness": 2,
+      "peacefulness": 1,
       "joy": 4,
       "power": 4,
       "tension": 3,
-      "sadness": 2
+      "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.1",
+    "summary": "넓게 펼쳐지는 아르페지오가 밝고 장대한 기세를 만들어내는 곡."
   },
   {
     "id": "chopin-etude-op10-no2",
@@ -50,7 +52,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.2",
+    "summary": "가느다란 반음계가 빠르게 스쳐 지나가며 날렵한 긴장감을 만드는 곡."
   },
   {
     "id": "chopin-etude-op10-no3",
@@ -66,16 +70,18 @@ export const manualRatings = [
       "wonder": 4,
       "transcendence": 1,
       "nostalgia": 2,
-      "tenderness": 3,
+      "tenderness": 4,
       "peacefulness": 3,
       "joy": 1,
       "power": 2,
-      "tension": 1,
+      "tension": 3,
       "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.3",
+    "summary": "따뜻한 노래가 격한 흔들림을 거쳐 다시 애틋하게 돌아오는 곡."
   },
   {
     "id": "chopin-etude-op10-no4",
@@ -89,18 +95,20 @@ export const manualRatings = [
     "alias": "",
     "emotionScores": {
       "wonder": 2,
-      "transcendence": 5,
+      "transcendence": 4,
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 4,
-      "power": 3,
+      "joy": 2,
+      "power": 4,
       "tension": 4,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.4",
+    "summary": "양손의 빠른 움직임이 쉼 없이 몰아치며 불꽃 같은 긴장을 만드는 곡."
   },
   {
     "id": "chopin-etude-op10-no5",
@@ -119,13 +127,15 @@ export const manualRatings = [
       "tenderness": 1,
       "peacefulness": 2,
       "joy": 4,
-      "power": 1,
-      "tension": 3,
+      "power": 2,
+      "tension": 2,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.5",
+    "summary": "검은 건반 위를 가볍게 뛰어다니는 반짝이는 유희."
   },
   {
     "id": "chopin-etude-op10-no6",
@@ -142,15 +152,17 @@ export const manualRatings = [
       "transcendence": 1,
       "nostalgia": 3,
       "tenderness": 3,
-      "peacefulness": 3,
+      "peacefulness": 2,
       "joy": 1,
       "power": 1,
-      "tension": 1,
+      "tension": 2,
       "sadness": 4
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.6",
+    "summary": "느린 선율 아래의 움직임이 조용한 슬픔을 깊게 만드는 곡."
   },
   {
     "id": "chopin-etude-op10-no7",
@@ -169,13 +181,15 @@ export const manualRatings = [
       "tenderness": 1,
       "peacefulness": 1,
       "joy": 3,
-      "power": 2,
+      "power": 3,
       "tension": 3,
-      "sadness": 2
+      "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.7",
+    "summary": "짧은 겹음이 탄력 있게 이어지는 밝고 분주한 곡."
   },
   {
     "id": "chopin-etude-op10-no8",
@@ -200,7 +214,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.8",
+    "summary": "높은 음역의 빠른 흐름 아래로 밝은 선율이 유연하게 움직이는 곡."
   },
   {
     "id": "chopin-etude-op10-no9",
@@ -218,14 +234,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 2,
-      "power": 2,
+      "joy": 1,
+      "power": 3,
       "tension": 3,
       "sadness": 4
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.9",
+    "summary": "넓은 반주 위의 선율이 불안과 애틋함을 호소하는 곡."
   },
   {
     "id": "chopin-etude-op10-no10",
@@ -250,7 +268,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.10",
+    "summary": "반복되는 음형이 다양한 악센트로 빛나는 활기찬 곡."
   },
   {
     "id": "chopin-etude-op10-no11",
@@ -267,15 +287,17 @@ export const manualRatings = [
       "transcendence": 1,
       "nostalgia": 3,
       "tenderness": 3,
-      "peacefulness": 3,
-      "joy": 3,
+      "peacefulness": 4,
+      "joy": 2,
       "power": 1,
       "tension": 1,
       "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.11",
+    "summary": "넓게 풀어지는 화음 사이로 부드러운 노래가 흐르는 곡."
   },
   {
     "id": "chopin-etude-op10-no12",
@@ -289,18 +311,20 @@ export const manualRatings = [
     "alias": "혁명",
     "emotionScores": {
       "wonder": 1,
-      "transcendence": 5,
+      "transcendence": 4,
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 3,
-      "power": 4,
+      "joy": 1,
+      "power": 5,
       "tension": 4,
-      "sadness": 1
+      "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.10 No.12",
+    "summary": "왼손의 거센 흐름과 단호한 화음이 분노와 비장함을 밀어 올리는 곡."
   },
   {
     "id": "chopin-etude-op25-no1",
@@ -315,17 +339,19 @@ export const manualRatings = [
     "emotionScores": {
       "wonder": 4,
       "transcendence": 1,
-      "nostalgia": 3,
-      "tenderness": 3,
-      "peacefulness": 2,
+      "nostalgia": 4,
+      "tenderness": 4,
+      "peacefulness": 3,
       "joy": 2,
       "power": 1,
       "tension": 1,
-      "sadness": 3
+      "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.1",
+    "summary": "하프 같은 반주 위로 따뜻하고 꿈결 같은 선율이 떠오르는 곡."
   },
   {
     "id": "chopin-etude-op25-no2",
@@ -340,17 +366,19 @@ export const manualRatings = [
     "emotionScores": {
       "wonder": 2,
       "transcendence": 1,
-      "nostalgia": 1,
-      "tenderness": 1,
-      "peacefulness": 1,
-      "joy": 4,
+      "nostalgia": 3,
+      "tenderness": 2,
+      "peacefulness": 3,
+      "joy": 3,
       "power": 1,
-      "tension": 1,
+      "tension": 2,
       "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.2",
+    "summary": "가느다란 음형이 가볍고 흐릿하게 흘러가는 곡."
   },
   {
     "id": "chopin-etude-op25-no3",
@@ -375,7 +403,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.3",
+    "summary": "탄력 있는 리듬과 밝은 움직임이 경쾌한 활력을 만드는 곡."
   },
   {
     "id": "chopin-etude-op25-no4",
@@ -400,7 +430,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.4",
+    "summary": "엇박과 도약이 가볍게 튀며 장난스러운 긴장을 만드는 곡."
   },
   {
     "id": "chopin-etude-op25-no5",
@@ -415,17 +447,19 @@ export const manualRatings = [
     "emotionScores": {
       "wonder": 2,
       "transcendence": 1,
-      "nostalgia": 1,
-      "tenderness": 2,
+      "nostalgia": 2,
+      "tenderness": 3,
       "peacefulness": 2,
       "joy": 3,
-      "power": 3,
+      "power": 2,
       "tension": 2,
       "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.5",
+    "summary": "거친 장난 같은 시작 뒤로 따뜻한 노래가 펼쳐지는 곡."
   },
   {
     "id": "chopin-etude-op25-no6",
@@ -440,17 +474,19 @@ export const manualRatings = [
     "emotionScores": {
       "wonder": 3,
       "transcendence": 3,
-      "nostalgia": 3,
+      "nostalgia": 2,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 3,
-      "power": 2,
+      "joy": 2,
+      "power": 3,
       "tension": 4,
       "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.6",
+    "summary": "촘촘한 3도 진행이 서늘하고 날렵한 긴장을 만드는 곡."
   },
   {
     "id": "chopin-etude-op25-no7",
@@ -465,8 +501,8 @@ export const manualRatings = [
     "emotionScores": {
       "wonder": 4,
       "transcendence": 1,
-      "nostalgia": 1,
-      "tenderness": 2,
+      "nostalgia": 2,
+      "tenderness": 3,
       "peacefulness": 2,
       "joy": 1,
       "power": 1,
@@ -475,7 +511,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.7",
+    "summary": "낮은 음역의 깊은 노래가 애틋한 대화처럼 이어지는 곡."
   },
   {
     "id": "chopin-etude-op25-no8",
@@ -500,7 +538,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.8",
+    "summary": "빠른 6도 진행이 짧고 밝은 활기를 만들어내는 곡."
   },
   {
     "id": "chopin-etude-op25-no9",
@@ -516,16 +556,18 @@ export const manualRatings = [
       "wonder": 1,
       "transcendence": 1,
       "nostalgia": 1,
-      "tenderness": 3,
+      "tenderness": 2,
       "peacefulness": 2,
-      "joy": 3,
+      "joy": 4,
       "power": 2,
       "tension": 2,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.9",
+    "summary": "짧은 도약과 탄력 있는 음들이 나비처럼 가볍게 춤추는 곡."
   },
   {
     "id": "chopin-etude-op25-no10",
@@ -541,16 +583,18 @@ export const manualRatings = [
       "wonder": 1,
       "transcendence": 4,
       "nostalgia": 1,
-      "tenderness": 1,
+      "tenderness": 3,
       "peacefulness": 1,
-      "joy": 3,
-      "power": 5,
+      "joy": 2,
+      "power": 4,
       "tension": 3,
       "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.10",
+    "summary": "거친 옥타브와 다정한 중간 선율이 선명하게 대비되는 곡."
   },
   {
     "id": "chopin-etude-op25-no11",
@@ -564,18 +608,20 @@ export const manualRatings = [
     "alias": "겨울바람",
     "emotionScores": {
       "wonder": 2,
-      "transcendence": 5,
+      "transcendence": 4,
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 3,
-      "power": 4,
+      "joy": 1,
+      "power": 5,
       "tension": 4,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.11",
+    "summary": "짧은 고요 뒤로 거센 음형이 몰아치는 비장한 곡."
   },
   {
     "id": "chopin-etude-op25-no12",
@@ -593,14 +639,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 3,
-      "power": 4,
-      "tension": 3,
+      "joy": 2,
+      "power": 5,
+      "tension": 4,
       "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Etude Op.25 No.12",
+    "summary": "양손의 큰 흐름이 거대한 물결처럼 솟아오르는 곡."
   },
   {
     "id": "chopin-sonata-op35-no2-m1",
@@ -614,18 +662,20 @@ export const manualRatings = [
     "alias": "",
     "emotionScores": {
       "wonder": 3,
-      "transcendence": 5,
+      "transcendence": 4,
       "nostalgia": 1,
       "tenderness": 2,
       "peacefulness": 1,
-      "joy": 3,
+      "joy": 1,
       "power": 4,
       "tension": 4,
       "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Chopin Piano Sonata No.2 Op.35 - I",
+    "summary": "불안한 움직임과 서정적인 노래가 충돌하는 극적인 악장."
   },
   {
     "id": "chopin-sonata-op35-no2-m2",
@@ -641,16 +691,18 @@ export const manualRatings = [
       "wonder": 1,
       "transcendence": 3,
       "nostalgia": 2,
-      "tenderness": 1,
+      "tenderness": 2,
       "peacefulness": 1,
-      "joy": 4,
-      "power": 3,
+      "joy": 2,
+      "power": 4,
       "tension": 3,
-      "sadness": 1
+      "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Chopin Piano Sonata No.2 Op.35 - II",
+    "summary": "거친 스케르초 사이로 부드러운 노래가 잠시 드러나는 악장."
   },
   {
     "id": "chopin-sonata-op35-no2-m3",
@@ -664,18 +716,20 @@ export const manualRatings = [
     "alias": "",
     "emotionScores": {
       "wonder": 2,
-      "transcendence": 1,
+      "transcendence": 2,
       "nostalgia": 2,
-      "tenderness": 1,
+      "tenderness": 3,
       "peacefulness": 2,
       "joy": 1,
       "power": 2,
       "tension": 3,
-      "sadness": 4
+      "sadness": 5
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Chopin Piano Sonata No.2 Op.35 - III",
+    "summary": "무거운 장송의 발걸음 사이로 멀리서 위로의 노래가 들리는 악장."
   },
   {
     "id": "chopin-sonata-op35-no2-m4",
@@ -693,14 +747,16 @@ export const manualRatings = [
       "nostalgia": 3,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 3,
-      "power": 3,
-      "tension": 4,
+      "joy": 1,
+      "power": 2,
+      "tension": 5,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Chopin Piano Sonata No.2 Op.35 - IV",
+    "summary": "형체를 잡기 어려운 빠른 음들이 섬뜩한 잔상을 남기는 악장."
   },
   {
     "id": "chopin-sonata-op58-no3-m1",
@@ -714,18 +770,20 @@ export const manualRatings = [
     "alias": "",
     "emotionScores": {
       "wonder": 3,
-      "transcendence": 2,
-      "nostalgia": 3,
+      "transcendence": 3,
+      "nostalgia": 2,
       "tenderness": 2,
       "peacefulness": 1,
       "joy": 2,
       "power": 4,
-      "tension": 2,
+      "tension": 3,
       "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Chopin Piano Sonata No.3 Op.58 - I",
+    "summary": "장대한 선언과 섬세한 노래가 넓은 이야기로 펼쳐지는 악장."
   },
   {
     "id": "chopin-sonata-op58-no3-m2",
@@ -740,9 +798,9 @@ export const manualRatings = [
     "emotionScores": {
       "wonder": 1,
       "transcendence": 1,
-      "nostalgia": 3,
+      "nostalgia": 2,
       "tenderness": 2,
-      "peacefulness": 1,
+      "peacefulness": 2,
       "joy": 4,
       "power": 2,
       "tension": 1,
@@ -750,7 +808,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Chopin Piano Sonata No.3 Op.58 - II",
+    "summary": "가볍게 질주하는 움직임 사이로 조용한 쉼이 찾아오는 악장."
   },
   {
     "id": "chopin-sonata-op58-no3-m3",
@@ -764,18 +824,20 @@ export const manualRatings = [
     "alias": "",
     "emotionScores": {
       "wonder": 3,
-      "transcendence": 1,
+      "transcendence": 2,
       "nostalgia": 2,
-      "tenderness": 3,
-      "peacefulness": 3,
+      "tenderness": 4,
+      "peacefulness": 4,
       "joy": 1,
       "power": 1,
       "tension": 1,
-      "sadness": 4
+      "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Chopin Piano Sonata No.3 Op.58 - III",
+    "summary": "깊고 긴 선율이 고요한 사색과 다정한 위로로 이어지는 악장."
   },
   {
     "id": "chopin-sonata-op58-no3-m4",
@@ -789,18 +851,20 @@ export const manualRatings = [
     "alias": "",
     "emotionScores": {
       "wonder": 3,
-      "transcendence": 5,
+      "transcendence": 4,
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 4,
+      "joy": 3,
       "power": 4,
-      "tension": 3,
+      "tension": 4,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Chopin Piano Sonata No.3 Op.58 - IV",
+    "summary": "힘찬 질주가 긴장을 쌓아 화려한 결말로 향하는 악장."
   },
   {
     "id": "chopin-ballade-op23-no1",
@@ -818,14 +882,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 3,
       "peacefulness": 2,
-      "joy": 3,
-      "power": 3,
-      "tension": 2,
+      "joy": 2,
+      "power": 4,
+      "tension": 4,
       "sadness": 4
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Ballade No.1 Op.23",
+    "summary": "서정적인 이야기가 격한 소용돌이로 변하며 깊은 여운을 남기는 곡."
   },
   {
     "id": "chopin-ballade-op38-no2",
@@ -839,18 +905,20 @@ export const manualRatings = [
     "alias": "",
     "emotionScores": {
       "wonder": 4,
-      "transcendence": 2,
-      "nostalgia": 3,
+      "transcendence": 3,
+      "nostalgia": 2,
       "tenderness": 3,
-      "peacefulness": 2,
+      "peacefulness": 1,
       "joy": 1,
-      "power": 3,
-      "tension": 1,
+      "power": 4,
+      "tension": 4,
       "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Ballade No.2 Op.38",
+    "summary": "목가적인 고요가 갑자기 거친 폭풍으로 뒤집히는 곡."
   },
   {
     "id": "chopin-ballade-op47-no3",
@@ -864,18 +932,20 @@ export const manualRatings = [
     "alias": "",
     "emotionScores": {
       "wonder": 3,
-      "transcendence": 1,
+      "transcendence": 3,
       "nostalgia": 1,
       "tenderness": 3,
-      "peacefulness": 4,
-      "joy": 5,
+      "peacefulness": 2,
+      "joy": 4,
       "power": 3,
-      "tension": 2,
+      "tension": 3,
       "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Ballade No.3 Op.47",
+    "summary": "우아한 리듬과 밝은 노래가 점점 열기를 더하는 곡."
   },
   {
     "id": "chopin-ballade-op52-no4",
@@ -894,13 +964,15 @@ export const manualRatings = [
       "tenderness": 3,
       "peacefulness": 2,
       "joy": 1,
-      "power": 3,
+      "power": 4,
       "tension": 4,
       "sadness": 5
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Chopin Ballade No.4 Op.52",
+    "summary": "섬세한 이야기가 겹겹이 쌓여 비극적인 절정에 이르는 곡."
   },
   {
     "id": "rachmaninoff-prelude-op23-no1",
@@ -920,12 +992,14 @@ export const manualRatings = [
       "peacefulness": 2,
       "joy": 1,
       "power": 1,
-      "tension": 1,
+      "tension": 2,
       "sadness": 4
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Rachmaninoff Prelude Op.23 No.1",
+    "summary": "어두운 반주 위의 느린 선율이 조용한 우수를 남기는 곡."
   },
   {
     "id": "rachmaninoff-prelude-op23-no5",
@@ -941,16 +1015,18 @@ export const manualRatings = [
       "wonder": 1,
       "transcendence": 3,
       "nostalgia": 1,
-      "tenderness": 1,
+      "tenderness": 2,
       "peacefulness": 1,
-      "joy": 4,
+      "joy": 2,
       "power": 4,
       "tension": 3,
       "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Rachmaninoff Prelude Op.23 No.5",
+    "summary": "단호한 행진과 부드러운 중간 선율이 대비되는 곡."
   },
   {
     "id": "rachmaninoff-elegy-op3-no1",
@@ -965,8 +1041,8 @@ export const manualRatings = [
     "emotionScores": {
       "wonder": 4,
       "transcendence": 2,
-      "nostalgia": 1,
-      "tenderness": 2,
+      "nostalgia": 2,
+      "tenderness": 3,
       "peacefulness": 1,
       "joy": 1,
       "power": 3,
@@ -975,7 +1051,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Rachmaninoff Elegie Op.3 No.1",
+    "summary": "깊은 슬픔이 긴 선율과 풍부한 울림으로 번지는 곡."
   },
   {
     "id": "rachmaninoff-prelude-op3-no2",
@@ -1000,7 +1078,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Rachmaninoff Prelude  Op.3 No.2",
+    "summary": "종 같은 무거운 화음이 긴장과 장대한 압도감을 만드는 곡."
   },
   {
     "id": "satie-gymnopedie-no1",
@@ -1017,7 +1097,7 @@ export const manualRatings = [
       "transcendence": 1,
       "nostalgia": 4,
       "tenderness": 3,
-      "peacefulness": 3,
+      "peacefulness": 4,
       "joy": 1,
       "power": 1,
       "tension": 1,
@@ -1025,7 +1105,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Satie Gymnopedie No.1",
+    "summary": "느린 발걸음 같은 반주 위에 고요하고 아련한 선율이 떠 있는 곡."
   },
   {
     "id": "satie-gymnopedie-no2",
@@ -1045,12 +1127,14 @@ export const manualRatings = [
       "peacefulness": 3,
       "joy": 1,
       "power": 1,
-      "tension": 3,
-      "sadness": 1
+      "tension": 2,
+      "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Satie Gymnopedie No.2",
+    "summary": "담담한 반복 속에 옅은 쓸쓸함과 낯선 여운이 머무는 곡."
   },
   {
     "id": "satie-gymnopedie-no3",
@@ -1067,7 +1151,7 @@ export const manualRatings = [
       "transcendence": 1,
       "nostalgia": 4,
       "tenderness": 3,
-      "peacefulness": 2,
+      "peacefulness": 3,
       "joy": 1,
       "power": 1,
       "tension": 2,
@@ -1075,7 +1159,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Satie Gymnopedie No.3",
+    "summary": "느리고 무게 있는 선율이 차분한 쓸쓸함을 남기는 곡."
   },
   {
     "id": "liszt-liebestraum-s541-no3",
@@ -1091,18 +1177,20 @@ export const manualRatings = [
     "alias": "",
     "emotionScores": {
       "wonder": 3,
-      "transcendence": 1,
-      "nostalgia": 1,
-      "tenderness": 3,
-      "peacefulness": 3,
+      "transcendence": 2,
+      "nostalgia": 2,
+      "tenderness": 4,
+      "peacefulness": 2,
       "joy": 1,
       "power": 2,
       "tension": 2,
-      "sadness": 4
+      "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-work"
+    "ratingUnit": "whole-work",
+    "titleEn": "Liszt Liebestraum S.541 No.3",
+    "summary": "다정한 사랑의 노래가 뜨거운 절정을 거쳐 아련한 여운으로 돌아오는 곡."
   },
   {
     "id": "beethoven-sonata-op27-2-no14-m1",
@@ -1128,7 +1216,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.14 Op.27 No.2 - I",
+    "summary": "잔잔한 반복 위의 선율이 어둡고 아련한 사색으로 이어지는 악장."
   },
   {
     "id": "beethoven-sonata-op27-2-no14-m2",
@@ -1146,7 +1236,7 @@ export const manualRatings = [
       "transcendence": 1,
       "nostalgia": 1,
       "tenderness": 4,
-      "peacefulness": 4,
+      "peacefulness": 3,
       "joy": 3,
       "power": 1,
       "tension": 1,
@@ -1154,7 +1244,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.14 Op.27 No.2 - II",
+    "summary": "무거운 양끝 악장 사이에서 가볍게 미소 짓는 짧은 춤."
   },
   {
     "id": "beethoven-sonata-op27-2-no14-m3",
@@ -1173,14 +1265,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 4,
-      "power": 4,
-      "tension": 4,
+      "joy": 1,
+      "power": 5,
+      "tension": 5,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.14 Op.27 No.2 - III",
+    "summary": "격렬한 분산화음과 강한 악센트가 폭풍처럼 몰아치는 악장."
   },
   {
     "id": "beethoven-sonata-op31-2-no17-m1",
@@ -1199,14 +1293,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 3,
+      "joy": 1,
       "power": 4,
-      "tension": 4,
-      "sadness": 1
+      "tension": 5,
+      "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.17 Op.31 No.2 - I",
+    "summary": "망설이는 시작과 격한 응답이 불안한 대화처럼 이어지는 악장."
   },
   {
     "id": "beethoven-sonata-op31-2-no17-m2",
@@ -1223,8 +1319,8 @@ export const manualRatings = [
       "wonder": 3,
       "transcendence": 1,
       "nostalgia": 1,
-      "tenderness": 3,
-      "peacefulness": 3,
+      "tenderness": 4,
+      "peacefulness": 4,
       "joy": 1,
       "power": 1,
       "tension": 1,
@@ -1232,7 +1328,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.17 Op.31 No.2 - II",
+    "summary": "넓은 선율과 고요한 울림이 차분한 위로를 건네는 악장."
   },
   {
     "id": "beethoven-sonata-op31-2-no17-m3",
@@ -1251,14 +1349,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 4,
+      "joy": 2,
       "power": 3,
       "tension": 4,
-      "sadness": 1
+      "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.17 Op.31 No.2 - III",
+    "summary": "돌아오는 음형이 멈추지 않는 불안과 애틋함을 만드는 악장."
   },
   {
     "id": "beethoven-sonata-op53-no21-m1",
@@ -1276,14 +1376,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 2,
       "peacefulness": 2,
-      "joy": 5,
+      "joy": 4,
       "power": 4,
       "tension": 3,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.21 Op.53 - I",
+    "summary": "반복되는 화음의 추진력이 밝고 넓은 에너지로 펼쳐지는 악장."
   },
   {
     "id": "beethoven-sonata-op53-no21-m2",
@@ -1300,15 +1402,17 @@ export const manualRatings = [
       "transcendence": 1,
       "nostalgia": 1,
       "tenderness": 3,
-      "peacefulness": 4,
+      "peacefulness": 2,
       "joy": 1,
       "power": 1,
-      "tension": 1,
+      "tension": 3,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.21 Op.53 - II",
+    "summary": "조용한 화음과 여백이 다음 악장을 기다리는 긴장을 만드는 악장."
   },
   {
     "id": "beethoven-sonata-op53-no21-m3",
@@ -1333,7 +1437,9 @@ export const manualRatings = [
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.21 Op.53 - III",
+    "summary": "부드럽게 떠오른 주제가 밝은 빛과 거대한 활력으로 확장되는 악장."
   },
   {
     "id": "beethoven-sonata-op57-no23-m1",
@@ -1351,14 +1457,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 2,
+      "joy": 1,
       "power": 4,
-      "tension": 4,
+      "tension": 5,
       "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.23 Op.57 - I",
+    "summary": "낮게 시작된 불안이 극적인 충돌과 거대한 힘으로 번지는 악장."
   },
   {
     "id": "beethoven-sonata-op57-no23-m2",
@@ -1375,15 +1483,17 @@ export const manualRatings = [
       "transcendence": 1,
       "nostalgia": 1,
       "tenderness": 3,
-      "peacefulness": 3,
+      "peacefulness": 4,
       "joy": 2,
       "power": 1,
       "tension": 1,
-      "sadness": 4
+      "sadness": 2
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.23 Op.57 - II",
+    "summary": "단정한 주제가 변주되며 고요한 안정감을 쌓아가는 악장."
   },
   {
     "id": "beethoven-sonata-op57-no23-m3",
@@ -1401,14 +1511,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 3,
+      "joy": 1,
       "power": 5,
-      "tension": 4,
+      "tension": 5,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.23 Op.57 - III",
+    "summary": "쉬지 않는 흐름이 격한 긴장을 쌓아 폭발적인 결말로 향하는 악장."
   },
   {
     "id": "beethoven-sonata-op81a-no26-m1",
@@ -1427,14 +1539,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 2,
       "peacefulness": 2,
-      "joy": 4,
-      "power": 4,
-      "tension": 1,
-      "sadness": 1
+      "joy": 2,
+      "power": 3,
+      "tension": 3,
+      "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.26 Op.81a - I",
+    "summary": "이별의 머뭇거림이 활발한 움직임 속에서도 여운을 남기는 악장."
   },
   {
     "id": "beethoven-sonata-op81a-no26-m2",
@@ -1455,12 +1569,14 @@ export const manualRatings = [
       "peacefulness": 2,
       "joy": 1,
       "power": 1,
-      "tension": 1,
-      "sadness": 3
+      "tension": 2,
+      "sadness": 4
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.26 Op.81a - II",
+    "summary": "빈자리를 느끼듯 조용한 그리움과 기다림이 이어지는 악장."
   },
   {
     "id": "beethoven-sonata-op81a-no26-m3",
@@ -1475,18 +1591,20 @@ export const manualRatings = [
     "alias": "고별",
     "emotionScores": {
       "wonder": 1,
-      "transcendence": 4,
+      "transcendence": 3,
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 4,
+      "joy": 5,
       "power": 4,
       "tension": 3,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.26 Op.81a - III",
+    "summary": "돌아온 기쁨이 밝고 힘찬 움직임으로 터져 나오는 악장."
   },
   {
     "id": "beethoven-sonata-op13-no8-m1",
@@ -1504,14 +1622,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 3,
+      "joy": 1,
       "power": 4,
       "tension": 5,
-      "sadness": 1
+      "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.8 Op.13 - I",
+    "summary": "무거운 선언과 급박한 움직임이 강한 비극적 긴장을 만드는 악장."
   },
   {
     "id": "beethoven-sonata-op13-no8-m2",
@@ -1527,16 +1647,18 @@ export const manualRatings = [
       "wonder": 5,
       "transcendence": 2,
       "nostalgia": 2,
-      "tenderness": 3,
-      "peacefulness": 3,
+      "tenderness": 4,
+      "peacefulness": 4,
       "joy": 1,
       "power": 1,
       "tension": 1,
-      "sadness": 4
+      "sadness": 3
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.8 Op.13 - II",
+    "summary": "부드러운 노래가 다정한 위로와 고요한 여운을 전하는 악장."
   },
   {
     "id": "beethoven-sonata-op13-no8-m3",
@@ -1554,14 +1676,16 @@ export const manualRatings = [
       "nostalgia": 1,
       "tenderness": 1,
       "peacefulness": 1,
-      "joy": 4,
+      "joy": 3,
       "power": 3,
       "tension": 3,
       "sadness": 1
     },
     "ratingSource": "manual",
     "ratingVersion": "manual-emotions-1",
-    "ratingUnit": "whole-movement"
+    "ratingUnit": "whole-movement",
+    "titleEn": "Beethoven Piano Sonata No.8 Op.13 - III",
+    "summary": "긴장 어린 주제가 날렵하게 돌아오며 단호하게 마무리되는 악장."
   },
   {
     "id": "beethoven-piano-concerto-op73-no5-m1",

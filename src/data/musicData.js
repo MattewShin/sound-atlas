@@ -1,6 +1,7 @@
 import { manualRatings } from './manualRatings.js'
 import { getRepresentativeEmotions, isFullyRated } from './emotions.js'
 import { tchaikovskySeasonDetails } from './tchaikovskySeasons.js'
+import { manualTrackDetails } from './manualTrackDetails.js'
 
 export const composerImages = {
   바흐: '/composers/bach-card-800x600.jpg',
@@ -31,8 +32,9 @@ export const legacyTrackIdMap = {
   'beethoven-waldstein-1': 'beethoven-sonata-op53-no21-m1',
   'beethoven-appassionata-3': 'beethoven-sonata-op57-no23-m3',
 }
-// 정확히 같은 작품·악장에만 연결합니다. 기존 쇼팽 두 악장에는 등록 영상이 없었습니다.
+// 작품·악장 ID별 사용자 제공 소개와 정확한 영상 구간을 연결합니다.
 export const trackDetails = {
+  ...manualTrackDetails,
   ...tchaikovskySeasonDetails,
   'beethoven-piano-concerto-op73-no5-m1': {
     about: '1809년에 작곡된 협주곡의 첫 악장으로, 관현악의 강한 화음에 피아노가 자유로운 독주처럼 응답하며 시작한다.',
@@ -51,18 +53,5 @@ export const trackDetails = {
     listeningTip: '엇박이 만드는 탄력과 주제가 돌아올 때의 변화를 들어보자. 마지막 부근에서 피아노와 팀파니가 조용히 호흡을 맞춘 뒤 다시 활력이 터지는 대비가 인상적이다.',
     shortPreview: { provider: 'youtube', videoId: 'DRPhtnden5g', startSeconds: 0, endSeconds: 623,
       sourceLabel: 'Krystian Zimerman · London Symphony Orchestra · Sir Simon Rattle / Krystian Zimerman - Topic / 《Beethoven: Complete Piano Concertos》 · Deutsche Grammophon (2021)' },
-  },
-  'chopin-sonata-op35-no2-m1': {
-    highlight: { title: '강한 걸음과 섬세한 숨결', description: '단단한 리듬 사이로 갑자기 부드러워지는 선율의 대비를 느껴보세요.' },
-  },
-  'chopin-sonata-op58-no3-m4': {
-    highlight: { title: '밝게 치닫는 피날레', description: '가벼운 도약처럼 이어지는 음형이 마지막까지 힘을 얻는 흐름을 들어보세요.' },
-  },
-  // 이전 영상 등록 참고본과 동일한 월광 1·3악장 구간만 재사용합니다.
-  'beethoven-sonata-op27-2-no14-m1': {
-    shortPreview: { provider: 'youtube', videoId: 'uTjOXAzUTQA', startSeconds: 7, endSeconds: 339, sourceLabel: '다니엘 하리토노프 · MBC TV예술무대' },
-  },
-  'beethoven-sonata-op27-2-no14-m3': {
-    shortPreview: { provider: 'youtube', videoId: 'uTjOXAzUTQA', startSeconds: 459, endSeconds: 788, sourceLabel: '다니엘 하리토노프 · MBC TV예술무대' },
   },
 }
