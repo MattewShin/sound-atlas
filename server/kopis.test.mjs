@@ -38,6 +38,27 @@ test('지역·기간·클래식 코드·페이지를 서버에서 지정하고 �
   await assert.rejects(service.search({ ...query, from: '2026-02-30' }), (error) => error.status === 400)
 })
 
+test('예술의전당 공연을 KOPIS 결과와 함께 보여주고 출처 오류는 부분 결과로 알린다', async () => {
+  const sacConcert = { id: 'sac-81233', sacId: '81233', title: 'KBS교향악단 송년음악회',
+    dateFrom: '2026-12-24', dateTo: '2026-12-24', region: '서울', venue: '예술의전당 콘서트홀',
+    saleState: '예정', sourceUrl: 'https://www.sac.or.kr/site/main/show/show_view?SN=81233',
+    sourceLabel: '예술의전당 공식 공연 정보', programStatus: 'unavailable', programWorkIds: [] }
+  const service = createKopisService({ env: { KOPIS_SERVICE_KEY: 'test-key' }, delay: instant,
+    fetchImpl: async () => xmlResponse(`<dbs>${fixture()}</dbs>`),
+    sacService: { search: async () => [sacConcert] } })
+  const result = await service.search(query)
+  assert.equal(result.concerts.length, 2)
+  assert.equal(result.concerts.find((item) => item.sacId === '81233')?.saleState, '예정')
+  assert.deepEqual(result.sourceWarnings, [])
+  const failing = createKopisService({ env: { KOPIS_SERVICE_KEY: 'test-key' }, delay: instant,
+    fetchImpl: async () => xmlResponse(`<dbs>${fixture()}</dbs>`),
+    sacService: { search: async () => { throw new Error('upstream private detail') } } })
+  const partial = await failing.search(query)
+  assert.equal(partial.concerts.length, 1)
+  assert.equal(partial.sourceWarnings.length, 1)
+  assert.ok(!JSON.stringify(partial).includes('upstream private detail'))
+})
+
 test('서버 검색 캐시는 같은 조건을 6시간 재사용하고 만료·강제 새로고침·다른 지역은 재조회한다', async () => {
   let now = Date.parse('2026-10-12T00:00:00Z'), calls = 0
   const service = createKopisService({ sacService: { search: async () => [] }, env: { KOPIS_SERVICE_KEY: 'test-key' }, now: () => now, delay: instant,
