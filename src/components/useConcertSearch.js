@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { createConcertSearchClient, mergeSearchConcerts } from '../data/concertSearch.js'
+import { createConcertSearchClient, keepRecentSacPrograms, mergeSearchConcerts } from '../data/concertSearch.js'
 import { getTrackTarget } from '../data/workCatalog.js'
 import { concertFitsQuery, getRegisteredTargetConcerts } from '../data/concertTargetSearch.js'
 import { getMatchStatus, INITIAL_CONCERT_CHECK_LIMIT } from '../data/concertMatchStates.js'
@@ -86,6 +86,7 @@ export default function useConcertSearch() {
       setSearch({ status: 'error', data: null, error: '먼저 등록된 곡을 선택해주세요.' })
       return
     }
+    const previousSac = !refresh && snapshot.current?.targetTrackId === target.trackId ? snapshot.current.concerts : []
     const { id, current } = begin()
     setSearch((previous) => ({ ...previous, status: 'loading', error: null }))
     try {
@@ -94,7 +95,7 @@ export default function useConcertSearch() {
       const data = await client.search(query, { refresh, signal: current.signal })
       if (id !== requestId.current || current.signal.aborted) return
       const unique = [...new Map(data.concerts.map((concert) => [concert.kopisId || concert.id, concert])).values()]
-      const candidates = mergeSearchConcerts(unique.filter((concert) => concertFitsQuery(concert, query)), registered)
+      const candidates = keepRecentSacPrograms(mergeSearchConcerts(unique.filter((concert) => concertFitsQuery(concert, query)), registered), previousSac, target.trackId)
       publish({ ...data, apiTotal: unique.length, targetTrackId: target.trackId, target, query: { ...data.query, targetTrackId: target.trackId },
         concerts: candidates.map((concert) => ({ ...concert, ...(!concert.targetMatch ? { targetMatch: concert.sacId
           ? { status: 'needs-review', targetTrackId: target.trackId, attempted: false, completed: false, reason: '예술의전당 일정에서 확인했어요. 선택한 작품의 연주 여부는 공식 프로그램에서 확인해주세요.' }
