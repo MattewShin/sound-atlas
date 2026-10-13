@@ -38,8 +38,26 @@ export const normalizeSacConcert = (row, fetchedAt) => {
   }
 }
 
+export const extractSacProgramText = (html) => {
+  if (typeof html !== 'string') return ''
+  const plain = html.replace(/<(?:script|style|head|svg)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<br\s*\/?\s*>|<\/(?:p|div|li|h[1-6]|section|tr)>/gi, '\n')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;|&#160;/gi, ' ').replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/&#(\d+);/g, (_, number) => String.fromCodePoint(Number(number)))
+  const lines = plain.split(/\r?\n/).map((line) => line.replace(/\s+/g, ' ').trim()).filter(Boolean)
+  const start = lines.findIndex((line) => /^[\[【]\s*프로그램\s*[\]】]$/.test(line))
+  if (start < 0) return ''
+  const selected = []
+  for (const line of lines.slice(start + 1, start + 41)) {
+    if (/^(?:\[?할인정보|\[?예매통계|\[?장소안내|\[?관람평|※\s*(?:C석|할인|출연진)|티켓예매)/.test(line)) break
+    selected.push(line)
+  }
+  return selected.length ? '[PROGRAM]\n' + selected.join('\n') : ''
+}
+
 export const createSacService = ({ fetchImpl = fetch, now = Date.now, ttl = CONCERT_CACHE_TTL_MS } = {}) => {
-  const cache = new Map(), pending = new Map()
+  const cache = new Map(), pending = new Map(), detailCache = new Map(), detailPending = new Map()
   const month = async (year, monthNumber, refresh = false) => {
     const key = `${year}-${monthNumber}`, entry = cache.get(key)
     if (!refresh && entry && now() - entry.at < ttl) return entry.concerts
@@ -72,5 +90,23 @@ export const createSacService = ({ fetchImpl = fetch, now = Date.now, ttl = CONC
     return [...new Map(results.flat().filter((item) => item.dateFrom <= to && item.dateTo >= from)
       .map((item) => [item.id, item])).values()]
   }
-  return { search }
+  const program = async (sacId, refresh = false) => {
+    if (!/^\d{1,12}$/.test(sacId)) throw new Error('Invalid SAC concert ID')
+    const entry = detailCache.get(sacId)
+    if (!refresh && entry && now() - entry.at < ttl) return entry.text
+    if (!refresh && detailPending.has(sacId)) return detailPending.get(sacId)
+    const request = (async () => {
+      const url = `https://www.sac.or.kr/site/main/show/show_view?SN=${sacId}`
+      const response = await fetchImpl(url, { method: 'GET', redirect: 'error', signal: AbortSignal.timeout(15000) })
+      if (!response.ok || !/html/i.test(response.headers?.get?.('content-type') || '')) throw new Error('SAC detail unavailable')
+      const html = await response.text()
+      if (html.length > 2_000_000) throw new Error('SAC detail response too large')
+      const text = extractSacProgramText(html)
+      detailCache.set(sacId, { at: now(), text })
+      return text
+    })()
+    detailPending.set(sacId, request)
+    try { return await request } finally { if (detailPending.get(sacId) === request) detailPending.delete(sacId) }
+  }
+  return { search, program }
 }
