@@ -12,11 +12,11 @@ export const createConcertSearchClient = ({ fetchImpl = (...args) => fetch(...ar
   }
   const read = (key) => {
     if (memory.has(key)) return memory.get(key)
-    try { const entry = JSON.parse(storage?.getItem(`classic-atlas-concert-cache-v1:${key}`) || 'null'); if (entry) memory.set(key, entry); return entry } catch { return null }
+    try { const entry = JSON.parse(storage?.getItem(`classic-atlas-concert-cache-v2:${key}`) || 'null'); if (entry) memory.set(key, entry); return entry } catch { return null }
   }
   const write = (key, entry) => {
     memory.set(key, entry)
-    try { storage?.setItem(`classic-atlas-concert-cache-v1:${key}`, JSON.stringify(entry)) } catch { /* 저장 차단 시 메모리 캐시 유지 */ }
+    try { storage?.setItem(`classic-atlas-concert-cache-v2:${key}`, JSON.stringify(entry)) } catch { /* 저장 차단 시 메모리 캐시 유지 */ }
   }
   const cached = async (key, refresh, loader) => {
     const entry = read(key)
@@ -54,44 +54,29 @@ export const createConcertSearchClient = ({ fetchImpl = (...args) => fetch(...ar
         return data
       })
     },
-    async matchBatch(targetTrackId, kopisIds, { refresh = false, cacheOnly = false, signal } = {}) {
+    async matchBatch(targetTrackId, kopisIds, { refresh = false, cacheOnly = false, query, signal } = {}) {
       const data = await request('/api/concerts/match-batch', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ targetTrackId, kopisIds, refresh, cacheOnly }), signal })
+        body: JSON.stringify({ targetTrackId, kopisIds, query, refresh, cacheOnly }), signal })
       if (data.targetTrackId !== targetTrackId || !Array.isArray(data.results) || !data.target) throw new Error('대상 곡의 프로그램 확인 응답을 확인할 수 없습니다.')
       return data
     },
   }
 }
 
-const sacEventIdentity = (url) => {
-  try {
-    const parsed = new URL(url)
-    return ['www.sac.or.kr', 'sac.or.kr'].includes(parsed.hostname) && parsed.pathname === '/site/main/show/show_view'
-      ? parsed.searchParams.get('SN') : null
-  } catch { return null }
-}
 export const isSameConfirmedConcert = (known, incoming) => {
-  if (known.kopisId && known.kopisId === incoming.kopisId) return true
-  const eventId = sacEventIdentity(known.sourceUrl)
-  const officialDate = known.startsAt?.slice(0, 10)
-  return Boolean(eventId && incoming.relatedUrls?.some((url) => sacEventIdentity(url) === eventId)
-    && incoming.dateFrom === officialDate && incoming.dateTo === officialDate
-    && known.kopisHallId && incoming.kopisHallId === known.kopisHallId)
+  return Boolean(known.kopisId && known.kopisId === incoming.kopisId)
 }
 
-// 기존 공식 출처·시간·확인된 프로그램은 API 빈 값이나 소개 자료로 덮어쓰지 않습니다.
+// KOPIS 기본정보·자동 매칭은 KOPIS 응답이 기준입니다. 직접 등록 정보는 보조 링크만 결합합니다.
 export const mergeSearchConcerts = (incomingList, knownList) => {
-  const result = new Map(knownList.map((concert) => [concert.id, concert]))
+  const result = new Map(knownList.map((concert) => [concert.kopisId || concert.id, concert]))
   for (const incoming of incomingList) {
     const known = knownList.find((concert) => isSameConfirmedConcert(concert, incoming))
     if (known) {
-      const merged = { ...incoming, ...known, kopisId: incoming.kopisId || known.kopisId, fetchedAt: incoming.fetchedAt || known.fetchedAt }
-      if (incoming.programEvidence?.text || incoming.programEvidence?.imageUrls?.length) merged.programEvidence = incoming.programEvidence
-      if (incoming.relatedUrls?.length) merged.relatedUrls = incoming.relatedUrls
-      if (incoming.scheduleText) merged.scheduleText = incoming.scheduleText
-      if (incoming.programFetchedAt) merged.programFetchedAt = incoming.programFetchedAt
-      result.set(known.id, merged)
-    } else result.set(incoming.id, incoming)
+      const links = known.verifiedOn && /^https?:\/\//.test(known.sourceUrl || '') ? [known.sourceUrl] : []
+      result.set(incoming.kopisId, { ...incoming, officialUrls: [...new Set([...(incoming.officialUrls || []), ...links])],
+        referenceInfo: { title: known.title, sourceUrl: known.sourceUrl, verifiedOn: known.verifiedOn } })
+    } else result.set(incoming.kopisId || incoming.id, incoming)
   }
   return [...result.values()]
 }

@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 const query = { region: '서울', from: '2026-12-01', to: '2026-12-31' }
-const fixture = (id = 'PF999001', extra = '') => `<db><mt20id>${id}</mt20id><prfnm>테스트 클래식</prfnm><prfpdfrom>2026.12.24</prfpdfrom><prfpdto>2026.12.24</prfpdto><fcltynm>테스트홀</fcltynm><area>서울특별시</area><genrenm>서양음악(클래식)</genrenm>${extra}</db>`
+const fixture = (id = 'PF999001', extra = '') => `<db><mt20id>${id}</mt20id><prfnm>테스트 클래식</prfnm><prfpdfrom>2026.12.24</prfpdfrom><prfpdto>2026.12.24</prfpdto><fcltynm>테스트홀</fcltynm><area>서울특별시</area><genrenm>서양음악(클래식)</genrenm><prfstate>공연예정</prfstate>${extra}</db>`
 const xmlResponse = (xml) => ({ ok: true, text: async () => xml })
 const instant = async () => {}
 
@@ -25,7 +25,8 @@ test('지역·기간·클래식 코드·페이지를 서버에서 지정하고 �
   const service = createKopisService({ env: { KOPIS_SERVICE_KEY: 'test-secret' }, delay: instant,
     fetchImpl: async (url) => { urls.push(url); return xmlResponse(`<dbs>${fixture()}</dbs>`) } })
   const result = await service.search(query)
-  assert.equal(urls.length, 1)
+  assert.equal(urls.length, 2)
+  assert.deepEqual(urls.map((url) => url.searchParams.get('prfstate')), ['01', '02'])
   assert.equal(urls[0].pathname, '/openApi/restful/pblprfr')
   assert.equal(urls[0].searchParams.get('shcate'), 'CCCA')
   assert.equal(urls[0].searchParams.get('signgucode'), '11')
@@ -47,14 +48,14 @@ test('서버 검색 캐시는 같은 조건을 6시간 재사용하고 만료·�
   const cached = await service.search(query)
   assert.equal(cached.fromCache, true)
   assert.equal(cached.fetchedAt, first.fetchedAt)
-  assert.equal(calls, 1)
+  assert.equal(calls, 2)
   now += 1
   await service.search(query)
-  assert.equal(calls, 2)
-  await service.search(query, true)
-  assert.equal(calls, 3)
-  await service.search({ ...query, region: '부산' })
   assert.equal(calls, 4)
+  await service.search(query, true)
+  assert.equal(calls, 6)
+  await service.search({ ...query, region: '부산' })
+  assert.equal(calls, 8)
 })
 
 test('정상 0건과 잘못된 XML·인증 오류·네트워크 오류를 구별하고 오류는 캐시하지 않는다', async () => {
@@ -67,7 +68,7 @@ test('정상 0건과 잘못된 XML·인증 오류·네트워크 오류를 구별
     fetchImpl: async () => { calls += 1; if (calls === 1) throw new Error('https://kopis.or.kr/?service=never-return-key'); return xmlResponse('<dbs/>') } })
   await assert.rejects(service.search(query), (error) => error.code === 'KOPIS_UNAVAILABLE' && !error.message.includes('never-return-key'))
   assert.deepEqual((await service.search(query)).concerts, [])
-  assert.equal(calls, 2)
+  assert.equal(calls, 3)
 })
 
 test('100건 페이지 뒤의 결과도 가져오고 중복 ID는 한 번만 표시한다', async () => {
@@ -75,7 +76,7 @@ test('100건 페이지 뒤의 결과도 가져오고 중복 ID는 한 번만 표
   const service = createKopisService({ env: { KOPIS_SERVICE_KEY: 'test-key' }, delay: instant,
     fetchImpl: async () => { calls += 1; return xmlResponse(`<dbs>${calls === 1 ? Array.from({ length: 100 }, (_, i) => fixture(`PF${900000 + i}`)).join('') : fixture('PF900000') + fixture('PF900100')}</dbs>`) } })
   assert.equal((await service.search(query)).concerts.length, 101)
-  assert.equal(calls, 2)
+  assert.equal(calls, 3)
 })
 
 test('상세·프로그램 자료 조회는 별도 요청이며 텍스트·이미지가 있어도 추천용 확정 작품을 만들지 않는다', async () => {

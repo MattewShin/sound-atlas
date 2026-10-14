@@ -12,6 +12,7 @@
     "test": "node scripts/test.mjs",
     "verify:ocr": "node --env-file-if-exists=.env scripts/verifyProgramOcrLive.mjs",
     "verify:ocr-cache": "node scripts/verifyOcrCacheRestart.mjs",
+    "verify:concerts": "node --env-file-if-exists=.env scripts/verifyConcertSearchV1.mjs",
     "import:emma": "node scripts/emma/importEmma.js",
     "diagnose:recommendations": "node scripts/diagnoseRecommendations.js",
     "preview": "vite preview",

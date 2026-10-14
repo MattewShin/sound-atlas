@@ -1,12 +1,15 @@
 import './emma/emma.test.js'
 import '../src/data/recommendation.test.js'
+import '../src/data/halfPointRatings.test.js'
 import '../src/data/storage.test.js'
+import '../src/data/weeklySelections.test.js'
 import '../src/data/concertRecommendations.test.js'
 import '../src/data/concertSearch.test.js'
 import '../server/kopis.test.mjs'
 import '../server/vercel.test.mjs'
 import '../server/programMatching.test.mjs'
 import '../server/programOcr.test.mjs'
+import '../server/concertSearchV1.test.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { writeFileSync, unlinkSync } from 'node:fs'
@@ -22,6 +25,9 @@ import { searchConcertTracks } from '../src/data/concertTrackSearch.js'
 import { verifyConcertSearchInteractions } from './concertSearchDomTest.mjs'
 import { verifyTargetConcertInteractions } from './targetConcertDomTest.mjs'
 import { verifyMusicSelectionInteractions } from './musicSelectionDomTest.mjs'
+import { verifyWeeklySelectionInteractions } from './weeklySelectionDomTest.mjs'
+import { weeklySelections } from '../src/data/weeklySelections.js'
+import { getWeeklySelectionState } from '../src/data/weeklySelectionHelpers.js'
 
 // JSX를 실제 컴파일해 화면의 렌더링 경로와 카탈로그 연결을 확인합니다.
 const compiledPath = new URL('../src/.App.ssr.local.mjs', import.meta.url)
@@ -34,6 +40,48 @@ try {
   try { unlinkSync(compiledPath) } catch { /* 컴파일 실패 시 파일 없음 */ }
 }
 const render = (component, props = {}) => renderToStaticMarkup(React.createElement(component, props))
+
+test('주간 소개에서 홈·글·상세·영상·보관함·지난 글의 연결을 검증한다', async () => {
+  await verifyWeeklySelectionInteractions(components.default)
+})
+
+test('주간 소개는 긴 제목·선택 항목 생략·영상 없음·별도 구간을 렌더링한다', () => {
+  const entry = getWeeklySelectionState(weeklySelections, tracks, '2026-10-14T03:00:00Z').current
+  const props = { entry, detail: trackDetails[entry.trackId], PreviewPlayer: components.YouTubeShortEmbed }
+  const html = render(components.WeeklySelectionScreen, props)
+  assert.ok(html.includes('기존 곡 미리듣기 · 0:00–2:10'))
+  assert.ok(!html.includes('<iframe'))
+  const range = { videoId: props.detail.shortPreview.videoId, start: '0:30', end: '1:10' }
+  assert.ok(render(components.WeeklySelectionScreen, { ...props, entry: { ...entry, previewRange: range } }).includes('선정자가 고른 구간 · 0:30–1:10'))
+  const player = render(components.YouTubeShortEmbed, { track: entry.track, preview: { ...props.detail.shortPreview, startSeconds: 30, endSeconds: 70 } })
+  assert.ok(player.includes('start=30&amp;end=70&amp;autoplay=0'))
+  const noVideo = render(components.WeeklySelectionScreen, { ...props, detail: {}, entry: { ...entry, editorName: '' } })
+  assert.ok(noVideo.includes('곡 자세히 보기'))
+  assert.ok(!noVideo.includes('My Piano Mood 에디터'))
+  assert.equal(render(components.WeeklySelectionSection, { entry: null }), '')
+  assert.ok(render(components.WeeklySelectionSection, { entry: { ...entry, title: '아주 긴 제목'.repeat(50), track: { ...entry.track, title: '긴 곡명'.repeat(50) } } }).includes('아주 긴 제목'))
+})
+test('공연 악장 점수는 정수 4와 소수점 4.5를 그대로 표시한다', () => {
+  const track = { ...tracks[0], emotionScores: Object.fromEntries(emotions.map(({ key }) => [key, 1])) }
+  track.emotionScores.tenderness = 4.5
+  track.emotionScores.peacefulness = 4
+  const html = render(components.ConcertMovement, { track, work: { title: '테스트 작품' } })
+  assert.ok(html.includes('부드러운 4.5/5'))
+  assert.ok(html.includes('평안한 4/5'))
+  assert.ok(!html.includes('4.0/5'))
+})
+test('취향 차트는 4점·4.5점·두 점수 평균의 차이를 막대 값과 표시값에 반영한다', () => {
+  const base = { ...tracks[0], emotionScores: Object.fromEntries(emotions.map(({ key }) => [key, 1])) }
+  const integer = { ...base, id: 'integer', emotionScores: { ...base.emotionScores, tenderness: 4 } }
+  const half = { ...base, id: 'half', emotionScores: { ...base.emotionScores, tenderness: 4.5 } }
+  for (const [savedIds, value, label] of [[['integer'], 75, '75'], [['half'], 87.5, '87.5'], [['integer', 'half'], 81.25, '81.3']]) {
+    const profile = getLibraryPreferenceProfile([integer, half], savedIds)
+    const html = render(components.PreferenceScreen, { profile })
+    assert.ok(html.includes(`<meter min="0" max="100" value="${value}" aria-label="부드러운"`))
+    assert.ok(html.includes(`<strong>${label}</strong>`))
+    assert.equal(profile.emotionProfile.tenderness * 100, value)
+  }
+})
 const testUnanalysedId = 'test-unanalysed-work'
 const testConcertWorks = { ...concertWorks, [testUnanalysedId]: { id: testUnanalysedId, title: '미등록 교향곡', composer: '베토벤', type: 'symphony', opus: 125, number: 9, trackIds: [] } }
 const testConcert = { id: 'test-registered-concert', title: '테스트 등록 공연', programStatus: 'verified', programVerification: 'manual',
@@ -47,6 +95,8 @@ test('곡 검색은 한글·영문·별칭·작품번호로 기존 ID만 선택�
   assert.ok(ids('Emperor Beethoven Op.73').includes('beethoven-piano-concerto-op73-no5-m2'))
   assert.ok(ids('Tchaikovsky Four Seasons June Barcarolle').includes('tchaikovsky-seasons-op37a-no6'))
   assert.ok(ids('차이콥스키 사계 10월').includes('tchaikovsky-seasons-op37a-no10'))
+  assert.ok(ids('Schubert Impromptu D.899 Op.90 No.3').includes('schubert-impromptu-d899-op90-no3'))
+  assert.ok(ids('슈베르트 즉흥곡 4번').includes('schubert-impromptu-d899-op90-no4'))
   assert.ok(!ids('Chopin Ballade Op.28').includes('chopin-ballade-op23-no1'))
   assert.deepEqual(ids('존재하지 않는 작품'), [])
   assert.deepEqual(ids(''), [])
@@ -63,8 +113,9 @@ test('보관한 특정 곡의 캐시 결과·10건 자동 확인·추가 확인�
 test('검색에 병합된 등록 공연이나 반복 API 행은 카드를 중복 표시하지 않는다', () => {
   const now = Date.parse('2026-10-12T12:00:00+09:00')
   const targetTrack = tracks.find(({ id }) => id === 'beethoven-piano-concerto-op73-no5-m2')
-  const result = analyzeConcert({ ...testConcert, kopisId: 'PF999111', targetMatch: { status: 'matched', reason: '테스트 프로그램 확인' } }, tracks, {}, testConcertWorks)
-  const html = render(components.ConcertScreen, { searchResults: [result, result], now, region: '서울', searchControls: { targetTrack, period: { from: '2026-12-01', to: '2026-12-31' }, search: { status: 'success', data: { targetTrackId: targetTrack.id, concerts: [result.concert], query: { region: '서울', from: '2026-12-01', to: '2026-12-31' }, fetchedAt: new Date(now).toISOString() } } } })
+  const workId = 'beethoven-piano-concerto-op73-no5'
+  const result = analyzeConcert({ ...testConcert, kopisDetailVerified: true, programVerification: 'text', kopisId: 'PF999111', targetMatch: { targetTrackId: targetTrack.id, workId, evidenceKind: 'text', status: 'matched', reason: '테스트 프로그램 확인' } }, tracks, {}, testConcertWorks)
+  const html = render(components.ConcertScreen, { searchResults: [result, result], now, region: '서울', searchControls: { targetTrack, period: { from: '2026-12-01', to: '2026-12-31' }, search: { status: 'success', data: { target: { workId }, targetTrackId: targetTrack.id, concerts: [result.concert], query: { region: '서울', from: '2026-12-01', to: '2026-12-31' }, fetchedAt: new Date(now).toISOString() } } } })
   assert.equal((html.match(/class="concert-card"/g) || []).length, 1)
 })
 test('공연 카드·전체 프로그램은 공식 링크·확인일·분석 범위·악장 상세·실제 영상 상태를 렌더링한다', () => {
@@ -81,7 +132,7 @@ test('공연 카드·전체 프로그램은 공식 링크·확인일·분석 범
   assert.equal((detail.match(/곡 상세·보관/g) ?? []).length, 3)
   assert.equal((detail.match(/>미리듣기<\/button>/g) ?? []).length, 3)
   assert.ok(detail.includes('아직 분석하지 않은 작품'))
-  assert.ok(detail.includes('부드러운 4/5'))
+  assert.ok(detail.includes('부드러운 4.5/5'))
   assert.ok(!/세 악장 연주 확정|취향 일치|95%/.test(detail + card))
   const linkedTrack = result.program[0].linkedTracks[1]
   // 악장별 미리듣기 버튼이 각 곡에 연결되는 경로를 검증합니다.
@@ -156,7 +207,8 @@ test('취향 미형성에는 차트를 만들지 않고 활성 프로필은 9개
   const html = render(components.PreferenceScreen, { profile: getLibraryPreferenceProfile(tracks, [tracks[0].id]) })
   assert.equal((html.match(/<meter/g) ?? []).length, 9)
   assert.equal((html.match(/min="0" max="100"/g) ?? []).length, 9)
-  assert.ok(html.includes('초기 취향') && html.includes('(공동)'))
+  assert.ok(html.includes('초기 취향') && html.includes('상위 감정: 힘찬'))
+  assert.ok(!html.includes('(공동)'))
 })
 
 test('메인의 가로 추천 카드는 대표곡을 제외한 상위 8곡까지만 표시한다', () => {

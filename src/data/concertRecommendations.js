@@ -79,7 +79,7 @@ export const isUpcomingConcert = (concert, now = Date.now()) => concert.startsAt
   ? Date.parse(concert.startsAt) > Number(now)
   : concert.performanceStatus !== '공연완료' && Date.parse(`${concert.dateTo}T23:59:59.999+09:00`) > Number(now)
 
-export const getConcertRecommendations = (trackList, options = {}, concertList = concerts, works = concertWorks) => [...new Map(concertList.map((concert) => [concert.id, concert])).values()]
+export const getConcertRecommendations = (trackList, options = {}, concertList = concerts, works = concertWorks) => [...new Map(concertList.map((concert) => [concert.kopisId || concert.id, concert])).values()]
   .filter((concert) => isUpcomingConcert(concert, options.now))
   .filter((concert) => !options.region || options.region === '전국' || concert.region === options.region)
   .map((concert) => analyzeConcert(concert, trackList, options, works))

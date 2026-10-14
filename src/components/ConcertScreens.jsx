@@ -9,12 +9,13 @@ import { getTrackTarget } from '../data/workCatalog.js'
 
 function MatchBasis({ concert }) {
   const match = concert.targetMatch
-  return match ? <div className="concert-match-basis"><strong>{matchLabels[getMatchStatus(match)]}</strong><p>{match.reason}</p>{match.scope?.kind === 'complete-work' && <p>전곡 안내</p>}{match.scope?.kind === 'movement-excerpt' && <p>악장 발췌 안내 · {match.scope.movementNumbers.join('·')}악장</p>}{match.evidence && !/^https?:/.test(match.evidence) && <blockquote>{match.evidence}</blockquote>}{match.evidenceSourceUrl && <a href={match.evidenceSourceUrl} target="_blank" rel="noopener noreferrer">프로그램 근거 이미지 보기 ↗</a>}</div> : null
+  return match ? <div className="concert-match-basis"><strong>{matchLabels[getMatchStatus(match)]}</strong><p>{match.reason}</p>{match.scope?.kind === 'work' && <p>해당 작품 포함 · 전곡·개별 악장 연주 범위는 별도 확인</p>}{match.scope?.kind === 'complete-work' && <p>전곡 안내</p>}{match.scope?.kind === 'movement-excerpt' && <p>악장 발췌 안내 · {match.scope.movementNumbers.join('·')}악장</p>}{match.evidence && !/^https?:/.test(match.evidence) && <blockquote>{match.evidence.slice(0, 320)}</blockquote>}{match.status === 'matched' && <p>근거 유형 · {match.evidenceKind === 'ocr' ? 'KOPIS 소개 이미지 OCR' : 'KOPIS 프로그램 텍스트'}</p>}{match.evidenceSourceUrl && <a href={match.evidenceSourceUrl} target="_blank" rel="noopener noreferrer">프로그램 근거 이미지 보기 ↗</a>}</div> : null
 }
 
 function OfficialSource({ concert }) {
   return <div className="concert-source">
-    <a className="concert-official-link" href={concert.sourceUrl} target="_blank" rel="noopener noreferrer">{concert.programStatus === 'verified' ? '공식 공연 정보' : 'KOPIS 공연 정보'} <span aria-hidden="true">↗</span></a>
+    <a className="concert-official-link" href={concert.sourceUrl} target="_blank" rel="noopener noreferrer">{concert.kopisId ? 'KOPIS 상세정보' : '직접 등록한 참고 공연 정보'} <span aria-hidden="true">↗</span></a>
+    {(concert.officialUrls || []).map((url) => <a key={url} className="concert-official-link" href={url} target="_blank" rel="noopener noreferrer">공식 공연장 정보 ↗</a>)}
     <p>{concert.sourceLabel} · {concert.verifiedOn ? <>정보 확인일 <time dateTime={concert.verifiedOn}>{concert.verifiedOn}</time></> : <>정보 조회 <time dateTime={concert.fetchedAt}>{formatConcertDate(concert.fetchedAt)}</time> · 한국 시간</>}</p>
   </div>
 }
@@ -23,6 +24,8 @@ function ConcertFacts({ concert, now }) {
   return <>
     <p className="concert-date">{concert.startsAt ? <><time dateTime={concert.startsAt}>{formatConcertDate(concert.startsAt)}</time> · 한국 시간</> : <><time dateTime={concert.dateFrom}>{concert.dateFrom}</time> ~ <time dateTime={concert.dateTo}>{concert.dateTo}</time><br />회차별 시간은 공연 정보에서 확인</>}</p>
     <p className="concert-venue">{concert.venue}</p>
+    {concert.performanceStatus && <p>공연 상태 · {concert.performanceStatus}</p>}
+    {concert.performers && <p>출연진 · {concert.performers}</p>}
     <p className="concert-ticket-status">{getConcertTicketStatus(concert, now)}</p>
     {concert.ticketOpensAt && <p className="concert-ticket-time">{concert.ticketAudience} 티켓 오픈<br /><time dateTime={concert.ticketOpensAt}>{formatConcertDate(concert.ticketOpensAt)}</time> · 한국 시간</p>}
   </>
@@ -42,7 +45,8 @@ export function ConcertCard({ result, now, onOpenConcert }) {
   return <article className="concert-card">
     <p className="concert-eyebrow">{concert.targetMatch?.status === 'matched' ? '선택한 작품 포함 확인' : result.isRecommended ? '음악과 연결된 공연' : '예정 공연'}</p>
     <h2>{concert.title}</h2>
-    {target && <p className="concert-card-target-song">연결된 곡 · {target.title}{target.movement ? ` · ${target.movement}` : ''}</p>}
+    {concert.kopisId && <p className="concert-kopis-id">KOPIS 공연 ID · {concert.kopisId}</p>}
+    {target && <p className="concert-card-target-song">연결된 작품 · {target.work.composer} · {target.work.title}<br />{target.work.opus != null ? `Op.${target.work.opus}${target.work.opusSuffix || ''}${target.work.opusPart ? `-${target.work.opusPart}` : ''}` : target.work.catalogue ? `${target.work.catalogue}.${target.work.catalogueNumber}` : '작품번호 없음'}{target.work.number != null && ` · No.${target.work.number}`}</p>}
     <MatchBasis concert={concert} />
     <ConcertFacts concert={concert} now={now} />
     <div className="concert-card-program"><h3>프로그램과 연결된 작품</h3>{program.length ? program.map((work) => <p key={work.id}>{work.title}<small>{work.ratedTracks.length ? '등록된 악장 평가와 연결' : '아직 분석하지 않은 작품'}</small></p>) : <p>{concert.programStatus === 'needs-review' ? '소개 자료 확보 · 작품 연결 확인 필요' : '프로그램 미확보'}<small>일반 검색 결과 · 취향 적합도 미계산</small></p>}</div>

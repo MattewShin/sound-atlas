@@ -10,6 +10,7 @@ const typeAliases = {
   ballade: 'ballade', 'piano-concerto': 'piano concerto', sonata: 'sonata',
   etude: 'etude', prelude: 'prelude', elegy: 'elegy', gymnopedie: 'gymnopedie',
   liebestraum: 'liebestraum',
+  impromptu: 'impromptu',
   seasons: 'the seasons four seasons',
 }
 
@@ -23,7 +24,7 @@ export function trackSearchText(track) {
     ...(track.aliasesEn || []),
     track.movement, track.id, work?.title, ...(work?.aliases || []),
     typeAliases[track.type], track.opus != null && `op ${track.opus} op.${track.opus}`,
-    track.number != null && `no ${track.number} no.${track.number}`,
+    track.number != null && `no ${track.number} no.${track.number} ${track.number}번 제${track.number}번`,
     track.catalogue, track.catalogueNumber,
   ].filter(Boolean).join(' '))
 }

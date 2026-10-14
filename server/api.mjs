@@ -13,12 +13,13 @@ export const createConcertApiHandler = (service) => async (req, res, next) => {
       let data
       try { data = JSON.parse(body) } catch { return respond(400, { code: 'INVALID_BATCH', message: '올바른 확인 요청을 보내주세요.' }) }
       if (!data || typeof data !== 'object' || Array.isArray(data)) return respond(400, { code: 'INVALID_BATCH', message: '올바른 확인 요청을 보내주세요.' })
-      if (data.cacheOnly === true) return respond(200, await service.cachedMatches({ targetTrackId: data.targetTrackId, kopisIds: data.kopisIds }))
+      if (!data.query || typeof data.query !== 'object' || Array.isArray(data.query)) return respond(400, { code: 'INVALID_QUERY', message: '선택한 지역과 기간을 함께 보내주세요.' })
+      if (data.cacheOnly === true) return respond(200, await service.cachedMatches({ targetTrackId: data.targetTrackId, kopisIds: data.kopisIds, query: data.query }))
       const controller = new AbortController()
       const abort = () => { if (!res.writableEnded) controller.abort() }
       req.once('aborted', abort); res.once('close', abort)
       try {
-        const result = await service.matchBatch({ targetTrackId: data.targetTrackId, kopisIds: data.kopisIds, refresh: data.refresh === true, signal: controller.signal })
+        const result = await service.matchBatch({ targetTrackId: data.targetTrackId, kopisIds: data.kopisIds, query: data.query, refresh: data.refresh === true, signal: controller.signal })
         if (!controller.signal.aborted) return respond(200, result)
       } finally { req.removeListener('aborted', abort); res.removeListener('close', abort) }
       return

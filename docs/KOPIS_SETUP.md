@@ -1,5 +1,7 @@
 # KOPIS 공연 검색 설정
 
+현재 검색 기준·정확성 검증·실제 KOPIS/OCR 결과·미검증 사항·사용자 확인 순서는 [곡별 공연 검색 v1.0](KOPIS_SEARCH_V1.md)에 정리했습니다.
+
 현재 앱은 사용자가 기존 곡 DB에서 곡을 선택한 뒤 **공연 찾기**를 누를 때 클래식 공연을 조회합니다. 곡을 고르기 전에는 목록·상세·OCR 요청을 보내지 않습니다. 정기 수집이나 예약 실행은 없습니다. 로컬 Node 서버와 Vercel 함수용 진입점을 제공합니다. 순수 정적 파일 배포만으로는 서버 API와 OCR이 작동하지 않습니다.
 
 1. [KOPIS OpenAPI 안내](https://kopis.or.kr/por/cs/openapi/openApiInfo.do?menuId=MNU_00074)에서 서비스키를 발급받습니다.
@@ -43,9 +45,9 @@ OCR worker와 WASM 파일은 함수에 포함하며, 언어 모델은 최초 OCR
 | 경로 | 용도 |
 | --- | --- |
 | `GET /api/concerts/status` | 서비스키 설정 여부, 캐시·처리 한도 확인. KOPIS 호출 없음 |
-| `GET /api/concerts?region=서울&from=2026-10-12&to=2026-10-31` | 사용자 요청 목록 검색 |
+| `GET /api/concerts?targetTrackId=chopin-ballade-op23-no1&region=서울&from=2026-10-14&to=2026-10-31` | 사용자 요청 예정·진행 클래식 목록 검색 |
 | `GET /api/concerts/{KOPIS_ID}/program` | 별도 공연 상세·소개 자료 |
-| `POST /api/concerts/match-batch` | 실제 `targetTrackId`, KOPIS ID 최대 5개, 선택적 `cacheOnly`·`refresh`로 작품 비교 |
+| `POST /api/concerts/match-batch` | 실제 `targetTrackId`, KOPIS ID 최대 5개, 필수 `query: { region, from, to }`, 선택적 `cacheOnly`·`refresh`로 작품 비교. 캐시 전용 요청은 최대 500개 ID |
 
 목록·프로그램 GET 경로의 `refresh=1`과 POST의 `refresh`는 캐시를 건너뜁니다. 정상 0건은 HTTP 200과 빈 `concerts` 배열입니다. 미설정은 503 `KOPIS_NOT_CONFIGURED`, 인증 오류는 `KOPIS_AUTH_ERROR`, 조회 오류는 별도 오류 코드와 메시지입니다. 서버는 서비스키가 포함된 요청 URL·원문 오류·스택을 브라우저로 전달하지 않습니다. 로컬 운영에서는 API와 앱을 같은 Node 서버에서 제공하고, Vercel에서는 같은 출처의 함수로 API를 제공합니다. 다른 정적 호스팅을 쓰려면 별도의 Node API를 운영하고 `/api/*`를 같은 출처로 프록시해야 합니다.
 

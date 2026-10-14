@@ -1,4 +1,4 @@
-// 사용자 제공 62곡의 작품 배경·감상 포인트·영상과 재생 구간.
+// 사용자 제공 작품의 배경·감상 포인트·영상과 재생 구간.
 export const manualTrackDetails = {
   "chopin-etude-op10-no1": {
     "about": "오른손의 넓은 분산화음과 왼손의 긴 화음이 중심인 다장조 연습곡이다.",
@@ -680,6 +680,50 @@ export const manualTrackDetails = {
       "startSeconds": 0,
       "endSeconds": 411,
       "sourceLabel": "다니엘 바렌보임 (Daniel Barenboim) / Daniel Barenboim - Topic / Deutsche Grammophon 공식 음원"
+    }
+  },
+  "schubert-impromptu-d899-op90-no1": {
+    "about": "다단조의 곡으로, 반주 없이 제시되는 행진풍 선율이 곡 전체의 전개를 이끈다.",
+    "listeningTip": "같은 선율이 단단한 리듬과 부드럽게 흐르는 반주 속에서 어떻게 다른 표정을 얻는지 따라가 보자.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "hp1G3qUY5X8",
+      "startSeconds": 0,
+      "endSeconds": 546,
+      "sourceLabel": "크리스티안 짐머만, 피아노 / Krystian Zimerman - Topic / 《Schubert: Impromptus D.899 & D.935》 · Deutsche Grammophon · ℗1991 · UMG 제공 공식 음원 영상"
+    }
+  },
+  "schubert-impromptu-d899-op90-no2": {
+    "about": "내림마장조의 빠르게 흐르는 부분과 나단조의 격렬한 중간부가 대비되며, 마지막은 내림마단조로 끝난다.",
+    "listeningTip": "처음의 가벼운 움직임이 중간부의 강한 악센트와 결말을 거치며 얼마나 다르게 느껴지는지 들어보자.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "L4B1IJmjsyo",
+      "startSeconds": 0,
+      "endSeconds": 288,
+      "sourceLabel": "크리스티안 짐머만, 피아노 — 영상 제목에 표기 / Ahmed Barod 채널 업로드 / 공연명·녹음 연도는 설명에 미기재"
+    }
+  },
+  "schubert-impromptu-d899-op90-no3": {
+    "about": "내림사장조의 노래 같은 곡으로, 앞선 2번의 불안한 단조 결말 뒤에 이어진다.",
+    "listeningTip": "지속적으로 흐르는 반주보다 긴 선율의 호흡에 귀를 기울여 보자. 평온한 표면 아래 잠시 스치는 그늘이 애잔한 여운을 만든다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "dMi9AHqKWWs",
+      "startSeconds": 0,
+      "endSeconds": 380,
+      "sourceLabel": "크리스티안 짐머만, 피아노 / Krystian Zimerman - Topic / 《Schubert: Impromptus D.899 & D.935》 · Deutsche Grammophon · ℗1991 · UMG 제공 공식 음원 영상"
+    }
+  },
+  "schubert-impromptu-d899-op90-no4": {
+    "about": "내림가장조의 곡이지만 시작은 단조이며, 이후 장조로 밝아진다. 중간부에는 맥박처럼 반복되는 반주와 긴 선율이 등장한다.",
+    "listeningTip": "흘러내리는 음형 사이의 선율과 중간부의 절절한 노래를 대비해 들어보자.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "WbtzTNgJXNE",
+      "startSeconds": 0,
+      "endSeconds": 481,
+      "sourceLabel": "크리스티안 짐머만, 피아노 / Krystian Zimerman - Topic / 《Schubert: Impromptus D.899 & D.935》 · Deutsche Grammophon · ℗1991 · UMG 제공 공식 음원 영상"
     }
   }
 }

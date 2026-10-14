@@ -21,6 +21,22 @@ const imageRecord = (text, second = text, confidence = 96) => {
 }
 const concert = { kopisId: 'PF999400', title: '테스트 연주자 피아노 리사이틀', performers: '테스트 연주자', venue: '테스트 음악홀', dateFrom: '2026-10-17', dateTo: '2026-10-17', programEvidence: { text: '', imageUrls: ['a', 'b'] } }
 const poster = imageRecord('테스트 연주자 2026.10.17 테스트 음악홀')
+
+test('OCR 근거는 해당 KOPIS 상세에 연결된 공연 ID·이미지 URL·공연장과 일치해야 한다', () => {
+  const ownedPoster = { ...poster, concertId: concert.kopisId, sourceUrl: 'https://kopis.or.kr/upload/poster.png' }
+  const ownedProgram = { ...imageRecord(raw), concertId: concert.kopisId, sourceUrl: 'https://kopis.or.kr/upload/program.png' }
+  const detail = { ...concert, kopisDetailVerified: true, programEvidence: { text: '', imageUrls: [ownedPoster.sourceUrl, ownedProgram.sourceUrl] } }
+  assert.equal(matchAnalyzedConcert(combineOcrProgram(detail, [ownedPoster, ownedProgram]), id).status, 'matched')
+  for (const record of [{ ...ownedProgram, concertId: 'PF999401' }, { ...ownedProgram, sourceUrl: 'https://kopis.or.kr/upload/other.png' }]) {
+    const mixed = combineOcrProgram(detail, [ownedPoster, record])
+    assert.equal(mixed.programOcr.context.conflict, 'source')
+    assert.equal(matchAnalyzedConcert(mixed, id).status, 'needs-review')
+  }
+  const otherVenue = { ...imageRecord(raw + '\n공연장: 다른 음악홀'), concertId: concert.kopisId, sourceUrl: ownedProgram.sourceUrl }
+  const mixed = combineOcrProgram(detail, [ownedPoster, otherVenue])
+  assert.equal(mixed.programOcr.context.conflict, 'venue')
+  assert.equal(matchAnalyzedConcert(mixed, id).status, 'needs-review')
+})
 test('OCR의 원본·전처리 문맥과 식별 단어·번호를 함께 검증하며 오인식을 교정하지 않는다', () => {
   const program = imageRecord(raw)
   assert.deepEqual(program.links.map(({ workId }) => workId), [id])
@@ -180,7 +196,7 @@ test('중단한 HTTP 배치 요청은 서버의 AbortSignal로 전달된다', as
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
   try {
     const controller = new AbortController()
-    const request = fetch(`http://127.0.0.1:${server.address().port}/api/concerts/match-batch`, { method: 'POST', body: JSON.stringify({ targetTrackId: id, kopisIds: ['PF999400'] }), signal: controller.signal })
+    const request = fetch(`http://127.0.0.1:${server.address().port}/api/concerts/match-batch`, { method: 'POST', body: JSON.stringify({ targetTrackId: id, kopisIds: ['PF999400'], query: { region: '서울', from: '2026-10-14', to: '2026-10-31' } }), signal: controller.signal })
     await begin; controller.abort()
     await assert.rejects(request)
     await stopped

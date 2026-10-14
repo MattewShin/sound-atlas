@@ -1,9 +1,11 @@
 import { manualRatings } from './manualRatings.js'
+import { manualTrackDetails } from './manualTrackDetails.js'
 
 export const composerPatterns = {
   쇼팽: /쇼팽|\bchopin\b/i, 베토벤: /베토벤|\bbeethoven\b/i,
   라흐마니노프: /라흐마니노프|\brachmanin(?:off|ov)\b/i,
   사티: /사티|\bsatie\b/i, 리스트: /리스트|\bliszt\b/i,
+  슈베르트: /슈베르트|\bschubert\b/i,
   차이콥스키: /차이콥스키|\btchaikovsk(?:y|i)\b|\btchaikowsky\b/i,
 }
 export const workTypePatterns = {
@@ -12,12 +14,21 @@ export const workTypePatterns = {
   etude: /연습곡|\betudes?\b/i, prelude: /전주곡|\bpreludes?\b/i,
   elegy: /엘레지|\beleg(?:y|ie)\b/i, gymnopedie: /짐노페디|\bgymnopedies?\b/i,
   liebestraum: /사랑의\s*꿈|\bliebestraum(?:e)?\b/i,
+  impromptu: /즉흥곡|\bimpromptus?\b/i,
   seasons: /사계|\b(?:the|four)\s+seasons\b|\bseasons\b/i,
 }
 
 // 기존 곡 ID를 변경하지 않고 악장 ID에서 부모 작품을 파생합니다.
 export const getWorkId = (track) => track.movementNumber ? track.id.replace(/-m\d+$/, '') : track.id
 const aliasTranslations = { 황제: ['Emperor'], 월광: ['Moonlight'] }
+export const musicalKeysIn = (text) => {
+  const notes = { 다: 'C', 라: 'D', 마: 'E', 바: 'F', 사: 'G', 가: 'A', 나: 'B' }
+  const korean = [...String(text || '').matchAll(/(올림|내림)?([다라마바사가나])(장조|단조)/g)]
+    .map((match) => `${notes[match[2]]}${match[1] === '올림' ? '#' : match[1] === '내림' ? 'b' : ''}:${match[3] === '장조' ? 'major' : 'minor'}`)
+  const english = [...String(text || '').matchAll(/\b([A-G])\s*(#|♯|b|♭|sharp|flat)?\s*(major|minor)\b/gi)]
+    .map((match) => `${match[1].toUpperCase()}${/#|♯|sharp/i.test(match[2] || '') ? '#' : /b|♭|flat/i.test(match[2] || '') ? 'b' : ''}:${match[3].toLowerCase()}`)
+  return [...new Set([...korean, ...english])]
+}
 export const workCatalog = Object.fromEntries(manualRatings.map((track) => {
   const id = getWorkId(track)
   const siblings = manualRatings.filter((item) => getWorkId(item) === id)
@@ -27,6 +38,7 @@ export const workCatalog = Object.fromEntries(manualRatings.map((track) => {
     composer: track.composer, type: track.type, cycleId: track.cycleId, monthEn: track.monthEn,
     opus: track.opus, opusPart: track.opusPart,
     opusSuffix: track.opusSuffix, number: track.number, catalogue: track.catalogue, catalogueNumber: track.catalogueNumber,
+    musicalKeys: [...new Set(siblings.flatMap(({ id }) => musicalKeysIn(manualTrackDetails[id]?.about)))],
     trackIds: siblings.map(({ id }) => id),
   }]
 }))

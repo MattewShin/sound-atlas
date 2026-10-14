@@ -15,21 +15,23 @@ export async function verifyTargetConcertInteractions(App) {
   dom.window.HTMLDialogElement.prototype.showModal = function () { this.open = true }
   dom.window.HTMLDialogElement.prototype.close = function () { this.open = false }
   const songId = 'chopin-ballade-op23-no1', emperorId = 'beethoven-piano-concerto-op73-no5-m2'
-  dom.window.localStorage.setItem('classic-atlas-music-data-version', 'manual-catalog-5')
+  dom.window.localStorage.setItem('classic-atlas-music-data-version', 'manual-catalog-6')
   dom.window.localStorage.setItem('classic-atlas-track-reactions-v1', JSON.stringify({ [songId]: { listenAgain: true }, [emperorId]: { listenAgain: true } }))
   let listCalls = 0, detailCalls = 0, root, candidates = [], hold = true, release, lastSignal
   const batches = [], cache = new Map()
   const makeResult = (candidate) => {
     const index = Number(candidate.kopisId.slice(2)) - 999100
     const status = index === 2 ? 'not-found' : [3, 10].includes(index) ? 'no-material' : [4, 8].includes(index) ? 'needs-review' : index === 5 ? 'failed' : 'matched'
-    return { kopisId: candidate.kopisId, concert: { ...candidate, programStatus: status === 'matched' ? 'verified' : 'needs-review', programVerification: 'ocr', programWorkIds: status === 'matched' ? [songId] : [],
-      targetMatch: { targetTrackId: songId, status, attempted: true, completed: status !== 'failed', retryable: status === 'failed', reason: '합성 테스트 프로그램 근거', evidence: 'F. Chopin Ballade No.1 Op.23', evidenceSourceUrl: 'https://kopis.or.kr/upload/test.png' } } }
+    return { kopisId: candidate.kopisId, concert: { ...candidate, kopisDetailVerified: true, programStatus: status === 'matched' ? 'verified' : 'needs-review', programVerification: 'ocr', programWorkIds: status === 'matched' ? [songId] : [],
+      targetMatch: { targetTrackId: songId, workId: songId, evidenceKind: 'ocr', status, attempted: true, completed: status !== 'failed', retryable: status === 'failed', reason: '합성 테스트 프로그램 근거', evidence: 'F. Chopin Ballade No.1 Op.23', evidenceSourceUrl: 'https://kopis.or.kr/upload/test.png' } } }
   }
   globalThis.fetch = async (value, options) => {
     const url = new URL(value, 'http://localhost'), json = (body) => ({ ok: true, json: async () => body })
     if (url.pathname.endsWith('/status')) return json({ configured: true, cacheTtlMs: 21600000, initialCheckLimit: 10, moreCheckLimit: 10, programBatchSize: 2 })
     if (url.pathname.endsWith('/match-batch')) {
       const body = JSON.parse(options.body)
+      assert.equal(body.query.region, '서울')
+      assert.ok(body.query.from && body.query.to, '목록과 프로그램 확인에 지역·기간 전달')
       const response = (results) => json({ targetTrackId: body.targetTrackId, target: getTrackTarget(body.targetTrackId), results })
       if (body.cacheOnly) return response(body.kopisIds.map((id) => cache.get(id)).filter(Boolean))
       batches.push(body); lastSignal = options.signal

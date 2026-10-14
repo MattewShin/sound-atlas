@@ -8,7 +8,7 @@ import { createVercelConcertHandler, getVercelConcertEnv } from './vercel.mjs'
 
 const query = { region: '서울', from: '2026-12-01', to: '2026-12-31' }
 const targetTrackId = 'chopin-ballade-op23-no1'
-const fixture = '<dbs><db><mt20id>PF999001</mt20id><prfnm>프로그램 테스트</prfnm><prfpdfrom>2026.12.24</prfpdfrom><prfpdto>2026.12.24</prfpdto><area>서울특별시</area><genrenm>서양음악(클래식)</genrenm><sty><![CDATA[[PROGRAM]\nChopin Ballade No.1 Op.23]]></sty></db></dbs>'
+const fixture = '<dbs><db><mt20id>PF999001</mt20id><prfnm>프로그램 테스트</prfnm><prfpdfrom>2026.12.24</prfpdfrom><prfpdto>2026.12.24</prfpdto><area>서울특별시</area><genrenm>서양음악(클래식)</genrenm><prfstate>공연예정</prfstate><sty><![CDATA[[PROGRAM]\nChopin Ballade No.1 Op.23]]></sty></db></dbs>'
 const rewritten = (path, params = {}) => `/api/index?${new URLSearchParams({ ...params, __concertPath: path })}`
 const serve = async (t, handler) => {
   const server = createServer((req, res) => { void handler(req, res) })
@@ -46,21 +46,21 @@ test('Vercel rewrite로 상태·검색 조건·상세·POST 작품 확인을 전
   assert.equal(urls[0].searchParams.get('signgucode'), '11')
   const cached = await fetch(base + `/api/concerts?${new URLSearchParams(query)}`)
   assert.equal((await cached.json()).fromCache, true)
-  assert.equal(urls.length, 1)
-  await fetch(base + rewritten('concerts', { ...query, refresh: '1' }))
   assert.equal(urls.length, 2)
+  await fetch(base + rewritten('concerts', { ...query, refresh: '1' }))
+  assert.equal(urls.length, 4)
 
   const detail = await fetch(base + rewritten('concerts/PF999001/program'))
   assert.equal((await detail.json()).concert.kopisId, 'PF999001')
   const batch = await fetch(base + rewritten('concerts/match-batch'), {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetTrackId, kopisIds: ['PF999001'] }),
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetTrackId, kopisIds: ['PF999001'], query }),
   })
   assert.equal(batch.status, 200)
   const result = await batch.json()
   assert.equal(result.results[0].concert.targetMatch.status, 'matched')
   assert.equal(JSON.stringify(result).includes('fixture-secret'), false)
   const cachedMatches = await fetch(base + rewritten('concerts/match-batch'), {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetTrackId, kopisIds: ['PF999001'], cacheOnly: true }),
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetTrackId, kopisIds: ['PF999001'], query, cacheOnly: true }),
   })
   assert.equal((await cachedMatches.json()).results[0].fromCache, true)
 })

@@ -1,6 +1,6 @@
 // 앱 운영 명칭. EMMA 실험 점수와 사용자 수동 평가는 별개입니다.
 export const RATING_VERSION = 'manual-emotions-1'
-export const DATA_VERSION = 'manual-catalog-5'
+export const DATA_VERSION = 'manual-catalog-6'
 export const emotions = [
   { key: 'wonder', label: '감동적인', definition: '감동과 경이로움' },
   { key: 'transcendence', label: '압도적인', definition: '일상을 넘어서는 듯한 압도감' },
@@ -15,8 +15,11 @@ export const emotions = [
 export const emotionKeys = emotions.map(({ key }) => key)
 export const emotionLabel = (key) => emotions.find((emotion) => emotion.key === key)?.label ?? ''
 export const normalizeScore = (score) => (score - 1) / 4
+// 원점수만 0.5점 단위로 검증합니다. 평균·유사도 등 계산 결과에는 적용하지 않습니다.
+export const isValidEmotionScore = (score) => typeof score === 'number'
+  && Number.isFinite(score) && score >= 1 && score <= 5 && Number.isInteger(score * 2)
 export const isFullyRated = (track) => Boolean(track?.emotionScores)
-  && emotionKeys.every((key) => Number.isInteger(track.emotionScores[key]) && track.emotionScores[key] >= 1 && track.emotionScores[key] <= 5)
+  && emotionKeys.every((key) => isValidEmotionScore(track.emotionScores[key]))
 export const getRepresentativeEmotions = (track) => emotions
   .filter(({ key }) => track.emotionScores?.[key] >= 3)
   .sort((a, b) => track.emotionScores[b.key] - track.emotionScores[a.key])

@@ -4,7 +4,9 @@ import { isUpcomingConcert } from './concertRecommendations.js'
 export const concertFitsQuery = (concert, query, now = Date.now()) => {
   const from = concert.dateFrom || concert.startsAt?.slice(0, 10)
   const to = concert.dateTo || concert.endsAt?.slice(0, 10) || from
-  return isUpcomingConcert(concert, now) && (query.region === '전국' || concert.region === query.region) && from <= query.to && to >= query.from
+  return isUpcomingConcert(concert, now) && (!concert.kopisId || !concert.genre || concert.genre === '서양음악(클래식)')
+    && (!concert.performanceStatus || ['공연예정', '공연중'].includes(concert.performanceStatus))
+    && (query.region === '전국' || concert.region === query.region) && from <= query.to && to >= query.from
 }
 export const getRegisteredTargetConcerts = (query, now = Date.now()) => {
   const target = getTrackTarget(query.targetTrackId)

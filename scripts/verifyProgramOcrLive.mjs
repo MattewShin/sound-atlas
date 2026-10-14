@@ -18,7 +18,7 @@ try {
   console.log(JSON.stringify({ firstMs, reuseMs, imageDownloads, additionalImageDownloads: imageDownloads - before.imageDownloads, additionalApiCalls: apiCalls - before.apiCalls,
     id: record.kopisId, title: record.title, state: record.targetMatch.status, evidence: record.targetMatch.evidence,
     context: record.programOcr.context, images: record.programOcr.records.map((image) => ({ sourceUrl: image.sourceUrl, status: image.status, elapsedMs: image.elapsedMs, role: image.role,
-      confidence: image.original?.confidence, rawText: image.role === 'program' ? image.original.text : undefined, preprocessedText: image.role === 'program' ? image.preprocessed.text : undefined,
+      confidence: image.original?.confidence, textCharacters: image.original?.text?.length,
       links: image.links, reviewRequired: image.reviewRequired, failureCode: image.failureCode })), otherState: other.results[0].concert.targetMatch.status }))
   await mkdir('data/kopis-ocr-live.local', { recursive: true })
   await writeFile('data/kopis-ocr-live.local/verification.json', JSON.stringify({ verifiedAt: new Date().toISOString(), firstMs, reuseMs, first, other, before, after: { imageDownloads, apiCalls } }, null, 2))

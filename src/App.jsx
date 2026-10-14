@@ -12,6 +12,10 @@ import { getInitialConcertPeriod } from './data/concertSearchConfig.js'
 import useConcertSearch from './components/useConcertSearch.js'
 export { ConcertScreen, ConcertCard, ConcertMovement, ConcertDetailScreen } from './components/ConcertScreens.jsx'
 import { getInitialMusicState, saveMusicValue, STORAGE_KEY, SELECTION_KEY, NOTICE_KEY } from './data/storage.js'
+import { weeklySelections } from './data/weeklySelections.js'
+import { getKoreanDate, getWeeklySelectionState } from './data/weeklySelectionHelpers.js'
+import { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } from './components/WeeklySelectionScreens.jsx'
+export { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } from './components/WeeklySelectionScreens.jsx'
 
 function Icon({ name, filled = false }) {
   const paths = {
@@ -131,7 +135,7 @@ export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen,
   )
 }
 
-function YouTubeShortEmbed({ track, preview }) {
+export function YouTubeShortEmbed({ track, preview }) {
   const [hasVideoError, setHasVideoError] = useState(false)
   const iframeRef = useRef(null)
   const startSeconds = Number.isFinite(preview.startSeconds) ? preview.startSeconds : 0
@@ -299,6 +303,10 @@ function App() {
   const [excludedFeelingTrackId, setExcludedFeelingTrackId] = useState(null)
   const lastFeelingRecommendations = useRef({})
   const [selectedTrackId, setSelectedTrackId] = useState(null)
+  const [weeklyStory, setWeeklyStory] = useState({ id: null, from: 'explore' })
+  const weeklyDate = getKoreanDate(concertNow)
+  const weeklyState = useMemo(() => getWeeklySelectionState(weeklySelections, tracks, concertNow), [weeklyDate])
+  const weeklyEntry = weeklyState.readable.find((entry) => entry.id === weeklyStory.id)
   const [recommendationListState, setRecommendationListState] = useState({ query: null, count: 20 })
   const [detailTrack, setDetailTrack] = useState(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
@@ -330,7 +338,7 @@ function App() {
   const savedTracks = useMemo(() => tracks.filter((track) => trackReactions[track.id]?.listenAgain === true).sort((a, b) => (Date.parse(trackReactions[b.id]?.updatedAt) || 0) - (Date.parse(trackReactions[a.id]?.updatedAt) || 0)), [trackReactions])
   const isTrackSaved = (id) => trackReactions[id]?.listenAgain === true
   const concertOptions = { mode: 'keyword', selectedKeys: [], savedTrackIds: [], now: concertNow, region: concertRegion }
-  const allConcerts = mergeSearchConcerts(concertSearch.search.data?.concerts || [], concerts)
+  const allConcerts = mergeSearchConcerts(concertSearch.search.data?.concerts || [], concerts).filter(({ kopisId }) => kopisId)
   const searchedKopisIds = new Set((concertSearch.search.data?.concerts || []).map(({ kopisId }) => kopisId))
   const searchedIds = new Set((concertSearch.search.data?.concerts || []).map(({ id }) => id))
   const searchedConcertResults = getConcertRecommendations(tracks, { ...concertOptions, region: concertSearch.search.data?.query.region }, allConcerts.filter(({ id, kopisId }) => searchedIds.has(id) || (kopisId && searchedKopisIds.has(kopisId))))
@@ -351,6 +359,9 @@ function App() {
     document.addEventListener('visibilitychange', refresh)
     return () => { window.clearInterval(timer); document.removeEventListener('visibilitychange', refresh) }
   }, [])
+  useEffect(() => {
+    if (import.meta.env?.DEV) weeklyState.diagnostics.forEach((message) => console.warn(message))
+  }, [weeklyState])
   useEffect(() => {
     // 키워드는 현재 화면에서만 유지하며 이전 버전의 저장된 선택도 제거합니다.
     try { window.localStorage.removeItem(SELECTION_KEY) } catch { /* 저장 차단 */ }
@@ -448,6 +459,8 @@ function App() {
     setActiveView('recommendations'); window.scrollTo({ top: 0 })
   }
   const returnToExplore = () => { setActiveView('explore'); window.scrollTo({ top: 0 }) }
+  const openWeeklyStory = (id, from = 'explore') => { setWeeklyStory({ id, from }); setActiveView('weekly-story'); window.scrollTo({ top: 0 }) }
+  const openWeeklyArchive = () => { setActiveView('weekly-archive'); window.scrollTo({ top: 0 }) }
   const loadMoreRecommendations = () => setRecommendationListState((state) => ({ query: recommendationQuery, count: Math.min((state.query === recommendationQuery ? state.count : 20) + 20, recommendedTracks.length) }))
 
   return <div className="app-shell">
@@ -490,13 +503,19 @@ function App() {
         </section>
         {!isInitialExploration && <RelatedRecommendations key={recommendationQuery} relatedTracks={relatedTracks} onOpenTrack={selectRelatedTrack} onSeeAll={openRecommendationList} />}
         {!isInitialExploration && selectedTrack && relatedTracks.length === 0 && <div className="recommendations-single-link"><button className="recommendations-see-all" type="button" onClick={openRecommendationList}>추천곡 더 보기 <span aria-hidden="true">→</span></button></div>}
+        <WeeklySelectionSection entry={weeklyState.current} onOpen={openWeeklyStory} onArchive={openWeeklyArchive} />
+        {!weeklyState.current && weeklyState.archive.length > 0 && <div className="weekly-archive-entry"><button className="weekly-link" type="button" onClick={openWeeklyArchive}>지난 선정곡 →</button></div>}
       </main>
-    </> : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetail
+    </> : activeView === 'weekly-story' ? weeklyEntry
+      ? <WeeklySelectionScreen key={weeklyEntry.id} entry={weeklyEntry} detail={trackDetails[weeklyEntry.trackId]} isSaved={isTrackSaved(weeklyEntry.trackId)} onBack={weeklyStory.from === 'archive' ? openWeeklyArchive : returnToExplore} onToggleSave={toggleTrackSave} onOpenTrack={openTrackDetail} saveFeedback={saveFeedback?.trackId === weeklyEntry.trackId ? saveFeedback.message : null} PreviewPlayer={YouTubeShortEmbed} />
+      : <main className="weekly-screen"><h1>지금은 읽을 수 없는 소개예요</h1><button className="weekly-link" type="button" onClick={returnToExplore}>음악 탐색으로</button></main>
+      : activeView === 'weekly-archive' ? <WeeklyArchiveScreen entries={weeklyState.archive} onOpen={(id) => openWeeklyStory(id, 'archive')} onBack={returnToExplore} />
+      : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetail
       ? <ConcertDetailScreen result={concertDetail} now={concertNow} onBack={showConcerts} onOpenTrack={openTrackDetail} onOpenShort={openHighlightShort} details={trackDetails} isTrackSaved={isTrackSaved} onLoadProgram={concertSearch.loadProgram} programRequest={concertSearch.programRequests[detailConcert.kopisId]} />
       : <ConcertScreen searchResults={searchedConcertResults} now={concertNow} region={concertRegion} onSelectRegion={changeConcertRegion} onGoExplore={returnToExplore} onOpenConcert={openConcert} tracks={tracks} savedTracks={savedTracks} onSelectTrack={findTrackConcert} searchControls={{ period: concertPeriod, onChangePeriod: changeConcertPeriod, onSearch: concertSearch.runSearch, search: concertSearch.search, connection: concertSearch.connection, targetTrack: concertTargetTrack, onClearTarget: clearConcertTarget, onCheckMore: concertSearch.checkNext, onStop: concertSearch.stop }} />
       : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} onFindTrackConcert={findTrackConcert} />}
     <nav className="bottom-nav" aria-label="주요 메뉴">
-      <button className={'nav-item ' + (activeView === 'explore' || activeView === 'recommendations' ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
+      <button className={'nav-item ' + (['explore', 'recommendations', 'weekly-story', 'weekly-archive'].includes(activeView) ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
       <button className={'nav-item ' + (activeView === 'concert' ? 'active' : '')} type="button" onClick={showConcerts}><Icon name="stage" /><span>공연 찾기</span></button>
       <button className={'nav-item ' + (activeView === 'library' ? 'active' : '')} type="button" onClick={() => setActiveView('library')}><Icon name="bookmarkSmall" /><span>보관함</span></button>
       <button className={'nav-item ' + (activeView === 'taste' ? 'active' : '')} type="button" onClick={() => setActiveView('taste')}><Icon name="user" /><span>나의 취향</span></button>

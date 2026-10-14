@@ -8,7 +8,7 @@ import { getOcrConfig } from './ocrConfig.mjs'
 import { extractProgram, getExtractedWorkLinks, identifyEntry } from './programMatching.mjs'
 import { workCatalog, composerPatterns, workTypePatterns } from '../src/data/workCatalog.js'
 
-export const OCR_VERSION = 'program-ocr-3'
+export const OCR_VERSION = 'program-ocr-4'
 const hash = (value) => createHash('sha256').update(value).digest('hex')
 const aborted = () => Object.assign(new Error('처리를 중단했어요.'), { code: 'ABORTED' })
 const checkAbort = (signal) => { if (signal?.aborted) throw aborted() }

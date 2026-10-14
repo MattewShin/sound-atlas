@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { createConcertSearchClient, mergeSearchConcerts } from '../data/concertSearch.js'
+import { createConcertSearchClient } from '../data/concertSearch.js'
 import { getTrackTarget } from '../data/workCatalog.js'
-import { concertFitsQuery, getRegisteredTargetConcerts } from '../data/concertTargetSearch.js'
+import { concertFitsQuery } from '../data/concertTargetSearch.js'
 import { getMatchStatus, INITIAL_CONCERT_CHECK_LIMIT } from '../data/concertMatchStates.js'
 
 export default function useConcertSearch() {
@@ -16,7 +16,7 @@ export default function useConcertSearch() {
   const requestId = useRef(0), snapshot = useRef(null), controller = useRef(null), busy = useRef(false)
   const settings = useRef({ initialCheckLimit: INITIAL_CONCERT_CHECK_LIMIT, moreCheckLimit: 10, programBatchSize: 2 })
   const publish = (data, status = 'success') => { snapshot.current = data; setSearch({ status, error: null, data }) }
-  const releaseProcessing = (data) => data && ({ ...data, concerts: data.concerts.map((concert) => getMatchStatus(concert.targetMatch) === 'processing'
+  const releaseProcessing = (data) => data && ({ ...data, concerts: data.concerts.map((concert) => ['processing', 'image-required'].includes(getMatchStatus(concert.targetMatch))
     ? { ...concert, targetMatch: { ...concert.targetMatch, status: 'pending', completed: false, reason: '처리를 중단했어요. 다시 이어서 확인할 수 있어요.' } } : concert) })
   const stop = () => {
     requestId.current += 1; controller.current?.abort(); controller.current = null; busy.current = false
@@ -46,7 +46,7 @@ export default function useConcertSearch() {
     return { ...data, target: response.target, checkedAt: response.checkedAt, concerts: data.concerts.map((concert) => {
       const item = byId.get(concert.kopisId)
       if (!item) return concert
-      if (item.concert && !concertFitsQuery(item.concert, data.query)) {
+      if (item.targetMatch?.outOfScope || item.concert?.targetMatch?.outOfScope || (item.concert && !concertFitsQuery(item.concert, data.query))) {
         if (item.fromCache) return { ...concert, needsFreshProgram: true, targetMatch: { status: 'pending', attempted: false, completed: false, reason: '목록과 저장된 상세 일정이 달라 다시 확인할 예정이에요.' } }
         return { ...concert, needsFreshProgram: false, targetMatch: { status: 'needs-review', attempted: true, completed: true, reason: '목록과 상세 일정 또는 지역이 달라 공연 정보를 다시 확인해야 해요.' } }
       }
@@ -64,8 +64,8 @@ export default function useConcertSearch() {
       const batch = candidates.slice(0, Math.min(remaining, settings.current.programBatchSize))
       if (!batch.length) break
       const ids = new Set(batch.map(({ kopisId }) => kopisId))
-      publish({ ...data, concerts: data.concerts.map((concert) => ids.has(concert.kopisId) ? { ...concert, targetMatch: { ...concert.targetMatch, status: 'processing', attempted: true, completed: false, reason: '프로그램 자료를 확인하고 있어요.' } } : concert) }, 'checking')
-      const response = await client.matchBatch(data.targetTrackId, [...ids], { refresh: refresh || batch.some((concert) => concert.needsFreshProgram), signal: current.signal })
+      publish({ ...data, concerts: data.concerts.map((concert) => ids.has(concert.kopisId) ? { ...concert, targetMatch: { ...concert.targetMatch, status: concert.programEvidence?.imageUrls?.length ? 'image-required' : 'processing', attempted: true, completed: false, reason: '프로그램 자료를 확인하고 있어요.' } } : concert) }, 'checking')
+      const response = await client.matchBatch(data.targetTrackId, [...ids], { query: data.query, refresh: refresh || batch.some((concert) => concert.needsFreshProgram), signal: current.signal })
       if (id !== requestId.current || current.signal.aborted) return
       for (const value of ids) processed.add(value)
       remaining -= batch.length
@@ -89,23 +89,21 @@ export default function useConcertSearch() {
     const { id, current } = begin()
     setSearch((previous) => ({ ...previous, status: 'loading', error: null }))
     try {
-      const registered = getRegisteredTargetConcerts(query)
-      if (registered.length) publish({ query, concerts: registered, target, targetTrackId: target.trackId, apiTotal: null, localOnly: true }, 'loading')
       const data = await client.search(query, { refresh, signal: current.signal })
       if (id !== requestId.current || current.signal.aborted) return
-      const unique = [...new Map(data.concerts.map((concert) => [concert.kopisId || concert.id, concert])).values()]
-      const candidates = mergeSearchConcerts(unique.filter((concert) => concertFitsQuery(concert, query)), registered)
+      const unique = [...new Map(data.concerts.filter(({ kopisId }) => /^PF\d+$/.test(kopisId)).map((concert) => [concert.kopisId, concert])).values()]
+      const candidates = unique.filter((concert) => concertFitsQuery(concert, query))
       publish({ ...data, apiTotal: unique.length, targetTrackId: target.trackId, target, query: { ...data.query, targetTrackId: target.trackId },
         concerts: candidates.map((concert) => ({ ...concert, ...(!concert.targetMatch ? { targetMatch: { status: 'pending', targetTrackId: target.trackId, attempted: false, completed: false, reason: '프로그램을 아직 확인하지 않았어요.' } } : {}) })),
       }, 'checking')
       const ids = candidates.filter(({ kopisId }) => kopisId).map(({ kopisId }) => kopisId)
       if (!refresh) for (let offset = 0; offset < ids.length; offset += 100) {
-        const cached = await client.matchBatch(target.trackId, ids.slice(offset, offset + 100), { cacheOnly: true, signal: current.signal })
+        const cached = await client.matchBatch(target.trackId, ids.slice(offset, offset + 100), { query, cacheOnly: true, signal: current.signal })
         if (id !== requestId.current || current.signal.aborted) return
         publish(applyBatch(snapshot.current, cached), 'checking')
       }
       if (!ids.length) {
-        await client.matchBatch(target.trackId, [], { cacheOnly: true, signal: current.signal })
+        await client.matchBatch(target.trackId, [], { query, cacheOnly: true, signal: current.signal })
         if (id !== requestId.current) return
       }
       await processGroup(settings.current.initialCheckLimit, id, current, refresh)
@@ -117,7 +115,7 @@ export default function useConcertSearch() {
     const { id, current } = begin()
     setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'loading' } }))
     try {
-      const response = await client.matchBatch(snapshot.current.targetTrackId, [concert.kopisId], { refresh, signal: current.signal })
+      const response = await client.matchBatch(snapshot.current.targetTrackId, [concert.kopisId], { query: snapshot.current.query, refresh, signal: current.signal })
       if (id === requestId.current) publish(applyBatch(snapshot.current, response))
       if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'success' } }))
     } catch (error) { if (id === requestId.current) setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'error', error: error.message } })) }

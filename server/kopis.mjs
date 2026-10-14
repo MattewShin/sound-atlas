@@ -2,8 +2,7 @@ import { XMLParser, XMLValidator } from 'fast-xml-parser'
 import { CONCERT_CACHE_TTL_MS, KOPIS_REGION_CODES, MAX_CONCERT_SEARCH_DAYS, validateConcertQuery } from '../src/data/concertSearchConfig.js'
 import { CONCERT_PROGRAM_BATCH_SIZE } from '../src/data/concertMatchStates.js'
 import { getTrackTarget } from '../src/data/workCatalog.js'
-import { concerts } from '../src/data/concerts.js'
-import { mergeSearchConcerts } from '../src/data/concertSearch.js'
+import { concertFitsQuery } from '../src/data/concertTargetSearch.js'
 import { extractProgram, getExtractedWorkLinks, matchConcertToTrack } from './programMatching.mjs'
 import { createProgramOcrService, OCR_VERSION } from './programOcr.mjs'
 import { combineOcrProgram, matchAnalyzedConcert } from './ocrProgramEvidence.mjs'
@@ -117,19 +116,23 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
     try { query = validateConcertQuery(input) } catch (error) { throw new ConcertApiError('INVALID_QUERY', error.message, 400) }
     return cached(`list:${JSON.stringify(query)}`, refresh, async () => {
       const unique = new Map()
-      for (let page = 1; page <= 50; page += 1) {
-        const rows = await requestXml('pblprfr', {
-          stdate: query.from.replaceAll('-', ''), eddate: query.to.replaceAll('-', ''), cpage: String(page), rows: '100', shcate: 'CCCA',
-          ...(query.region === '전국' ? {} : { signgucode: KOPIS_REGION_CODES[query.region] }),
-        })
-        for (const row of rows) {
-          if (text(row.genrenm) !== '서양음악(클래식)') continue
-          const concert = normalizeKopisConcert(row, new Date(now()).toISOString())
-          if (concert.dateFrom <= query.to && concert.dateTo >= query.from && (query.region === '전국' || concert.region === query.region)) unique.set(concert.id, concert)
+      for (const state of ['01', '02']) {
+        let finished = false
+        for (let page = 1; page <= 50; page += 1) {
+          const rows = await requestXml('pblprfr', {
+            stdate: query.from.replaceAll('-', ''), eddate: query.to.replaceAll('-', ''), cpage: String(page), rows: '100', shcate: 'CCCA', prfstate: state,
+            ...(query.region === '전국' ? {} : { signgucode: KOPIS_REGION_CODES[query.region] }),
+          })
+          for (const row of rows) {
+            if (text(row.genrenm) !== '서양음악(클래식)') continue
+            const concert = normalizeKopisConcert({ ...row, prfstate: row.prfstate || (state === '01' ? '공연예정' : '공연중') }, new Date(now()).toISOString())
+            if (concertFitsQuery(concert, query, now())) unique.set(concert.kopisId, concert)
+          }
+          if (rows.length < 100) { finished = true; break }
         }
-        if (rows.length < 100) return { query, concerts: [...unique.values()] }
+        if (!finished) throw new ConcertApiError('SEARCH_TOO_LARGE', '검색 결과가 많습니다. 지역이나 기간을 좁혀 다시 조회해주세요.')
       }
-      throw new ConcertApiError('SEARCH_TOO_LARGE', '검색 결과가 많습니다. 지역이나 기간을 좁혀 다시 조회해주세요.')
+      return { query, concerts: [...unique.values()] }
     })
   }
   const program = async (kopisId, refresh = false) => {
@@ -140,10 +143,16 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
       if (!row) throw new ConcertApiError('PERFORMANCE_NOT_FOUND', '공연 상세 정보를 찾지 못했습니다.', 404)
       const concert = normalizeKopisConcert(row, new Date(now()).toISOString())
       const programEvidence = { text: text(row.sty), imageUrls: asArray(row.styurls?.styurl).map(safeUrl).filter(Boolean) }
+      const relatedUrls = asArray(row.relates?.relate).map((link) => safeUrl(link.relateurl)).filter(Boolean)
+      const officialUrls = relatedUrls.filter((url) => {
+        const host = new URL(url).hostname.replace(/^www\./, '')
+        return ['sac.or.kr', 'lotteconcerthall.com'].includes(host)
+      })
       const programExtraction = extractProgram(programEvidence.text)
       return { concert: {
         ...concert, performers: text(row.prfcast), kopisHallId: text(row.mt13id), scheduleText: text(row.dtguidance),
-        relatedUrls: asArray(row.relates?.relate).map((link) => safeUrl(link.relateurl)).filter(Boolean),
+        relatedUrls, officialUrls,
+        kopisDetailVerified: true,
         programEvidence, programExtraction,
         programStatus: text(row.sty) || asArray(row.styurls?.styurl).length ? 'needs-review' : 'unavailable',
       } }
@@ -159,7 +168,12 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
       await writeFile(temporary, JSON.stringify(record)); await rename(temporary, path)
     } catch { /* 읽기 전용 배포에서는 메모리 캐시 사용 */ }
   }
-  const cachedMatches = async ({ targetTrackId, kopisIds }) => {
+  const scopeQuery = (query) => {
+    if (!query) return null // 직접 서비스 호출의 진단 경로. 공개 API는 query를 필수로 검증합니다.
+    try { return validateConcertQuery(query) } catch (error) { throw new ConcertApiError('INVALID_QUERY', error.message, 400) }
+  }
+  const cachedMatches = async ({ targetTrackId, kopisIds, query }) => {
+    const scope = scopeQuery(query)
     const target = getTrackTarget(targetTrackId)
     if (!target) throw new ConcertApiError('INVALID_TARGET', '등록된 곡 ID를 선택해주세요.', 400)
     if (!Array.isArray(kopisIds) || kopisIds.length > 500 || kopisIds.some((id) => !/^PF\d{1,12}$/.test(id))) throw new ConcertApiError('INVALID_BATCH', '캐시 확인 요청을 확인해주세요.', 400)
@@ -168,6 +182,7 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
       let record = analyses.get(kopisId)
       if (!record) { try { record = JSON.parse(await readFile(join(ocr.config.cacheDirectory, 'concerts', kopisId + '.json'), 'utf8')) } catch { continue } }
       if (record.version !== OCR_VERSION || record.concert?.kopisId !== kopisId || now() - Date.parse(record.checkedAt) < 0 || now() - Date.parse(record.checkedAt) >= Math.min(ttl, ocr.config.cacheTtlMs)) continue
+      if (scope && (!record.concert.kopisDetailVerified || !concertFitsQuery(record.concert, scope, now()))) continue
       const sourceTime = Date.parse(record.concert.programFetchedAt)
       if (!Number.isFinite(sourceTime) || now() - sourceTime >= ttl || record.concert.programOcr?.records.some((image) => now() - Date.parse(image.validatedAt) >= ocr.config.cacheTtlMs)) continue
       const result = matchAnalyzedConcert(record.concert, targetTrackId)
@@ -176,19 +191,30 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
     }
     return { targetTrackId, target, results, checkedAt: new Date(now()).toISOString() }
   }
-  const matchBatch = async ({ targetTrackId, kopisIds, refresh = false, signal }) => {
+  const matchBatch = async ({ targetTrackId, kopisIds, query, refresh = false, signal }) => {
+    const scope = scopeQuery(query)
     const target = getTrackTarget(targetTrackId)
     if (!target) throw new ConcertApiError('INVALID_TARGET', '등록된 곡 ID를 선택해주세요.', 400)
     if (!Array.isArray(kopisIds) || kopisIds.length > CONCERT_PROGRAM_BATCH_SIZE || kopisIds.some((id) => typeof id !== 'string' || !/^PF\d{1,12}$/.test(id))) {
       throw new ConcertApiError('INVALID_BATCH', `공연 자료는 최대 ${CONCERT_PROGRAM_BATCH_SIZE}건씩 확인할 수 있어요.`, 400)
     }
     requireKey()
+    const eligible = scope ? new Set((await search({ ...scope, targetTrackId })).concerts.map(({ kopisId }) => kopisId)) : null
     const results = []
     for (const kopisId of [...new Set(kopisIds)]) {
       try {
         signal?.throwIfAborted()
-        const detail = await program(kopisId, refresh)
-        let original = mergeSearchConcerts([detail.concert], concerts).find((item) => item.kopisId === kopisId) || detail.concert
+        if (eligible && !eligible.has(kopisId)) {
+          results.push({ kopisId, targetMatch: { targetTrackId, workId: target.workId, status: 'needs-review', attempted: false, completed: false, outOfScope: true, reason: '선택한 지역·기간·장르·공연 상태의 KOPIS 후보에 없는 공연이에요.' } })
+          continue
+        }
+        let detail = await program(kopisId, refresh)
+        if (scope && detail.fromCache && !concertFitsQuery(detail.concert, scope, now())) detail = await program(kopisId, true)
+        let original = detail.concert
+        if (scope && (!concertFitsQuery(original, scope, now()) || original.genre !== '서양음악(클래식)' || !['공연예정', '공연중'].includes(original.performanceStatus))) {
+          results.push({ kopisId, concert: { ...original, targetMatch: { targetTrackId, workId: target.workId, status: 'needs-review', attempted: true, completed: true, outOfScope: true, reason: 'KOPIS 상세의 지역·기간·장르·공연 상태가 검색 조건과 달라 프로그램 분석을 생략했어요.' } } })
+          continue
+        }
         const firstMatch = matchConcertToTrack(original, targetTrackId)
         const imageUrls = original.programEvidence?.imageUrls || []
         if (imageUrls.length && !['matched', 'not-found'].includes(firstMatch.status)) {
@@ -200,14 +226,15 @@ export const createKopisService = ({ env = process.env, fetchImpl = fetch, now =
           original = combineOcrProgram(original, records, { totalImages: imageUrls.length })
         }
         signal?.throwIfAborted()
-        const links = getExtractedWorkLinks(original.programExtraction)
+        const contextConfirmed = !firstMatch.contextConflict && (!original.programOcr || original.programOcr.context.verified)
+        const links = contextConfirmed ? getExtractedWorkLinks(original.programExtraction) : []
         const enriched = { ...original, programFetchedAt: detail.fetchedAt,
-          programWorkIds: original.programVerification === 'manual' ? original.programWorkIds : links.map(({ workId }) => workId), programScopes: Object.fromEntries(links.map(({ workId, scope }) => [workId, scope])),
-          programStatus: links.length || original.programVerification === 'manual' ? 'verified' : original.programStatus,
-          programVerification: original.programVerification === 'manual' ? 'manual' : links.length ? original.programOcr ? 'ocr' : 'text' : undefined,
+          programWorkIds: links.map(({ workId }) => workId), programScopes: Object.fromEntries(links.map(({ workId, scope }) => [workId, scope])),
+          programStatus: links.length ? 'verified' : original.programStatus,
+          programVerification: links.length ? original.programOcr ? 'ocr' : 'text' : undefined,
           programCoverage: { complete: original.programExtraction.complete, explicitComplete: original.programExtraction.explicitComplete, extractedEntries: original.programExtraction.entries.length },
         }
-        const confirmed = mergeSearchConcerts([enriched], concerts).find((concert) => concert.kopisId === kopisId) || enriched
+        const confirmed = enriched
         await saveAnalysis(confirmed)
         results.push({ kopisId, concert: { ...confirmed, targetMatch: matchAnalyzedConcert(confirmed, targetTrackId) }, fromCache: detail.fromCache })
       } catch (error) {

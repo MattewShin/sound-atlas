@@ -25,7 +25,7 @@ test('황제 작품 연결은 실제 세 악장 ID·점수를 재사용하고 �
   result.program[0].linkedTracks.forEach((track) => assert.equal(track, tracks.find(({ id }) => id === track.id)))
   assert.equal(result.program[1].linkedTracks.length, 0)
   assert.equal(result.program[1].emotionFit, null)
-  assert.equal(result.score, (0.75 + 0 + 0.75) / 3)
+  assert.equal(result.score, (0.875 + 0 + 0.875) / 3)
   assert.match(result.scope, /분석된 작품 기준/)
   assert.match(result.scope, /2작품 중 1작품/)
 })
@@ -33,9 +33,9 @@ test('황제 작품 연결은 실제 세 악장 ID·점수를 재사용하고 �
 test('감정 변경 시 세 악장 모두의 평균 적합도와 실제 3점 이상 악장만 설명한다', () => {
   const soft = analyze(tracks, { selectedKeys: ['tenderness'] })
   const powerful = analyze(tracks, { selectedKeys: ['power'] })
-  assert.equal(soft.program[0].emotionFit, 0.25)
+  assert.equal(soft.program[0].emotionFit, 0.375)
   assert.deepEqual(soft.program[0].matches.map(({ track }) => track.movementNumber), [2])
-  assert.match(soft.reasons.join(' '), /2악장: 부드러운 4\/5/)
+  assert.match(soft.reasons.join(' '), /2악장: 부드러운 4\.5\/5/)
   assert.deepEqual(powerful.program[0].matches.map(({ track }) => track.movementNumber), [1, 3])
   assert.notEqual(soft.score, powerful.score)
   const combined = analyze(tracks, { selectedKeys: ['power', 'joy', 'power', 'unknown'] })
@@ -53,7 +53,7 @@ test('평점 수정 후 재계산은 수정된 점수·추천 설명을 반영�
   assert.equal(after.isRecommended, true)
   assert.equal(after.score, 1 / 3)
   assert.match(after.reasons.join(' '), /2악장: 몽환적인 5\/5/)
-  assert.equal(tracks.find(({ id }) => id === movementIds[1]).emotionScores.nostalgia, 2)
+  assert.equal(tracks.find(({ id }) => id === movementIds[1]).emotionScores.nostalgia, 2.5)
 })
 
 test('보관한 황제 2악장은 직접 연결로 설명하며 단순 등록과 구분한다', () => {
@@ -89,7 +89,7 @@ test('합창의 실제 작품 메타데이터 평가가 추가되면 작품당 �
     emotionScores: Object.fromEntries(Object.keys(tracks[0].emotionScores).map((key) => [key, 5])) }
   const result = analyze([...tracks, symphony], { selectedKeys: ['tenderness'] })
   assert.equal(result.program[1].ratedTracks[0], symphony)
-  assert.equal(result.score, (0.25 + 1) / 2)
+  assert.equal(result.score, (0.375 + 1) / 2)
   assert.match(result.scope, /2작품 중 2작품/)
 })
 

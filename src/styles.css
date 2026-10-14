@@ -1,6 +1,55 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Gowun+Dodum&family=Nunito+Sans:wght@500;600;700;800&display=swap');
 
 :root { color: #1e2928; background: #e4e1da; font-family: 'Gowun Dodum', sans-serif; font-synthesis: none; }
+/* 운영자의 주간 소개: 추천 카드보다 조용한 가로형 지면 */
+.weekly-section { margin: 26px 20px 12px; padding: 18px 0 0; border-top: 1px solid #ded9cf; }
+.weekly-feature { display: flex; align-items: flex-start; gap: 14px; width: 100%; padding: 0; border: 0; color: #293b36; background: transparent; text-align: left; }
+.weekly-artwork { display: grid; place-items: center; flex: none; width: 72px; height: 88px; overflow: hidden; border-radius: 7px; color: #31534d; background: #e4eee2; }
+.weekly-artwork img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.weekly-copy { display: grid; gap: 6px; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.weekly-eyebrow { margin: 0; color: #69796d; font-size: 10px; letter-spacing: .4px; }
+.weekly-title { color: #31534d; font-size: 16px; line-height: 1.5; font-weight: 700; }
+.weekly-teaser { color: #536359; font-size: 12px; line-height: 1.6; }
+.weekly-track { color: #71766e; font-size: 11px; line-height: 1.6; }
+.weekly-read { margin-top: 3px; color: #31534d; font-size: 11px; text-decoration: underline; text-underline-offset: 4px; }
+.weekly-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.weekly-footer small, .weekly-editor { color: #737b71; font-size: 10px; overflow-wrap: anywhere; }
+.weekly-link { min-height: 44px; border: 0; padding: 7px 0; color: #53675d; background: transparent; font-size: 11px; text-decoration: underline; text-underline-offset: 4px; }
+.weekly-footer .weekly-link { margin-left: auto; }
+.weekly-feature:focus-visible, .weekly-screen button:focus-visible, .weekly-link:focus-visible { outline: 2px solid #31534d; outline-offset: 5px; border-radius: 4px; }
+.weekly-archive-entry { margin: 22px 20px; text-align: right; }
+.weekly-screen { min-height: 70dvh; margin: 0; padding: 22px 24px 38px; overflow-wrap: anywhere; background: #f7f3eb; }
+.weekly-back { margin-bottom: 20px; }
+.weekly-period { color: #7c7e73; font-size: 10px; line-height: 1.6; }
+.weekly-story-header > .weekly-period { display: block; margin-top: 7px; }
+.weekly-screen h1 { margin: 14px 0 25px; color: #31534d; font-size: 28px; line-height: 1.45; letter-spacing: -.8px; }
+.weekly-story-track { display: flex; align-items: center; gap: 14px; }
+.weekly-story-track > div { min-width: 0; }
+.weekly-story-track p { margin: 0 0 5px; color: #71766e; font-size: 12px; }
+.weekly-story-track h2 { margin: 0; font-size: 17px; line-height: 1.6; }
+.weekly-story-part { margin-top: 30px; }
+.weekly-story-part h2 { margin: 0 0 9px; color: #31534d; font-size: 16px; }
+.weekly-story-part p { margin: 8px 0 0; color: #536359; font-size: 14px; line-height: 1.95; white-space: pre-line; }
+.weekly-story-part .weekly-preview-source { color: #757c71; font-size: 11px; line-height: 1.75; }
+.weekly-preview-button, .weekly-detail-button { width: 100%; min-height: 44px; margin-top: 14px; border: 1px solid #ccd4c6; border-radius: 10px; padding: 10px 15px; color: #31534d; background: #eaf0e5; font-size: 12px; }
+.weekly-video { width: 100%; aspect-ratio: 16 / 9; margin-top: 16px; overflow: hidden; border-radius: 10px; background: #202d2b; }
+.weekly-video iframe { width: 100%; height: 100%; border: 0; }
+.weekly-actions { margin-top: 30px; }
+.weekly-actions .library-save-button { width: 100%; min-height: 44px; }
+.weekly-detail-button { background: transparent; }
+.weekly-archive header > p:last-child { color: #737b71; font-size: 12px; line-height: 1.7; }
+.weekly-archive-list { display: grid; gap: 22px; padding: 0; margin: 28px 0 0; list-style: none; }
+.weekly-archive-list li { padding-bottom: 22px; border-bottom: 1px solid #ded9cf; }
+.weekly-empty { margin: 36px 0; color: #737b71; font-size: 13px; line-height: 1.8; }
+@media (max-width: 520px) {
+  .weekly-feature .weekly-title, .weekly-feature .weekly-teaser { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+}
+@media (max-width: 355px) {
+  .weekly-section { margin-left: 16px; margin-right: 16px; }
+  .weekly-artwork { width: 58px; height: 76px; }
+  .weekly-feature { gap: 11px; }
+  .weekly-screen { padding-left: 18px; padding-right: 18px; }
+}
 * { box-sizing: border-box; } html { scroll-behavior: smooth; } body { margin: 0; min-width: 320px; } button, a { font: inherit; -webkit-tap-highlight-color: transparent; } button { cursor: pointer; } svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .app-shell { min-height: 100vh; max-width: 520px; margin: 0 auto; padding-bottom: 98px; overflow: hidden; background: #f7f3eb; }
 .top-header { position: relative; min-height: 286px; overflow: hidden; padding: 22px 21px 36px; background: #f3eee3; }
@@ -174,3 +223,6 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-ocr-evidence details { margin: 12px 0; padding: 10px; border: 1px solid #d3ddd0; border-radius: 9px; }
 .concert-ocr-evidence summary { min-height: 44px; cursor: pointer; }
 .concert-ocr-evidence pre { max-height: 380px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; padding: 10px; background: #f3f6ed; }
+.concert-kopis-id { color: #677567; font-size: 11px; overflow-wrap: anywhere; }
+.concert-card-target-song, .concert-match-basis, .concert-source { overflow-wrap: anywhere; min-width: 0; }
+.concert-match-basis blockquote { margin: 10px 0; padding: 10px; border-left: 3px solid #bacab3; white-space: pre-wrap; }

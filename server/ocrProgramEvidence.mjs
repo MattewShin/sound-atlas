@@ -1,5 +1,6 @@
 import { extractProgram, matchConcertToTrack, identifyEntry } from './programMatching.mjs'
 import { getTrackTarget } from '../src/data/workCatalog.js'
+import { checkProgramContext } from './programContext.mjs'
 const compact = (text) => String(text || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')
 const dateValues = (text) => [...String(text).matchAll(/(20\d{2})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})/g)]
   .map((match) => `${match[1]}-${match[2].padStart(2, '0')}-${match[3].padStart(2, '0')}`)
@@ -17,8 +18,15 @@ export const checkImageContext = (concert, records) => {
   let posterConfirmed = false
   const roles = []
   for (const record of records) {
+    if (concert.kopisDetailVerified && (record.concertId !== concert.kopisId || !concert.programEvidence?.imageUrls?.includes(record.sourceUrl))) {
+      return { verified: false, reason: 'KOPIS 상세의 공연 ID와 소개 이미지 출처가 일치하지 않아 추가 확인이 필요해요.', roles, conflict: 'source' }
+    }
     if (record.status !== 'completed') return { verified: false, reason: '읽지 못한 이미지가 남아 있어 연결 확인이 필요해요.', roles }
     const text = record.original.text
+    if (record.role === 'program') {
+      const programContext = checkProgramContext(concert, text)
+      if (!programContext.verified) return { ...programContext, roles }
+    }
     const dates = dateValues(text)
     const sourceId = record.sourceUrl.match(/PF[_-](PF\d+)/i)?.[1]
     if (sourceId && sourceId !== concert.kopisId) return { verified: false, reason: '이미지 출처의 공연 식별 정보가 다르게 표시돼 확인이 필요해요.', roles }
@@ -47,7 +55,7 @@ export const combineOcrProgram = (concert, records, { totalImages = records.leng
     complete: complete && context.verified && programRecords.length > 0 && programRecords.every((record) => record.original.extraction.complete && !record.original.extraction.unparsedLines.length && !record.reviewRequired),
     explicitComplete: false }
   return { ...concert, programExtraction: extraction,
-    programOcr: { version: 'program-ocr-2', records, totalImages, processedImages: records.filter(({ status }) => status === 'completed').length, allProcessed: complete, context,
+    programOcr: { version: 'program-ocr-4', records, totalImages, processedImages: records.filter(({ status }) => status === 'completed').length, allProcessed: complete, context,
       coverageComplete: extraction.complete, acceptedEntries: accepted.length },
   }
 }
