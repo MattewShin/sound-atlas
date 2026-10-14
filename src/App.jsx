@@ -96,7 +96,7 @@ export function RecommendationListScreen({ recommendedTracks, selectedKeys = [],
   </>
 }
 
-export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen, onClose, onOpenShort, onToggleSave, saveFeedback, onFindConcert, onFindTrackConcert }) {
+export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen, onClose, onOpenShort, onToggleSave, saveFeedback, onFindTrackConcert, onGoLibrary }) {
   if (!track) return null
 
   const imageSrc = detail?.composerImage || composerImages[track.composer]
@@ -128,7 +128,7 @@ export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen,
           <section className="track-detail-section"><h3>이 곡은 어떤 곡인가요?</h3><p>{about}</p></section>
           <section className="track-detail-section"><h3>감상 포인트</h3><p>{listeningTip}</p></section>
           {highlight && <section className="track-detail-section track-detail-highlight"><h3>감상 하이라이트</h3><div className="track-detail-highlight-card"><strong>{highlight.title}</strong><p>{highlight.description}</p></div></section>}
-          <section className="library-save-section" aria-label="보관함에 곡 저장"><p>다시 찾아 듣고 싶은 곡을 보관해보세요.</p><button className={`library-save-button ${isSaved ? 'saved' : ''}`} type="button" aria-pressed={isSaved} onClick={() => onToggleSave(track.id)}>{isSaved ? '✓ 보관됨' : '보관함에 담기'}</button>{saveFeedback && <p className="library-save-feedback" role="status">{saveFeedback}</p>}<div className="concert-preview">{onFindTrackConcert && <button type="button" onClick={() => onFindTrackConcert(track)}>이 곡의 공연 찾기</button>}{onFindConcert ? <><button type="button" onClick={onFindConcert}>이 작품이 포함된 공연 보기</button><p>등록된 악장과 공연 프로그램의 작품을 연결했어요.</p></> : <p>이 작품과 연결된 예정 공연은 아직 등록되지 않았어요.</p>}</div></section>
+          <section className="library-save-section" aria-label="보관함에 곡 저장"><p>다시 찾아 듣고 싶은 곡을 보관해보세요.</p><button className={`library-save-button ${isSaved ? 'saved' : ''}`} type="button" aria-pressed={isSaved} onClick={() => onToggleSave(track.id)}>{isSaved ? '✓ 보관됨' : '보관함에 담기'}</button>{saveFeedback && <p className="library-save-feedback" role="status">{saveFeedback}</p>}<div className="concert-preview">{onFindTrackConcert && <button type="button" onClick={() => onFindTrackConcert(track)}>이 곡의 공연 찾기</button>}{isSaved && onGoLibrary && <button type="button" onClick={onGoLibrary}>보관함으로 가기</button>}<p>{isSaved ? '보관 여부와 관계없이 공연을 찾을 수 있고, 보관한 곡은 보관함에서 다시 확인할 수 있어요.' : '보관 여부와 관계없이 이 곡이 포함된 공연을 찾을 수 있어요.'}</p></div></section>
           {canOpenShort ? <div className="highlight-short-cta"><p>이 곡을 영상으로 만나보세요.</p><button type="button" onClick={() => onOpenShort(track)}>음원 감상하기</button></div> : <div className="track-detail-coming-soon">미리듣기 준비 중</div>}
         </div>
       </section>
@@ -344,11 +344,10 @@ function App({ isLoggedIn = false } = {}) {
   const searchedConcertResults = getConcertRecommendations(tracks, { ...concertOptions, region: concertSearch.search.data?.query.region }, allConcerts.filter(({ id, kopisId }) => searchedIds.has(id) || (kopisId && searchedKopisIds.has(kopisId))))
   const detailConcert = allConcerts.find(({ id, kopisId }) => id === concertDetailId || (kopisId && `kopis-${kopisId}` === concertDetailId))
   const concertDetail = detailConcert ? analyzeConcert(detailConcert, tracks, concertOptions) : null
-  const relatedConcert = detailTrack ? getConcertRecommendations(tracks, { now: concertNow }, allConcerts)
-    .find(({ program }) => program.some(({ linkedTracks }) => linkedTracks.some(({ id }) => id === detailTrack.id))) : null
   const openConcert = (id) => { setConcertDetailId(id); setActiveView('concert'); window.scrollTo({ top: 0 }) }
   const showConcerts = () => { setConcertDetailId(null); setActiveView('concert'); window.scrollTo({ top: 0 }) }
   const findTrackConcert = (track) => { concertSearch.clear(); setConcertTargetTrackId(track.id); closeTrackDetail(); showConcerts() }
+  const showLibrary = () => { closeTrackDetail(); setActiveView('library'); window.scrollTo({ top: 0 }) }
   const clearConcertTarget = () => { concertSearch.clear(); setConcertTargetTrackId(null) }
   const changeConcertRegion = (value) => { if (value !== concertRegion) concertSearch.clear(); setConcertRegion(value) }
   const changeConcertPeriod = (value) => { concertSearch.clear(); setConcertPeriod(value) }
@@ -520,7 +519,7 @@ function App({ isLoggedIn = false } = {}) {
       <button className={'nav-item ' + (activeView === 'library' ? 'active' : '')} type="button" onClick={() => setActiveView('library')}><Icon name="bookmarkSmall" /><span>보관함</span></button>
       <button className={'nav-item ' + (activeView === 'taste' ? 'active' : '')} type="button" onClick={() => setActiveView('taste')}><Icon name="user" /><span>나의 취향</span></button>
     </nav>
-    <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={!isInitialExploration && recommendationMode !== 'library' ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} onFindTrackConcert={findTrackConcert} onFindConcert={relatedConcert ? () => { closeTrackDetail(); openConcert(relatedConcert.concert.id) } : undefined} />
+    <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={!isInitialExploration && recommendationMode !== 'library' ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} onFindTrackConcert={findTrackConcert} onGoLibrary={showLibrary} />
     <HighlightShortView track={shortTrack} detail={shortTrack ? trackDetails[shortTrack.id] : null} isOpen={isShortOpen} onClose={closeHighlightShort} />
   </div>
 }

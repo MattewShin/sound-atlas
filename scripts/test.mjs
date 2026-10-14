@@ -208,6 +208,25 @@ test('전체 활성곡 상세·보관함은 제목·별칭·감상 정보·이�
   assert.ok(!missing.includes('미평가'))
   assert.ok(!missing.includes('평가 검토 중'))
 })
+test('곡 상세는 공연 찾기를 하나만 표시하고 보관한 곡에는 보관함 이동을 제공한다', () => {
+  const props = {
+    track: tracks[0],
+    detail: trackDetails[tracks[0].id],
+    selectedKeys: [],
+    isOpen: true,
+    onToggleSave: () => {},
+    onFindTrackConcert: () => {},
+    onGoLibrary: () => {},
+  }
+  const unsaved = render(components.TrackDetailSheet, { ...props, isSaved: false })
+  assert.equal((unsaved.match(/이 곡의 공연 찾기/g) ?? []).length, 1)
+  assert.ok(!unsaved.includes('이 작품이 포함된 공연 보기'))
+  assert.ok(!unsaved.includes('보관함으로 가기'))
+
+  const saved = render(components.TrackDetailSheet, { ...props, isSaved: true })
+  assert.equal((saved.match(/이 곡의 공연 찾기/g) ?? []).length, 1)
+  assert.ok(saved.includes('보관함으로 가기'))
+})
 test('취향 미형성에는 차트를 만들지 않고 활성 프로필은 9개 고정 축을 사용한다', () => {
   const empty = render(components.PreferenceScreen, { profile: getLibraryPreferenceProfile(tracks, []) })
   assert.ok(empty.includes('아직 취향이 형성되지'))
