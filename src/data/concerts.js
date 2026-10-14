@@ -30,4 +30,23 @@ export const concerts = [{
     'schubert-impromptu-d899-op90-no2': { kind: 'work', movementNumbers: [] },
     'chopin-ballade-op23-no1': { kind: 'work', movementNumbers: [] },
   },
+}, {
+  id: 'kopis-PF302451',
+  kopisId: 'PF302451',
+  title: '음악공방 피오레움, 윤피아노 클래스 초청 연주회: 장준호',
+  dateFrom: '2026-10-23',
+  dateTo: '2026-10-23',
+  venue: '피오레아트앤엔터(피오레움)',
+  region: '서울',
+  genre: '서양음악(클래식)',
+  performanceStatus: '공연예정',
+  sourceUrl: 'https://kopis.or.kr/por/db/pblprfr/pblprfrView.do?mt20id=PF302451',
+  sourceLabel: 'KOPIS 공연 정보',
+  verifiedOn: '2026-10-14',
+  programStatus: 'verified',
+  programVerification: 'manual',
+  programWorkIds: ['beethoven-sonata-op57-no23'],
+  programScopes: {
+    'beethoven-sonata-op57-no23': { kind: 'work', movementNumbers: [] },
+  },
 }]

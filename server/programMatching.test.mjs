@@ -11,6 +11,7 @@ const january = 'tchaikovsky-seasons-op37a-no1'
 const september = 'tchaikovsky-seasons-op37a-no9'
 const schubert2 = 'schubert-impromptu-d899-op90-no2'
 const schubert3 = 'schubert-impromptu-d899-op90-no3'
+const appassionata1 = 'beethoven-sonata-op57-no23-m1'
 const concert = (text, images = []) => ({ programEvidence: { text, imageUrls: images } })
 const state = (text, id = chopin, images = []) => matchConcertToTrack(concert(text, images), id)
 test('실제 곡 ID와 부모 작품을 보존하고 프로그램 구역의 작곡가·작품번호·곡번호로 연결한다', () => {
@@ -25,6 +26,7 @@ test('실제 곡 ID와 부모 작품을 보존하고 프로그램 구역의 작�
   assert.equal(state('[PROGRAM]\nBallade No.1 Op.23').status, 'ambiguous')
   assert.equal(state('[PROGRAM]\nChopin\nEtude Op.10 No.3\nSchubert Ballade No.1 Op.23').status, 'not-found')
   assert.equal(state('[PROGRAM]\nChopin\nBallade No.1 Op.23').status, 'matched')
+  assert.equal(state('[Program]\nL.v. Beethoven\nPiano Sonata No. 23 in f minor, Op. 57', appassionata1).status, 'matched')
 })
 test('차이콥스키 사계의 영문 월명·한글 월명·검증된 별칭을 개별 곡에만 연결한다', () => {
   assert.equal(getTrackTarget(january).work.opusSuffix, 'a')

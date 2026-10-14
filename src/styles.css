@@ -169,8 +169,8 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-movement-actions > span { color: #838775; font-size: 11px; }
 .concert-preview button:not(:disabled) { min-height: 44px; color: #31594e; border-color: #b7c9bb; background: #eaf0e5; cursor: pointer; }
 .concert-search-panel { margin-bottom: 26px; border: 1px solid #d5ddcf; border-radius: 18px; padding: 18px 14px; background: #fbf8f1; }
-.concert-search-panel h2, .concert-search-results > h2, .concert-known-heading { margin: 0 0 12px; color: #31594e; font-size: 21px; }
-.concert-search-panel p, .concert-search-results > p, .concert-known-guide, .concert-program-request p, .concert-program-evidence p { color: #65756b; font-size: 12px; line-height: 1.8; }
+.concert-search-panel h2, .concert-exact-section > h2, .concert-similar-section > h2, .concert-known-heading { margin: 0 0 12px; color: #31594e; font-size: 21px; }
+.concert-search-panel p, .concert-exact-section > p, .concert-similar-section > p, .concert-search-feedback > p, .concert-known-guide, .concert-program-request p, .concert-program-evidence p { color: #65756b; font-size: 12px; line-height: 1.8; }
 .concert-search-panel small { display: block; font-size: 10px; }
 .concert-period { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 16px 0; }
 .concert-period label { min-width: 0; color: #456757; font-size: 11px; }
@@ -199,6 +199,12 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-region-field .concert-location-control:focus-visible { outline-color: #31594e; }
 .concert-target > span { display: block; margin-bottom: 5px; font-size: 11px; }
 .concert-search-results { margin: 26px 0; }
+.concert-similar-section { margin-top: 28px; padding-top: 20px; border-top: 1px solid #d3ddd0; }
+.concert-similar-list { display: grid; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; }
+.concert-similar-list li { padding: 12px; border: 1px solid #d3ddd0; border-radius: 10px; background: #f8faf3; }
+.concert-similar-list button { min-height: 36px; padding: 0; border: 0; background: transparent; color: #245a53; text-align: left; font: inherit; font-weight: 700; cursor: pointer; }
+.concert-similar-list li p { margin: 5px 0 0; color: #65756b; font-size: 11px; line-height: 1.6; }
+.concert-search-feedback { margin-top: 18px; }
 .concert-known-heading { margin-top: 28px; }
 .concert-evidence-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 400px; overflow-y: auto; }
 .concert-program-evidence .concert-official-link { margin-top: 8px; }

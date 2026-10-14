@@ -7,7 +7,7 @@ import { createProgramOcrService, assessOcrReadings } from './programOcr.mjs'
 import { combineOcrProgram, matchAnalyzedConcert } from './ocrProgramEvidence.mjs'
 import { extractProgram } from './programMatching.mjs'
 import { getMatchProgress } from '../src/data/concertMatchStates.js'
-import { getRegisteredTargetConcerts, prioritizeRegisteredTargetConcerts } from '../src/data/concertTargetSearch.js'
+import { getRegisteredTargetConcerts, getSimilarTargetConcerts, getTargetConcertRelevance, prioritizeRegisteredTargetConcerts } from '../src/data/concertTargetSearch.js'
 import { createKopisService } from './kopis.mjs'
 import { createAppServer } from './index.mjs'
 import { getOcrConfig } from './ocrConfig.mjs'
@@ -178,6 +178,24 @@ test('공식 프로그램으로 확인한 PF302595는 슈베르트 즉흥곡 3�
   assert.deepEqual(getRegisteredTargetConcerts(query, now).map(({ kopisId }) => kopisId), ['PF302595'])
   const candidates = [{ kopisId: 'PF303000' }, { kopisId: 'PF302595' }, { kopisId: 'PF302000' }]
   assert.deepEqual(prioritizeRegisteredTargetConcerts(candidates, query, now).map(({ kopisId }) => kopisId), ['PF302595', 'PF303000', 'PF302000'])
+})
+test('PF302451 열정 소나타 공연과 피아노 후보를 먼저 확인하고 다른 악기 독주회는 비슷한 공연에서 제외한다', () => {
+  const targetTrackId = 'beethoven-sonata-op57-no23-m1'
+  const query = { region: '서울', from: '2026-10-14', to: '2026-11-13', targetTrackId }
+  const now = Date.parse('2026-10-14T00:00:00+09:00')
+  assert.deepEqual(getRegisteredTargetConcerts(query, now).map(({ kopisId }) => kopisId), ['PF302451'])
+  const candidates = [
+    { kopisId: 'PF-VIOLIN', title: '김모씨 바이올린 독주회' },
+    { kopisId: 'PF-PIANO', title: '새로운 피아노 리사이틀' },
+    { kopisId: 'PF302451', title: '음악공방 피오레움, 윤피아노 클래스 초청 연주회: 장준호' },
+    { kopisId: 'PF-FLUTE', title: '박모씨 플루트 리사이틀' },
+    { kopisId: 'PF-UNKNOWN', title: '가을 실내악 음악회' },
+  ]
+  assert.deepEqual(prioritizeRegisteredTargetConcerts(candidates, query, now).map(({ kopisId }) => kopisId),
+    ['PF302451', 'PF-PIANO', 'PF-UNKNOWN', 'PF-VIOLIN', 'PF-FLUTE'])
+  assert.equal(getTargetConcertRelevance(candidates[1], query).similar, true)
+  assert.equal(getTargetConcertRelevance(candidates[0], query).similar, false)
+  assert.deepEqual(getSimilarTargetConcerts(candidates, query, now).map(({ kopisId }) => kopisId), ['PF302451', 'PF-PIANO'])
 })
 test('서버 검색 단계의 OCR 연결·다른 곡 비교·재시작 캐시 조회는 동일 원문을 재사용한다', async () => {
   const directory = await localDirectory()
