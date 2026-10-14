@@ -7,7 +7,7 @@ import { createProgramOcrService, assessOcrReadings } from './programOcr.mjs'
 import { combineOcrProgram, matchAnalyzedConcert } from './ocrProgramEvidence.mjs'
 import { extractProgram } from './programMatching.mjs'
 import { getMatchProgress } from '../src/data/concertMatchStates.js'
-import { getRegisteredTargetConcerts, getSimilarTargetConcerts, getTargetConcertRelevance, prioritizeRegisteredTargetConcerts } from '../src/data/concertTargetSearch.js'
+import { getRegisteredTargetConcerts, getSimilarTargetConcerts, getTargetConcertRelevance, isSimilarTargetConcert, prioritizeRegisteredTargetConcerts } from '../src/data/concertTargetSearch.js'
 import { createKopisService } from './kopis.mjs'
 import { createAppServer } from './index.mjs'
 import { getOcrConfig } from './ocrConfig.mjs'
@@ -179,7 +179,7 @@ test('공식 프로그램으로 확인한 PF302595는 슈베르트 즉흥곡 3�
   const candidates = [{ kopisId: 'PF303000' }, { kopisId: 'PF302595' }, { kopisId: 'PF302000' }]
   assert.deepEqual(prioritizeRegisteredTargetConcerts(candidates, query, now).map(({ kopisId }) => kopisId), ['PF302595', 'PF303000', 'PF302000'])
 })
-test('PF302451 열정 소나타 공연과 피아노 후보를 먼저 확인하고 다른 악기 독주회는 비슷한 공연에서 제외한다', () => {
+test('PF302451을 먼저 확인하고 비슷한 공연은 분석된 같은 작곡가·작품 형식으로 제한한다', () => {
   const targetTrackId = 'beethoven-sonata-op57-no23-m1'
   const query = { region: '서울', from: '2026-10-14', to: '2026-11-13', targetTrackId }
   const now = Date.parse('2026-10-14T00:00:00+09:00')
@@ -193,9 +193,15 @@ test('PF302451 열정 소나타 공연과 피아노 후보를 먼저 확인하�
   ]
   assert.deepEqual(prioritizeRegisteredTargetConcerts(candidates, query, now).map(({ kopisId }) => kopisId),
     ['PF302451', 'PF-PIANO', 'PF-UNKNOWN', 'PF-VIOLIN', 'PF-FLUTE'])
-  assert.equal(getTargetConcertRelevance(candidates[1], query).similar, true)
-  assert.equal(getTargetConcertRelevance(candidates[0], query).similar, false)
-  assert.deepEqual(getSimilarTargetConcerts(candidates, query, now).map(({ kopisId }) => kopisId), ['PF302451', 'PF-PIANO'])
+  assert.ok(getTargetConcertRelevance(candidates[1], query).score > getTargetConcertRelevance(candidates[0], query).score)
+  const relatedSonata = { kopisId: 'PF-RELATED', title: '프로그램 확인 공연', kopisDetailVerified: true,
+    targetMatch: { status: 'not-found' }, programExtraction: { entries: [{ composer: '베토벤', type: 'sonata', signature: 'Piano Sonata No. 8 Op. 13' }] } }
+  const otherForm = { kopisId: 'PF-CONCERTO', title: '베토벤 프로그램', kopisDetailVerified: true,
+    targetMatch: { status: 'not-found' }, programExtraction: { entries: [{ composer: '베토벤', type: 'piano-concerto', signature: 'Piano Concerto No. 5 Op. 73' }] } }
+  assert.equal(isSimilarTargetConcert(relatedSonata, query), true)
+  assert.equal(isSimilarTargetConcert(otherForm, query), false)
+  assert.equal(isSimilarTargetConcert(candidates[1], query), false, '공연명만 피아노인 미확인 후보는 비슷한 공연이 아님')
+  assert.deepEqual(getSimilarTargetConcerts([...candidates, otherForm, relatedSonata], query, now).map(({ kopisId }) => kopisId), ['PF-RELATED'])
 })
 test('서버 검색 단계의 OCR 연결·다른 곡 비교·재시작 캐시 조회는 동일 원문을 재사용한다', async () => {
   const directory = await localDirectory()

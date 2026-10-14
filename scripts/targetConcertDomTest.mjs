@@ -23,6 +23,7 @@ export async function verifyTargetConcertInteractions(App) {
     const index = Number(candidate.kopisId.slice(2)) - 999100
     const status = index === 2 ? 'not-found' : [3, 10].includes(index) ? 'no-material' : [4, 8].includes(index) ? 'needs-review' : index === 5 ? 'failed' : 'matched'
     return { kopisId: candidate.kopisId, concert: { ...candidate, kopisDetailVerified: true, programStatus: status === 'matched' ? 'verified' : 'needs-review', programVerification: 'ocr', programWorkIds: status === 'matched' ? [songId] : [],
+      programExtraction: { entries: ['not-found', 'needs-review'].includes(status) ? [{ composer: '쇼팽', type: 'ballade', signature: 'Ballade No.2 Op.38' }] : [] },
       targetMatch: { targetTrackId: songId, workId: songId, evidenceKind: 'ocr', status, attempted: true, completed: status !== 'failed', retryable: status === 'failed', reason: '합성 테스트 프로그램 근거', evidence: 'F. Chopin Ballade No.1 Op.23', evidenceSourceUrl: 'https://kopis.or.kr/upload/test.png' } } }
   }
   globalThis.fetch = async (value, options) => {
@@ -72,12 +73,12 @@ export async function verifyTargetConcertInteractions(App) {
     assert.ok(main().textContent.includes('일치하는 공연'))
     assert.ok(main().textContent.includes('비슷한 공연'))
     assert.ok(main().textContent.includes('공연 프로그램을 확인하고 있어요'))
-    assert.ok(main().querySelectorAll('.concert-similar-list li').length > 0)
     await flush(submit)
     assert.equal(batches.length, 1, '동일 검색을 중복 실행하지 않음')
     await flush(release)
     assert.equal(batches.length, 5)
     assert.equal(new Set(batches.flatMap(({ kopisIds }) => kopisIds)).size, 10)
+    assert.ok(main().querySelectorAll('.concert-similar-list li').length > 0, '같은 작곡가·작품 형식만 비슷한 공연에 표시')
     for (const label of ['상세정보 조회 대기', '프로그램 분석 중', '이미지 OCR 필요', '추가 확인이 필요한 공연', '분석 실패']) assert.ok(!main().textContent.includes(label), label)
     assert.ok(!dom.window.document.body.textContent.includes('직접 등록한 공연'), '곡 검색에 별도 등록 공연을 표시하지 않음')
     assert.equal(detailCalls, 0)

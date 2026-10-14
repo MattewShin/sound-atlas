@@ -19,17 +19,17 @@ export default function TargetConcertResults({ search, results, renderCard, onCh
 
   return <section className="concert-search-results" aria-label="대상 곡 공연 검색 결과">
     <section className="concert-exact-section" aria-labelledby="concert-exact-title">
-      <h2 id="concert-exact-title">일치하는 공연</h2>
+      <h2 id="concert-exact-title">정확히 일치하는 공연</h2>
       {matched.length ? matched.map(renderCard) : <p>{busy ? '선택한 곡이 프로그램에 포함된 공연을 확인하고 있어요.' : '현재까지 선택한 곡과 일치하는 공연을 확인하지 못했어요.'}</p>}
     </section>
 
     <section className="concert-similar-section" aria-labelledby="concert-similar-title">
       <h2 id="concert-similar-title">비슷한 공연</h2>
-      <p>공연명에서 피아노·작곡가 연관성이 확인된 공연이에요. 선택한 곡의 연주 여부는 아직 확정되지 않았어요.</p>
+      <p>프로그램에서 같은 작곡가와 같은 작품 형식을 확인했지만 Op.·No.가 선택한 곡과 다르거나 확정되지 않은 공연이에요.</p>
       {similar.length ? <ul className="concert-similar-list">{similar.map((concert) => <li key={concert.kopisId}>
         <button type="button" onClick={() => onOpenConcert(concert.id)}>{concert.title}</button>
         <p>{concert.dateFrom}{concert.dateTo !== concert.dateFrom && ` ~ ${concert.dateTo}`} · {concert.venue}</p>
-      </li>)}</ul> : <p>현재 검색 범위에서 비슷한 피아노 공연을 찾지 못했어요.</p>}
+      </li>)}</ul> : <p>현재까지 같은 작곡가·작품 형식의 공연을 확인하지 못했어요.</p>}
     </section>
 
     <div className="concert-search-feedback" aria-live="polite">

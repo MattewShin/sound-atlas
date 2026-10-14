@@ -8,7 +8,7 @@ const recitalPattern = /독주회|리사이틀|recital/i
 
 export const getTargetConcertRelevance = (concert, query) => {
   const target = getTrackTarget(query.targetTrackId)
-  if (!target) return { score: 0, similar: false }
+  if (!target) return { score: 0 }
   const title = String(concert.title || '')
   const hasPiano = pianoPattern.test(title)
   const hasOtherInstrumentRecital = otherInstrumentRecitalPattern.test(title)
@@ -18,7 +18,13 @@ export const getTargetConcertRelevance = (concert, query) => {
   if (hasPiano) score += 4
   if (hasPiano && recitalPattern.test(title)) score += 2
   if (hasOtherInstrumentRecital && !hasPiano) score -= 10
-  return { score, similar: score > 0 && !(hasOtherInstrumentRecital && !hasPiano) }
+  return { score }
+}
+
+export const isSimilarTargetConcert = (concert, query) => {
+  const target = getTrackTarget(query.targetTrackId)
+  if (!target || concert.targetMatch?.status === 'matched' || !concert.kopisDetailVerified) return false
+  return (concert.programExtraction?.entries || []).some((entry) => entry.composer === target.work.composer && entry.type === target.work.type)
 }
 export const concertFitsQuery = (concert, query, now = Date.now()) => {
   const from = concert.dateFrom || concert.startsAt?.slice(0, 10)
@@ -45,4 +51,4 @@ export const prioritizeRegisteredTargetConcerts = (candidates, query, now = Date
 }
 
 export const getSimilarTargetConcerts = (candidates, query, now = Date.now()) => prioritizeRegisteredTargetConcerts(candidates, query, now)
-  .filter((concert) => concert.targetMatch?.status !== 'matched' && getTargetConcertRelevance(concert, query).similar)
+  .filter((concert) => isSimilarTargetConcert(concert, query))

@@ -7,7 +7,8 @@ const integer = (env, name, fallback, min, max) => {
 export const getOcrConfig = (env = process.env) => ({
   initialCheckLimit: integer(env, 'CONCERT_INITIAL_CHECK_LIMIT', 10, 1, 10),
   moreCheckLimit: integer(env, 'CONCERT_MORE_CHECK_LIMIT', 10, 1, 10),
-  programBatchSize: 2, workers: 1,
+  // Vercel 요청 하나가 느린 OCR 후보를 기다리느라 앞선 텍스트 일치 결과까지 잃지 않도록 한 공연씩 확인합니다.
+  programBatchSize: 1, workers: 1,
   maxImages: integer(env, 'OCR_MAX_IMAGES_PER_CONCERT', 8, 1, 12),
   maxBytes: integer(env, 'OCR_MAX_IMAGE_BYTES', 6_000_000, 100_000, 20_000_000),
   maxPixels: integer(env, 'OCR_MAX_IMAGE_PIXELS', 12_000_000, 100_000, 24_000_000),

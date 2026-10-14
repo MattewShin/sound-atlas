@@ -42,6 +42,16 @@ export async function verifyMusicSelectionInteractions(App) {
       assert.equal(pressed(label), false, `${label}: 두 번째 탭으로 선택 해제`)
       assert.equal(featured(), undefined)
     }
+    for (const keys of [['wonder', 'transcendence'], ['wonder', 'transcendence', 'tenderness']]) {
+      const labels = keys.map((key) => emotions.find((emotion) => emotion.key === key).label)
+      for (const label of labels) await click(label, 0)
+      const previous = featured()
+      const lastLabel = labels.at(-1)
+      await click(lastLabel, 0)
+      await click(lastLabel, 0)
+      assert.notEqual(featured(), previous, `${keys.length}개 키워드 조합을 다시 선택하면 직전 곡을 제외해 추천`)
+      for (const label of labels) if (pressed(label)) await click(label)
+    }
     for (const label of ['감동적인', '평안한', '부드러운']) await click(label)
     assert.equal(button('힘찬').disabled, true, '최대 세 느낌 선택')
     await click('감동적인')

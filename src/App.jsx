@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { composerImages, trackDetails, tracks } from './data/musicData.js'
 import { emotionLabel, emotions, formatTrackTitle, getRepresentativeEmotions } from './data/emotions.js'
-import { getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation, pickRandomFeelingRecommendation } from './data/recommendations.js'
+import { getDiversifiedKeywordRecommendations, getKeywordMetrics, getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomKeywordRecommendation, pickRandomFeelingRecommendation } from './data/recommendations.js'
+import { readRecommendationExposures, recordRecommendationExposures } from './data/recommendationExposure.js'
 import { feelingOptions, getSuggestedEmotions } from './data/feelingSuggestions.js'
 import { readConcertRegion, saveConcertRegion } from './data/concertRegions.js'
 import { ConcertScreen, ConcertDetailScreen } from './components/ConcertScreens.jsx'
@@ -34,7 +35,10 @@ function Icon({ name, filled = false }) {
 
 const describeRecommendationMatch = (track, selectedKeys) => {
   const matched = selectedKeys.filter((key) => track.emotionScores?.[key] >= 3)
-  return matched.length ? `${matched.map(emotionLabel).join('·')} 느낌` : '보관한 곡과 감정 성향이 비슷한 곡'
+  const metrics = getKeywordMetrics(track, selectedKeys)
+  if (selectedKeys.length > 1 && metrics?.minimum >= 3) return `${selectedKeys.map(emotionLabel).join(' · ')} 감정이 고르게 어울리는 곡`
+  if (matched.length && metrics?.dominance >= 0.75) return `선택한 ${matched.map(emotionLabel).join(' · ')} 감정이 특히 두드러지는 곡`
+  return matched.length ? `${matched.map(emotionLabel).join(' · ')} 감정과 잘 맞는 곡` : '보관한 곡과 감정 성향이 비슷한 곡'
 }
 
 function TrackAlias({ track }) {
@@ -298,7 +302,11 @@ function App({ isLoggedIn = false } = {}) {
   const [selectedKeys, setSelectedKeys] = useState([])
   const [recommendationDraw, setRecommendationDraw] = useState(Math.random)
   const [excludedFeelingTrackId, setExcludedFeelingTrackId] = useState(null)
+  const [excludedKeywordTrackId, setExcludedKeywordTrackId] = useState(null)
   const lastFeelingRecommendations = useRef({})
+  const lastKeywordRecommendations = useRef({})
+  const [recommendationExposures, setRecommendationExposures] = useState(readRecommendationExposures)
+  const exposureSignature = useRef('')
   const [selectedTrackId, setSelectedTrackId] = useState(null)
   const [weeklyStory, setWeeklyStory] = useState({ id: null, from: 'explore' })
   const weeklyDate = getKoreanDate(concertNow)
@@ -321,11 +329,22 @@ function App({ isLoggedIn = false } = {}) {
   const isLibraryMode = recommendationMode === 'library' && libraryPreference.isActive
   const isInitialExploration = !isLibraryMode && activeKeys.length === 0
   const recommendation = useMemo(() => getRecommendationResult(tracks, activeKeys), [activeKeys])
+  const keywordConditionKey = [...activeKeys].sort().join('|')
+  const keywordRecommendationOptions = useMemo(() => ({
+    exposures: recommendationExposures,
+    conditionKey: keywordConditionKey,
+    exemptTrackIds: [...savedTrackIds, selectedTrackId].filter(Boolean),
+  }), [recommendationExposures, keywordConditionKey, savedTrackIds, selectedTrackId])
   const featuredKeywordTrack = useMemo(() => recommendationInput === 'feeling'
     ? pickRandomFeelingRecommendation(recommendation, activeKeys, recommendationDraw, excludedFeelingTrackId)
-    : pickRandomTopRecommendation(recommendation, recommendationDraw),
-  [recommendation, recommendationInput, activeKeys, recommendationDraw, excludedFeelingTrackId])
-  const recommendedTracks = useMemo(() => isLibraryMode ? getLibraryRecommendations(tracks, libraryPreference) : recommendation.tracks, [isLibraryMode, libraryPreference, recommendation])
+    : pickRandomKeywordRecommendation(recommendation, activeKeys, recommendationDraw, excludedKeywordTrackId, keywordRecommendationOptions),
+  [recommendation, recommendationInput, activeKeys, recommendationDraw, excludedFeelingTrackId, excludedKeywordTrackId, keywordRecommendationOptions])
+  const diversifiedKeywordRecommendations = useMemo(() => getDiversifiedKeywordRecommendations(recommendation, activeKeys, {
+    ...keywordRecommendationOptions, randomValue: recommendationDraw,
+  }), [recommendation, activeKeys, keywordRecommendationOptions, recommendationDraw])
+  const recommendedTracks = useMemo(() => isLibraryMode ? getLibraryRecommendations(tracks, libraryPreference)
+    : recommendationInput === 'music' ? diversifiedKeywordRecommendations.tracks : recommendation.tracks,
+  [isLibraryMode, libraryPreference, recommendationInput, diversifiedKeywordRecommendations, recommendation])
   const discoveryCandidates = useMemo(() => getRecommendationResult(tracks).tracks, [])
   const discovery = useHomeDiscovery({ candidates: discoveryCandidates, activeView,
     conditionKey: JSON.stringify([recommendationInput, currentFeeling, activeKeys, isLibraryMode ? 'library' : 'keyword']),
@@ -373,6 +392,21 @@ function App({ isLoggedIn = false } = {}) {
     }
   }, [recommendationInput, isLibraryMode, currentFeeling, selectedTrack])
   useEffect(() => {
+    if (recommendationInput === 'music' && !isLibraryMode && activeKeys.length && featuredKeywordTrack) {
+      lastKeywordRecommendations.current[[...activeKeys].sort().join('|')] = featuredKeywordTrack.id
+    }
+  }, [recommendationInput, isLibraryMode, activeKeys, featuredKeywordTrack])
+  useEffect(() => {
+    if (recommendationInput !== 'music' || isLibraryMode || !keywordConditionKey || !featuredKeywordTrack) return
+    const signature = `${keywordConditionKey}|${recommendationDraw}`
+    if (exposureSignature.current === signature) return
+    exposureSignature.current = signature
+    const exempt = new Set([...savedTrackIds, selectedTrackId].filter(Boolean))
+    const shownIds = [featuredKeywordTrack, ...recommendedTracks.filter(({ id }) => id !== featuredKeywordTrack.id)]
+      .slice(0, 6).map(({ id }) => id).filter((id) => !exempt.has(id))
+    recordRecommendationExposures(shownIds, keywordConditionKey)
+  }, [recommendationInput, isLibraryMode, keywordConditionKey, recommendationDraw, featuredKeywordTrack, recommendedTracks, savedTrackIds, selectedTrackId])
+  useEffect(() => {
     if (!initialMusicState.notice) return undefined
     try { window.localStorage.removeItem(NOTICE_KEY) } catch { /* 저장 차단 */ }
     const timer = window.setTimeout(() => setMigrationNotice(null), 5000)
@@ -402,7 +436,10 @@ function App({ isLoggedIn = false } = {}) {
   }, [])
 
   const selectEmotion = (key) => {
-    setSelectedKeys((keys) => keys.includes(key) ? keys.filter((item) => item !== key) : keys.length < 3 ? [...keys, key] : keys)
+    const nextKeys = selectedKeys.includes(key) ? selectedKeys.filter((item) => item !== key) : selectedKeys.length < 3 ? [...selectedKeys, key] : selectedKeys
+    setRecommendationExposures(readRecommendationExposures())
+    setSelectedKeys(nextKeys)
+    setExcludedKeywordTrackId(lastKeywordRecommendations.current[[...nextKeys].sort().join('|')] || null)
     setRecommendationDraw(Math.random())
     setSelectedTrackId(null)
   }
@@ -414,11 +451,15 @@ function App({ isLoggedIn = false } = {}) {
   const selectInput = (input) => {
     if (input === recommendationInput) return
     if (input === 'feeling') setExcludedFeelingTrackId(lastFeelingRecommendations.current[currentFeeling] || null)
+    else {
+      setRecommendationExposures(readRecommendationExposures())
+      setExcludedKeywordTrackId(lastKeywordRecommendations.current[[...selectedKeys].sort().join('|')] || null)
+    }
     setRecommendationInput(input); setSelectedTrackId(null); setRecommendationDraw(Math.random())
   }
   const resetInputs = () => {
     if (recommendationInput === 'feeling') setCurrentFeeling(null)
-    else setSelectedKeys([])
+    else { setSelectedKeys([]); setExcludedKeywordTrackId(null) }
     setSelectedTrackId(null); setRecommendationMode('keyword')
   }
   const returnToMusicKeywords = () => {

@@ -120,11 +120,13 @@ export const identifyEntry = (entry, work) => {
     if (catalogue && Number(catalogue[1]) !== work.catalogueNumber) return { state: 'different' }
   }
   const needsNumber = ['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'seasons'].includes(work.type)
+  const needsOpusNumber = ['sonata', 'ballade', 'piano-concerto'].includes(work.type) && work.number != null
   const allSet = /전곡|complete|all\s+(?:etudes|preludes|impromptus|seasons)|(?:all|four|4|twelve|12)\s+(?:the\s+)?(?:impromptus|months|pieces)|전\s*(?:4|12)곡/i.test(text)
   const uniqueAlias = work.type === 'seasons' && !explicitMonths.length && aliases.length === 1 && aliases[0].id === work.id
   if (needsNumber && !numbers.includes(work.number) && !allSet && !uniqueAlias) {
     return { state: numbers.length ? 'different' : 'ambiguous', reason: '작품집의 개별 곡번호를 확인해야 해요.' }
   }
+  if (needsOpusNumber && !numbers.includes(work.number)) return { state: 'ambiguous', reason: '작품번호와 곡번호를 모두 확인해야 해요.' }
   if (!needsNumber && numbers.length && !numbers.includes(work.number) && !work.opusPart) return { state: 'ambiguous', reason: '작품번호와 곡번호의 조합을 확인해야 해요.' }
   const evidence = entry.lines.join('\n').trim()
   const keys = musicalKeysIn(text)

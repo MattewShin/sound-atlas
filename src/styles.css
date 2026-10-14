@@ -1,6 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Gowun+Dodum&family=Nunito+Sans:wght@500;600;700;800&display=swap');
 
-:root { color: #1e2928; background: #e4e1da; font-family: 'Gowun Dodum', sans-serif; font-synthesis: none; }
+:root {
+  --font-body: 16px;
+  --font-small: 14px;
+  --font-caption: 13px;
+  --font-button: 15px;
+  --font-card-title: 18px;
+  --font-section-title: 21px;
+  --font-page-title: 25px;
+  --text-primary: #263b36;
+  --text-secondary: #53635b;
+  --text-muted: #667269;
+  color: #1e2928;
+  background: #e4e1da;
+  font-family: 'Gowun Dodum', sans-serif;
+  font-synthesis: none;
+}
 /* 운영자의 주간 소개: 추천 카드보다 조용한 가로형 지면 */
 .weekly-section { margin: 26px 20px 12px; padding: 18px 0 0; border-top: 1px solid #ded9cf; }
 .weekly-section-heading { margin-bottom: 18px; }
@@ -233,3 +248,174 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-kopis-id { color: #677567; font-size: 11px; overflow-wrap: anywhere; }
 .concert-card-target-song, .concert-match-basis, .concert-source { overflow-wrap: anywhere; min-width: 0; }
 .concert-match-basis blockquote { margin: 10px 0; padding: 10px; border-left: 3px solid #bacab3; white-space: pre-wrap; }
+
+/* 모바일 가독성: 기존 색감과 카드 구조를 유지하면서 본문·보조정보·조작 요소의 최소 크기를 통일합니다. */
+@media (max-width: 679px) {
+  body { color: var(--text-primary); font-size: var(--font-body); line-height: 1.6; }
+  .app-shell { padding-bottom: calc(124px + env(safe-area-inset-bottom)); }
+  .app-shell button, .app-shell a, .app-shell input, .app-shell select, .app-shell textarea {
+    font-size: var(--font-button);
+    line-height: 1.4;
+  }
+  .app-shell button, .app-shell [role="button"], .app-shell input, .app-shell select { min-height: 44px; }
+  .section-heading p, .date-note, .weekly-eyebrow, .weekly-period, .concert-eyebrow,
+  .concert-coming-header p, .region-picker-eyebrow, .starter-label {
+    color: var(--text-muted);
+    font-size: var(--font-caption);
+    line-height: 1.5;
+  }
+  .section-heading h2, .preference-panel h2, .concert-search-panel h2,
+  .concert-exact-section > h2, .concert-similar-section > h2, .concert-known-heading,
+  .concert-track-picker h2, .concert-program > h2 {
+    font-size: var(--font-section-title);
+    line-height: 1.4;
+  }
+  .mood-guide, .recommendation-heading > span, .recommendation-mode-guide,
+  .feeling-result-path, .recommendation-result-notice, .preview-pending,
+  .migration-notice, .recommendation-list-count, .recommendation-list-end {
+    color: var(--text-secondary);
+    font-size: var(--font-small);
+    line-height: 1.6;
+  }
+  .recommendation-input-control button, .keyword-choice-list button,
+  .feeling-choice-list button, .feeling-direction-list button, .mood-chip {
+    min-height: 46px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    color: #43554f;
+    font-size: var(--font-button);
+    line-height: 1.35;
+  }
+  .recommendation-input-content h3 { font-size: 16px; line-height: 1.55; }
+  .recommendation-input-reset { min-height: 44px; color: #53635b; font-size: var(--font-small); }
+  .recommendation-mode-control button { min-height: 44px; font-size: var(--font-small); }
+  .recommendation-mode-control button:disabled, .keyword-choice-list button:disabled { color: #6f756f; opacity: .58; }
+
+  .track-card-top span { font-size: var(--font-small); line-height: 1.5; }
+  .recommendation-basis small, .recommendation-basis .library-recommendation-note,
+  .recommendation-basis .library-recommendation-label { color: var(--text-secondary); font-size: var(--font-caption); line-height: 1.5; }
+  .track-card-top button, .track-detail-close, .highlight-short-top button, .recommendation-save {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+  .track-copy { max-width: calc(100% - 126px); }
+  .track-kicker { color: var(--text-muted); font-size: var(--font-caption); }
+  .composer, .track-detail-composer { color: var(--text-secondary); font-size: var(--font-small); }
+  .track-copy h2 { font-size: clamp(21px, 6.4vw, 25px); line-height: 1.36; overflow-wrap: anywhere; }
+  .track-description, .track-detail-summary { color: #40534d; font-size: 15px; line-height: 1.65; }
+  .tag-list span, .track-detail-tags span, .track-detail-tags strong, .saved-track-tags i {
+    color: #40574f;
+    font-size: var(--font-caption);
+    line-height: 1.35;
+  }
+  .play-button { width: 48px; height: 48px; }
+
+  .inline-heading > span { color: var(--text-muted); font-size: var(--font-caption); }
+  .mini-track { flex-basis: 176px; min-height: 190px; padding: 12px; }
+  .mini-art { height: 72px; }
+  .mini-copy b { color: var(--text-secondary); font-size: var(--font-small); white-space: normal; text-overflow: clip; overflow-wrap: anywhere; }
+  .mini-copy strong { min-height: 0; color: var(--text-primary); font-size: 16px; line-height: 1.4; overflow-wrap: anywhere; }
+  .mini-copy small { color: var(--text-muted); font-size: var(--font-caption); line-height: 1.45; overflow-wrap: anywhere; }
+  .recommendations-see-all, .recommendations-load-more, .recommendation-back { min-height: 44px; font-size: var(--font-button); }
+  .recommendations-load-more > span, .recommendation-rank { font-size: var(--font-caption); }
+  .recommendation-list-card { align-items: stretch; }
+  .recommendation-track-open { min-height: 88px; }
+  .recommendation-track-open .saved-track-copy strong { font-size: 16px; line-height: 1.45; overflow-wrap: anywhere; }
+
+  .weekly-title { font-size: var(--font-card-title); line-height: 1.4; }
+  .weekly-teaser { color: var(--text-secondary); font-size: 15px; line-height: 1.6; }
+  .weekly-track, .weekly-read, .weekly-footer small, .weekly-editor, .weekly-link,
+  .weekly-story-track p, .weekly-preview-source, .weekly-archive header > p:last-child,
+  .weekly-empty { color: var(--text-muted); font-size: var(--font-small); line-height: 1.6; }
+  .weekly-feature .weekly-title, .weekly-feature .weekly-teaser { display: block; overflow: visible; }
+  .weekly-screen h1 { font-size: var(--font-page-title); line-height: 1.4; }
+  .weekly-story-track h2 { font-size: var(--font-card-title); line-height: 1.45; overflow-wrap: anywhere; }
+  .weekly-story-part h2 { font-size: var(--font-section-title); }
+  .weekly-story-part p { color: var(--text-secondary); font-size: var(--font-body); line-height: 1.75; }
+  .weekly-preview-button, .weekly-detail-button { min-height: 46px; font-size: var(--font-button); }
+
+  .track-detail-top { min-height: 52px; }
+  .track-detail-content h2 { font-size: var(--font-page-title); line-height: 1.38; overflow-wrap: anywhere; }
+  .track-detail-movement, .track-detail-meta { color: var(--text-muted); font-size: var(--font-small); line-height: 1.55; }
+  .track-detail-section h3, .track-detail-highlight-card strong { font-size: 18px; line-height: 1.4; }
+  .track-detail-section p, .track-detail-highlight-card p, .library-save-section > p,
+  .highlight-short-cta p, .concert-preview p { color: var(--text-secondary); font-size: 15px; line-height: 1.65; }
+  .track-detail-coming-soon, .library-save-feedback { font-size: var(--font-small) !important; line-height: 1.55; }
+  .library-save-button, .highlight-short-cta button, .highlight-short-return,
+  .saved-track-remove, .saved-track-concert, .library-empty button { min-height: 46px; font-size: var(--font-button); }
+
+  .library-header h1, .concert-detail-header h1 { font-size: var(--font-page-title); line-height: 1.4; overflow-wrap: anywhere; }
+  .library-header p, .library-header span, .library-header strong { font-size: var(--font-small); line-height: 1.55; }
+  .saved-track-copy b { color: var(--text-secondary); font-size: var(--font-small); white-space: normal; }
+  .saved-track-copy strong { color: var(--text-primary); font-size: 16px; line-height: 1.45; overflow-wrap: anywhere; }
+  .library-empty h2 { font-size: var(--font-section-title); }
+  .library-empty p, .preference-panel p { color: var(--text-secondary); font-size: 15px; line-height: 1.65; }
+  .preference-row { grid-template-columns: 88px minmax(0, 1fr) 42px; color: #31534d; font-size: var(--font-small); }
+  .preference-row strong, .preference-axis { color: var(--text-muted); font-size: var(--font-caption); }
+
+  .concert-coming-header h1 { font-size: var(--font-page-title); line-height: 1.35; }
+  .concert-coming-header span { font-size: 15px; line-height: 1.65; }
+  .concert-coming-features strong { font-size: 15px; line-height: 1.45; }
+  .concert-coming-features span, .concert-coming-features i { font-size: var(--font-caption); }
+  .concert-coming-return { min-height: 46px; font-size: var(--font-button); }
+  .concert-controls > p, .concert-program > p, .concert-program-note, .concert-list-count,
+  .concert-search-panel p, .concert-exact-section > p, .concert-similar-section > p,
+  .concert-search-feedback > p, .concert-known-guide, .concert-program-request p,
+  .concert-program-evidence p, .concert-track-picker p, .concert-target,
+  .concert-match-progress, .concert-match-basis, .concert-candidate-group,
+  .concert-known-section, .concert-ocr-evidence {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .concert-card h2 { font-size: 20px; line-height: 1.42; overflow-wrap: anywhere; }
+  .concert-date, .concert-venue, .concert-card-program p, .concert-details-panel > p,
+  .concert-movement-heading, .concert-movement-scores, .concert-unrated,
+  .concert-reason ul, .concert-analysis-scope {
+    color: var(--text-secondary);
+    font-size: var(--font-small);
+    line-height: 1.65;
+  }
+  .concert-ticket-status, .concert-ticket-time, .concert-card-program small,
+  .concert-source p, .concert-search-panel small, .concert-search-setup span,
+  .concert-search-error span, .concert-period label, .concert-track-options small,
+  .concert-target small, .concert-target > span, .concert-similar-list li p,
+  .concert-status-counts dt, .concert-processing-actions > span, .concert-kopis-id {
+    color: var(--text-muted);
+    font-size: var(--font-caption);
+    line-height: 1.55;
+  }
+  .concert-card-program h3, .concert-reason > strong, .concert-track-picker h3,
+  .concert-track-options strong, .concert-target strong, .concert-card-target-song {
+    font-size: 16px;
+    line-height: 1.45;
+  }
+  .concert-work > h3 { font-size: var(--font-card-title); line-height: 1.45; overflow-wrap: anywhere; }
+  .concert-detail-button, .concert-official-link, .concert-movement-actions button,
+  .concert-preview button, .concert-search-actions button, .concert-program-request button,
+  .concert-similar-list button, .concert-target button, .concert-candidate-group button {
+    min-height: 44px;
+    font-size: var(--font-button);
+    line-height: 1.4;
+  }
+  .concert-period input, .concert-track-picker input[type="search"], .concert-location-control {
+    min-height: 46px;
+    font-size: 16px;
+  }
+  .concert-track-search-label, .concert-region-field { font-size: var(--font-small); }
+  .concert-track-options button { min-height: 58px; }
+  .concert-similar-list button { height: auto; white-space: normal; overflow-wrap: anywhere; }
+  .concert-status-counts dd { font-size: 17px; }
+
+  .bottom-nav { padding-top: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+  .nav-item { min-height: 58px; color: #667269; font-size: var(--font-caption); line-height: 1.25; }
+  .nav-item svg { width: 21px; height: 21px; }
+}
+
+@media (max-width: 355px) {
+  .keyword-choice-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .track-copy { max-width: calc(100% - 102px); }
+  .mini-track { flex-basis: 168px; }
+  .preference-row { grid-template-columns: 78px minmax(0, 1fr) 38px; gap: 6px; }
+}

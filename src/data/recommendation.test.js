@@ -3,7 +3,8 @@ import test from 'node:test'
 import { readFileSync, existsSync } from 'node:fs'
 import { emotionKeys, emotions, formatTrackTitle, getRepresentativeEmotions, isFullyRated, RATING_VERSION } from './emotions.js'
 import { composerImages, tracks, trackDetails } from './musicData.js'
-import { cosineSimilarity, emotionVector, getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation, getFeelingRecommendationCandidates, pickRandomFeelingRecommendation } from './recommendations.js'
+import { cosineSimilarity, emotionVector, getDiversifiedKeywordRecommendations, getKeywordCandidateGroups, getKeywordMetrics, getKeywordRecommendationCandidates, getKeywordRecommendationWeight, getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomTopRecommendation, pickRandomKeywordRecommendation, getFeelingRecommendationCandidates, pickRandomFeelingRecommendation } from './recommendations.js'
+import { getRecentExposureCount, readRecommendationExposures, recordRecommendationExposures, RECOMMENDATION_EXPOSURE_MAX_RECORDS, RECOMMENDATION_EXPOSURE_STORAGE_KEY } from './recommendationExposure.js'
 import { feelingOptions, getSuggestedEmotions } from './feelingSuggestions.js'
 import { buildRecommendationDiagnosis } from '../../scripts/diagnoseRecommendations.js'
 
@@ -139,6 +140,109 @@ test('다중 선택은 평균 점수가 같은 최고 후보 전체에서 대표
   assert.deepEqual(result.topScoreTracks.map(({ id }) => id), ['a', 'z'])
   assert.equal(pickRandomTopRecommendation(result, 0).id, 'a')
   assert.equal(pickRandomTopRecommendation(result, 0.75).id, 'z')
+})
+
+test('2개·3개 키워드는 모두 맞는 평균 1점 이내 후보에서 직전 추천곡을 제외해 다시 추첨한다', () => {
+  const songs = [
+    song('top', { power: 5, joy: 5, wonder: 5 }),
+    song('near', { power: 4, joy: 4, wonder: 4 }),
+    song('far', { power: 3, joy: 3, wonder: 3 }),
+    song('partial', { power: 5, joy: 5, wonder: 1 }),
+  ]
+  for (const keys of [['power', 'joy'], ['power', 'joy', 'wonder']]) {
+    const result = getRecommendationResult(songs, keys)
+    const candidates = getKeywordRecommendationCandidates(result, keys)
+    assert.deepEqual(candidates.map(({ id }) => id), keys.length === 2 ? ['partial', 'top', 'near'] : ['top', 'near'])
+    const previous = candidates[0].id
+    assert.notEqual(pickRandomKeywordRecommendation(result, keys, 0, previous).id, previous)
+    assert.notEqual(pickRandomKeywordRecommendation(result, keys, 0.99, previous).id, previous)
+  }
+  const single = getRecommendationResult(songs, ['power'])
+  assert.deepEqual(getKeywordRecommendationCandidates(single, ['power']).map(({ id }) => id), ['partial', 'top', 'near'])
+
+  const sparseKeys = ['power', 'joy', 'wonder']
+  const sparse = getRecommendationResult([
+    song('only-balanced', { power: 5, joy: 5, wonder: 5 }),
+    song('closest', { power: 5, joy: 5, wonder: 1 }),
+    song('next', { power: 4, joy: 4, wonder: 1 }),
+  ], sparseKeys)
+  const sparseCandidates = getKeywordRecommendationCandidates(sparse, sparseKeys)
+  assert.deepEqual(sparseCandidates.map(({ id }) => id), ['only-balanced'])
+  assert.equal(pickRandomKeywordRecommendation(sparse, sparseKeys, 0, 'only-balanced').id, 'only-balanced')
+})
+
+test('한 감정은 최고점에서 1점 이내만 후보로 삼고 점수가 높을수록 큰 추첨 가중치를 받는다', () => {
+  const songs = [
+    song('five', { sadness: 5 }), song('four-half', { sadness: 4.5 }), song('four', { sadness: 4 }),
+    song('three-half', { sadness: 3.5 }), song('irrelevant', { sadness: 2.5 }),
+  ]
+  const keys = ['sadness'], result = getRecommendationResult(songs, keys)
+  const groups = getKeywordCandidateGroups(result, keys)
+  assert.deepEqual(getKeywordRecommendationCandidates(result, keys).map(({ id }) => id), ['five', 'four-half', 'four'])
+  assert.ok(getKeywordRecommendationWeight(songs[0], keys, groups) > getKeywordRecommendationWeight(songs[1], keys, groups))
+  assert.ok(getKeywordRecommendationWeight(songs[1], keys, groups) > getKeywordRecommendationWeight(songs[2], keys, groups))
+  assert.ok(!getKeywordRecommendationCandidates(result, keys).some(({ id }) => id === 'irrelevant'))
+})
+
+test('복수 감정은 평균 70%와 최저점 30%로 균형을 반영하고 2.5점 미만 곡을 제외한다', () => {
+  const keys = ['power', 'joy']
+  const uneven = song('uneven', { power: 5, joy: 2 })
+  const balanced = song('balanced', { power: 3.5, joy: 3.5 })
+  assert.equal(getKeywordMetrics(uneven, keys).average, getKeywordMetrics(balanced, keys).average)
+  assert.ok(getKeywordMetrics(balanced, keys).balancedFit > getKeywordMetrics(uneven, keys).balancedFit)
+  const groups = getKeywordCandidateGroups(getRecommendationResult([uneven, balanced], keys), keys)
+  assert.deepEqual(groups.eligible.map(({ id }) => id), ['balanced'])
+  assert.equal(pickRandomKeywordRecommendation(getRecommendationResult([uneven, balanced], keys), keys, 0).id, 'balanced')
+})
+
+test('숨은 일치와 새로운 발견을 높은 일치와 중복 없이 3·1·1로 구성한다', () => {
+  const keys = ['power', 'joy']
+  const hidden = song('hidden', { power: 3.5, joy: 3.5 })
+  const discovery = song('discovery', Object.fromEntries(emotionKeys.map((key) => [key, 4])))
+  discovery.emotionScores.power = 5; discovery.emotionScores.joy = 2.5
+  const songs = [
+    song('high-1', { power: 5, joy: 5 }), song('high-2', { power: 4.5, joy: 4.5 }), song('high-3', { power: 4, joy: 4 }),
+    hidden, discovery,
+  ]
+  const result = getRecommendationResult(songs, keys)
+  const groups = getKeywordCandidateGroups(result, keys)
+  assert.ok(groups.hidden.some(({ id }) => id === 'hidden'))
+  assert.ok(groups.discovery.some(({ id }) => id === 'discovery'))
+  const mixed = getDiversifiedKeywordRecommendations(result, keys, { random: () => 0 })
+  assert.equal(mixed.tracks.length, 5)
+  assert.equal(new Set(mixed.tracks.map(({ id }) => id)).size, 5)
+  assert.equal([...mixed.categories.values()].filter((value) => value === 'high').length, 3)
+  assert.equal([...mixed.categories.values()].filter((value) => value === 'hidden').length, 1)
+  assert.equal([...mixed.categories.values()].filter((value) => value === 'discovery').length, 1)
+})
+
+test('최근 노출은 같은 감정 조합에서 가중치를 낮추되 후보가 하나면 다시 사용할 수 있다', () => {
+  const keys = ['sadness'], conditionKey = 'sadness'
+  const songs = [song('recent', { sadness: 5 }), song('fresh', { sadness: 5 })]
+  const result = getRecommendationResult(songs, keys)
+  const exposures = [{ trackId: 'recent', conditionKey, count: 3, lastShownAt: 3 }]
+  const groups = getKeywordCandidateGroups(result, keys, { exposures, conditionKey })
+  assert.ok(getKeywordRecommendationWeight(songs[0], keys, groups, { exposures, conditionKey })
+    < getKeywordRecommendationWeight(songs[1], keys, groups, { exposures, conditionKey }))
+  assert.equal(getRecentExposureCount(exposures, 'other', 'recent'), 0)
+  const only = getRecommendationResult([songs[0]], keys)
+  assert.equal(pickRandomKeywordRecommendation(only, keys, 0.5, null, { exposures, conditionKey }).id, 'recent')
+  assert.equal(pickRandomKeywordRecommendation(result, keys, 0.75, null, { exposures, conditionKey }).id,
+    pickRandomKeywordRecommendation(result, keys, 0.75, null, { exposures, conditionKey }).id, '고정 난수에서는 렌더링마다 바뀌지 않음')
+})
+
+test('추천 노출 기록은 저장 개수를 제한하고 저장소 오류에도 빈 기록으로 계속 동작한다', () => {
+  const values = new Map()
+  const storage = { getItem: (key) => values.get(key) || null, setItem: (key, value) => values.set(key, value) }
+  for (let index = 0; index < RECOMMENDATION_EXPOSURE_MAX_RECORDS + 10; index += 1) {
+    recordRecommendationExposures([`track-${index}`], `condition-${index}`, { storage, now: index })
+  }
+  const records = readRecommendationExposures(storage)
+  assert.equal(records.length, RECOMMENDATION_EXPOSURE_MAX_RECORDS)
+  assert.ok(values.has(RECOMMENDATION_EXPOSURE_STORAGE_KEY))
+  const blocked = { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('blocked') } }
+  assert.deepEqual(readRecommendationExposures(blocked), [])
+  assert.doesNotThrow(() => recordRecommendationExposures(['track'], 'condition', { storage: blocked }))
 })
 
 test('실제 키워드마다 최고 점수 동점곡 모두가 대표곡이 될 수 있으며 단독 최고점은 유지한다', () => {

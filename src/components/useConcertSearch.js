@@ -14,7 +14,7 @@ export default function useConcertSearch() {
   const [search, setSearch] = useState({ status: 'idle', data: null, error: null })
   const [programRequests, setProgramRequests] = useState({})
   const requestId = useRef(0), snapshot = useRef(null), controller = useRef(null), busy = useRef(false)
-  const settings = useRef({ initialCheckLimit: INITIAL_CONCERT_CHECK_LIMIT, moreCheckLimit: 10, programBatchSize: 2 })
+  const settings = useRef({ initialCheckLimit: INITIAL_CONCERT_CHECK_LIMIT, moreCheckLimit: 10, programBatchSize: 1 })
   const publish = (data, status = 'success') => { snapshot.current = data; setSearch({ status, error: null, data }) }
   const releaseProcessing = (data) => data && ({ ...data, concerts: data.concerts.map((concert) => ['processing', 'image-required'].includes(getMatchStatus(concert.targetMatch))
     ? { ...concert, targetMatch: { ...concert.targetMatch, status: 'pending', completed: false, reason: '처리를 중단했어요. 다시 이어서 확인할 수 있어요.' } } : concert) })
@@ -28,7 +28,7 @@ export default function useConcertSearch() {
     let mounted = true
     client.status().then((config) => {
       if (!mounted) return
-      settings.current = { initialCheckLimit: Math.min(10, Math.max(1, config.initialCheckLimit || 10)), moreCheckLimit: Math.min(10, Math.max(1, config.moreCheckLimit || 10)), programBatchSize: Math.min(5, Math.max(1, config.programBatchSize || 2)) }
+      settings.current = { initialCheckLimit: Math.min(10, Math.max(1, config.initialCheckLimit || 10)), moreCheckLimit: Math.min(10, Math.max(1, config.moreCheckLimit || 10)), programBatchSize: Math.min(5, Math.max(1, config.programBatchSize || 1)) }
       setConnection({ status: config.configured ? 'ready' : 'needs-setup', ...config })
     }).catch(() => { if (mounted) setConnection({ status: 'needs-setup' }) })
     return () => { mounted = false; requestId.current += 1; controller.current?.abort() }

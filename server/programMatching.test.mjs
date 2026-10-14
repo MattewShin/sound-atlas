@@ -27,6 +27,8 @@ test('실제 곡 ID와 부모 작품을 보존하고 프로그램 구역의 작�
   assert.equal(state('[PROGRAM]\nChopin\nEtude Op.10 No.3\nSchubert Ballade No.1 Op.23').status, 'not-found')
   assert.equal(state('[PROGRAM]\nChopin\nBallade No.1 Op.23').status, 'matched')
   assert.equal(state('[Program]\nL.v. Beethoven\nPiano Sonata No. 23 in f minor, Op. 57', appassionata1).status, 'matched')
+  assert.equal(state('[Program]\nL.v. Beethoven\nPiano Sonata in f minor, Op. 57', appassionata1).status, 'ambiguous')
+  assert.equal(state('[Program]\nF. Chopin\nBallade in G minor, Op. 23', chopin).status, 'ambiguous')
 })
 test('차이콥스키 사계의 영문 월명·한글 월명·검증된 별칭을 개별 곡에만 연결한다', () => {
   assert.equal(getTrackTarget(january).work.opusSuffix, 'a')
