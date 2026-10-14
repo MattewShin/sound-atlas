@@ -6,9 +6,9 @@ import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { getOcrConfig } from './ocrConfig.mjs'
 import { extractProgram, getExtractedWorkLinks, identifyEntry } from './programMatching.mjs'
-import { workCatalog, composerPatterns, workTypePatterns } from '../src/data/workCatalog.js'
+import { workCatalog, composerPatterns, workTypePatterns, musicalKeysIn } from '../src/data/workCatalog.js'
 
-export const OCR_VERSION = 'program-ocr-4'
+export const OCR_VERSION = 'program-ocr-5'
 const hash = (value) => createHash('sha256').update(value).digest('hex')
 const aborted = () => Object.assign(new Error('처리를 중단했어요.'), { code: 'ABORTED' })
 const checkAbort = (signal) => { if (signal?.aborted) throw aborted() }
@@ -45,8 +45,15 @@ const criticalWords = (reading, entry, work) => {
   ) : undefined
   const seasonKeyword = seasonLabel?.split(/\s+/).filter((word) => word.length >= 3).at(-1)
   const seasonWords = seasonKeyword ? words.filter(({ text }) => text.toLowerCase().includes(seasonKeyword.toLowerCase())) : []
-  return [composerWords, typeWords, opusWords, ...(numberInEntry ? [numberWords] : []), ...(seasonKeyword ? [seasonWords] : [])]
-    .every((group) => group.some(({ confidence }) => confidence >= 85))
+  const reliable = (group) => group.some(({ confidence }) => confidence >= 85)
+  const keyMatch = entry.signature.match(/\b([A-G])\s*(#|♯|b|♭|sharp|flat)?\s*(major|minor)\b/i)
+  const entryKeys = musicalKeysIn(entry.signature)
+  const keyTokens = keyMatch ? [keyMatch[1], keyMatch[2], keyMatch[3]].filter(Boolean).map((value) => value.toLowerCase()) : []
+  const reliableKnownKey = entryKeys.some((key) => work.musicalKeys?.includes(key)) && keyTokens.length >= 2
+    && keyTokens.every((token) => words.some((word) => word.text.replace(/[^A-Za-z#♯b♭]/g, '').toLowerCase() === token && word.confidence >= 85))
+  // 두 OCR 판독에서 같은 곡번호가 나오고 조성까지 고신뢰도로 일치하면, 숫자 한 글자의 낮은 개별 신뢰도를 보완합니다.
+  const reliableNumber = !numberInEntry || reliable(numberWords) || (numberWords.some(({ confidence }) => confidence >= 20) && reliableKnownKey)
+  return [composerWords, typeWords, opusWords, ...(seasonKeyword ? [seasonWords] : [])].every(reliable) && reliableNumber
 }
 const numberSignature = (reading) => [...reading.extraction.programText.matchAll(/\b(?:op\.?|s\.)\s*(\d+)|\bno\.?\s*(\d+)/gi)].map((match) => match[0].toLowerCase().replace(/[\s.]/g, '')).sort().join('|')
 export const assessOcrReadings = (original, preprocessed) => {

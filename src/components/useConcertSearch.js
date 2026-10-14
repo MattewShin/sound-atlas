@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createConcertSearchClient } from '../data/concertSearch.js'
 import { getTrackTarget } from '../data/workCatalog.js'
-import { concertFitsQuery } from '../data/concertTargetSearch.js'
+import { concertFitsQuery, prioritizeRegisteredTargetConcerts } from '../data/concertTargetSearch.js'
 import { getMatchStatus, INITIAL_CONCERT_CHECK_LIMIT } from '../data/concertMatchStates.js'
 
 export default function useConcertSearch() {
@@ -92,7 +92,7 @@ export default function useConcertSearch() {
       const data = await client.search(query, { refresh, signal: current.signal })
       if (id !== requestId.current || current.signal.aborted) return
       const unique = [...new Map(data.concerts.filter(({ kopisId }) => /^PF\d+$/.test(kopisId)).map((concert) => [concert.kopisId, concert])).values()]
-      const candidates = unique.filter((concert) => concertFitsQuery(concert, query))
+      const candidates = prioritizeRegisteredTargetConcerts(unique.filter((concert) => concertFitsQuery(concert, query)), { ...query, targetTrackId: target.trackId })
       publish({ ...data, apiTotal: unique.length, targetTrackId: target.trackId, target, query: { ...data.query, targetTrackId: target.trackId },
         concerts: candidates.map((concert) => ({ ...concert, ...(!concert.targetMatch ? { targetMatch: { status: 'pending', targetTrackId: target.trackId, attempted: false, completed: false, reason: '프로그램을 아직 확인하지 않았어요.' } } : {}) })),
       }, 'checking')

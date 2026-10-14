@@ -7,11 +7,12 @@ import { createProgramOcrService, assessOcrReadings } from './programOcr.mjs'
 import { combineOcrProgram, matchAnalyzedConcert } from './ocrProgramEvidence.mjs'
 import { extractProgram } from './programMatching.mjs'
 import { getMatchProgress } from '../src/data/concertMatchStates.js'
-import { getRegisteredTargetConcerts } from '../src/data/concertTargetSearch.js'
+import { getRegisteredTargetConcerts, prioritizeRegisteredTargetConcerts } from '../src/data/concertTargetSearch.js'
 import { createKopisService } from './kopis.mjs'
 import { createAppServer } from './index.mjs'
 import { getOcrConfig } from './ocrConfig.mjs'
 const id = 'chopin-ballade-op23-no1'
+const schubert3 = 'schubert-impromptu-d899-op90-no3'
 const raw = '[PROGRAM]\nF. Chopin Ballade No.1 Op.23'
 const reading = (text, confidence = 96) => ({ text, confidence, extraction: extractProgram(text),
   words: text.split(/\s+/).map((text) => ({ text, confidence, x: 100, y: 100, width: 20, height: 20 })) })
@@ -55,6 +56,19 @@ test('OCR의 원본·전처리 문맥과 식별 단어·번호를 함께 검증�
   const partial = combineOcrProgram(concert, [poster, program], { totalImages: 3 })
   assert.equal(matchAnalyzedConcert(partial, id).status, 'needs-review')
   assert.equal(matchAnalyzedConcert(partial, id).completed, false)
+})
+test('OCR 프로그램의 작품집 제목 다음 줄에 있는 슈베르트 개별 곡번호를 연결한다', () => {
+  const text = '[PROGRAM]\nF. Schubert Two Impromptus, Op. 90\n(1797-1828) No. 3 in G flat major\nNo. 2 in E flat major'
+  const program = imageRecord(text)
+  assert.ok(program.links.some(({ workId }) => workId === schubert3))
+  const result = matchAnalyzedConcert(combineOcrProgram(concert, [poster, program]), schubert3)
+  assert.equal(result.status, 'matched')
+  assert.equal(result.evidenceKind, 'ocr')
+  const original = reading(text), preprocessed = reading(text)
+  original.words.find(({ text: word }) => word === '3').confidence = 25
+  preprocessed.words.find(({ text: word }) => word === '3').confidence = 70
+  assert.ok(assessOcrReadings(original, preprocessed).links.some(({ workId }) => workId === schubert3), '일치하는 조성의 고신뢰도 판독으로 한 자리 곡번호를 보완')
+  assert.ok(!imageRecord(text.replace('G flat major', 'C major')).links.some(({ workId }) => workId === schubert3))
 })
 test('사계 OCR은 영문 월명까지 판독해야 월별 작품으로 확정한다', () => {
   const text = '[PROGRAM]\nP. Tchaikovsky The Seasons October: Autumn Song, Op.37a'
@@ -151,12 +165,19 @@ test('대표 상태의 합이 전체 후보 수와 같고 조회 시도·완료 
   assert.equal(progress.completed, 4)
   assert.equal(progress.pending + progress.processing + progress.matched + progress['needs-review'] + progress['no-material'] + progress.failed + progress['not-found'], 265)
 })
-test('직접 등록 공연이 없으면 곡·지역·기간과 관계없이 등록 결과를 만들지 않는다', () => {
+test('공식 확인 공연도 곡·지역·기간이 검색 조건 밖이면 등록 결과를 만들지 않는다', () => {
   const query = { region: '서울', from: '2026-12-01', to: '2026-12-31', targetTrackId: id }, now = Date.parse('2026-10-12T00:00:00Z')
   assert.equal(getRegisteredTargetConcerts(query, now).length, 0)
   assert.equal(getRegisteredTargetConcerts({ ...query, targetTrackId: 'beethoven-piano-concerto-op73-no5-m2' }, now).length, 0)
   assert.equal(getRegisteredTargetConcerts({ ...query, targetTrackId: 'beethoven-piano-concerto-op73-no5-m2', region: '부산' }, now).length, 0)
   assert.equal(getRegisteredTargetConcerts({ ...query, targetTrackId: 'beethoven-piano-concerto-op73-no5-m2', to: '2026-12-23' }, now).length, 0)
+})
+test('공식 프로그램으로 확인한 PF302595는 슈베르트 즉흥곡 3번 검색에서 먼저 검증한다', () => {
+  const query = { region: '서울', from: '2026-10-14', to: '2026-11-13', targetTrackId: schubert3 }
+  const now = Date.parse('2026-10-14T00:00:00+09:00')
+  assert.deepEqual(getRegisteredTargetConcerts(query, now).map(({ kopisId }) => kopisId), ['PF302595'])
+  const candidates = [{ kopisId: 'PF303000' }, { kopisId: 'PF302595' }, { kopisId: 'PF302000' }]
+  assert.deepEqual(prioritizeRegisteredTargetConcerts(candidates, query, now).map(({ kopisId }) => kopisId), ['PF302595', 'PF303000', 'PF302000'])
 })
 test('서버 검색 단계의 OCR 연결·다른 곡 비교·재시작 캐시 조회는 동일 원문을 재사용한다', async () => {
   const directory = await localDirectory()

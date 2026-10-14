@@ -9,6 +9,7 @@ const chopin = 'chopin-ballade-op23-no1'
 const emperor2 = 'beethoven-piano-concerto-op73-no5-m2'
 const january = 'tchaikovsky-seasons-op37a-no1'
 const september = 'tchaikovsky-seasons-op37a-no9'
+const schubert2 = 'schubert-impromptu-d899-op90-no2'
 const schubert3 = 'schubert-impromptu-d899-op90-no3'
 const concert = (text, images = []) => ({ programEvidence: { text, imageUrls: images } })
 const state = (text, id = chopin, images = []) => matchConcertToTrack(concert(text, images), id)
@@ -36,7 +37,7 @@ test('차이콥스키 사계의 영문 월명·한글 월명·검증된 별칭�
   assert.equal(state('[PROFILE]\nTchaikovsky The Seasons January: At the Fireside Op.37a', january).status, 'ambiguous')
   assert.equal(getExtractedWorkLinks(extractProgram('[Full Program]\nTchaikovsky Complete The Seasons, Op.37a')).length, 12)
 })
-test('슈베르트 즉흥곡은 D.899·Op.90·곡번호를 함께 확인해 개별 곡에 연결한다', () => {
+test('슈베르트 즉흥곡은 D.899 또는 Op.90과 곡번호를 확인해 개별 곡에 연결한다', () => {
   const target = getTrackTarget(schubert3)
   assert.equal(target.work.catalogue, 'D')
   assert.equal(target.work.catalogueNumber, 899)
@@ -45,6 +46,9 @@ test('슈베르트 즉흥곡은 D.899·Op.90·곡번호를 함께 확인해 개�
   assert.equal(state('[PROGRAM]\nSchubert Impromptu D.899 Op.90 No.2', schubert3).status, 'not-found')
   assert.equal(state('[PROGRAM]\nSchubert Impromptu D.935 Op.142 No.3', schubert3).status, 'not-found')
   assert.equal(state('[PROGRAM]\nSchubert Impromptu D.899 Op.90', schubert3).status, 'ambiguous')
+  const recital = extractProgram('[PROGRAM]\nF. Schubert                  Two Impromptus, Op. 90\n(1797-1828)                    No. 3 in G flat major\nNo. 2 in E flat major')
+  assert.equal(matchConcertToTrack({ programEvidence: { text: recital.programText, imageUrls: [] }, programExtraction: recital }, schubert3).status, 'matched')
+  assert.deepEqual(getExtractedWorkLinks(recital).map(({ workId }) => workId).sort(), [schubert2, schubert3])
   assert.equal(getExtractedWorkLinks(extractProgram('[Full Program]\nSchubert Complete 4 Impromptus D.899 Op.90')).length, 4)
 })
 test('소개·경력 언급과 편곡을 자동 확정하지 않고 자료 없음·이미지·부분 자료를 구분한다', () => {

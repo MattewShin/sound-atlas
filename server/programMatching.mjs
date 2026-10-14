@@ -9,6 +9,7 @@ const arrangement = /편곡|재편곡|\barr\.|\barranged\b|\btrans\.|transcripti
 const biography = /수상|콩쿠르|데뷔|과거|지난\s*\d|연주한\s*경력|연주했|performed\s+(?:in|at)|previously/i
 const namedComposer = /(?:[A-Z1]\.\s*)+(?:(?:de|van|von)\s+)?\p{Lu}[\p{L}-]+|^[가-힣]{2,6}\s*\(?\d{4}/u
 const types = Object.entries(workTypePatterns)
+const individuallyNumberedTypes = new Set(['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'seasons'])
 
 export const extractProgram = (rawText) => {
   const text = normalize(rawText).replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<br\s*\/?\s*>|<\/p>/gi, '\n').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ')
@@ -40,15 +41,22 @@ export const extractProgram = (rawText) => {
         entries.push(current)
       } else if (current) {
         if (/^\s*(?:op\.?|s\.)\s*\d/i.test(line)) current.signature += ' ' + line
-        else if (line.trim() && !/^\s*(?:(?:IV|III|II|I)\s*[.)]|제?\s*\d+\s*악장|(?:movement|mov\.)\s*\d+|전곡|전\s*악장|발췌|intermission|휴식|인터미션|allegro|adagio|andante|largo|presto|moderato|lento|vivace|scherzo|rondo|in\s+[a-g]\s|[a-g]\s*(?:major|minor)|\d+\s*(?:min|분))/i.test(line)) unparsedLines.push(line)
+        else if (line.trim() && !numbersIn(line).length && !/^\s*(?:(?:IV|III|II|I)\s*[.)]|제?\s*\d+\s*악장|(?:movement|mov\.)\s*\d+|전곡|전\s*악장|발췌|intermission|휴식|인터미션|allegro|adagio|andante|largo|presto|moderato|lento|vivace|scherzo|rondo|in\s+[a-g]\s|[a-g]\s*(?:major|minor)|\d+\s*(?:min|분))/i.test(line)) unparsedLines.push(line)
         current.lines.push(line)
       } else if (line.trim() && !foundComposer && !namedComposer.test(line) && !/^(?:intermission|휴식|인터미션)\s*$/i.test(line.trim())) unparsedLines.push(line)
     }
   }
+  const expandedEntries = entries.flatMap((entry) => {
+    if (!individuallyNumberedTypes.has(entry.type) || numbersIn(entry.signature).length) return [entry]
+    const numberedLines = entry.lines.filter((line) => numbersIn(line).length)
+    if (!numberedLines.length) return [entry]
+    const sharedLines = entry.lines.filter((line) => !numberedLines.includes(line))
+    return numberedLines.map((line) => ({ ...entry, signature: `${entry.signature} ${line.trim()}`, lines: [...sharedLines, line] }))
+  })
   const programText = sections.map((section) => section.lines.join('\n')).join('\n')
   return { version: 'program-text-1', programText, sectionFound: sections.length > 0,
     complete: sections.length > 0 && Boolean(programText.trim()) && !partial.test(sections.map((section) => section.title + '\n' + section.lines.join('\n')).join('\n')),
-    explicitComplete: sections.some((section) => section.explicitComplete), entries, unparsedLines }
+    explicitComplete: sections.some((section) => section.explicitComplete), entries: expandedEntries, unparsedLines }
 }
 
 const numbersIn = (text) => [...text.matchAll(/\b(?:nos?\.?|nr\.?)\s*(\d+)|제?\s*(\d+)\s*번/gi)].map((match) => Number(match[1] || match[2]))
@@ -107,8 +115,9 @@ export const identifyEntry = (entry, work) => {
     }
   }
   if (work.catalogue) {
-    if (!catalogue) return { state: 'ambiguous', reason: '작품목록 번호를 확인해야 해요.' }
-    if (Number(catalogue[1]) !== work.catalogueNumber) return { state: 'different' }
+    const exactOpusAndNumber = Number(op?.[1]) === work.opus && numbers.includes(work.number)
+    if (!catalogue && !exactOpusAndNumber) return { state: 'ambiguous', reason: '작품목록 번호를 확인해야 해요.' }
+    if (catalogue && Number(catalogue[1]) !== work.catalogueNumber) return { state: 'different' }
   }
   const needsNumber = ['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'seasons'].includes(work.type)
   const allSet = /전곡|complete|all\s+(?:etudes|preludes|impromptus|seasons)|(?:all|four|4|twelve|12)\s+(?:the\s+)?(?:impromptus|months|pieces)|전\s*(?:4|12)곡/i.test(text)

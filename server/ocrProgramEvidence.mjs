@@ -55,7 +55,7 @@ export const combineOcrProgram = (concert, records, { totalImages = records.leng
     complete: complete && context.verified && programRecords.length > 0 && programRecords.every((record) => record.original.extraction.complete && !record.original.extraction.unparsedLines.length && !record.reviewRequired),
     explicitComplete: false }
   return { ...concert, programExtraction: extraction,
-    programOcr: { version: 'program-ocr-4', records, totalImages, processedImages: records.filter(({ status }) => status === 'completed').length, allProcessed: complete, context,
+    programOcr: { version: 'program-ocr-5', records, totalImages, processedImages: records.filter(({ status }) => status === 'completed').length, allProcessed: complete, context,
       coverageComplete: extraction.complete, acceptedEntries: accepted.length },
   }
 }

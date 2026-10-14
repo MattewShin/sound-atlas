@@ -18,3 +18,8 @@ export const getRegisteredTargetConcerts = (query, now = Date.now()) => {
     scope: concert.programScopes?.[target.workId] || { kind: 'work', movementNumbers: [] }, evidence: concert.sourceUrl,
     reason: target.movementNumber ? '공식 프로그램에 해당 작품 포함 · 선택한 악장의 연주 확정 안내는 아니에요.' : '공식 프로그램에 대상 작품이 포함돼요.' } }))
 }
+export const prioritizeRegisteredTargetConcerts = (candidates, query, now = Date.now()) => {
+  const preferred = new Set(getRegisteredTargetConcerts(query, now).map(({ kopisId }) => kopisId).filter(Boolean))
+  return candidates.map((concert, index) => ({ concert, index })).sort((a, b) =>
+    Number(!preferred.has(a.concert.kopisId)) - Number(!preferred.has(b.concert.kopisId)) || a.index - b.index).map(({ concert }) => concert)
+}
