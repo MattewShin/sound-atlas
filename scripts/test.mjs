@@ -3,6 +3,7 @@ import '../src/data/recommendation.test.js'
 import '../src/data/halfPointRatings.test.js'
 import '../src/data/storage.test.js'
 import '../src/data/weeklySelections.test.js'
+import '../src/data/homeDiscovery.test.js'
 import '../src/data/concertRecommendations.test.js'
 import '../src/data/concertSearch.test.js'
 import '../server/kopis.test.mjs'
@@ -26,6 +27,7 @@ import { verifyConcertSearchInteractions } from './concertSearchDomTest.mjs'
 import { verifyTargetConcertInteractions } from './targetConcertDomTest.mjs'
 import { verifyMusicSelectionInteractions } from './musicSelectionDomTest.mjs'
 import { verifyWeeklySelectionInteractions } from './weeklySelectionDomTest.mjs'
+import { verifyHomeDiscoveryInteractions } from './homeDiscoveryDomTest.mjs'
 import { weeklySelections } from '../src/data/weeklySelections.js'
 import { getWeeklySelectionState } from '../src/data/weeklySelectionHelpers.js'
 
@@ -40,6 +42,10 @@ try {
   try { unlinkSync(compiledPath) } catch { /* 컴파일 실패 시 파일 없음 */ }
 }
 const render = (component, props = {}) => renderToStaticMarkup(React.createElement(component, props))
+
+test('홈 탐색의 재진입·로그인·조건 변경·모달·보관 상태와 주간 소개 제목을 검증한다', async () => {
+  await verifyHomeDiscoveryInteractions(components.default)
+})
 
 test('주간 소개에서 홈·글·상세·영상·보관함·지난 글의 연결을 검증한다', async () => {
   await verifyWeeklySelectionInteractions(components.default)
@@ -169,8 +175,10 @@ test('첫 화면에는 새 9개 선택과 활성곡만 있으며 Energy 선택�
   const html = render(components.default)
   emotions.forEach(({ label }) => assert.ok(html.includes(label)))
   assert.ok(html.includes('느낌으로 시작하기') && html.includes('기분에서 시작하기'))
-  assert.ok(html.includes('쇼팽 연습곡 Op.10 No.3'))
-  assert.ok(html.includes('<span class="track-alias"> [이별의 곡]</span></strong>'))
+  const discoveryIds = [...html.matchAll(/class="mini-track" data-track-id="([^"]+)"/g)].map((match) => match[1])
+  assert.equal(discoveryIds.length, 4)
+  assert.equal(new Set(discoveryIds).size, 4)
+  assert.ok(discoveryIds.every((id) => tracks.some((track) => track.id === id && track.ratingStatus === 'complete')))
   assert.ok(!/ENERGY|얼마나 깊게|강렬하게|녹턴/.test(html))
 })
 test('전체 활성곡 상세·보관함은 제목·별칭·감상 정보·이미지와 정확한 영상 상태를 렌더링한다', () => {

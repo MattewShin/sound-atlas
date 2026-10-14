@@ -18,11 +18,11 @@ function Period({ entry }) {
 
 export function WeeklySelectionSection({ entry, onOpen, onArchive }) {
   if (!entry) return null
-  return <section className="weekly-section" aria-label={entry.sectionName}>
+  return <section className="weekly-section" aria-labelledby="weekly-section-title">
+    <div className="section-heading weekly-section-heading"><p>EDITOR’S PICK</p><h2 id="weekly-section-title">{entry.sectionName}</h2></div>
     <button className="weekly-feature" type="button" onClick={() => onOpen(entry.id)}>
       <SelectionArtwork track={entry.track} />
       <span className="weekly-copy">
-        <span className="weekly-eyebrow">{entry.sectionName}</span>
         <strong className="weekly-title">{entry.title}</strong>
         <span className="weekly-teaser">{entry.teaser}</span>
         <span className="weekly-track"><TrackName track={entry.track} /></span>

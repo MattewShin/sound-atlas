@@ -3,6 +3,7 @@
 :root { color: #1e2928; background: #e4e1da; font-family: 'Gowun Dodum', sans-serif; font-synthesis: none; }
 /* 운영자의 주간 소개: 추천 카드보다 조용한 가로형 지면 */
 .weekly-section { margin: 26px 20px 12px; padding: 18px 0 0; border-top: 1px solid #ded9cf; }
+.weekly-section-heading { margin-bottom: 18px; }
 .weekly-feature { display: flex; align-items: flex-start; gap: 14px; width: 100%; padding: 0; border: 0; color: #293b36; background: transparent; text-align: left; }
 .weekly-artwork { display: grid; place-items: center; flex: none; width: 72px; height: 88px; overflow: hidden; border-radius: 7px; color: #31534d; background: #e4eee2; }
 .weekly-artwork img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }

@@ -43,7 +43,7 @@ previewRange: {
 
 ## 구현과 검증
 
-- 홈: 기존 추천곡 영역 전체 아래에 가로형 소개와 지난 선정곡 링크.
+- 홈: 기존 추천곡 영역 전체 아래에 `EDITOR’S PICK` 라벨과 한국어 섹션 제목, 가로형 소개, 지난 선정곡 링크. 섹션 제목은 카드 안에서 반복하지 않습니다.
 - 소개 글·지난 글: 앱의 기존 화면 상태 방식, 곡 상세는 기존 모달.
 - `src/data/weeklySelectionHelpers.js`: 한국 날짜, 입력 검증, 노출·정렬, 미리듣기 구간 선택.
 - `src/components/WeeklySelectionScreens.jsx`: 홈 소개·소개 글·지난 글 화면.
