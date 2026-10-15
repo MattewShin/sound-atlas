@@ -3,7 +3,7 @@ import React from 'react'
 import { JSDOM } from 'jsdom'
 import { DISCOVERY_SESSION_KEY } from '../src/data/homeDiscovery.js'
 import { tracks } from '../src/data/musicData.js'
-import { getRecommendationResult } from '../src/data/recommendations.js'
+import { getKeywordRecommendationCandidates, getRecommendationResult } from '../src/data/recommendations.js'
 import { formatTrackTitle } from '../src/data/emotions.js'
 
 export async function verifyHomeDiscoveryInteractions(App) {
@@ -80,7 +80,7 @@ export async function verifyHomeDiscoveryInteractions(App) {
     assert.equal(doc.querySelector('.starter-carousel'), null)
     const ranked = getRecommendationResult(tracks, ['wonder'])
     const featured = doc.querySelector('.featured-track h2').textContent
-    assert.ok(ranked.topScoreTracks.some((track) => featured.startsWith(formatTrackTitle(track))), '기존 감정 최고 적합도 유지')
+    assert.ok(getKeywordRecommendationCandidates(ranked, ['wonder']).some((track) => featured.startsWith(formatTrackTitle(track))), '현재 음악 키워드 추천 후보 안에서 대표곡 선택')
     await click('.featured-track .track-card-top button')
     const taste = [...doc.querySelectorAll('.recommendation-mode-control button')].find((node) => node.textContent === '내 취향')
     await flush(() => taste.click())

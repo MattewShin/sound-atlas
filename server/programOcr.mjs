@@ -5,6 +5,7 @@ import { mkdir, readFile, writeFile, rename } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { getOcrConfig } from './ocrConfig.mjs'
+import { kopisImageUrl, readLimitedImageBytes } from './kopisImageSource.mjs'
 import { extractProgram, getExtractedWorkLinks, identifyEntry } from './programMatching.mjs'
 import { workCatalog, composerPatterns, workTypePatterns, musicalKeysIn } from '../src/data/workCatalog.js'
 
@@ -132,17 +133,11 @@ export const createProgramOcrService = ({ env = process.env, fetchImpl = fetch, 
   const recognize = recognizeImpl ? (buffer, signal) => deadline(() => recognizeImpl(buffer, signal), config.recognizeTimeoutMs, signal)
     : (...args) => { runtime ||= getRuntime(config); return runtime.recognize(...args) }
   const download = async (sourceUrl, signal) => {
-    const url = new URL(sourceUrl)
-    if (!['kopis.or.kr', 'www.kopis.or.kr'].includes(url.hostname) || !url.pathname.startsWith('/upload/') || !['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.port) throw Object.assign(new Error('허용된 KOPIS 이미지 출처가 아니에요.'), { code: 'OCR_SOURCE_BLOCKED' })
+    const url = kopisImageUrl(sourceUrl)
     return deadline(async () => {
       const response = await fetchImpl(url, { redirect: 'error', signal: AbortSignal.any([signal || new AbortController().signal, AbortSignal.timeout(config.downloadTimeoutMs)]) })
       if (!response.ok) throw Object.assign(new Error('이미지 다운로드에 실패했어요.'), { code: 'OCR_DOWNLOAD_FAILED' })
-      if (Number(response.headers.get('content-length')) > config.maxBytes) throw Object.assign(new Error('이미지 파일 크기 제한을 초과했어요.'), { code: 'OCR_IMAGE_TOO_LARGE' })
-      const reader = response.body.getReader(), parts = []
-      let bytes = 0
-      try { for (;;) { const { value, done } = await reader.read(); if (done) break; bytes += value.length; if (bytes > config.maxBytes) throw Object.assign(new Error('이미지 파일 크기 제한을 초과했어요.'), { code: 'OCR_IMAGE_TOO_LARGE' }); parts.push(Buffer.from(value)) } }
-      finally { await reader.cancel().catch(() => {}) }
-      return Buffer.concat(parts)
+      return readLimitedImageBytes(response, config.maxBytes)
     }, config.downloadTimeoutMs, signal)
   }
   const processImage = async (concertId, sourceUrl, { refresh = false, signal } = {}) => {
