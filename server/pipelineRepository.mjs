@@ -3,6 +3,7 @@ import { createSupabaseCollector } from './supabaseCollector.mjs'
 import { createSupabaseOcr } from './supabaseOcr.mjs'
 import { createProgramAnalysisStore } from './supabaseProgramAnalysis.mjs'
 import { pipelineError } from './pipelineConfig.mjs'
+import { CLEANUP_TABLES, CLEANUP_SCHEMA_VERSION, fallbackCleanupPlan } from './pipelineCleanup.mjs'
 
 const fields={
   concerts:'id,kopis_id,title,venue,region,start_date,end_date,performance_status,synced_at,program_context_revision',
@@ -13,6 +14,7 @@ const fields={
 }
 export const createPipelineRepository = options => {
   const request=createSupabaseRest(options)
+  let cleanupSchemaReady=false,cleanupFunctionsPresent=false
   const all=async(table,params={},pageLimit=20,select=fields[table]||'id')=>{
     const rows=[];let last
     for(let page=0;page<pageLimit;page++){
@@ -30,13 +32,35 @@ export const createPipelineRepository = options => {
   }
   return {
     collector:createSupabaseCollector(options), ocr:createSupabaseOcr(options), analysis:createProgramAnalysisStore(options),
-    async preflight(){
+    async preflight({plan=false}={}){
       for(const table of [...Object.keys(fields),'concert_program_candidates','concert_program_reviews','concert_program_candidate_status','concert_program_catalogs']){
         await request(table,{params:{select:table==='concert_program_catalogs'?'catalog_hash':'id',limit:'0'}})
       }
       const schema=await request('')
       for(const name of ['sync_kopis_concert','record_concert_image_ocr','save_concert_program_analysis'])
         if(!schema.paths?.[`/rpc/${name}`])throw pipelineError('BATCH_SCHEMA_REQUIRED')
+      cleanupFunctionsPresent=['plan_expired_concert_cleanup','delete_expired_concert'].every(name=>schema.paths?.[`/rpc/${name}`])
+      cleanupSchemaReady=cleanupFunctionsPresent && (await request('rpc/plan_expired_concert_cleanup',{params:{p_limit:'1'}})).schema_version===CLEANUP_SCHEMA_VERSION
+      if(!cleanupSchemaReady&&!plan)throw pipelineError('CLEANUP_MIGRATION_REQUIRED')
+      if(cleanupSchemaReady)await request('concert_cleanup_events',{params:{select:'operation_id',limit:'0'}})
+      return {cleanup_schema_ready:cleanupSchemaReady}
+    },
+    async cleanupPlan(limit,today,pages){
+      if(cleanupFunctionsPresent){
+        const result=await request('rpc/plan_expired_concert_cleanup',{params:{p_limit:String(limit)}})
+        return {...result,migration_required:!cleanupSchemaReady}
+      }
+      const data={}
+      const select={concerts:'id,kopis_id,title,start_date,end_date',concert_program_images:'id,concert_id',
+        concert_image_ocr_results:'id,image_id',concert_image_ocr_attempts:'id,image_id,result_id',
+        concert_program_analyses:'id,concert_id,image_id,ocr_result_id,source_attempt_id',
+        concert_program_candidates:'id,analysis_id',concert_program_reviews:'id,candidate_id'}
+      for(const table of CLEANUP_TABLES)data[table]=await all(table,{},pages,select[table])
+      return fallbackCleanupPlan(data,today,limit)
+    },
+    cleanupDelete(id,operationId,runId){
+      if(!cleanupSchemaReady)throw pipelineError('CLEANUP_MIGRATION_REQUIRED')
+      return request('rpc/delete_expired_concert',{body:{p_concert_id:id,p_operation_id:operationId,p_run_id:runId}})
     },
     async snapshot(conditions,pages){
       const concerts=await all('concerts',{region:`eq.${conditions.region}`,start_date:`lte.${conditions.to}`,end_date:`gte.${conditions.from}`,performance_status:'in.(공연예정,공연중)'},pages)

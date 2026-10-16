@@ -10,6 +10,7 @@ import { PIPELINE_DEFAULTS, parsePipelineArgs, pipelineError, serializePipelineR
 import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
 import { analysisSelection } from './pipelineSelection.mjs'
 import { createCollectionKopisClient } from './concertCollector.mjs'
+import { fallbackCleanupPlan, cleanupCounts } from './pipelineCleanup.mjs'
 
 const base=Date.parse('2026-10-15T00:00:00Z')
 const cleanup=async path=>{assert.ok(resolve(path).startsWith(resolve(tmpdir())+sep)&&basename(path).startsWith('atlas-pipeline-'));await rm(path,{recursive:true,force:true})}
@@ -28,6 +29,18 @@ const harness=()=>{
     async download(url){calls.push('download');return {contentHash:createHash('sha256').update(url).digest('hex'),width:800,height:300,buffer:Buffer.from('fixture')}},
     repository:{
       async snapshot(){calls.push('snapshot');return structuredClone(data)},
+      async cleanupPlan(limit,today){calls.push('cleanupPlan');return {...fallbackCleanupPlan({concerts:data.concerts,
+        concert_program_images:data.images,concert_image_ocr_results:data.results,concert_image_ocr_attempts:data.attempts,
+        concert_program_analyses:data.analyses,concert_program_candidates:data.candidates,concert_program_reviews:[]},today,limit),migration_required:false}},
+      async cleanupDelete(id){calls.push('cleanupDelete');const concert=data.concerts.find(c=>c.id===id)
+        if(!concert)return {status:'NOT_FOUND'}
+        const images=data.images.filter(i=>i.concert_id===id).map(i=>i.id),analyses=data.analyses.filter(a=>a.concert_id===id).map(a=>a.id)
+        const counts=cleanupCounts({concert_program_images:data.images,concert_image_ocr_results:data.results,concert_image_ocr_attempts:data.attempts,
+          concert_program_analyses:data.analyses,concert_program_candidates:data.candidates,concert_program_reviews:[]},[concert])
+        data.concerts=data.concerts.filter(c=>c.id!==id);data.images=data.images.filter(i=>i.concert_id!==id)
+        data.results=data.results.filter(r=>!images.includes(r.image_id));data.attempts=data.attempts.filter(a=>!images.includes(a.image_id))
+        data.analyses=data.analyses.filter(a=>a.concert_id!==id);data.candidates=data.candidates.filter(c=>!analyses.includes(c.analysis_id))
+        return {status:'DELETED',kopis_id:concert.kopis_id,deleted_at:stamp(),counts}},
       collector:{async save(value){calls.push('saveConcert');let c=data.concerts.find(c=>c.kopis_id===value.concert.kopis_id);if(!c){c={id:randomUUID(),program_context_revision:0};data.concerts.push(c)}Object.assign(c,value.concert)
         for(const image of value.images)if(!data.images.some(i=>i.concert_id===c.id&&i.source_url===image.source_url))data.images.push({...image,id:randomUUID(),concert_id:c.id,is_active:true,evidence_revision:0})}},
       ocr:{async preflight(){calls.push('ocrPreflight')},async findResult(imageId,hash){calls.push('cacheLookup');return data.results.find(r=>r.image_id===imageId&&r.content_sha256===hash&&r.pipeline_version===EASYOCR_PIPELINE_VERSION)},
@@ -54,6 +67,7 @@ test('pipeline uses collect -> OCR -> analysis, caps attempts and resumes past t
   assert.equal(a.stages.collection.attempted,10);assert.equal(a.stages.ocr.attempted,3);assert.equal(a.stages.analysis.succeeded,3)
   assert.equal(a.review.new_candidates,3);assert.equal(a.review.new_linked_candidates,3)
   assert.ok(h.calls.indexOf('saveConcert')<h.calls.indexOf('recognize'))
+  assert.ok(h.calls.indexOf('cleanupPlan')<h.calls.indexOf('list:02:1'))
   assert.ok(h.calls.lastIndexOf('saveOcr')<h.calls.indexOf('saveAnalysis'))
   assert.equal(h.state.collection.page,2);assert.equal(h.state.collection.pending.length,90)
   const first=h.data.concerts.map(c=>c.kopis_id)
@@ -78,6 +92,45 @@ test('list page cap advances the saved cursor and reports incomplete discovery',
   const b=await h.run({collectLimit:1,listPages:1,ocrLimit:1,analysisLimit:1})
   assert.equal(b.stages.collection.pages,1)
   assert.ok(h.calls.includes('list:02:2'))
+})
+
+test('cleanup respects its cap, prunes expired retries and cannot reingest expired list entries',async()=>{
+  const h=harness();await h.run({collectLimit:3,ocrLimit:1})
+  for(const concert of h.data.concerts){concert.start_date='2026-10-01';concert.end_date='2026-10-14'}
+  h.state.collection.pending.unshift('PF900001');h.state.collection.dates.PF900001={from:'2026-10-01',to:'2026-10-14'}
+  h.state.retries['collect:PF900001']={failures:1,until:base+3600000}
+  const oldImage=h.data.images.find(i=>i.concert_id===h.data.concerts.find(c=>c.kopis_id==='PF900001').id)
+  h.state.retries['ocr:'+oldImage.id]={failures:1,until:base+3600000}
+  h.runtime.client.list=async()=>{h.calls.push('list:expired-fixture');return [{...listing(1),prfpdfrom:'2026.10.01',prfpdto:'2026.10.14'}]}
+  h.state.collection.pending=['PF900001']
+  h.calls.length=0
+  const a=await h.run({cleanupLimit:1,collectLimit:1,ocrLimit:1})
+  assert.equal(a.stages.cleanup.succeeded,1);assert.equal(a.stages.cleanup.remaining,2);assert.equal(a.stages.cleanup.limit_reached,true)
+  assert.equal(a.stages.cleanup.deleted_counts.concerts,1);assert.ok(h.calls.indexOf('cleanupDelete')<h.calls.indexOf('list:expired-fixture'))
+  assert.equal(h.calls.some(c=>c.startsWith('detail:')),false)
+  const b=await h.run({cleanupLimit:100,collectLimit:1,ocrLimit:1})
+  assert.equal(b.stages.cleanup.succeeded,2);assert.equal(b.stages.cleanup.remaining,0)
+  const c=await h.run({collectLimit:1,ocrLimit:1})
+  assert.equal(c.stages.cleanup.succeeded,0);assert.equal(c.stages.cleanup.deleted_counts.concerts,0)
+  assert.equal(h.data.concerts.length,0)
+})
+
+test('cleanup failure continues collection; collection failure does not undo cleanup; missing schema is fatal first',async()=>{
+  const h=harness();await h.run({collectLimit:1,ocrLimit:1})
+  h.data.concerts[0].start_date='2026-10-01';h.data.concerts[0].end_date='2026-10-14'
+  h.runtime.repository.cleanupDelete=async()=>{throw pipelineError('SUPABASE_HTTP_400')}
+  const a=await h.run({collectLimit:1,ocrLimit:1})
+  assert.equal(a.status,'PARTIAL');assert.equal(a.stages.cleanup.failed,1);assert.equal(a.stages.collection.succeeded,1)
+  const offline=harness();await offline.run({collectLimit:1,ocrLimit:1})
+  offline.data.concerts[0].start_date='2026-10-01';offline.data.concerts[0].end_date='2026-10-14'
+  offline.runtime.client.list=async()=>{throw pipelineError('KOPIS_REQUEST_FAILED')}
+  const b=await offline.run({collectLimit:1,ocrLimit:1})
+  assert.equal(b.stages.cleanup.succeeded,1);assert.equal(b.status,'PARTIAL')
+  const missing=harness(),before=JSON.stringify(missing.state)
+  missing.runtime.preflight=async()=>{throw pipelineError('CLEANUP_MIGRATION_REQUIRED')}
+  const c=await missing.run();assert.equal(c.status,'FATAL');assert.equal(c.exit_code,2)
+  assert.equal(missing.calls.includes('cleanupDelete'),false);assert.equal(missing.calls.some(c=>c.startsWith('list:')),false)
+  assert.equal(JSON.stringify(missing.state),before)
 })
 
 test('cached OCR and identical evidence, including empty analyses, preserve manual decisions',async()=>{
@@ -163,7 +216,7 @@ test('plan does not call collection, downloads, OCR, writes, checkpoints or muta
   const before=JSON.stringify(h.state),data=JSON.stringify(h.data);h.calls.length=0
   const report=await h.run({},true)
   assert.equal(report.status,'PLAN_READY');assert.equal(report.plan.collection_api_candidates,'UNKNOWN_UNTIL_KOPIS_LIST')
-  assert.deepEqual(h.calls,['preflight','snapshot','reviews','close'])
+  assert.deepEqual(h.calls,['preflight','snapshot','cleanupPlan','reviews','close'])
   assert.equal(JSON.stringify(h.state),before);assert.equal(JSON.stringify(h.data),data)
 })
 

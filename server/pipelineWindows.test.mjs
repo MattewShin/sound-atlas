@@ -16,12 +16,13 @@ test('Windows wrapper handles spaces, project-relative env/cwd, caps and native 
     await copyFile('scripts/Invoke-ConcertPipeline.ps1',join(scripts,'Invoke-ConcertPipeline.ps1'))
     await writeFile(join(root,'.env'),'PIPELINE_TEST_MARKER=loaded-from-project\n')
     await writeFile(join(scripts,'runConcertPipeline.mjs'),'console.log(JSON.stringify({cwd:process.cwd(),marker:process.env.PIPELINE_TEST_MARKER,args:process.argv.slice(2)}));process.exitCode=3')
-    const result=execute(['-File',join(scripts,'Invoke-ConcertPipeline.ps1'),'-Mode','plan','-NodePath',process.execPath,'-CollectLimit','7','-OcrLimit','2','-AnalysisLimit','5','-ListPages','2','-MaxSeconds','120'])
+    const result=execute(['-File',join(scripts,'Invoke-ConcertPipeline.ps1'),'-Mode','plan','-NodePath',process.execPath,'-CollectLimit','7','-OcrLimit','2','-AnalysisLimit','5','-ListPages','2','-MaxSeconds','120','-CleanupLimit','12'])
     assert.equal(result.status,3,result.stderr)
     const output=JSON.parse(result.stdout)
     assert.equal(resolve(output.cwd),resolve(root));assert.equal(output.marker,'loaded-from-project')
     assert.deepEqual(output.args.slice(0,5),['plan','--collect-limit','7','--ocr-limit','2'])
     assert.ok(output.args.includes('--max-seconds'));assert.ok(output.args.includes('120'))
+    assert.equal(output.args[output.args.indexOf('--cleanup-limit')+1],'12')
   }finally{assert.ok(resolve(directory).startsWith(resolve(tmpdir())+sep)&&basename(directory).startsWith('atlas-pipeline-'));await rm(directory,{recursive:true,force:true})}
 })
 

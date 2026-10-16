@@ -15,7 +15,7 @@
 
 수집·OCR 배치가 웹 요청이나 브라우저에서 자동 실행되지는 않습니다. 기본 웹 검색은 기존 KOPIS/Tesseract 경로입니다. [DB 검색 미리보기](SUPABASE_CONCERT_PREVIEW.md)는 유효한 수동 확정 EXACT 결과만 반환하며 OCR·재분석·DB 쓰기나 다른 경로로의 우회를 수행하지 않습니다.
 
-[통합 배치와 Windows 예약 안내](LOCAL_PIPELINE.md)는 plan → 수동 실행 → 결과 확인 → 예약 등록 순서입니다. `.cache/concert-pipeline/`의 진행/결과는 Git에서 제외되며 새 DB 큐나 마이그레이션은 없습니다. 통합 배치도 후보를 자동 확정하지 않습니다.
+[통합 배치와 Windows 예약 안내](LOCAL_PIPELINE.md)는 plan → 수동 실행 → 결과 확인 → 예약 등록 순서입니다. `.cache/concert-pipeline/`의 진행/결과는 Git에서 제외됩니다. [지난 공연 정리](EXPIRED_CONCERT_CLEANUP.md)는 `pipelineCleanup.mjs`와 서버 전용 정리 RPC를 사용하며 신규 마이그레이션 `202610160001`이 필요합니다. 기존 예약은 재등록 없이 기본 cleanup 상한 100개를 적용합니다. 통합 배치도 후보를 자동 확정하지 않습니다.
 
 ## 모듈별 책임
 

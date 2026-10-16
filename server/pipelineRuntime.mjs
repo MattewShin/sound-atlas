@@ -38,9 +38,9 @@ export const createPipelineRuntime = ({env=process.env,signal,fetchImpl=fetch}={
       if(Number(process.versions.node.split('.')[0])!==22)throw pipelineError('NODE_22_REQUIRED')
       try{await access(config.python);await access(join(config.cacheDirectory,'models','craft_mlt_25k.pth'));await access(join(config.cacheDirectory,'models','korean_g2.pth'))}
       catch{throw pipelineError('EASYOCR_PYTHON_OR_MODELS_MISSING')}
-      await repository.preflight()
+      const schema=await repository.preflight({plan})
       if(!plan)await probePython(config,signal)
-      return {node:process.versions.node,python_file_checked:true,model_files_checked:true,python_dependencies_checked:!plan,kopis_authentication:plan?'NOT_CHECKED_IN_PLAN':'CHECKED_ON_FIRST_LIST_REQUEST'}
+      return {...schema,node:process.versions.node,python_file_checked:true,model_files_checked:true,python_dependencies_checked:!plan,kopis_authentication:plan?'NOT_CHECKED_IN_PLAN':'CHECKED_ON_FIRST_LIST_REQUEST'}
     },
     download:url=>downloadKopisImage(url,{config,signal,fetchImpl}),
   }

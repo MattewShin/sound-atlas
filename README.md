@@ -14,7 +14,7 @@ KOPIS 공연정보·이미지 URL을 Supabase에 수동 수집하는 설정과 �
 
 기존 검색을 기본으로 유지하면서 저장된 유효한 확정 결과만 검색하는 방법은 [Supabase 공연 검색 미리보기](docs/SUPABASE_CONCERT_PREVIEW.md)를 참고하세요. 서버 전용 `CONCERT_SEARCH_BACKEND=supabase`로 선택합니다.
 
-수집 → EasyOCR → 신규 분석 저장을 한 번에 실행하고 Windows 정기 실행을 준비하는 방법은 [로컬 통합 배치](docs/LOCAL_PIPELINE.md)를 참고하세요. 먼저 `npm run pipeline -- plan`으로 읽기 전용 확인을 진행합니다.
+지난 공연 정리 → 수집 → EasyOCR → 신규 분석 저장을 한 번에 실행하고 Windows 정기 실행을 준비하는 방법은 [로컬 통합 배치](docs/LOCAL_PIPELINE.md)를 참고하세요. [지난 공연 삭제 안내](docs/EXPIRED_CONCERT_CLEANUP.md)의 신규 SQL을 적용하고 `npm run pipeline -- plan`으로 확인하세요. run은 한국 시간 어제까지 종료된 공연과 종속 자료를 실제 삭제합니다.
 
 듣고 싶은 한글 감정 키워드나 현재 기분으로 피아노 음악을 탐색하고, 마음에 남는 곡을 보관하는 React 19 + Vite 6 앱입니다.
 

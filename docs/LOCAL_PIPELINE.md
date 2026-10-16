@@ -1,12 +1,12 @@
 # 로컬 통합 배치와 Windows 정기 실행
 
-기존 수집·EasyOCR·분석·RPC를 묶었습니다. 자동 분석은 REVIEW_REQUIRED이며 확정·반려는 하지 않습니다. 배치 성공만으로 검색에 노출되지 않고, 기존 Supabase 검색의 유효한 CONFIRMED + EXACT 조건을 통과해야 합니다. 카탈로그·matcher_version(`stored-program-2`)·OCR 설정·검색 기본값은 변경하지 않았습니다.
+기존 수집·EasyOCR·분석·RPC를 묶었습니다. 현재 run 순서는 **환경 점검 → 지난 공연 실제 삭제 → 수집 → EasyOCR → 분석**입니다. 한국 시간 `end_date < 오늘`인 공연과 종속 자료를 기본 최대 100개 삭제합니다. [삭제 기준·마이그레이션·원격 조회 결과](EXPIRED_CONCERT_CLEANUP.md)를 먼저 확인하세요. 자동 분석은 REVIEW_REQUIRED이며 확정·반려는 하지 않습니다. 배치 성공만으로 검색에 노출되지 않고, 기존 Supabase 검색의 유효한 CONFIRMED + EXACT 조건을 통과해야 합니다. 카탈로그·matcher_version(`stored-program-2`)·OCR 설정·검색 기본값은 변경하지 않았습니다.
 
 **plan → 수동 1회 실행 → 결과 확인 → 예약 등록** 순서로 진행하세요. 이번 구현 검증에서는 실제 데이터의 plan과 읽기만 수행했습니다. 실제 통합 배치의 수집·OCR·DB 쓰기 및 작업 등록은 사용자가 실행할 단계입니다.
 
 ## 1. plan
 
-Windows 10 PowerShell에서 먼저 프로젝트로 이동합니다. Node 22와 기존 루트 `.env`의 `KOPIS_SERVICE_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`가 필요합니다. 새 환경변수·마이그레이션·Supabase CLI 연결은 없습니다. `.venv`, 기반 `.cache/python-portable/`, `.cache/easyocr/models/`는 보존합니다.
+Windows 10 PowerShell에서 먼저 프로젝트로 이동합니다. Node 22와 기존 루트 `.env`의 `KOPIS_SERVICE_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`가 필요합니다. 새 환경변수·Supabase CLI 연결은 없지만 **`202610160001_expired_concert_cleanup.sql` 완료본 적용이 필요**합니다. SQL 자체는 공연을 삭제하지 않습니다. 미적용/초안 버전이면 plan은 읽기 전용 대상 확인을 지원하며 `migration_required: true`로 표시하고, run은 시작 점검에서 `CLEANUP_MIGRATION_REQUIRED`·FATAL/exit 2로 종료합니다. 이때 정리·수집·OCR·분석·DB 쓰기를 실행하지 않고 기존 커서를 초기화하지 않습니다. `.venv`, 기반 `.cache/python-portable/`, `.cache/easyocr/models/`는 보존합니다.
 
 ```powershell
 Set-Location 'C:\Users\CNXK\dev\sound-atlas'
@@ -31,6 +31,7 @@ $LASTEXITCODE
 
 | 옵션 | 기본값 | 의미 |
 | --- | ---: | --- |
+| `-CleanupLimit` | 100 | 종료일 오래된 순 공연 삭제 시도 상한. 자식 행 수와 구분하며 1~1000 허용 |
 | `-CollectLimit` | 10 | 공연 상세 동기화 시도 수 |
 | `-OcrLimit` | 3 | 새 OCR 시도 수. 다운로드/판독 실패도 시도에 포함 |
 | `-AnalysisLimit` | 10 | 새 분석을 처리할 유효 OCR 결과 수 |

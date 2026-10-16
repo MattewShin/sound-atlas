@@ -4,6 +4,7 @@ param(
   [ValidatePattern('^[A-Za-z0-9 _.\-]{1,100}$')][string]$TaskName = 'ClassicAtlas-LocalPipeline',
   [ValidatePattern('^([01][0-9]|2[0-3]):[0-5][0-9]$')][string]$Time = '09:00',
   [string]$NodePath,
+  [ValidateRange(1,1000)][int]$CleanupLimit = 100,
   [ValidateRange(1,1000)][int]$CollectLimit = 10,
   [ValidateRange(1,1000)][int]$OcrLimit = 3,
   [ValidateRange(1,1000)][int]$AnalysisLimit = 10,
@@ -32,7 +33,7 @@ if (-not (Test-Path -LiteralPath $NodePath -PathType Leaf)) { throw 'Node execut
 $entry = Join-Path $projectRoot 'scripts\Invoke-ConcertPipeline.ps1'
 $powershellExe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
 if ($entry.Contains('"') -or $NodePath.Contains('"')) { throw 'Unsupported quotation mark in path.' }
-$arguments = "-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -File `"$entry`" -Mode run -NodePath `"$NodePath`" -CollectLimit $CollectLimit -OcrLimit $OcrLimit -AnalysisLimit $AnalysisLimit -ListPages $ListPages -DbPages $DbPages -ImageChecks $ImageChecks -MaxSeconds $MaxSeconds -RecheckHours $RecheckHours"
+$arguments = "-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -File `"$entry`" -Mode run -NodePath `"$NodePath`" -CollectLimit $CollectLimit -OcrLimit $OcrLimit -AnalysisLimit $AnalysisLimit -ListPages $ListPages -DbPages $DbPages -ImageChecks $ImageChecks -MaxSeconds $MaxSeconds -RecheckHours $RecheckHours -CleanupLimit $CleanupLimit"
 $zone = Get-TimeZone
 $userName = [Security.Principal.WindowsIdentity]::GetCurrent().Name
 if ($Action -eq 'Preview') {

@@ -7,13 +7,14 @@ import { runEasyOcrBatch } from './easyOcrBatch.mjs'
 import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
 import { safeCode, fatalCode, koreanTime, pipelineError } from './pipelineConfig.mjs'
 import { analysisSelection, ocrSelection, retryDue, failedItem, completedItem, interleave, latestAttempt } from './pipelineSelection.mjs'
+import { cleanupPlanForReport, emptyCleanupCounts, pruneExpiredPipelineState } from './pipelineCleanup.mjs'
 
 const stage = () => ({status:'NOT_RUN',succeeded:0,failed:0,reused:0,skipped:0,limit_reached:false,remaining:null})
 export const runConcertPipeline = async ({runtime,local,state,options,plan=false,signal,now=Date.now,onProgress=()=>{}}) => {
-  const started=now(),conditions=collectionConditions(started)
+  const started=now();let conditions=collectionConditions(started)
   const report={run_id:randomUUID(),mode:plan?'PLAN':'RUN',started_at:koreanTime(started),finished_at:null,duration_ms:0,
     status:'RUNNING',exit_code:0,conditions,limits:options,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH,
-    stages:{preflight:stage(),collection:stage(),ocr:stage(),analysis:stage()},errors:[],review:{new_candidates:0,new_linked_candidates:0,priority:[]},
+    stages:{preflight:stage(),cleanup:stage(),collection:stage(),ocr:stage(),analysis:stage()},errors:[],review:{new_candidates:0,new_linked_candidates:0,priority:[]},
     coverage:'LIMITED_SAMPLE',retry:'Rerun the same run command after retry_at; use plan and latest to inspect.'}
   const persist=async()=>{if(!plan){await local.saveState(state);await local.saveReport(report)}}
   const checkpoint=async()=>{await persist();onProgress({event:'checkpoint',stages:report.stages})}
@@ -38,6 +39,9 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
     snapshot=await runtime.repository.snapshot(conditions,options.dbPages);check()
     report.stages.preflight={...stage(),status:'SUCCEEDED',succeeded:1};preflightDone=true
     if(plan){
+      const cleanup=await runtime.repository.cleanupPlan(options.cleanupLimit,conditions.from,options.dbPages);check()
+      report.stages.cleanup={...stage(),status:'PLANNED',plan:cleanupPlanForReport(cleanup,options.cleanupLimit),remaining:cleanup.total,
+        limit_reached:cleanup.total>cleanup.targets.length}
       const ocr=ocrSelection(snapshot,state,now(),options.recheckHours),analysis=analysisSelection(snapshot,state,now())
       report.plan={known_concerts:snapshot.concerts.length,active_detail_images:snapshot.images.length,
         collection_api_candidates:'UNKNOWN_UNTIL_KOPIS_LIST',new_or_changed_images_after_collection:'UNKNOWN',
@@ -49,7 +53,42 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       report.status='PLAN_READY'
     } else {
       await persist()
-      // A real list request validates KOPIS authentication before any DB writes.
+      const cleanup=report.stages.cleanup;cleanup.status='RUNNING';cleanup.deleted_counts=emptyCleanupCounts();cleanup.deleted=[]
+      cleanup.attempted=0;cleanup.remaining='UNKNOWN'
+      const deletedTargets=[]
+      try{
+        const selection=await runtime.repository.cleanupPlan(options.cleanupLimit,conditions.from,options.dbPages);check()
+        if(selection.migration_required)throw pipelineError('CLEANUP_MIGRATION_REQUIRED')
+        cleanup.reference_date=selection.reference_date;cleanup.total_before=selection.total
+        cleanup.excluded_invalid_dates=selection.excluded_invalid_dates;cleanup.limit_reached=selection.total>selection.targets.length
+        for(const target of selection.targets){
+          check();cleanup.attempted++
+          try{
+            const result=await runtime.repository.cleanupDelete(target.id,randomUUID(),report.run_id)
+            if(result.status==='DELETED'){
+              cleanup.succeeded++;deletedTargets.push(target)
+              for(const table of Object.keys(cleanup.deleted_counts))cleanup.deleted_counts[table]+=result.counts[table]
+              cleanup.deleted.push({kopis_id:result.kopis_id,deleted_at:result.deleted_at,counts:result.counts})
+            }else if(['NOT_FOUND','NOT_EXPIRED'].includes(result.status)){
+              cleanup.skipped++
+              if(result.status==='NOT_EXPIRED'&&result.start_date&&result.end_date)
+                state.collection.dates[target.kopis_id]={from:result.start_date,to:result.end_date}
+            }else throw pipelineError(result.status==='BLOCKED_SHARED_DEPENDENCY'?'CLEANUP_SHARED_DEPENDENCY':
+              result.status==='BLOCKED_UNEXPECTED_FOREIGN_KEY'?'CLEANUP_UNEXPECTED_FOREIGN_KEY':'CLEANUP_RESPONSE_INVALID')
+          }catch(e){cleanup.failed++;problem('cleanup',e,target.kopis_id)}
+          await checkpoint()
+        }
+        const after=await runtime.repository.cleanupPlan(1,conditions.from,options.dbPages);check()
+        cleanup.remaining=after.total
+      }catch(e){if(fatalCode(safeCode(e)))throw e;cleanup.failed++;problem('cleanup',e);if(safeCode(e)==='BATCH_INTERRUPTED')throw e}
+      // Keep refreshed legitimate dates, and remove only expired local entries.
+      for(const concert of snapshot.concerts)if(state.collection.dates[concert.kopis_id])
+        state.collection.dates[concert.kopis_id]={from:concert.start_date,to:concert.end_date}
+      conditions=collectionConditions(now());report.conditions=conditions
+      cleanup.local_state=pruneExpiredPipelineState(state,conditions.from,deletedTargets)
+      cleanup.status=cleanup.failed?'PARTIAL':'SUCCEEDED';await persist();check()
+      const removedInRun=new Set(deletedTargets.map(c=>c.kopis_id))
+      // Collection authentication is independent of successful cleanup.
       const c=report.stages.collection;c.status='RUNNING';c.pages=0;c.attempted=0;c.listing_cycle_completed=false
       let first,firstError
       if(!retryDue(state,'listing',now())){firstError=pipelineError('LISTING_RETRY_WAIT');c.failed++;problem('collection',firstError,undefined,'listing')}
@@ -74,7 +113,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
         if(rows.length===100 && signature===cursor.lastSignature){failedItem(state,'listing',now());c.failed++;problem('collection',pipelineError('PAGINATION_STALLED'),undefined,'listing');break}
         for(const row of rows){
           try {const x=normalizeKopisConcert(row,new Date(now()).toISOString());if(!/^PF\d{1,12}$/.test(x.kopisId))throw pipelineError('INVALID_ID')
-            if(x.dateFrom<=conditions.to&&x.dateTo>=conditions.from){cursor.pending.push(x.kopisId);cursor.dates[x.kopisId]={from:x.dateFrom,to:x.dateTo}}
+            if(!removedInRun.has(x.kopisId)&&x.dateFrom<=conditions.to&&x.dateTo>=collectionConditions(now()).from){cursor.pending.push(x.kopisId);cursor.dates[x.kopisId]={from:x.dateFrom,to:x.dateTo}}
           }catch(e){c.failed++;problem('collection',e)}
         }
         if(rows.length<100){cursor.state++;cursor.page=1;cursor.lastSignature=null;if(cursor.state>=conditions.states.length){cursor.state=0;cursor.cycle++;completedCycle=true}}
@@ -85,13 +124,13 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       const due=snapshot.concerts.filter(x=>Date.parse(x.synced_at)<=cutoff&&retryDue(state,'collect:'+x.kopis_id,now()))
         .sort((a,b)=>a.synced_at.localeCompare(b.synced_at)||a.kopis_id.localeCompare(b.kopis_id)).map(x=>x.kopis_id)
       const discovery=state.collection.pending.filter(id=>retryDue(state,'collect:'+id,now()))
-      const selection=[...new Set(interleave(discovery,due,state.lanes.collect))]
+      const selection=[...new Set(interleave(discovery,due,state.lanes.collect))].filter(id=>!removedInRun.has(id))
       c.cooldown=state.collection.pending.length-discovery.length
       for(const id of selection.slice(0,options.collectLimit)){
         check();c.attempted++;const key='collect:'+id
         try{
           const row=await runtime.client.detail(id);check()
-          const normalized=normalizeCollectionDetail(row,id,conditions,new Date(now()).toISOString())
+          const normalized=normalizeCollectionDetail(row,id,{...conditions,from:collectionConditions(now()).from},new Date(now()).toISOString())
           await runtime.repository.collector.save(normalized);c.succeeded++;completedItem(state,key,now())
           state.collection.pending=state.collection.pending.filter(x=>x!==id)
         }catch(e){c.failed++;failedItem(state,key,now());if(/^OUT_OF_SCOPE_/.test(safeCode(e)))state.collection.pending=state.collection.pending.filter(x=>x!==id);problem('collection',e,id)}
@@ -108,7 +147,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       o.skipped=selected.cooldown.length+selected.recent.length
       for(const image of selected.ready){
         if(o.checked>=options.imageChecks||o.attempted>=options.ocrLimit)break
-        check();o.checked++
+        check();o.checked++;(state.owners||={})[image.key]=image.concerts.kopis_id
         const repository={...runtime.repository.ocr,async *candidates(){yield image}}
         const result=await runEasyOcrBatch({repository,limit:1,signal,now,download:runtime.download,
           worker:{recognize:(...args)=>runtime.worker.recognize(...args),close(){}},
@@ -136,7 +175,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       const a=report.stages.analysis;a.status='RUNNING'
       const analyses=analysisSelection(snapshot,state,now());a.reused=analyses.reused.length;a.skipped=analyses.blocked.length+analyses.cooldown.length
       for(const target of analyses.ready.slice(0,options.analysisLimit)){
-        check()
+        check();(state.owners||={})[target.key]=target.concert.kopis_id
         try{
           const ocr=await runtime.repository.ocrResult(target.ocr.id)
           const analysis=analyzeStoredProgram({...target,ocr})
@@ -169,7 +208,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
         date_from:concert.start_date,date_to:concert.end_date,track_id:x.track_id,track:getTrackTarget(x.track_id)?.title||'Registered track',show:`npm run program:analyze -- show ${x.id}`})
     }
     report.review.priority=report.review.priority.slice(0,20)
-    report.coverage={kopis_listing_cycle_completed:report.stages.collection.listing_cycle_completed||false,
+    report.coverage={cleanup_remaining:report.stages.cleanup.remaining,kopis_listing_cycle_completed:report.stages.collection.listing_cycle_completed||false,
       limited_by_caps:Object.values(report.stages).some(s=>s.limit_reached||s.page_limit_reached),
       unseen_kopis_or_changed_remote_images:'UNKNOWN',known_ocr_remaining:report.stages.ocr.remaining,known_analysis_remaining:report.stages.analysis.remaining}
     report.retry_targets=Object.entries(state.retries).map(([key,value])=>({key,failures:value.failures,retry_at:koreanTime(value.until)}))

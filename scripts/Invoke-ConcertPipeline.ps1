@@ -2,6 +2,7 @@
 param(
   [ValidateSet('plan','run','latest','help')][string]$Mode = 'plan',
   [string]$NodePath,
+  [ValidateRange(1,1000)][int]$CleanupLimit = 100,
   [ValidateRange(1,1000)][int]$CollectLimit = 10,
   [ValidateRange(1,1000)][int]$OcrLimit = 3,
   [ValidateRange(1,1000)][int]$AnalysisLimit = 10,
@@ -24,7 +25,7 @@ try {
   try {
     $nodeArguments = @("--env-file-if-exists=$envFile", $entry, $Mode)
     if ($Mode -in @('run','plan')) {
-      $nodeArguments += @('--collect-limit', "$CollectLimit", '--ocr-limit', "$OcrLimit", '--analysis-limit', "$AnalysisLimit", '--list-pages', "$ListPages", '--db-pages', "$DbPages", '--image-checks', "$ImageChecks", '--max-seconds', "$MaxSeconds", '--recheck-hours', "$RecheckHours")
+      $nodeArguments += @('--collect-limit', "$CollectLimit", '--ocr-limit', "$OcrLimit", '--analysis-limit', "$AnalysisLimit", '--list-pages', "$ListPages", '--db-pages', "$DbPages", '--image-checks', "$ImageChecks", '--max-seconds', "$MaxSeconds", '--recheck-hours', "$RecheckHours", '--cleanup-limit', "$CleanupLimit")
     }
     & $NodePath @nodeArguments
     $pipelineExit = $LASTEXITCODE

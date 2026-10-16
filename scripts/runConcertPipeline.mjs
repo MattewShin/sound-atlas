@@ -19,7 +19,7 @@ process.once('SIGINT',interrupt);process.once('SIGTERM',interrupt)
 try {
   const {command,options}=parsePipelineArgs(process.argv.slice(2))
   selectedOptions=options
-  if(command==='help') console.log('npm run pipeline -- plan|run|latest [--collect-limit 10 --ocr-limit 3 --analysis-limit 10 --list-pages 4 --db-pages 20 --image-checks 10 --max-seconds 900 --recheck-hours 24]\nplan: DB/local reads only; unlike OCR dry-run, no OCR or collection. Exit: 0 success, 1 partial/interrupted, 2 fatal, 3 duplicate skipped.')
+  if(command==='help') console.log('npm run pipeline -- plan|run|latest [--cleanup-limit 100 --collect-limit 10 --ocr-limit 3 --analysis-limit 10 --list-pages 4 --db-pages 20 --image-checks 10 --max-seconds 900 --recheck-hours 24]\nplan: DB/local reads only; unlike OCR dry-run, no OCR or collection. run: permanently deletes expired concerts after preflight. Exit: 0 success, 1 partial/interrupted, 2 fatal, 3 duplicate skipped.')
   else if(command==='latest') console.log(serializePipelineReport(await createPipelineLocal(directory,'',process.env).latest()))
   else {
     if(command==='run'){
@@ -33,7 +33,7 @@ try {
       local=createPipelineLocal(directory,runtime.namespace,process.env)
       const state=await local.readState()
       report=await runConcertPipeline({runtime,local,state,options,plan:command==='plan',signal:controller.signal,
-        onProgress:({stages})=>console.log(JSON.stringify({event:'progress',...Object.fromEntries(['collection','ocr','analysis'].map(k=>[k,{succeeded:stages[k].succeeded,failed:stages[k].failed,reused:stages[k].reused}]))}))})
+        onProgress:({stages})=>console.log(JSON.stringify({event:'progress',...Object.fromEntries(['cleanup','collection','ocr','analysis'].map(k=>[k,{succeeded:stages[k].succeeded,failed:stages[k].failed,reused:stages[k].reused}]))}))})
       console.log(serializePipelineReport(report));process.exitCode=report.exit_code
     }
   }
