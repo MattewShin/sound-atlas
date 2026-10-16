@@ -357,7 +357,8 @@ function App({ isLoggedIn = false } = {}) {
   const savedTracks = useMemo(() => tracks.filter((track) => trackReactions[track.id]?.listenAgain === true).sort((a, b) => (Date.parse(trackReactions[b.id]?.updatedAt) || 0) - (Date.parse(trackReactions[a.id]?.updatedAt) || 0)), [trackReactions])
   const isTrackSaved = (id) => trackReactions[id]?.listenAgain === true
   const concertOptions = { mode: 'keyword', selectedKeys: [], savedTrackIds: [], now: concertNow, region: concertRegion }
-  const allConcerts = mergeSearchConcerts(concertSearch.search.data?.concerts || [], concerts).filter(({ kopisId }) => kopisId)
+  const dbConcertPreview = concertSearch.search.data?.backend === 'supabase'
+  const allConcerts = (dbConcertPreview ? concertSearch.search.data.concerts : mergeSearchConcerts(concertSearch.search.data?.concerts || [], concerts)).filter(({ kopisId }) => kopisId)
   const searchedKopisIds = new Set((concertSearch.search.data?.concerts || []).map(({ kopisId }) => kopisId))
   const searchedIds = new Set((concertSearch.search.data?.concerts || []).map(({ id }) => id))
   const searchedConcertResults = getConcertRecommendations(tracks, { ...concertOptions, region: concertSearch.search.data?.query.region }, allConcerts.filter(({ id, kopisId }) => searchedIds.has(id) || (kopisId && searchedKopisIds.has(kopisId))))
@@ -551,7 +552,7 @@ function App({ isLoggedIn = false } = {}) {
       : <main className="weekly-screen"><h1>지금은 읽을 수 없는 소개예요</h1><button className="weekly-link" type="button" onClick={returnToExplore}>음악 탐색으로</button></main>
       : activeView === 'weekly-archive' ? <WeeklyArchiveScreen entries={weeklyState.archive} onOpen={(id) => openWeeklyStory(id, 'archive')} onBack={returnToExplore} />
       : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetail
-      ? <ConcertDetailScreen result={concertDetail} now={concertNow} onBack={showConcerts} onOpenTrack={openTrackDetail} onOpenShort={openHighlightShort} details={trackDetails} isTrackSaved={isTrackSaved} onLoadProgram={concertSearch.loadProgram} programRequest={concertSearch.programRequests[detailConcert.kopisId]} />
+      ? <ConcertDetailScreen result={concertDetail} now={concertNow} onBack={showConcerts} onOpenTrack={openTrackDetail} onOpenShort={openHighlightShort} details={trackDetails} isTrackSaved={isTrackSaved} onLoadProgram={dbConcertPreview ? undefined : concertSearch.loadProgram} programRequest={concertSearch.programRequests[detailConcert.kopisId]} />
       : <ConcertScreen searchResults={searchedConcertResults} now={concertNow} region={concertRegion} onSelectRegion={changeConcertRegion} onGoExplore={returnToExplore} onOpenConcert={openConcert} tracks={tracks} savedTracks={savedTracks} onSelectTrack={findTrackConcert} searchControls={{ period: concertPeriod, onChangePeriod: changeConcertPeriod, onSearch: concertSearch.runSearch, search: concertSearch.search, connection: concertSearch.connection, targetTrack: concertTargetTrack, onClearTarget: clearConcertTarget, onCheckMore: concertSearch.checkNext, onStop: concertSearch.stop }} />
       : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} onFindTrackConcert={findTrackConcert} />}
     <nav className="bottom-nav" aria-label="주요 메뉴">

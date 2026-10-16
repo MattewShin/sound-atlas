@@ -1,0 +1,806 @@
+{
+  "before_checked_at": "2026-10-15T06:35:12.410Z",
+  "after_checked_at": "2026-10-15T06:46:33.104Z",
+  "final_verified_at": "2026-10-15T06:53:50.074Z",
+  "final_v2_result_identical": true,
+  "before_matcher_version": "stored-program-1",
+  "after_matcher_version": "stored-program-2",
+  "remote_write_calls": 0,
+  "scope": "Stored OCR reads only; no collection, downloads or OCR recognition.",
+  "concerts": [
+    {
+      "kopis_id": "PF300258",
+      "before": {
+        "counts": {
+          "total": 6,
+          "linked": 0,
+          "MATCHED": 0,
+          "UNREGISTERED": 5,
+          "AMBIGUOUS": 1,
+          "CONFLICT": 0
+        },
+        "sections": [
+          {
+            "ocr_result_id": "6f40d651-d958-4d09-92ec-1646f7950cc6",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 0,
+                "end": 766,
+                "preview": "어떤 경험올 하나요?"
+              }
+            ]
+          },
+          {
+            "ocr_result_id": "88eaee9f-ceb7-48ca-b46f-e889c44d3fb8",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "UNCERTAIN",
+                "reason": "EXPLICIT_PROGRAM_HEADING",
+                "start": 0,
+                "end": 298,
+                "preview": "PROGRAM",
+                "context_reasons": [
+                  "MULTIPLE_DATES_OR_SERIES_SCOPE"
+                ]
+              },
+              {
+                "index": 1,
+                "classification": "NON_PROGRAM",
+                "reason": "PROFILE_HISTORY_OR_ADMIN",
+                "start": 299,
+                "end": 1101,
+                "preview": "ARTIST"
+              }
+            ]
+          },
+          {
+            "ocr_result_id": "dff66596-50ea-46f6-9d90-a4e062e56a9a",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 0,
+                "end": 227,
+                "preview": "2026 ARKO 공연예술장작주체 지원사업 선정"
+              },
+              {
+                "index": 1,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 228,
+                "end": 317,
+                "preview": "공연중계"
+              },
+              {
+                "index": 2,
+                "classification": "NON_PROGRAM",
+                "reason": "PROFILE_HISTORY_OR_ADMIN",
+                "start": 318,
+                "end": 1288,
+                "preview": "문의"
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "identity": {
+              "original": "D Pujol (7957-\nDon Juan 돈 후안\nI.\nII. Septiembre 9월\nIII. Rojo y Negro 붉음과 검정",
+              "normalized": "D Pujol (7957-\nDon Juan 돈 후안\nI.\nII. Septiembre 9월\nIII. Rojo y Negro 붉음과 검정",
+              "composers": [],
+              "type": null,
+              "title": "Don Juan 돈 후안",
+              "catalogues": [],
+              "work_numbers": [],
+              "opus_part": null,
+              "opus_following_numbers": [],
+              "keys": [],
+              "movement_numbers": [
+                1,
+                2,
+                3
+              ],
+              "movement_names": [],
+              "arrangement_or_excerpt": false,
+              "reasons": [],
+              "composer": "D Pujol"
+            },
+            "track_id": null,
+            "work_id": null,
+            "relation": "AMBIGUOUS",
+            "review_status": "REVIEW_REQUIRED",
+            "review_reasons": [
+              "COMPOSER_OUTSIDE_CATALOG",
+              "WORK_NOT_REGISTERED",
+              "MULTIPLE_DATES_OR_SERIES_SCOPE",
+              "UNCERTAIN_PROGRAM_SECTION"
+            ],
+            "evidence": [
+              {
+                "role": "COMPOSER",
+                "quote": "D Pujol (7957-",
+                "start": 219,
+                "end": 233,
+                "line_index": 17,
+                "bbox": [
+                  [
+                    247,
+                    921
+                  ],
+                  [
+                    451,
+                    921
+                  ],
+                  [
+                    451,
+                    957
+                  ],
+                  [
+                    247,
+                    957
+                  ]
+                ],
+                "confidence": 0.7593153798391711
+              },
+              {
+                "role": "WORK",
+                "quote": "Don Juan 돈 후안",
+                "start": 239,
+                "end": 252,
+                "line_index": 20,
+                "bbox": [
+                  [
+                    241,
+                    971
+                  ],
+                  [
+                    473,
+                    971
+                  ],
+                  [
+                    473,
+                    1007
+                  ],
+                  [
+                    241,
+                    1007
+                  ]
+                ],
+                "confidence": 0.8569572904171361
+              },
+              {
+                "role": "SCOPE",
+                "quote": "I.",
+                "start": 253,
+                "end": 255,
+                "line_index": 21,
+                "bbox": [
+                  [
+                    209,
+                    975
+                  ],
+                  [
+                    229,
+                    975
+                  ],
+                  [
+                    229,
+                    1001
+                  ],
+                  [
+                    209,
+                    1001
+                  ]
+                ],
+                "confidence": 0.13548513612279672
+              },
+              {
+                "role": "SCOPE",
+                "quote": "II. Septiembre 9월",
+                "start": 256,
+                "end": 273,
+                "line_index": 22,
+                "bbox": [
+                  [
+                    203,
+                    1019
+                  ],
+                  [
+                    451,
+                    1019
+                  ],
+                  [
+                    451,
+                    1057
+                  ],
+                  [
+                    203,
+                    1057
+                  ]
+                ],
+                "confidence": 0.5282633211286454
+              },
+              {
+                "role": "SCOPE",
+                "quote": "III. Rojo y Negro 붉음과 검정",
+                "start": 274,
+                "end": 298,
+                "line_index": 23,
+                "bbox": [
+                  [
+                    199,
+                    1065
+                  ],
+                  [
+                    575,
+                    1065
+                  ],
+                  [
+                    575,
+                    1109
+                  ],
+                  [
+                    199,
+                    1109
+                  ]
+                ],
+                "confidence": 0.6966864999120935
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "counts": {
+          "total": 8,
+          "linked": 0,
+          "MATCHED": 0,
+          "UNREGISTERED": 4,
+          "AMBIGUOUS": 4,
+          "CONFLICT": 0
+        },
+        "sections": [
+          {
+            "ocr_result_id": "6f40d651-d958-4d09-92ec-1646f7950cc6",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 0,
+                "end": 766,
+                "preview": "어떤 경험올 하나요?"
+              }
+            ]
+          },
+          {
+            "ocr_result_id": "88eaee9f-ceb7-48ca-b46f-e889c44d3fb8",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "UNCERTAIN",
+                "reason": "EXPLICIT_PROGRAM_HEADING",
+                "start": 0,
+                "end": 298,
+                "preview": "PROGRAM",
+                "context_reasons": [
+                  "MULTIPLE_DATES_OR_SERIES_SCOPE"
+                ]
+              },
+              {
+                "index": 1,
+                "classification": "NON_PROGRAM",
+                "reason": "PROFILE_HISTORY_OR_ADMIN",
+                "start": 299,
+                "end": 1101,
+                "preview": "ARTIST"
+              }
+            ]
+          },
+          {
+            "ocr_result_id": "dff66596-50ea-46f6-9d90-a4e062e56a9a",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 0,
+                "end": 227,
+                "preview": "2026 ARKO 공연예술장작주체 지원사업 선정"
+              },
+              {
+                "index": 1,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 228,
+                "end": 317,
+                "preview": "공연중계"
+              },
+              {
+                "index": 2,
+                "classification": "NON_PROGRAM",
+                "reason": "PROFILE_HISTORY_OR_ADMIN",
+                "start": 318,
+                "end": 1288,
+                "preview": "문의"
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "identity": {
+              "original": "D Pujol (7957-\nDon Juan 돈 후안\nI.",
+              "normalized": "D Pujol (7957-\nDon Juan 돈 후안\nI.",
+              "composers": [],
+              "type": null,
+              "title": "Don Juan 돈 후안",
+              "catalogues": [],
+              "work_numbers": [],
+              "opus_part": null,
+              "opus_following_numbers": [],
+              "keys": [],
+              "movement_numbers": [],
+              "movement_names": [],
+              "arrangement_or_excerpt": false,
+              "reasons": [
+                "PARENT_WORK_TITLE_UNCONFIRMED",
+                "UNCERTAIN_NUMBERED_ITEM_RELATION"
+              ],
+              "parent_title": null,
+              "item_relation": "UNCERTAIN",
+              "group_key": "0:left:239",
+              "extracted_numbers": [
+                {
+                  "raw": "I",
+                  "notation": "ROMAN",
+                  "value": 1,
+                  "role": "UNRESOLVED",
+                  "association": "BBOX_SAME_ROW",
+                  "line_index": 21
+                }
+              ],
+              "unassigned_numbers": [],
+              "composer": "D Pujol"
+            },
+            "track_id": null,
+            "work_id": null,
+            "relation": "AMBIGUOUS",
+            "review_status": "REVIEW_REQUIRED",
+            "review_reasons": [
+              "PARENT_WORK_TITLE_UNCONFIRMED",
+              "UNCERTAIN_NUMBERED_ITEM_RELATION",
+              "COMPOSER_OUTSIDE_CATALOG",
+              "MULTIPLE_DATES_OR_SERIES_SCOPE",
+              "UNCERTAIN_PROGRAM_SECTION"
+            ],
+            "evidence": [
+              {
+                "role": "COMPOSER",
+                "quote": "D Pujol (7957-",
+                "start": 219,
+                "end": 233,
+                "line_index": 17,
+                "bbox": [
+                  [
+                    247,
+                    921
+                  ],
+                  [
+                    451,
+                    921
+                  ],
+                  [
+                    451,
+                    957
+                  ],
+                  [
+                    247,
+                    957
+                  ]
+                ],
+                "confidence": 0.7593153798391711
+              },
+              {
+                "role": "WORK",
+                "quote": "Don Juan 돈 후안",
+                "start": 239,
+                "end": 252,
+                "line_index": 20,
+                "bbox": [
+                  [
+                    241,
+                    971
+                  ],
+                  [
+                    473,
+                    971
+                  ],
+                  [
+                    473,
+                    1007
+                  ],
+                  [
+                    241,
+                    1007
+                  ]
+                ],
+                "confidence": 0.8569572904171361
+              },
+              {
+                "role": "NUMBER",
+                "quote": "I.",
+                "start": 253,
+                "end": 255,
+                "line_index": 21,
+                "bbox": [
+                  [
+                    209,
+                    975
+                  ],
+                  [
+                    229,
+                    975
+                  ],
+                  [
+                    229,
+                    1001
+                  ],
+                  [
+                    209,
+                    1001
+                  ]
+                ],
+                "confidence": 0.13548513612279672
+              }
+            ]
+          },
+          {
+            "identity": {
+              "original": "D Pujol (7957-\nII. Septiembre 9월",
+              "normalized": "D Pujol (7957-\nII. Septiembre 9월",
+              "composers": [],
+              "type": null,
+              "title": "Septiembre 9월",
+              "catalogues": [],
+              "work_numbers": [],
+              "opus_part": null,
+              "opus_following_numbers": [],
+              "keys": [],
+              "movement_numbers": [],
+              "movement_names": [],
+              "arrangement_or_excerpt": false,
+              "reasons": [
+                "PARENT_WORK_TITLE_UNCONFIRMED",
+                "UNCERTAIN_NUMBERED_ITEM_RELATION"
+              ],
+              "parent_title": null,
+              "item_relation": "UNCERTAIN",
+              "group_key": "0:left:239",
+              "extracted_numbers": [
+                {
+                  "raw": "II",
+                  "notation": "ROMAN",
+                  "value": 2,
+                  "role": "UNRESOLVED",
+                  "association": "INLINE",
+                  "line_index": 22
+                }
+              ],
+              "unassigned_numbers": [],
+              "composer": "D Pujol"
+            },
+            "track_id": null,
+            "work_id": null,
+            "relation": "AMBIGUOUS",
+            "review_status": "REVIEW_REQUIRED",
+            "review_reasons": [
+              "PARENT_WORK_TITLE_UNCONFIRMED",
+              "UNCERTAIN_NUMBERED_ITEM_RELATION",
+              "COMPOSER_OUTSIDE_CATALOG",
+              "MULTIPLE_DATES_OR_SERIES_SCOPE",
+              "UNCERTAIN_PROGRAM_SECTION"
+            ],
+            "evidence": [
+              {
+                "role": "COMPOSER",
+                "quote": "D Pujol (7957-",
+                "start": 219,
+                "end": 233,
+                "line_index": 17,
+                "bbox": [
+                  [
+                    247,
+                    921
+                  ],
+                  [
+                    451,
+                    921
+                  ],
+                  [
+                    451,
+                    957
+                  ],
+                  [
+                    247,
+                    957
+                  ]
+                ],
+                "confidence": 0.7593153798391711
+              },
+              {
+                "role": "WORK",
+                "quote": "II. Septiembre 9월",
+                "start": 256,
+                "end": 273,
+                "line_index": 22,
+                "bbox": [
+                  [
+                    203,
+                    1019
+                  ],
+                  [
+                    451,
+                    1019
+                  ],
+                  [
+                    451,
+                    1057
+                  ],
+                  [
+                    203,
+                    1057
+                  ]
+                ],
+                "confidence": 0.5282633211286454
+              }
+            ]
+          },
+          {
+            "identity": {
+              "original": "D Pujol (7957-\nIII. Rojo y Negro 붉음과 검정",
+              "normalized": "D Pujol (7957-\nIII. Rojo y Negro 붉음과 검정",
+              "composers": [],
+              "type": null,
+              "title": "Rojo y Negro 붉음과 검정",
+              "catalogues": [],
+              "work_numbers": [],
+              "opus_part": null,
+              "opus_following_numbers": [],
+              "keys": [],
+              "movement_numbers": [],
+              "movement_names": [],
+              "arrangement_or_excerpt": false,
+              "reasons": [
+                "PARENT_WORK_TITLE_UNCONFIRMED",
+                "UNCERTAIN_NUMBERED_ITEM_RELATION"
+              ],
+              "parent_title": null,
+              "item_relation": "UNCERTAIN",
+              "group_key": "0:left:239",
+              "extracted_numbers": [
+                {
+                  "raw": "III",
+                  "notation": "ROMAN",
+                  "value": 3,
+                  "role": "UNRESOLVED",
+                  "association": "INLINE",
+                  "line_index": 23
+                }
+              ],
+              "unassigned_numbers": [],
+              "composer": "D Pujol"
+            },
+            "track_id": null,
+            "work_id": null,
+            "relation": "AMBIGUOUS",
+            "review_status": "REVIEW_REQUIRED",
+            "review_reasons": [
+              "PARENT_WORK_TITLE_UNCONFIRMED",
+              "UNCERTAIN_NUMBERED_ITEM_RELATION",
+              "COMPOSER_OUTSIDE_CATALOG",
+              "MULTIPLE_DATES_OR_SERIES_SCOPE",
+              "UNCERTAIN_PROGRAM_SECTION"
+            ],
+            "evidence": [
+              {
+                "role": "COMPOSER",
+                "quote": "D Pujol (7957-",
+                "start": 219,
+                "end": 233,
+                "line_index": 17,
+                "bbox": [
+                  [
+                    247,
+                    921
+                  ],
+                  [
+                    451,
+                    921
+                  ],
+                  [
+                    451,
+                    957
+                  ],
+                  [
+                    247,
+                    957
+                  ]
+                ],
+                "confidence": 0.7593153798391711
+              },
+              {
+                "role": "WORK",
+                "quote": "III. Rojo y Negro 붉음과 검정",
+                "start": 274,
+                "end": 298,
+                "line_index": 23,
+                "bbox": [
+                  [
+                    199,
+                    1065
+                  ],
+                  [
+                    575,
+                    1065
+                  ],
+                  [
+                    575,
+                    1109
+                  ],
+                  [
+                    199,
+                    1109
+                  ]
+                ],
+                "confidence": 0.6966864999120935
+              }
+            ]
+          }
+        ]
+      },
+      "unchanged_other_candidates": true
+    },
+    {
+      "kopis_id": "PF296289",
+      "before": {
+        "counts": {
+          "total": 5,
+          "linked": 0,
+          "MATCHED": 0,
+          "UNREGISTERED": 3,
+          "AMBIGUOUS": 2,
+          "CONFLICT": 0
+        },
+        "sections": [
+          {
+            "ocr_result_id": "c365d67d-9acf-40a0-8a90-0a62039e200e",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "UNCERTAIN",
+                "reason": "EXPLICIT_PROGRAM_HEADING",
+                "start": 0,
+                "end": 557,
+                "preview": "PROGRAM",
+                "context_reasons": [
+                  "MULTIPLE_DATES_OR_SERIES_SCOPE"
+                ]
+              },
+              {
+                "index": 1,
+                "classification": "NON_PROGRAM",
+                "reason": "PROFILE_HISTORY_OR_ADMIN",
+                "start": 558,
+                "end": 1962,
+                "preview": "명국 예후디 메뉴한 염제음악학교 입학(8세) , 퍼실 음악학교 재학 중 도미, 줄리어드 음대 최연소 입학(16세) , 학사 및 석사 취득"
+              }
+            ]
+          },
+          {
+            "ocr_result_id": "e7856454-7205-4340-a54b-0000f33da824",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 0,
+                "end": 4,
+                "preview": "1AK'"
+              },
+              {
+                "index": 1,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 5,
+                "end": 209,
+                "preview": "MUsIC"
+              },
+              {
+                "index": 2,
+                "classification": "NON_PROGRAM",
+                "reason": "PROFILE_HISTORY_OR_ADMIN",
+                "start": 210,
+                "end": 288,
+                "preview": "문의 02 458 4840 | 네이버예약 일반 2만원 학생"
+              }
+            ]
+          }
+        ],
+        "items": []
+      },
+      "after": {
+        "counts": {
+          "total": 5,
+          "linked": 0,
+          "MATCHED": 0,
+          "UNREGISTERED": 3,
+          "AMBIGUOUS": 2,
+          "CONFLICT": 0
+        },
+        "sections": [
+          {
+            "ocr_result_id": "c365d67d-9acf-40a0-8a90-0a62039e200e",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "UNCERTAIN",
+                "reason": "EXPLICIT_PROGRAM_HEADING",
+                "start": 0,
+                "end": 557,
+                "preview": "PROGRAM",
+                "context_reasons": [
+                  "MULTIPLE_DATES_OR_SERIES_SCOPE"
+                ]
+              },
+              {
+                "index": 1,
+                "classification": "NON_PROGRAM",
+                "reason": "PROFILE_HISTORY_OR_ADMIN",
+                "start": 558,
+                "end": 1962,
+                "preview": "명국 예후디 메뉴한 염제음악학교 입학(8세) , 퍼실 음악학교 재학 중 도미, 줄리어드 음대 최연소 입학(16세) , 학사 및 석사 취득"
+              }
+            ]
+          },
+          {
+            "ocr_result_id": "e7856454-7205-4340-a54b-0000f33da824",
+            "sections": [
+              {
+                "index": 0,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 0,
+                "end": 4,
+                "preview": "1AK'"
+              },
+              {
+                "index": 1,
+                "classification": "NON_PROGRAM",
+                "reason": "NO_IDENTIFIABLE_WORK_LIST",
+                "start": 5,
+                "end": 209,
+                "preview": "MUsIC"
+              },
+              {
+                "index": 2,
+                "classification": "NON_PROGRAM",
+                "reason": "PROFILE_HISTORY_OR_ADMIN",
+                "start": 210,
+                "end": 288,
+                "preview": "문의 02 458 4840 | 네이버예약 일반 2만원 학생"
+              }
+            ]
+          }
+        ],
+        "items": []
+      },
+      "unchanged_other_candidates": true
+    }
+  ]
+}

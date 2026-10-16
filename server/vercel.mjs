@@ -1,6 +1,6 @@
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { createKopisService } from './kopis.mjs'
+import { createConcertSearchService } from './concertSearchService.mjs'
 import { createConcertApiHandler } from './api.mjs'
 
 export const getVercelConcertEnv = (env = process.env) => ({
@@ -9,7 +9,7 @@ export const getVercelConcertEnv = (env = process.env) => ({
   CONCERT_OCR_CACHE_DIR: join(tmpdir(), 'sound-atlas-ocr'),
 })
 
-export const createVercelConcertHandler = ({ env = process.env, service = createKopisService({ env: getVercelConcertEnv(env) }) } = {}) => {
+export const createVercelConcertHandler = ({ env = process.env, service = createConcertSearchService({ env: getVercelConcertEnv(env) }) } = {}) => {
   const api = createConcertApiHandler(service)
   return async (req, res) => {
     const url = new URL(req.url, 'http://localhost')

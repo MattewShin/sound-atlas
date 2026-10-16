@@ -8,7 +8,13 @@ KOPIS 공연정보·이미지 URL을 Supabase에 수동 수집하는 설정과 �
 
 수집한 상세 이미지를 로컬 EasyOCR로 판독하고 결과를 저장하는 방법은 [EasyOCR 배치 2단계](docs/EASYOCR_BATCH.md)를 참고하세요.
 
+저장된 OCR의 프로그램 구간·작품 후보·근거 저장과 단건 수동 검토는 [프로그램 분석 3단계](docs/PROGRAM_ANALYSIS.md)를 참고하세요. 먼저 특정 공연 dry-run과 원본 이미지를 확인하고 신규 마이그레이션을 적용합니다.
+
 웹 검색·수집·OCR의 진입점과 공통 모듈 역할은 [공연 코드 구조](docs/CONCERT_PIPELINE.md)에 정리했습니다.
+
+기존 검색을 기본으로 유지하면서 저장된 유효한 확정 결과만 검색하는 방법은 [Supabase 공연 검색 미리보기](docs/SUPABASE_CONCERT_PREVIEW.md)를 참고하세요. 서버 전용 `CONCERT_SEARCH_BACKEND=supabase`로 선택합니다.
+
+수집 → EasyOCR → 신규 분석 저장을 한 번에 실행하고 Windows 정기 실행을 준비하는 방법은 [로컬 통합 배치](docs/LOCAL_PIPELINE.md)를 참고하세요. 먼저 `npm run pipeline -- plan`으로 읽기 전용 확인을 진행합니다.
 
 듣고 싶은 한글 감정 키워드나 현재 기분으로 피아노 음악을 탐색하고, 마음에 남는 곡을 보관하는 React 19 + Vite 6 앱입니다.
 
@@ -77,6 +83,6 @@ npm run diagnose:recommendations
 
 선택값은 `classic-atlas-music-selection-v1`에 감정 키로 저장합니다. 유효한 키·현재 한글명은 유지하고 이전 편안한만 평안한으로 변환합니다. 따뜻한·장엄한 등으로 새 평가를 추정하지 않습니다. 최근 곡 키 `classic-atlas-recent-tracks-v1`이 있으면 ID 매핑·중복 제거를 적용합니다. 과거 취향·강도·추천 캐시 키만 폐기합니다. 정리된 보관곡이 있으면 한 번 안내하며 동일 버전 재실행은 추가 삭제를 하지 않습니다. `localStorage.clear()`는 사용하지 않습니다.
 
-로그인·서버 DB·외부 음원 API·실제 공연 예매는 현재 범위에 포함되어 있지 않습니다. KOPIS 검색은 서버 전용 서비스키와 Node API를 사용합니다. `.env.example`을 참고하고 개발은 `npm run dev`, Node 운영은 `npm run build` 후 `npm start`로 실행합니다. Vercel에서는 `api/index.js`와 `vercel.json`이 공연 API를 연결합니다. Vercel 환경변수에 `KOPIS_SERVICE_KEY`를 등록하고 이 코드가 포함된 새 배포를 실행하세요. 단계별 확인 방법은 [Vercel 배포 안내](docs/KOPIS_SETUP.md#vercel-배포)에 있습니다.
+로그인·외부 음원 API·실제 공연 예매는 현재 범위에 포함되어 있지 않습니다. 기본 KOPIS 검색은 서버 전용 서비스키와 Node API를 사용하며 Supabase 검색은 별도 미리보기입니다. `.env.example`을 참고하고 개발은 `npm run dev`, Node 운영은 `npm run build` 후 `npm start`로 실행합니다. Vercel에서는 `api/index.js`와 `vercel.json`이 공연 API를 연결합니다. 기존 검색 배포 안내는 [Vercel 배포 안내](docs/KOPIS_SETUP.md#vercel-배포), DB 설정은 [미리보기 안내](docs/SUPABASE_CONCERT_PREVIEW.md)에 있습니다.
 
 지역 선택은 공연 찾기에서 곡을 선택한 뒤 검색 조건 안에 표시합니다. 화면 폭에 맞는 선택 창에 전국·시도 목록을 3열 버튼으로 배치하며, 선택하면 창이 닫힙니다. 닫기 버튼·바깥 영역·Escape 키로도 닫을 수 있습니다. 기본값은 서울이며 선택은 `classic-atlas-concert-region-v1`에 별도로 저장해 탭 이동과 새로고침 후에도 유지합니다. 선택한 지역·기간은 검색 버튼을 누를 때만 조회 조건으로 적용합니다.

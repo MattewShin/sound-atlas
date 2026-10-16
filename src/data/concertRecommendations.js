@@ -29,7 +29,8 @@ export const resolveConcertProgram = (concert, trackList, works = concertWorks) 
       .map((track) => [track.id, track])).values()]
       .sort((a, b) => (a.movementNumber ?? 0) - (b.movementNumber ?? 0))
     const scope = concert.programScopes?.[work.id]
-    const performedTracks = scope?.kind === 'movement-excerpt' ? linkedTracks.filter(({ movementNumber }) => scope.movementNumbers.includes(movementNumber)) : linkedTracks
+    const scopedTracks = scope?.kind === 'movement-excerpt' ? linkedTracks.filter(({ movementNumber }) => scope.movementNumbers.includes(movementNumber)) : linkedTracks
+    const performedTracks = concert.searchBackend === 'supabase' ? scopedTracks.filter(({ id }) => concert.programTrackIds?.includes(id)) : scopedTracks
     return { ...work, linkedTracks: performedTracks, ratedTracks: performedTracks.filter(isFullyRated) }
   })
 

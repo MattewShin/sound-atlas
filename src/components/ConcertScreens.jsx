@@ -9,6 +9,7 @@ import { getTrackTarget } from '../data/workCatalog.js'
 
 function MatchBasis({ concert }) {
   const match = concert.targetMatch
+  if (concert.searchBackend === 'supabase') return <div className="concert-match-basis"><strong>선택한 곡과의 연결 확인</strong><p>원본 프로그램과 곡의 연결을 수동 검토한 결과예요.</p>{concert.dateFrom !== concert.dateTo && <p>기간형 공연 안내예요. 이 곡이 연주되는 정확한 회차는 공식 안내에서 확인해주세요.</p>}{match?.evidenceSourceUrl && <a href={match.evidenceSourceUrl} target="_blank" rel="noopener noreferrer">프로그램 근거 이미지 보기 ↗</a>}</div>
   return match ? <div className="concert-match-basis"><strong>{matchLabels[getMatchStatus(match)]}</strong><p>{match.reason}</p>{match.scope?.kind === 'work' && <p>해당 작품 포함 · 전곡·개별 악장 연주 범위는 별도 확인</p>}{match.scope?.kind === 'complete-work' && <p>전곡 안내</p>}{match.scope?.kind === 'movement-excerpt' && <p>악장 발췌 안내 · {match.scope.movementNumbers.join('·')}악장</p>}{match.evidence && !/^https?:/.test(match.evidence) && <blockquote>{match.evidence.slice(0, 320)}</blockquote>}{match.status === 'matched' && <p>근거 유형 · {match.evidenceKind === 'ocr' ? 'KOPIS 소개 이미지 OCR' : 'KOPIS 프로그램 텍스트'}</p>}{match.evidenceSourceUrl && <a href={match.evidenceSourceUrl} target="_blank" rel="noopener noreferrer">프로그램 근거 이미지 보기 ↗</a>}</div> : null
 }
 
@@ -95,8 +96,8 @@ export function ConcertDetailScreen({ result, now, onBack, onOpenTrack, onOpenSh
     <main className="concert-main concert-detail-main">
       <MatchBasis concert={concert} />
       <section className="concert-details-panel"><ConcertFacts concert={concert} now={now} />{(concert.conductor || concert.pianist) && <p>{concert.conductor && <>지휘 · {concert.conductor}<br /></>}{concert.pianist && <>피아노 협연 · {concert.pianist}</>}</p>}{concert.scheduleText && <p>공연 시간 안내 · {concert.scheduleText}</p>}{!concert.targetMatch && <AnalysisReason result={result} />}</section>
-      <section className="concert-program" aria-labelledby="concert-program-title"><h2 id="concert-program-title">{['text', 'ocr'].includes(concert.programVerification) ? '확보한 프로그램과 연결 작품' : '전체 프로그램'}</h2>
-        <p>{program.length ? '공식 안내는 작품 단위예요. 아래 악장은 앱에 등록된 평가와 감상 자료를 연결한 목록이에요.' : '공연 기본 정보와 프로그램 확인은 별도 단계예요. 소개 자료만으로 작품과 악장 연결을 확정하지 않아요.'}</p>
+      <section className="concert-program" aria-labelledby="concert-program-title"><h2 id="concert-program-title">{concert.searchBackend === 'supabase' ? '확인된 연결 곡' : ['text', 'ocr'].includes(concert.programVerification) ? '확보한 프로그램과 연결 작품' : '전체 프로그램'}</h2>
+        <p>{concert.searchBackend === 'supabase' ? '수동 검토가 완료된 선택 곡의 연결만 표시해요. 공연의 전체 프로그램을 뜻하지 않아요.' : program.length ? '공식 안내는 작품 단위예요. 아래 악장은 앱에 등록된 평가와 감상 자료를 연결한 목록이에요.' : '공연 기본 정보와 프로그램 확인은 별도 단계예요. 소개 자료만으로 작품과 악장 연결을 확정하지 않아요.'}</p>
         {!program.length && <p>{concert.programStatus === 'needs-review' ? '프로그램 자료 확인 필요 · 일반 검색 결과' : '프로그램 미확보 · 일반 검색 결과'}</p>}
         {concert.kopisId && onLoadProgram && <div className="concert-program-request"><button className="concert-official-link" type="button" disabled={programRequest?.status === 'loading'} onClick={() => onLoadProgram(concert, false)}>{programRequest?.status === 'loading' ? '자료 조회 중…' : '상세·프로그램 자료 확인'}</button>
           {concert.programFetchedAt && <><p>자료 조회 · {formatConcertDate(concert.programFetchedAt)} · 한국 시간</p><button className="concert-official-link" type="button" disabled={programRequest?.status === 'loading'} onClick={() => onLoadProgram(concert, true)}>프로그램 자료 새로고침</button></>}

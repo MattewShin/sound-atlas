@@ -160,6 +160,35 @@ test('HTTP requests retry transient errors up to 3 times, never retry authentica
   assert.equal(attempts, 1)
 })
 
+test('KOPIS HTTP diagnostics retain the real status and safe media type without bodies or retrying 400', async () => {
+  const requests = []
+  const client = createCollectionKopisClient({ env: { KOPIS_SERVICE_KEY: 'fixture-secret' }, delay: instant,
+    fetchImpl: async (url) => {
+      requests.push(url)
+      return new Response('reflected service=fixture-secret; upstream private error', {
+        status: 400, headers: { 'content-type': 'application/xml; charset=UTF-8' },
+      })
+    },
+  })
+  await assert.rejects(client.detail('PF900001'), error => {
+    assert.equal(error.code, 'KOPIS_HTTP_400'); assert.equal(error.http_status, 400)
+    assert.equal(error.content_type, 'application/xml'); assert.equal(error.retryable, false)
+    assert.ok(!JSON.stringify(error).includes('fixture-secret'))
+    assert.ok(!JSON.stringify(error).includes('upstream private error'))
+    return true
+  })
+  assert.equal(requests.length, 1)
+  assert.equal(requests[0].pathname, '/openApi/restful/pblprfr/PF900001')
+  assert.deepEqual([...requests[0].searchParams.keys()], ['service'])
+  await assert.rejects(requestWithRetry('https://example.com', {
+    fetchImpl: async () => new Response('', { status: 400, headers: { 'content-type': 'secret-reflected-header' } }),
+  }), error => error.http_status === 400 && error.content_type === null)
+  const invalidXml = createCollectionKopisClient({ env: { KOPIS_SERVICE_KEY: 'fixture-secret' }, delay: instant,
+    fetchImpl: async () => new Response('not XML', { status: 200 }),
+  })
+  await assert.rejects(invalidXml.detail('PF900001'), error => error.code !== 'KOPIS_HTTP_400' && error.http_status === undefined)
+})
+
 test('Supabase server adapter sends a single transaction RPC, retries safely and hides error bodies', async () => {
   const requests = []
   const env = { SUPABASE_URL: 'https://example.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'fixture-secret' }

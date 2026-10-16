@@ -68,14 +68,14 @@ export const normalizeCollectionDetail = (row, expectedId, conditions, fetchedAt
   }, images: [...images.values()] }
 }
 
-export const createCollectionKopisClient = ({ env = process.env, fetchImpl = fetch, delay = pause } = {}) => {
+export const createCollectionKopisClient = ({ env = process.env, fetchImpl = fetch, delay = pause, signal } = {}) => {
   const key = env.KOPIS_SERVICE_KEY?.trim()
   if (!key) fail('KOPIS_NOT_CONFIGURED', 'KOPIS_SERVICE_KEY is required (including dry-run)')
   const request = async (path, params = {}) => {
     const url = new URL(`https://kopis.or.kr/openApi/restful/${path}`)
     url.search = new URLSearchParams({ service: key, ...params }).toString()
     try {
-      return await requestWithRetry(url, { fetchImpl, delay, label: 'KOPIS', decode: async (response) => {
+      return await requestWithRetry(url, { fetchImpl, delay, signal, label: 'KOPIS', decode: async (response) => {
         const xml = await response.text()
         if (xml.length > 3_000_000) fail('KOPIS_RESPONSE_TOO_LARGE', 'KOPIS response exceeds size limit')
         try { return parseKopisXml(xml, { validateRows: false }) }

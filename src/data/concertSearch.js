@@ -2,6 +2,7 @@ import { CONCERT_CACHE_TTL_MS, concertQueryKey } from './concertSearchConfig.js'
 
 export const createConcertSearchClient = ({ fetchImpl = (...args) => fetch(...args), storage, now = Date.now } = {}) => {
   let cacheTtlMs = CONCERT_CACHE_TTL_MS
+  let backend = 'kopis'
   const memory = new Map(), pending = new Map()
   const request = async (url, options = {}) => {
     let response, data
@@ -35,16 +36,21 @@ export const createConcertSearchClient = ({ fetchImpl = (...args) => fetch(...ar
     async status() {
       const data = await request('/api/concerts/status')
       if (typeof data.configured !== 'boolean') throw Object.assign(new Error('공연 검색 연동 설정 필요'), { code: 'CONCERT_SERVER_UNAVAILABLE' })
+      if (data.backend !== undefined && !['kopis', 'supabase'].includes(data.backend)) throw new Error('공연 검색 방식 설정을 확인해주세요.')
+      backend = data.backend || 'kopis'
       if (Number.isSafeInteger(data.cacheTtlMs) && data.cacheTtlMs >= 0) cacheTtlMs = data.cacheTtlMs
       return data
     },
     search(query, { refresh = false, signal } = {}) {
       const key = concertQueryKey(query)
-      return cached(`list:${key}`, refresh, async () => {
+      const load = async () => {
         const data = await request(`/api/concerts?${new URLSearchParams({ ...query, ...(refresh ? { refresh: '1' } : {}) })}`, { signal })
         if (!Array.isArray(data.concerts) || !data.query || concertQueryKey(data.query) !== key || !Number.isFinite(Date.parse(data.fetchedAt))) throw new Error('공연 검색 결과 형식을 확인할 수 없습니다.')
+        if (backend === 'supabase' && (data.backend !== backend || data.targetTrackId !== query.targetTrackId)) throw new Error('공연 검색 결과 형식을 확인할 수 없습니다.')
         return data
-      })
+      }
+      // Manual decisions and evidence validity must be read again on every DB search.
+      return backend === 'supabase' ? load() : cached(`list:${key}`, refresh, load)
     },
     program(kopisId, { refresh = false, signal } = {}) {
       if (!/^PF\d{1,12}$/.test(kopisId)) throw new Error('공연 ID가 올바르지 않습니다.')

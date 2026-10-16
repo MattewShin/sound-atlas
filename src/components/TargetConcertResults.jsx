@@ -3,6 +3,13 @@ import { getMatchStatus } from '../data/concertMatchStates.js'
 import { getSimilarTargetConcerts } from '../data/concertTargetSearch.js'
 
 export default function TargetConcertResults({ search, results, renderCard, onCheckMore, onStop, onOpenConcert, moreCheckLimit = 10 }) {
+  if (search.data.backend === 'supabase') return <section className="concert-search-results" aria-label="확인된 공연 검색 결과">
+    <section className="concert-exact-section" aria-labelledby="concert-exact-title">
+      <h2 id="concert-exact-title">확인된 공연</h2>
+      {search.status === 'error' ? <p>검색 중 오류가 발생했어요. 다시 조회해주세요.</p>
+        : results.length ? results.map(renderCard) : <p>선택한 조건에서 확인된 공연이 아직 없어요.</p>}
+    </section>
+  </section>
   const confirmed = (concert) => concert.kopisId && concert.kopisDetailVerified
     && ['text', 'ocr'].includes(concert.programVerification) && ['text', 'ocr'].includes(concert.targetMatch?.evidenceKind)
     && concert.targetMatch.status === 'matched' && concert.targetMatch.targetTrackId === search.data.targetTrackId

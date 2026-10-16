@@ -4,9 +4,9 @@ import { CollectionError, requestWithRetry } from './collectionHttp.mjs'
 import { kopisImageUrl, readLimitedImageBytes } from './kopisImageSource.mjs'
 
 // Batch transport retries plus PNG conversion. The request-based OCR keeps its own decoding.
-export const downloadKopisImage = async (sourceUrl, { config, fetchImpl = fetch, delay } = {}) => {
+export const downloadKopisImage = async (sourceUrl, { config, fetchImpl = fetch, delay, signal } = {}) => {
   const url = kopisImageUrl(sourceUrl)
-  const raw = await requestWithRetry(url, { fetchImpl, delay, timeoutMs: config.downloadTimeoutMs, label: 'OCR_IMAGE',
+  const raw = await requestWithRetry(url, { fetchImpl, delay, signal, timeoutMs: config.downloadTimeoutMs, label: 'OCR_IMAGE',
     decode: (response) => readLimitedImageBytes(response, config.maxBytes),
   })
   try {

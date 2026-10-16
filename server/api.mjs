@@ -1,9 +1,13 @@
-import { ConcertApiError } from './kopis.mjs'
+import { ConcertApiError } from './kopisData.mjs'
 export const createConcertApiHandler = (service) => async (req, res, next) => {
   const url = new URL(req.url, 'http://localhost')
   if (!url.pathname.startsWith('/api/')) return next?.()
   const respond = (status, data) => { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(data)) }
   try {
+    if (service.backend === 'invalid') return service.config()
+    if (service.backend === 'supabase' && !['/api/concerts', '/api/concerts/status'].includes(url.pathname)) {
+      return respond(405, { code: 'SEARCH_ROUTE_DISABLED', message: '이 검색 방식에서는 저장된 확인 결과만 조회할 수 있어요.' })
+    }
     if (req.method === 'POST' && url.pathname === '/api/concerts/match-batch') {
       let body = ''
       for await (const chunk of req) {

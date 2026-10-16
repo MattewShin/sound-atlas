@@ -1,0 +1,1318 @@
+{
+  "checked_at": "2026-10-15T01:32:11.859Z",
+  "mode": "DRY_RUN",
+  "limited_sample": true,
+  "matcher_version": "stored-program-1",
+  "catalog_hash": "f76ab9d16a30a28f1458be850bea3305c0f394b894389a53517e49ded90ac974",
+  "coverage": {
+    "concerts": 10,
+    "detail_images": 17,
+    "results": 5
+  },
+  "analyzed_images": 5,
+  "saved": 0,
+  "candidate_counts": {
+    "total": 11,
+    "linked": 0,
+    "MATCHED": 0,
+    "UNREGISTERED": 8,
+    "AMBIGUOUS": 3,
+    "CONFLICT": 0
+  },
+  "section_counts": {
+    "PROGRAM": 0,
+    "NON_PROGRAM": 9,
+    "UNCERTAIN": 2
+  },
+  "skipped": [
+    {
+      "kopis_id": "PF301763",
+      "image_id": "5031f1e6-affb-4c02-a0c2-90d156771cde",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF300434",
+      "image_id": "cb019b71-f737-4011-85bb-713d1e6f3e32",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF302043",
+      "image_id": "444fc8be-e572-4bd5-940f-23cdee4fb762",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF300769",
+      "image_id": "0bd599ce-b172-4bc8-9e68-f16d71692802",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF300769",
+      "image_id": "13c8c91a-fa5a-40cb-90b5-5a72c670b22b",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF300769",
+      "image_id": "b95952bf-3c60-4902-a543-1a2efbbafe8d",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF300769",
+      "image_id": "d92cfbe4-8fb2-40bb-a9ea-5460881c6f90",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF301589",
+      "image_id": "b90b0651-25d5-4198-85cd-7835713f50ea",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF299391",
+      "image_id": "26054b39-b1d1-43d8-9e1a-fb852d9b08df",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF296572",
+      "image_id": "7b9d38d7-b718-4e9e-bdc3-4443ac9fa111",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF296572",
+      "image_id": "e3fc7cd3-1753-47d7-a398-852ce3965946",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    },
+    {
+      "kopis_id": "PF302080",
+      "image_id": "ed78f27e-be27-4b2c-b3c3-a3a03b86b692",
+      "reason": "NO_CURRENT_SUCCESSFUL_OCR"
+    }
+  ],
+  "failures": [],
+  "analyses": [
+    {
+      "kopis_id": "PF296289",
+      "title": "Sunday Vibe (선데이 바이브)",
+      "image_id": "43377dd0-4177-4f11-8f9e-81b18d31ef64",
+      "ocr_result_id": "c365d67d-9acf-40a0-8a90-0a62039e200e",
+      "source_attempt_id": "edd79606-000e-4b0d-9207-d4b08ba19969",
+      "source_url": "http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF296289_202607160331059020.jpg",
+      "sections": [
+        {
+          "index": 0,
+          "classification": "UNCERTAIN",
+          "reason": "EXPLICIT_PROGRAM_HEADING",
+          "start": 0,
+          "end": 557,
+          "preview": "PROGRAM",
+          "context_reasons": [
+            "MULTIPLE_DATES_OR_SERIES_SCOPE"
+          ]
+        },
+        {
+          "index": 1,
+          "classification": "NON_PROGRAM",
+          "reason": "PROFILE_HISTORY_OR_ADMIN",
+          "start": 558,
+          "end": 1962,
+          "preview": "명국 예후디 메뉴한 염제음악학교 입학(8세) , 퍼실 음악학교 재학 중 도미, 줄리어드 음대 최연소 입학(16세) , 학사 및 석사 취득"
+        }
+      ],
+      "limitations": [
+        "Stored OCR snapshot only; current URL bytes have not been checked.",
+        "Multiple sessions/dates: work-to-session association requires manual review."
+      ],
+      "candidates": [
+        {
+          "candidate_key": "8363adb9f8d8aea1231257fe94d745d6ba34f13e4a4a8fb8066abf61709c085c",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AMBIGUOUS",
+          "composer": "F Mendelssohn",
+          "title": "Piano Concerto No.1in G mninor Op.25",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "OCR_NUMBER_UNCERTAIN",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "F Mendelssohn",
+              "start": 8,
+              "end": 21,
+              "line_index": 1,
+              "bbox": [
+                [
+                  67,
+                  95
+                ],
+                [
+                  164,
+                  95
+                ],
+                [
+                  164,
+                  111
+                ],
+                [
+                  67,
+                  111
+                ]
+              ],
+              "confidence": 0.9810666613206136
+            },
+            {
+              "role": "WORK",
+              "quote": "Piano Concerto No.1in G mninor Op.25",
+              "start": 22,
+              "end": 58,
+              "line_index": 2,
+              "bbox": [
+                [
+                  67,
+                  113
+                ],
+                [
+                  299,
+                  113
+                ],
+                [
+                  299,
+                  131
+                ],
+                [
+                  67,
+                  131
+                ]
+              ],
+              "confidence": 0.4938976928285515
+            },
+            {
+              "role": "SCOPE",
+              "quote": "Molto allegro con fuoco",
+              "start": 73,
+              "end": 96,
+              "line_index": 4,
+              "bbox": [
+                [
+                  77,
+                  133
+                ],
+                [
+                  221,
+                  133
+                ],
+                [
+                  221,
+                  151
+                ],
+                [
+                  77,
+                  151
+                ]
+              ],
+              "confidence": 0.7911927535450467
+            },
+            {
+              "role": "SCOPE",
+              "quote": "Andante",
+              "start": 144,
+              "end": 151,
+              "line_index": 6,
+              "bbox": [
+                [
+                  81,
+                  153
+                ],
+                [
+                  135,
+                  153
+                ],
+                [
+                  135,
+                  167
+                ],
+                [
+                  81,
+                  167
+                ]
+              ],
+              "confidence": 0.9748312915201504
+            },
+            {
+              "role": "SCOPE",
+              "quote": "IlI Presto",
+              "start": 171,
+              "end": 181,
+              "line_index": 9,
+              "bbox": [
+                [
+                  67,
+                  171
+                ],
+                [
+                  123,
+                  171
+                ],
+                [
+                  123,
+                  187
+                ],
+                [
+                  67,
+                  187
+                ]
+              ],
+              "confidence": 0.5628401320586518
+            },
+            {
+              "role": "SCOPE",
+              "quote": "Molto allegro",
+              "start": 182,
+              "end": 195,
+              "line_index": 10,
+              "bbox": [
+                [
+                  131,
+                  171
+                ],
+                [
+                  213,
+                  171
+                ],
+                [
+                  213,
+                  187
+                ],
+                [
+                  131,
+                  187
+                ]
+              ],
+              "confidence": 0.9771676222301444
+            },
+            {
+              "role": "SCOPE",
+              "quote": "Vivace",
+              "start": 196,
+              "end": 202,
+              "line_index": 11,
+              "bbox": [
+                [
+                  223,
+                  173
+                ],
+                [
+                  265,
+                  173
+                ],
+                [
+                  265,
+                  187
+                ],
+                [
+                  223,
+                  187
+                ]
+              ],
+              "confidence": 0.9880449472757983
+            }
+          ]
+        },
+        {
+          "candidate_key": "33549c4f4fe67fb05d5a7804ce05f5076f79a09b32bcea25825237c9ef0bf919",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "UNREGISTERED",
+          "composer": "C Saint-Saens",
+          "title": "Africa Fantaisie pour piano et orchestre Op 89",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "WORK_NOT_REGISTERED",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "C Saint-Saens",
+              "start": 59,
+              "end": 72,
+              "line_index": 3,
+              "bbox": [
+                [
+                  433,
+                  123
+                ],
+                [
+                  523,
+                  123
+                ],
+                [
+                  523,
+                  137
+                ],
+                [
+                  433,
+                  137
+                ]
+              ],
+              "confidence": 0.8050912916130608
+            },
+            {
+              "role": "WORK",
+              "quote": "Africa Fantaisie pour piano et orchestre Op 89",
+              "start": 97,
+              "end": 143,
+              "line_index": 5,
+              "bbox": [
+                [
+                  430,
+                  139
+                ],
+                [
+                  719,
+                  139
+                ],
+                [
+                  719,
+                  157
+                ],
+                [
+                  430,
+                  157
+                ]
+              ],
+              "confidence": 0.8158745326268988
+            }
+          ]
+        },
+        {
+          "candidate_key": "2b57ec82988f4682c5cb2fdfee3407a7c1398f5f9014d7290b19819f2c41e0f5",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "UNREGISTERED",
+          "composer": "C Franck",
+          "title": "Variations symphoniques pour piano et orchestre",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "WORK_NOT_REGISTERED",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "C Franck",
+              "start": 223,
+              "end": 231,
+              "line_index": 14,
+              "bbox": [
+                [
+                  433,
+                  193
+                ],
+                [
+                  493,
+                  193
+                ],
+                [
+                  493,
+                  209
+                ],
+                [
+                  433,
+                  209
+                ]
+              ],
+              "confidence": 0.9466001054405379
+            },
+            {
+              "role": "WORK",
+              "quote": "Variations symphoniques pour piano et orchestre",
+              "start": 232,
+              "end": 279,
+              "line_index": 15,
+              "bbox": [
+                [
+                  433,
+                  213
+                ],
+                [
+                  729,
+                  213
+                ],
+                [
+                  729,
+                  229
+                ],
+                [
+                  433,
+                  229
+                ]
+              ],
+              "confidence": 0.8770378287992276
+            }
+          ]
+        },
+        {
+          "candidate_key": "05874a4887ffd1f519e818bbc46c6d23fc34e9d97eab75a1b99219e0eb43a94a",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "UNREGISTERED",
+          "composer": "리스트",
+          "title": "Piano Concerto No.1in E-flat major S.124",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "WORK_NOT_REGISTERED",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "F Liszt",
+              "start": 280,
+              "end": 287,
+              "line_index": 16,
+              "bbox": [
+                [
+                  67,
+                  227
+                ],
+                [
+                  113,
+                  227
+                ],
+                [
+                  113,
+                  243
+                ],
+                [
+                  67,
+                  243
+                ]
+              ],
+              "confidence": 0.6261932271038844
+            },
+            {
+              "role": "WORK",
+              "quote": "Piano Concerto No.1in E-flat major S.124",
+              "start": 310,
+              "end": 350,
+              "line_index": 18,
+              "bbox": [
+                [
+                  67,
+                  245
+                ],
+                [
+                  319,
+                  245
+                ],
+                [
+                  319,
+                  261
+                ],
+                [
+                  67,
+                  261
+                ]
+              ],
+              "confidence": 0.47423497513063734
+            },
+            {
+              "role": "SCOPE",
+              "quote": "Allegro mnaestoso Tempo giusto",
+              "start": 351,
+              "end": 381,
+              "line_index": 19,
+              "bbox": [
+                [
+                  77,
+                  262
+                ],
+                [
+                  273,
+                  262
+                ],
+                [
+                  273,
+                  282
+                ],
+                [
+                  77,
+                  282
+                ]
+              ],
+              "confidence": 0.8192580354584453
+            },
+            {
+              "role": "SCOPE",
+              "quote": "Quasi adagio; Allegretto vivace; Allegro animato",
+              "start": 392,
+              "end": 440,
+              "line_index": 21,
+              "bbox": [
+                [
+                  81,
+                  283
+                ],
+                [
+                  367,
+                  283
+                ],
+                [
+                  367,
+                  299
+                ],
+                [
+                  81,
+                  299
+                ]
+              ],
+              "confidence": 0.7443239371522199
+            },
+            {
+              "role": "SCOPE",
+              "quote": "Allegro marziale animato",
+              "start": 482,
+              "end": 506,
+              "line_index": 23,
+              "bbox": [
+                [
+                  82,
+                  299
+                ],
+                [
+                  233,
+                  299
+                ],
+                [
+                  233,
+                  320
+                ],
+                [
+                  82,
+                  320
+                ]
+              ],
+              "confidence": 0.8534038401834908
+            }
+          ]
+        },
+        {
+          "candidate_key": "0144f7da5dbb766c23cc07e453ce24eba4be67dc467c527cf13a1602035573b5",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AMBIGUOUS",
+          "composer": "Prokofiev",
+          "title": "Piano Concerto No.lin D-flat major Op.10",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "OCR_NUMBER_UNCERTAIN",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "Prokofiev",
+              "start": 382,
+              "end": 391,
+              "line_index": 20,
+              "bbox": [
+                [
+                  445,
+                  267
+                ],
+                [
+                  507,
+                  267
+                ],
+                [
+                  507,
+                  281
+                ],
+                [
+                  445,
+                  281
+                ]
+              ],
+              "confidence": 0.9337801909692073
+            },
+            {
+              "role": "WORK",
+              "quote": "Piano Concerto No.lin D-flat major Op.10",
+              "start": 441,
+              "end": 481,
+              "line_index": 22,
+              "bbox": [
+                [
+                  431,
+                  283
+                ],
+                [
+                  687,
+                  283
+                ],
+                [
+                  687,
+                  301
+                ],
+                [
+                  431,
+                  301
+                ]
+              ],
+              "confidence": 0.5253222188416672
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kopis_id": "PF296289",
+      "title": "Sunday Vibe (선데이 바이브)",
+      "image_id": "7db9a484-ff24-4781-870c-993754b6979f",
+      "ocr_result_id": "e7856454-7205-4340-a54b-0000f33da824",
+      "source_attempt_id": "de38d832-5f8c-4996-84d8-ac222ca8c445",
+      "source_url": "http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF296289_202607160331059061.png",
+      "sections": [
+        {
+          "index": 0,
+          "classification": "NON_PROGRAM",
+          "reason": "NO_IDENTIFIABLE_WORK_LIST",
+          "start": 0,
+          "end": 4,
+          "preview": "1AK'"
+        },
+        {
+          "index": 1,
+          "classification": "NON_PROGRAM",
+          "reason": "NO_IDENTIFIABLE_WORK_LIST",
+          "start": 5,
+          "end": 209,
+          "preview": "MUsIC"
+        },
+        {
+          "index": 2,
+          "classification": "NON_PROGRAM",
+          "reason": "PROFILE_HISTORY_OR_ADMIN",
+          "start": 210,
+          "end": 288,
+          "preview": "문의 02 458 4840 | 네이버예약 일반 2만원 학생"
+        }
+      ],
+      "limitations": [
+        "Stored OCR snapshot only; current URL bytes have not been checked.",
+        "Multiple sessions/dates: work-to-session association requires manual review."
+      ],
+      "candidates": []
+    },
+    {
+      "kopis_id": "PF300258",
+      "title": "라율아트홀 한 잔의 여유 시리즈, Hand Drip Coffee & Guitar Concert",
+      "image_id": "3b396483-642a-40de-81d6-da3aca445f7e",
+      "ocr_result_id": "6f40d651-d958-4d09-92ec-1646f7950cc6",
+      "source_attempt_id": "efa8ba4d-2229-464f-b529-2bc39d47f000",
+      "source_url": "http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF300258_202609070110504250.jpg",
+      "sections": [
+        {
+          "index": 0,
+          "classification": "NON_PROGRAM",
+          "reason": "NO_IDENTIFIABLE_WORK_LIST",
+          "start": 0,
+          "end": 766,
+          "preview": "어떤 경험올 하나요?"
+        }
+      ],
+      "limitations": [
+        "Stored OCR snapshot only; current URL bytes have not been checked.",
+        "Multiple sessions/dates: work-to-session association requires manual review."
+      ],
+      "candidates": []
+    },
+    {
+      "kopis_id": "PF300258",
+      "title": "라율아트홀 한 잔의 여유 시리즈, Hand Drip Coffee & Guitar Concert",
+      "image_id": "92039fc8-a640-489a-a73d-2ca30cf43a48",
+      "ocr_result_id": "88eaee9f-ceb7-48ca-b46f-e889c44d3fb8",
+      "source_attempt_id": "891df4d4-4f95-4412-878a-d302e9fc0583",
+      "source_url": "http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF300258_202609070110504591.jpg",
+      "sections": [
+        {
+          "index": 0,
+          "classification": "UNCERTAIN",
+          "reason": "EXPLICIT_PROGRAM_HEADING",
+          "start": 0,
+          "end": 298,
+          "preview": "PROGRAM",
+          "context_reasons": [
+            "MULTIPLE_DATES_OR_SERIES_SCOPE"
+          ]
+        },
+        {
+          "index": 1,
+          "classification": "NON_PROGRAM",
+          "reason": "PROFILE_HISTORY_OR_ADMIN",
+          "start": 299,
+          "end": 1101,
+          "preview": "ARTIST"
+        }
+      ],
+      "limitations": [
+        "Stored OCR snapshot only; current URL bytes have not been checked.",
+        "Multiple sessions/dates: work-to-session association requires manual review."
+      ],
+      "candidates": [
+        {
+          "candidate_key": "76afc4aa161c159f93f1be0abdff9295d2fa54fbeb5ca3f728410f9ccaa5fc2c",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AMBIGUOUS",
+          "composer": "H. Villa-Lobos",
+          "title": "Prelude No.1 전주곡 제7번",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "CHECK_MULTIPLE_WORK_NUMBERS",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "H. Villa-Lobos (1887-1959)",
+              "start": 8,
+              "end": 34,
+              "line_index": 1,
+              "bbox": [
+                [
+                  203,
+                  207
+                ],
+                [
+                  563,
+                  207
+                ],
+                [
+                  563,
+                  243
+                ],
+                [
+                  203,
+                  243
+                ]
+              ],
+              "confidence": 0.7073580018541563
+            },
+            {
+              "role": "WORK",
+              "quote": "Prelude No.1 전주곡 제7번",
+              "start": 38,
+              "end": 58,
+              "line_index": 3,
+              "bbox": [
+                [
+                  203,
+                  257
+                ],
+                [
+                  543,
+                  257
+                ],
+                [
+                  543,
+                  293
+                ],
+                [
+                  203,
+                  293
+                ]
+              ],
+              "confidence": 0.5472024716363376
+            }
+          ]
+        },
+        {
+          "candidate_key": "d477519ca019582006f87b5868d5986b8d051baafc896079920be898347cbfc8",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "UNREGISTERED",
+          "composer": "M Monnot",
+          "title": "Hymne a |Amour 사랑의 찬가",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "WORK_NOT_REGISTERED",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "M Monnot (1903-1967)",
+              "start": 59,
+              "end": 79,
+              "line_index": 4,
+              "bbox": [
+                [
+                  203,
+                  352
+                ],
+                [
+                  517,
+                  352
+                ],
+                [
+                  517,
+                  388
+                ],
+                [
+                  203,
+                  388
+                ]
+              ],
+              "confidence": 0.6256410377441511
+            },
+            {
+              "role": "WORK",
+              "quote": "Hymne a |Amour 사랑의 찬가",
+              "start": 83,
+              "end": 104,
+              "line_index": 6,
+              "bbox": [
+                [
+                  203,
+                  400
+                ],
+                [
+                  587,
+                  400
+                ],
+                [
+                  587,
+                  441
+                ],
+                [
+                  203,
+                  441
+                ]
+              ],
+              "confidence": 0.6677764599424649
+            }
+          ]
+        },
+        {
+          "candidate_key": "ba700de8752071f87634a1c4c7634afc6ded5de34cc6a256a658ffcfa37bbe55",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "UNREGISTERED",
+          "composer": "Spanish Folk",
+          "title": "Romance de Amor 사랑의 로망스",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "WORK_NOT_REGISTERED",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "Spanish Folk",
+              "start": 110,
+              "end": 122,
+              "line_index": 8,
+              "bbox": [
+                [
+                  202,
+                  489
+                ],
+                [
+                  385,
+                  489
+                ],
+                [
+                  385,
+                  530
+                ],
+                [
+                  202,
+                  530
+                ]
+              ],
+              "confidence": 0.941029984271399
+            },
+            {
+              "role": "WORK",
+              "quote": "Romance de Amor 사랑의 로망스",
+              "start": 126,
+              "end": 149,
+              "line_index": 10,
+              "bbox": [
+                [
+                  203,
+                  541
+                ],
+                [
+                  629,
+                  541
+                ],
+                [
+                  629,
+                  577
+                ],
+                [
+                  203,
+                  577
+                ]
+              ],
+              "confidence": 0.9778378884029817
+            }
+          ]
+        },
+        {
+          "candidate_key": "c2b86fc2ba229093eb93ef388da5d97769cc01aa200d012312ce95202205999a",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "UNREGISTERED",
+          "composer": "S Myers",
+          "title": "Cavatina 카바티나",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "WORK_NOT_REGISTERED",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "S Myers (1930-1993)",
+              "start": 150,
+              "end": 169,
+              "line_index": 11,
+              "bbox": [
+                [
+                  203,
+                  631
+                ],
+                [
+                  495,
+                  631
+                ],
+                [
+                  495,
+                  669
+                ],
+                [
+                  203,
+                  669
+                ]
+              ],
+              "confidence": 0.4767680009147275
+            },
+            {
+              "role": "WORK",
+              "quote": "Cavatina 카바티나",
+              "start": 173,
+              "end": 186,
+              "line_index": 13,
+              "bbox": [
+                [
+                  204,
+                  682
+                ],
+                [
+                  446,
+                  682
+                ],
+                [
+                  446,
+                  714
+                ],
+                [
+                  204,
+                  714
+                ]
+              ],
+              "confidence": 0.9982016278795586
+            }
+          ]
+        },
+        {
+          "candidate_key": "a64d5af15e588982188384c4bc89630d0041270a138333c61fe36c0a677b0258",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "UNREGISTERED",
+          "composer": "D. McLean",
+          "title": "Vincent 반센트",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "WORK_NOT_REGISTERED",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "D. McLean (1945-",
+              "start": 187,
+              "end": 203,
+              "line_index": 14,
+              "bbox": [
+                [
+                  203,
+                  773
+                ],
+                [
+                  453,
+                  773
+                ],
+                [
+                  453,
+                  811
+                ],
+                [
+                  203,
+                  811
+                ]
+              ],
+              "confidence": 0.7615345729016123
+            },
+            {
+              "role": "WORK",
+              "quote": "Vincent 반센트",
+              "start": 207,
+              "end": 218,
+              "line_index": 16,
+              "bbox": [
+                [
+                  205,
+                  825
+                ],
+                [
+                  399,
+                  825
+                ],
+                [
+                  399,
+                  861
+                ],
+                [
+                  205,
+                  861
+                ]
+              ],
+              "confidence": 0.8876673333684209
+            }
+          ]
+        },
+        {
+          "candidate_key": "4528d7b846db320b50b2da1ee41904daf8440608279055dffa9be23f65205d41",
+          "track_id": null,
+          "work_id": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "UNREGISTERED",
+          "composer": "D Pujol",
+          "title": "Don Juan 돈 후안",
+          "review_status": "REVIEW_REQUIRED",
+          "review_reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "WORK_NOT_REGISTERED",
+            "MULTIPLE_DATES_OR_SERIES_SCOPE",
+            "UNCERTAIN_PROGRAM_SECTION"
+          ],
+          "evidence": [
+            {
+              "role": "COMPOSER",
+              "quote": "D Pujol (7957-",
+              "start": 219,
+              "end": 233,
+              "line_index": 17,
+              "bbox": [
+                [
+                  247,
+                  921
+                ],
+                [
+                  451,
+                  921
+                ],
+                [
+                  451,
+                  957
+                ],
+                [
+                  247,
+                  957
+                ]
+              ],
+              "confidence": 0.7593153798391711
+            },
+            {
+              "role": "WORK",
+              "quote": "Don Juan 돈 후안",
+              "start": 239,
+              "end": 252,
+              "line_index": 20,
+              "bbox": [
+                [
+                  241,
+                  971
+                ],
+                [
+                  473,
+                  971
+                ],
+                [
+                  473,
+                  1007
+                ],
+                [
+                  241,
+                  1007
+                ]
+              ],
+              "confidence": 0.8569572904171361
+            },
+            {
+              "role": "SCOPE",
+              "quote": "I.",
+              "start": 253,
+              "end": 255,
+              "line_index": 21,
+              "bbox": [
+                [
+                  209,
+                  975
+                ],
+                [
+                  229,
+                  975
+                ],
+                [
+                  229,
+                  1001
+                ],
+                [
+                  209,
+                  1001
+                ]
+              ],
+              "confidence": 0.13548513612279672
+            },
+            {
+              "role": "SCOPE",
+              "quote": "II. Septiembre 9월",
+              "start": 256,
+              "end": 273,
+              "line_index": 22,
+              "bbox": [
+                [
+                  203,
+                  1019
+                ],
+                [
+                  451,
+                  1019
+                ],
+                [
+                  451,
+                  1057
+                ],
+                [
+                  203,
+                  1057
+                ]
+              ],
+              "confidence": 0.5282633211286454
+            },
+            {
+              "role": "SCOPE",
+              "quote": "III. Rojo y Negro 붉음과 검정",
+              "start": 274,
+              "end": 298,
+              "line_index": 23,
+              "bbox": [
+                [
+                  199,
+                  1065
+                ],
+                [
+                  575,
+                  1065
+                ],
+                [
+                  575,
+                  1109
+                ],
+                [
+                  199,
+                  1109
+                ]
+              ],
+              "confidence": 0.6966864999120935
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kopis_id": "PF300258",
+      "title": "라율아트홀 한 잔의 여유 시리즈, Hand Drip Coffee & Guitar Concert",
+      "image_id": "b3623e73-17f3-40a6-a3f3-d300fd38520e",
+      "ocr_result_id": "dff66596-50ea-46f6-9d90-a4e062e56a9a",
+      "source_attempt_id": "ac0e954c-09ea-4646-b098-01618ecf259e",
+      "source_url": "http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF300258_202609070109459270.jpg",
+      "sections": [
+        {
+          "index": 0,
+          "classification": "NON_PROGRAM",
+          "reason": "NO_IDENTIFIABLE_WORK_LIST",
+          "start": 0,
+          "end": 227,
+          "preview": "2026 ARKO 공연예술장작주체 지원사업 선정"
+        },
+        {
+          "index": 1,
+          "classification": "NON_PROGRAM",
+          "reason": "NO_IDENTIFIABLE_WORK_LIST",
+          "start": 228,
+          "end": 317,
+          "preview": "공연중계"
+        },
+        {
+          "index": 2,
+          "classification": "NON_PROGRAM",
+          "reason": "PROFILE_HISTORY_OR_ADMIN",
+          "start": 318,
+          "end": 1288,
+          "preview": "문의"
+        }
+      ],
+      "limitations": [
+        "Stored OCR snapshot only; current URL bytes have not been checked.",
+        "Multiple sessions/dates: work-to-session association requires manual review."
+      ],
+      "candidates": []
+    }
+  ]
+}

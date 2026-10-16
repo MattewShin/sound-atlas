@@ -25,12 +25,16 @@ export const validateEasyOcrResult = (value, image) => {
     engine_version: value.engineVersion, torch_version: value.torchVersion }
 }
 
-export const createEasyOcrWorker = ({ config, spawnImpl = spawn } = {}) => {
+export const createEasyOcrWorker = ({ config, spawnImpl = spawn, terminateImpl = child => child.kill() } = {}) => {
   let child, pending, closed = false
+  let shutdown = Promise.resolve()
   const stop = (error = new CollectionError('OCR_WORKER_STOPPED', 'EasyOCR worker stopped')) => {
     const current = child; child = undefined
     if (pending) { const job = pending; pending = undefined; clearTimeout(job.timer); job.reject(error) }
-    current?.kill()
+    if (current) {
+      try { shutdown = Promise.resolve(terminateImpl(current)) } catch (error) { shutdown = Promise.reject(error) }
+      shutdown.catch(() => {})
+    }
   }
   const start = () => {
     if (child) return child
@@ -78,6 +82,7 @@ export const createEasyOcrWorker = ({ config, spawnImpl = spawn } = {}) => {
       if (closed) throw new CollectionError('OCR_WORKER_STOPPED', 'EasyOCR worker is closed')
       if (pending) throw new CollectionError('OCR_WORKER_BUSY', 'Only sequential recognition is supported')
       signal?.throwIfAborted()
+      await shutdown
       await mkdir(config.tempDirectory, { recursive: true })
       const id = randomUUID(), path = join(config.tempDirectory, id + '.png')
       const aborted = () => stop(new CollectionError('OCR_ABORTED', 'OCR was cancelled'))
@@ -96,6 +101,6 @@ export const createEasyOcrWorker = ({ config, spawnImpl = spawn } = {}) => {
         await unlink(path).catch(() => {})
       }
     },
-    close() { closed = true; stop() },
+    close() { closed = true; stop(); return shutdown },
   }
 }

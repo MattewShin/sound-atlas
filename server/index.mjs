@@ -2,12 +2,12 @@ import { createServer } from 'node:http'
 import { readFile, stat } from 'node:fs/promises'
 import { resolve, extname, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createKopisService } from './kopis.mjs'
+import { createConcertSearchService } from './concertSearchService.mjs'
 import { createConcertApiHandler } from './api.mjs'
 
 const dist = fileURLToPath(new URL('../dist/', import.meta.url))
 const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.jpg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' }
-export const createAppServer = ({ service = createKopisService(), distDirectory = dist } = {}) => {
+export const createAppServer = ({ service = createConcertSearchService(), distDirectory = dist } = {}) => {
   const api = createConcertApiHandler(service)
   const server = createServer((req, res) => {
     void api(req, res, async () => {

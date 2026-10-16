@@ -6,11 +6,16 @@
 
 | 작업 | 명령 / 진입점 | 실행 모듈 |
 | --- | --- | --- |
-| 웹 검색 | `npm run dev`, `npm start`, Vercel `api/index.js` | `server/api.mjs` → `kopis.mjs` → 필요할 때 `programOcr.mjs`(Tesseract) |
+| 기본 웹 검색 | `npm run dev`, `npm start`, Vercel `api/index.js` | `concertSearchService.mjs` → `server/api.mjs` → `kopis.mjs` → 필요할 때 `programOcr.mjs`(Tesseract) |
+| DB 검색 미리보기 | 같은 진입점, 서버 설정 `CONCERT_SEARCH_BACKEND=supabase` | `supabaseConcertSearch.mjs` → `supabaseRest.mjs` → 기존 비공개 유효성 뷰 GET |
 | 공연 수집 | `npm run collect:concerts` / `scripts/collectConcerts.mjs` | `concertCollector.mjs` → `supabaseCollector.mjs` |
 | 로컬 OCR | `npm run ocr:batch` / `scripts/runEasyOcrBatch.mjs` | `easyOcrBatch.mjs` → `easyOcrWorker.mjs` → `python/easyocr/worker.py`, 저장은 `supabaseOcr.mjs` |
+| 저장 OCR 분석·검토 | `npm run program:analyze` / `scripts/runProgramAnalysis.mjs` | `supabaseProgramAnalysis.mjs` → `programAnalysis.mjs`, 저장·검토는 전용 RPC |
+| 로컬 통합 배치 | `npm run pipeline -- plan/run/latest` / `scripts/Invoke-ConcertPipeline.ps1` | `concertPipeline.mjs` → 기존 수집/OCR/분석 모듈, 로컬 커서·재시도·실행 잠금 |
 
-수집·OCR 배치가 웹 요청이나 브라우저에서 자동 실행되지는 않습니다. 현재 웹 검색은 기존 KOPIS/Tesseract 경로를 사용합니다.
+수집·OCR 배치가 웹 요청이나 브라우저에서 자동 실행되지는 않습니다. 기본 웹 검색은 기존 KOPIS/Tesseract 경로입니다. [DB 검색 미리보기](SUPABASE_CONCERT_PREVIEW.md)는 유효한 수동 확정 EXACT 결과만 반환하며 OCR·재분석·DB 쓰기나 다른 경로로의 우회를 수행하지 않습니다.
+
+[통합 배치와 Windows 예약 안내](LOCAL_PIPELINE.md)는 plan → 수동 실행 → 결과 확인 → 예약 등록 순서입니다. `.cache/concert-pipeline/`의 진행/결과는 Git에서 제외되며 새 DB 큐나 마이그레이션은 없습니다. 통합 배치도 후보를 자동 확정하지 않습니다.
 
 ## 모듈별 책임
 
@@ -37,7 +42,7 @@ OCR 배치와 DB 어댑터는 조건을 얻기 위해 KOPIS 수집기 전체를 
 - 두 엔진의 이미지 제한·허용 출처 변경: `ocrImageConfig.mjs`, `kopisImageSource.mjs`.
 - EasyOCR 언어·타일·판독 방식 변경: `pipeline.json`에서 바꾸고 `pipelineVersion`도 올립니다. 기존 성공 결과와 새 설정 결과를 구분해야 합니다.
 - OCR 기록 방식 변경: `supabaseOcr.mjs`와 신규 SQL 마이그레이션. 이미 적용한 마이그레이션은 그대로 보존합니다.
-- 작품 추출·매칭 추가: OCR 원문·bbox·신뢰도를 입력으로 받는 별도 모듈을 두고, worker나 다운로드 모듈에 작품 판정 로직을 넣지 않습니다.
+- 저장 OCR의 작품 추출·매칭: `programAnalysis.mjs`에서 변경하고 `MATCHER_VERSION`을 올립니다. [분석·검토 안내](PROGRAM_ANALYSIS.md)를 참고하세요.
 
 ## 검증 명령
 

@@ -2,8 +2,8 @@ import { CollectionError } from './collectionHttp.mjs'
 import { createSupabaseRest } from './supabaseRest.mjs'
 
 // Server/local CLI only. No dependency on browser sessions or VITE_ variables.
-export const createSupabaseCollector = ({ env = process.env, fetchImpl = fetch, delay } = {}) => {
-  const request = createSupabaseRest({ env, fetchImpl, delay })
+export const createSupabaseCollector = (options = {}) => {
+  const request = createSupabaseRest(options)
   return {
     async save(snapshot) {
       // One RPC transaction locks/upserts the concert and reconciles its image snapshot.

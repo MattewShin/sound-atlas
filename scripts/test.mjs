@@ -10,7 +10,11 @@ import '../src/data/concertSearch.test.js'
 import '../server/kopis.test.mjs'
 import './testConcertCollection.mjs'
 import './testEasyOcr.mjs'
+import './testProgramAnalysis.mjs'
 import '../server/vercel.test.mjs'
+import '../server/supabaseConcertSearch.test.mjs'
+import '../server/concertPipeline.test.mjs'
+import '../server/pipelineWindows.test.mjs'
 import '../server/programMatching.test.mjs'
 import '../server/programOcr.test.mjs'
 import '../server/concertSearchV1.test.mjs'
@@ -28,6 +32,7 @@ import { concertWorks } from '../src/data/concerts.js'
 import { searchConcertTracks } from '../src/data/concertTrackSearch.js'
 import { verifyConcertSearchInteractions } from './concertSearchDomTest.mjs'
 import { verifyTargetConcertInteractions } from './targetConcertDomTest.mjs'
+import { verifyDbConcertInteractions } from './dbConcertDomTest.mjs'
 import { verifyMusicSelectionInteractions } from './musicSelectionDomTest.mjs'
 import { verifyWeeklySelectionInteractions } from './weeklySelectionDomTest.mjs'
 import { verifyHomeDiscoveryInteractions } from './homeDiscoveryDomTest.mjs'
@@ -118,6 +123,10 @@ test('느낌·기분의 선택 해제와 탭별 초기화·기분 후보 확대�
 })
 test('보관한 특정 곡의 캐시 결과·10건 자동 확인·추가 확인·중단·조건 변경·상태 집계를 검증한다', async () => {
   await verifyTargetConcertInteractions(components.default)
+})
+
+test('DB preview renders empty, confirmed and error states without OCR calls or inferred movements',async()=>{
+  await verifyDbConcertInteractions(components.default)
 })
 test('검색에 병합된 등록 공연이나 반복 API 행은 카드를 중복 표시하지 않는다', () => {
   const now = Date.parse('2026-10-12T12:00:00+09:00')

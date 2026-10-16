@@ -12,6 +12,25 @@ const apiConcert = { id: 'kopis-PF999001', kopisId: 'PF999001', title: known.tit
   dateFrom: '2026-12-24', dateTo: '2026-12-24', region: '서울', venue: known.venue,
   fetchedAt: '2026-10-12T00:00:00Z', programStatus: 'unavailable', programWorkIds: [], sourceUrl: 'https://kopis.or.kr/por/db/pblprfr/pblprfrView.do?mt20id=PF999001' }
 
+test('DB preview bypasses legacy browser cache and reads each track and changed decision without fallback', async()=>{
+  const calls=[],targetTrackId='schubert-impromptu-d899-op90-no2'
+  let count=0,fail=false
+  const client=createConcertSearchClient({storage:{getItem:()=>JSON.stringify({query,concerts:[apiConcert],fetchedAt:new Date().toISOString()})},fetchImpl:async(url,options)=>{
+    calls.push([url,options.method||'GET'])
+    if(url.endsWith('/status'))return {ok:true,json:async()=>({backend:'supabase',configured:true,cacheTtlMs:0})}
+    return {ok:!fail,json:async()=>fail?{code:'DB_SEARCH_UNAVAILABLE',message:'확인된 공연 조회 오류'}:{backend:'supabase',targetTrackId:new URL(url,'http://localhost').searchParams.get('targetTrackId'),query,concerts:Array.from({length:count},()=>apiConcert),fetchedAt:new Date().toISOString(),cacheTtlMs:0}}
+  }})
+  await client.status()
+  assert.equal((await client.search({...query,targetTrackId})).concerts.length,0)
+  count=1
+  assert.equal((await client.search({...query,targetTrackId})).concerts.length,1)
+  assert.equal((await client.search({...query,targetTrackId:'schubert-impromptu-d899-op90-no3'})).concerts.length,1)
+  fail=true
+  await assert.rejects(client.search({...query,targetTrackId}),e=>e.code==='DB_SEARCH_UNAVAILABLE')
+  assert.equal(calls.length,5)
+  assert.ok(calls.every(([url,method])=>method==='GET'&&!url.includes('program')&&!url.includes('match-batch')))
+})
+
 test('브라우저 캐시는 같은 조건·페이지 재진입에 재사용하고 만료·강제 새로고침만 API를 재호출한다', async () => {
   let now = Date.parse(apiConcert.fetchedAt), calls = 0
   const values = new Map()

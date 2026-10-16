@@ -15,6 +15,7 @@ export default function useConcertSearch() {
   const [programRequests, setProgramRequests] = useState({})
   const requestId = useRef(0), snapshot = useRef(null), controller = useRef(null), busy = useRef(false)
   const settings = useRef({ initialCheckLimit: INITIAL_CONCERT_CHECK_LIMIT, moreCheckLimit: 10, programBatchSize: 1 })
+  const configuration = useRef(null)
   const publish = (data, status = 'success') => { snapshot.current = data; setSearch({ status, error: null, data }) }
   const releaseProcessing = (data) => data && ({ ...data, concerts: data.concerts.map((concert) => ['processing', 'image-required'].includes(getMatchStatus(concert.targetMatch))
     ? { ...concert, targetMatch: { ...concert.targetMatch, status: 'pending', completed: false, reason: '처리를 중단했어요. 다시 이어서 확인할 수 있어요.' } } : concert) })
@@ -26,11 +27,12 @@ export default function useConcertSearch() {
   const clear = () => { stop(); publish(null, 'idle') }
   useEffect(() => {
     let mounted = true
-    client.status().then((config) => {
+    configuration.current = client.status()
+    configuration.current.then((config) => {
       if (!mounted) return
       settings.current = { initialCheckLimit: Math.min(10, Math.max(1, config.initialCheckLimit || 10)), moreCheckLimit: Math.min(10, Math.max(1, config.moreCheckLimit || 10)), programBatchSize: Math.min(5, Math.max(1, config.programBatchSize || 1)) }
       setConnection({ status: config.configured ? 'ready' : 'needs-setup', ...config })
-    }).catch(() => { if (mounted) setConnection({ status: 'needs-setup' }) })
+    }).catch((error) => { if (mounted) setConnection({ status: 'needs-setup', error: error.message }) })
     return () => { mounted = false; requestId.current += 1; controller.current?.abort() }
   }, [client])
   const begin = () => { controller.current?.abort(); const id = ++requestId.current; const current = new AbortController(); controller.current = current; busy.current = true; return { id, current } }
@@ -74,6 +76,7 @@ export default function useConcertSearch() {
     if (id === requestId.current) publish(snapshot.current)
   }
   const checkNext = async () => {
+    if (snapshot.current?.backend === 'supabase') return
     if (busy.current || !snapshot.current?.targetTrackId) return
     const { id, current } = begin()
     try { await processGroup(settings.current.moreCheckLimit, id, current) } catch (error) { fail(error, id) }
@@ -89,9 +92,17 @@ export default function useConcertSearch() {
     const { id, current } = begin()
     setSearch((previous) => ({ ...previous, status: 'loading', error: null }))
     try {
+      const config = await (configuration.current || client.status())
+      if (id !== requestId.current || current.signal.aborted) return
+      if (config.backend === 'supabase') { snapshot.current = null; setSearch({ status: 'loading', data: null, error: null }) }
       const data = await client.search(query, { refresh, signal: current.signal })
       if (id !== requestId.current || current.signal.aborted) return
       const unique = [...new Map(data.concerts.filter(({ kopisId }) => /^PF\d+$/.test(kopisId)).map((concert) => [concert.kopisId, concert])).values()]
+      if (data.backend === 'supabase') {
+        publish({ ...data, concerts: unique.filter((concert) => concertFitsQuery(concert, query)),
+          targetTrackId: target.trackId, target, query: { ...data.query, targetTrackId: target.trackId }, targetValidated: true })
+        return
+      }
       const candidates = prioritizeRegisteredTargetConcerts(unique.filter((concert) => concertFitsQuery(concert, query)), { ...query, targetTrackId: target.trackId })
       publish({ ...data, apiTotal: unique.length, targetTrackId: target.trackId, target, query: { ...data.query, targetTrackId: target.trackId },
         concerts: candidates.map((concert) => ({ ...concert, ...(!concert.targetMatch ? { targetMatch: { status: 'pending', targetTrackId: target.trackId, attempted: false, completed: false, reason: '프로그램을 아직 확인하지 않았어요.' } } : {}) })),
@@ -111,6 +122,7 @@ export default function useConcertSearch() {
     finally { if (id === requestId.current) busy.current = false }
   }
   const loadProgram = async (concert, refresh = false) => {
+    if (snapshot.current?.backend === 'supabase' || concert.searchBackend === 'supabase') return
     if (busy.current || !snapshot.current?.targetTrackId) return
     const { id, current } = begin()
     setProgramRequests((previous) => ({ ...previous, [concert.kopisId]: { status: 'loading' } }))
