@@ -342,7 +342,7 @@ test('작곡가 이미지와 활성 상세 연결이 유효하고 진단도 새 
   }
   assert.ok(Object.keys(trackDetails).every((id) => tracks.some((track) => track.id === id)))
   assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview && track.composer === '베토벤').length, 21)
-  assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview).length, 81)
+  assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview).length, 115)
   assert.deepEqual(buildRecommendationDiagnosis().emotions.map(({ key }) => key), emotionKeys)
 })
 

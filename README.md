@@ -65,7 +65,7 @@ npm run diagnose:recommendations
 
 - `src/data/manualRatings.js`, `src/data/tchaikovskySeasons.js`: 확정 수동 평가 115곡·1,035개 점수. `ratingSource: manual`, `ratingVersion: manual-emotions-1`. 영문 표기는 작품 검색·프로그램 매칭에도 사용합니다.
 - `data/manual/manual-emotions-v1.csv`: 사용자가 제공한 확정 입력 대조본. 작곡가 확장에 맞춰 기존 `chopin-emotions-v1.csv`를 이름 변경했습니다.
-- `data/manual/catalog-additions-2026-10-19.json`: 신규 34곡·306개 점수와 제목·요약·배경·감상 포인트·재생 구간·출처의 사용자 입력 대조본. 링크 칸은 실제 URL 없이 `YouTube`로 제공되어, 상세의 `pendingPreview`에 재생 구간과 출처를 보존하고 미리듣기는 준비 중으로 표시합니다.
+- `data/manual/catalog-additions-2026-10-19.json`: 신규 34곡·306개 점수와 제목·요약·배경·감상 포인트·재생 구간·출처의 사용자 입력 대조본. 이후 제공된 YouTube URL 34개를 원래 곡 순서대로 연결하고, 상세의 `shortPreview`에 영상 ID와 기존 재생 구간·출처를 보존했습니다.
 - `data/manual/catalog-update-2026-10-13.json`: 사용자 제공 기존 62곡의 최신 입력 대조본. 558개 점수·영문/한글 제목·요약·작품 배경과 감상 포인트·유튜브 링크·재생 구간·출처를 보존합니다. 전체 목록의 ID와 순서를 유지하고, 점수와 요약은 `manualRatings.js`, 상세 설명과 영상은 `manualTrackDetails.js`에 반영했습니다.
 - `src/data/musicData.js`: 활성 목록·공용 이미지 맵·상세·구 ID 매핑. 별칭은 별도 데이터로 관리하고, 화면에서는 곡명 뒤에 공백 한 칸을 두고 `[비창]`처럼 대괄호로 감싸 강제 줄바꿈 없이 같은 서식으로 표시합니다.
 - `src/data/recommendations.js`: 점수 추천·취향 프로필·코사인 유사도.
@@ -76,7 +76,7 @@ npm run diagnose:recommendations
 
 대표 키워드는 3 이상인 감정 중 점수 상위 최대 3개이며 동점은 기준표 순서입니다. 전체 감정 점수는 상세에서 표시합니다. 미평가는 null로 두고 검토 대상으로 표시하며 추천과 취향 집계에서 제외합니다. EMMA 가져오기 도구는 참고 자료만 갱신하며 수동 평가를 변경하거나 곡을 자동 매칭하지 않습니다.
 
-작곡가 이미지는 `composerImages`에서 공용 파일을 카드·상세·보관함에 공유합니다. 새 차이콥스키 초상은 [Wikimedia Commons의 CC0 이미지](https://commons.wikimedia.org/wiki/File:Portret_van_Pyotr_Ilyich_Tchaikovsky,_RP-F-F00667-AE.jpg)를 800×600 카드로 가공했습니다. 영상은 정확히 같은 작품·곡번호·악장에만 연결합니다. 기존 81곡은 제공된 유튜브 영상·재생 구간을 사용하며 신규 34곡은 실제 URL 제공 전까지 미리듣기 준비 중입니다. 영상·연주자·채널·종료 시각은 사용자 입력 그대로 반영했으며, 외부 메타데이터나 실제 청취로 별도 검증하지 않았습니다.
+작곡가 이미지는 `composerImages`에서 공용 파일을 카드·상세·보관함에 공유합니다. 새 차이콥스키 초상은 [Wikimedia Commons의 CC0 이미지](https://commons.wikimedia.org/wiki/File:Portret_van_Pyotr_Ilyich_Tchaikovsky,_RP-F-F00667-AE.jpg)를 800×600 카드로 가공했습니다. 영상은 정확히 같은 작품·곡번호·악장에만 연결합니다. 전체 115곡에 사용자 제공 유튜브 영상·재생 구간을 연결했습니다. 신규 34곡의 링크는 사용자가 지정한 원래 곡 순서대로 반영했습니다. 영상·연주자·채널·종료 시각은 사용자 입력 그대로 반영했으며, 외부 메타데이터나 실제 청취로 별도 검증하지 않았습니다.
 
 ## 로컬 저장 마이그레이션
 

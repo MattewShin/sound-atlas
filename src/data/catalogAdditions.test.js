@@ -29,10 +29,14 @@ test('신규 34곡의 306개 점수·제목·설명·출처·재생 구간을 �
     const [about, tip] = input.backgroundAndPoint.split('감상 포인트:')
     assert.equal(detail.about, about.trim())
     assert.equal(detail.listeningTip, tip.trim())
-    assert.equal(input.link, 'YouTube')
-    assert.equal(detail.shortPreview, undefined, 'URL이 없는 곡은 재생 가능한 영상으로 등록하지 않는다')
-    assert.deepEqual(detail.pendingPreview, {
-      provider: 'youtube', startSeconds: seconds(input.start), endSeconds: seconds(input.end), sourceLabel: input.sourceLabel,
+    const link = new URL(input.link)
+    assert.equal(link.origin, 'https://www.youtube.com')
+    assert.equal(link.pathname, '/watch')
+    assert.match(link.searchParams.get('v'), /^[A-Za-z0-9_-]{11}$/)
+    assert.equal(detail.pendingPreview, undefined)
+    assert.deepEqual(detail.shortPreview, {
+      provider: 'youtube', videoId: link.searchParams.get('v'),
+      startSeconds: seconds(input.start), endSeconds: seconds(input.end), sourceLabel: input.sourceLabel,
     })
     assert.deepEqual(getLibraryPreferenceProfile(tracks, [input.id]).vector, Object.values(input.emotionScores).map(s => (s - 1) / 4))
     for (const key of emotionKeys) assert.equal(getRecommendationResult(tracks, [key]).tracks.some(t => t.id === input.id), input.emotionScores[key] >= 3)
