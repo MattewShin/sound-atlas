@@ -1,5 +1,6 @@
 import './emma/emma.test.js'
 import '../src/data/recommendation.test.js'
+import '../src/data/catalogAdditions.test.js'
 import '../src/data/mobileTypography.test.js'
 import '../src/data/halfPointRatings.test.js'
 import '../src/data/storage.test.js'

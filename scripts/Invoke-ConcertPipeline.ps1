@@ -103,6 +103,16 @@ try {
         $outFile.Flush(); $errFile.Flush()
         $outFile.Dispose(); $outFile = $null
         $errFile.Dispose(); $errFile = $null
+        # The Node entry point reports its actual imported version; do not keep
+        # a second hardcoded version in the scheduled action or PowerShell.
+        $versionLine = [IO.File]::ReadLines($stdoutPath) | Where-Object { $_ -match '"event":"analysis_version"' } | Select-Object -First 1
+        if ($versionLine) {
+          try {
+            $versionInfo = $versionLine | ConvertFrom-Json
+            $receipt.matcher_version = $versionInfo.matcher_version
+            $receipt.catalog_hash = $versionInfo.catalog_hash
+          } catch { $receipt.version_record_error = 'VERSION_EVENT_INVALID' }
+        }
         $receipt.node_exit_code = $pipelineExit
         $receipt.node_exit_code_unsigned = [uint32]([long]$pipelineExit -band 0xffffffffL)
         $receipt.node_finished_at = $nodeProcess.ExitTime.ToUniversalTime().ToString('o')

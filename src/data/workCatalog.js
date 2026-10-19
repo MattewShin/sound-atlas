@@ -6,6 +6,7 @@ export const composerPatterns = {
   라흐마니노프: /라흐마니노프|\brachmanin(?:off|ov)\b/i,
   사티: /사티|\bsatie\b/i, 리스트: /리스트|\bliszt\b/i,
   슈베르트: /슈베르트|\bschubert\b/i,
+  슈만: /슈만|\bschumann\b/i,
   차이콥스키: /차이콥스키|\btchaikovsk(?:y|i)\b|\btchaikowsky\b/i,
 }
 export const workTypePatterns = {
@@ -14,7 +15,12 @@ export const workTypePatterns = {
   etude: /연습곡|\betudes?\b/i, prelude: /전주곡|\bpreludes?\b/i,
   elegy: /엘레지|\beleg(?:y|ie)\b/i, gymnopedie: /짐노페디|\bgymnopedies?\b/i,
   liebestraum: /사랑의\s*꿈|\bliebestraum(?:e)?\b/i,
-  impromptu: /즉흥곡|\bimpromptus?\b/i,
+  'fantaisie-impromptu': /환상\s*즉흥곡|\bfantaisie[\s-]+impromptu\b/i,
+  'polonaise-fantaisie': /환상\s*폴로네즈|\bpolonaise[\s-]+fantaisie\b/i,
+  impromptu: /(?<!환상)(?<!환상 )즉흥곡|(?<!fantaisie-)(?<!fantaisie )\bimpromptus?\b/i,
+  // 번호·작품번호 없는 Scherzo는 소나타의 악장명일 수 있습니다.
+  scherzo: /(?:스케르초|\bscherzos?\b)(?=[^\n]*(?:\bop[.:]?\s*\d|\bno[.:]?\s*\d|제?\s*\d+\s*번))/i,
+  polonaise: /(?<!환상)(?<!환상 )폴로네즈|\bpolonaises?\b(?![\s-]+fantaisie)/i,
   seasons: /사계|\b(?:the|four)\s+seasons\b|\bseasons\b/i,
 }
 

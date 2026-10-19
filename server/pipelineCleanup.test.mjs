@@ -38,7 +38,7 @@ test('expired local retries and pending items are pruned without resetting healt
 
 test('repository cleanup plan is GET only; missing migration fails run but preserves read-only plan',async()=>{
   const calls=[],env={SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'local-secret'}
-  const paths=Object.fromEntries(['sync_kopis_concert','record_concert_image_ocr','save_concert_program_analysis'].map(n=>['/rpc/'+n,{}]))
+  const paths=Object.fromEntries(['sync_kopis_concert','record_concert_image_ocr','save_concert_program_analysis','save_concert_program_analysis_v3'].map(n=>['/rpc/'+n,{}]))
   const repo=createPipelineRepository({env,fetchImpl:async(url,init)=>{
     calls.push({path:url.pathname,method:init.method,select:url.searchParams.get('select')})
     assert.equal(url.origin,env.SUPABASE_URL)
@@ -54,7 +54,7 @@ test('repository cleanup plan is GET only; missing migration fails run but prese
 
 test('installed cleanup uses private GET plan and only the transactional deletion RPC for writes',async()=>{
   const calls=[],env={SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'local-secret'}
-  const paths=Object.fromEntries(['sync_kopis_concert','record_concert_image_ocr','save_concert_program_analysis','plan_expired_concert_cleanup','delete_expired_concert'].map(n=>['/rpc/'+n,{}]))
+  const paths=Object.fromEntries(['sync_kopis_concert','record_concert_image_ocr','save_concert_program_analysis','save_concert_program_analysis_v3','plan_expired_concert_cleanup','delete_expired_concert'].map(n=>['/rpc/'+n,{}]))
   const repo=createPipelineRepository({env,fetchImpl:async(url,init)=>{
     calls.push({path:url.pathname,method:init.method,body:init.body&&JSON.parse(init.body)})
     const value=url.pathname==='/rest/v1/'?{paths}:url.pathname.endsWith('/plan_expired_concert_cleanup')?{total:0,schema_version:CLEANUP_SCHEMA_VERSION}:url.pathname.endsWith('/delete_expired_concert')?{status:'DELETED',counts:emptyCleanupCounts()}:[]
@@ -65,12 +65,12 @@ test('installed cleanup uses private GET plan and only the transactional deletio
 })
 
 test('draft cleanup functions without the completed schema version cannot start deletion',async()=>{
-  const calls=[],paths=Object.fromEntries(['sync_kopis_concert','record_concert_image_ocr','save_concert_program_analysis','plan_expired_concert_cleanup','delete_expired_concert'].map(n=>['/rpc/'+n,{}]))
+  const calls=[],paths=Object.fromEntries(['sync_kopis_concert','record_concert_image_ocr','save_concert_program_analysis','save_concert_program_analysis_v3','plan_expired_concert_cleanup','delete_expired_concert'].map(n=>['/rpc/'+n,{}]))
   const repo=createPipelineRepository({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'local-secret'},fetchImpl:async(url,init)=>{
     calls.push(init.method)
     return new Response(JSON.stringify(url.pathname==='/rest/v1/'?{paths}:url.pathname.endsWith('/plan_expired_concert_cleanup')?{reference_date:'2026-10-16',total:0,targets:[],counts:emptyCleanupCounts()}:[]))
   }})
-  assert.deepEqual(await repo.preflight({plan:true}),{cleanup_schema_ready:false})
+  assert.deepEqual(await repo.preflight({plan:true}),{cleanup_schema_ready:false,analysis_schema_ready:true,analysis_version_enabled:true,matcher_version:'stored-program-3'})
   assert.equal((await repo.cleanupPlan(100,'2026-10-16',20)).migration_required,true)
   await assert.rejects(repo.preflight(),{code:'CLEANUP_MIGRATION_REQUIRED'})
   assert.throws(()=>repo.cleanupDelete('id','op','run'),{code:'CLEANUP_MIGRATION_REQUIRED'})

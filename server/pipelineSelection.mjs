@@ -1,4 +1,4 @@
-import { hashJson, concertContext, MATCHER_VERSION, CATALOG_HASH } from './programAnalysis.mjs'
+import { concertContext, MATCHER_VERSION, CATALOG_HASH,programAnalysisCacheKey } from './programAnalysis.mjs'
 import { evidenceIssue } from './supabaseProgramAnalysis.mjs'
 import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
 import { koreanTime } from './pipelineConfig.mjs'
@@ -59,7 +59,7 @@ export const analysisSelection = (snapshot,state,now,validationKey) => {
     const issue=ocr?evidenceIssue({image,ocr,attempts:snapshot.attempts.filter(a=>a.image_id===image.id),results}):'NO_CURRENT_SUCCESSFUL_OCR'
     if(issue){blocked.push({image_id:image.id,reason:issue});continue}
     const target={concert,image,attempt,ocr,work_kind:'NEW'}
-    target.key='analysis:'+hashJson([ocr.id,attempt.id,image.evidence_revision,concert.program_context_revision,concertContext(concert),MATCHER_VERSION,CATALOG_HASH])
+    target.key=programAnalysisCacheKey(target)
     const existing=snapshot.analyses.find(a=>sameAnalysis(a,target))
     if(existing?.is_current){reused.push(existing);continue}
     if(existing){blocked.push({image_id:image.id,reason:'SUPERSEDED_SAME_KEY_REQUIRES_NEW_EVIDENCE_OR_VERSION'});continue}

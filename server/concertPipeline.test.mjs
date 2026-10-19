@@ -69,6 +69,7 @@ const harness=()=>{
 test('pipeline uses collect -> OCR -> analysis, caps attempts and resumes past the first ten',async()=>{
   const h=harness(),a=await h.run()
   assert.equal(a.status,'SUCCESS');assert.equal(a.exit_code,0)
+  assert.equal(a.matcher_version,'stored-program-3')
   assert.equal(a.stages.collection.attempted,10);assert.equal(a.stages.ocr.attempted,3);assert.equal(a.stages.analysis.succeeded,3)
   assert.equal(a.review.new_candidates,3);assert.equal(a.review.new_linked_candidates,3)
   assert.ok(h.calls.indexOf('saveConcert')<h.calls.indexOf('recognize'))

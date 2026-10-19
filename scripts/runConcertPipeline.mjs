@@ -7,6 +7,7 @@ import { acquirePipelineLock, createPipelineLocal } from '../server/pipelineLoca
 import { createPipelineRuntime } from '../server/pipelineRuntime.mjs'
 import { runConcertPipeline } from '../server/concertPipeline.mjs'
 import { collectionConditions } from '../server/concertCollectionConfig.mjs'
+import { MATCHER_VERSION,CATALOG_HASH } from '../server/programAnalysis.mjs'
 
 const root=fileURLToPath(new URL('../',import.meta.url))
 process.chdir(root)
@@ -26,13 +27,14 @@ try {
   else if(command==='latest') console.log(serializePipelineReport(await createPipelineLocal(directory,'',process.env).latest()))
   else {
     if(command==='run'){
+      console.log(JSON.stringify({event:'analysis_version',matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH}))
       lock=await acquirePipelineLock(directory,{runId})
       if(lock){
         if(/^[0-9a-f-]{36}$/i.test(process.env.CLASSIC_ATLAS_LAUNCH_ID||''))lock.owner.launch_id=process.env.CLASSIC_ATLAS_LAUNCH_ID
         heartbeat=setInterval(()=>{lock.heartbeat().catch(()=>controller.abort('LOCK_OWNERSHIP_LOST'))},15000);heartbeat.unref()
       }
       if(!lock){console.log(serializePipelineReport({run_id:randomUUID(),status:'DUPLICATE_SKIPPED',exit_code:3,
-        started_at:koreanTime(cliStarted),finished_at:koreanTime(Date.now()),duration_ms:Date.now()-cliStarted,limits:options}));process.exitCode=3}
+        started_at:koreanTime(cliStarted),finished_at:koreanTime(Date.now()),duration_ms:Date.now()-cliStarted,limits:options,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH}));process.exitCode=3}
     }
     if(command==='plan'||lock){
       timer=setTimeout(()=>controller.abort('TIME_LIMIT'),options.maxSeconds*1000)
@@ -41,13 +43,13 @@ try {
       if(lock)await local.recoverPrevious(lock.owner,lock.previousOwner)
       const state=await local.readState()
       report=await runConcertPipeline({runtime,local,state,options,plan:command==='plan',signal:controller.signal,runId,execution:lock?.owner,
-        onProgress:({stages})=>console.log(JSON.stringify({event:'progress',...Object.fromEntries(['cleanup','collection','ocr','analysis'].map(k=>[k,{succeeded:stages[k].succeeded,failed:stages[k].failed,reused:stages[k].reused}]))}))})
+        onProgress:({stages})=>console.log(JSON.stringify({event:'progress',matcher_version:MATCHER_VERSION,...Object.fromEntries(['cleanup','collection','ocr','analysis'].map(k=>[k,{succeeded:stages[k].succeeded,failed:stages[k].failed,reused:stages[k].reused}]))}))})
       console.log(serializePipelineReport(report));process.exitCode=report.exit_code
     }
   }
 }catch(error){
   report={run_id:runId,execution:lock?.owner,status:'FATAL',exit_code:2,started_at:koreanTime(cliStarted),finished_at:koreanTime(Date.now()),duration_ms:Date.now()-cliStarted,
-    conditions:collectionConditions(cliStarted),limits:selectedOptions||null,errors:[{code:safeCode(error)}],
+    conditions:collectionConditions(cliStarted),limits:selectedOptions||null,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH,errors:[{code:safeCode(error)}],
     action:'Check required server variables, local Python/models, DB migrations, filesystem permissions and docs/LOCAL_PIPELINE.md.'}
   console.error(serializePipelineReport(report));process.exitCode=2
   if(lock){try{await mkdir(directory,{recursive:true});await (local||createPipelineLocal(directory,'',process.env)).saveReport(report)}catch{/* console remains available */}}

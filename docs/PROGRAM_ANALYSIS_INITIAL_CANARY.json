@@ -1,0 +1,92 @@
+{
+  "schema_version": "program-ocr-canary-1",
+  "source_run_id": "f8930c00-a841-4433-b1da-f54740dca99b",
+  "expected_count": 17,
+  "targets": [
+    {
+      "ocr_result_id": "97d6f4c5-3e04-45b8-91bf-297320af116d",
+      "source_analysis_id": "ff71e230-f39c-4f16-aa88-ed20f04f3df4",
+      "kopis_id": "PF281822"
+    },
+    {
+      "ocr_result_id": "bbcdf0f0-827c-409a-815d-0b38053f4c64",
+      "source_analysis_id": "303e526a-181b-462d-af2e-00f842408793",
+      "kopis_id": "PF296659"
+    },
+    {
+      "ocr_result_id": "27b85fae-43ce-4f48-b79b-b06ff635435c",
+      "source_analysis_id": "642046e3-af57-42d3-a46b-9ffe5f7e2288",
+      "kopis_id": "PF297103"
+    },
+    {
+      "ocr_result_id": "d79da3a5-c567-41d1-a8df-05fdd0a65296",
+      "source_analysis_id": "87d9ea1f-0e27-4d08-b0c5-4595041ebe59",
+      "kopis_id": "PF279448"
+    },
+    {
+      "ocr_result_id": "f51b0c80-f56c-4aac-872c-a4ce92576908",
+      "source_analysis_id": "357d2681-a217-483f-8328-961672dbf50a",
+      "kopis_id": "PF293214"
+    },
+    {
+      "ocr_result_id": "42a32326-2452-42e9-a48b-3cd5afdbaa66",
+      "source_analysis_id": "3297d091-ac43-4ee1-a06f-0d7c1e7e8930",
+      "kopis_id": "PF299101"
+    },
+    {
+      "ocr_result_id": "314e61c5-4742-41fa-8a81-7987bc706793",
+      "source_analysis_id": "c3bb0ed6-5356-44c4-ab62-fab4c1954a1b",
+      "kopis_id": "PF298876"
+    },
+    {
+      "ocr_result_id": "156855ed-0b7a-4c17-9760-04d72a41044d",
+      "source_analysis_id": "74db53ec-1996-49ce-a6c9-bb89bc0db406",
+      "kopis_id": "PF301406"
+    },
+    {
+      "ocr_result_id": "ed2d1af6-5bc1-49b4-9bc9-196e46dbe342",
+      "source_analysis_id": "9bf0e039-f4c3-4a77-96b2-190da75c4883",
+      "kopis_id": "PF289260"
+    },
+    {
+      "ocr_result_id": "71e9536d-f113-4298-ac1d-65984d06128f",
+      "source_analysis_id": "5409def4-aebe-4454-9a13-081320a6bbd5",
+      "kopis_id": "PF295548"
+    },
+    {
+      "ocr_result_id": "06d7bee8-6fe5-4720-bccf-061c85b3dae7",
+      "source_analysis_id": "0fda12eb-0b11-4cbe-be5a-a2be80bfbd4e",
+      "kopis_id": "PF301750"
+    },
+    {
+      "ocr_result_id": "87bb2ffd-d61d-4566-a967-7b55732192d4",
+      "source_analysis_id": "06f2917d-087e-4f84-bd57-d9e5aad4b647",
+      "kopis_id": "PF300523"
+    },
+    {
+      "ocr_result_id": "0f0067cb-81d9-46e3-985a-49c12e1fde0c",
+      "source_analysis_id": "2233cc0b-d748-45b6-94d3-055aefed43f0",
+      "kopis_id": "PF302048"
+    },
+    {
+      "ocr_result_id": "c97ecc18-7410-40c2-9d81-5df314f2325c",
+      "source_analysis_id": "745b7292-7211-4cca-8d5b-8b830010dd19",
+      "kopis_id": "PF291310"
+    },
+    {
+      "ocr_result_id": "86242283-53a2-42ad-93c2-280ce903c6be",
+      "source_analysis_id": "29196958-91c4-4db5-bf3b-1340aee8d1df",
+      "kopis_id": "PF298796"
+    },
+    {
+      "ocr_result_id": "89b91f99-0e07-428d-9f82-0c8f6f0b121d",
+      "source_analysis_id": "9c4373d9-fc0f-4479-824e-0458c8167a4e",
+      "kopis_id": "PF303430"
+    },
+    {
+      "ocr_result_id": "6f8d1b2f-19b0-45cf-959d-d639a54c4199",
+      "source_analysis_id": "271d24d0-7d5b-410a-b77e-fcc6e71b0a84",
+      "kopis_id": "PF303474"
+    }
+  ]
+}

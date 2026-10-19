@@ -1,3 +1,7 @@
 import '../server/programAnalysis.test.mjs'
+import '../server/programLogicalWorks.test.mjs'
+import '../server/programMatchingNormalization.test.mjs'
 import '../server/programItemBoundaries.test.mjs'
 import '../server/programAnalysisSql.test.mjs'
+import '../server/programVersion.test.mjs'
+import '../server/programVersionSql.test.mjs'

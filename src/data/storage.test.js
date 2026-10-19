@@ -108,7 +108,7 @@ test('재추가된 동일 작품만 구 ID로 연결하고 잘못된 작품번�
 })
 
 test('44곡 버전의 전체 보관 기록을 보존하고 정확한 베토벤 구 악장 ID를 연결한다', () => {
-  const reactions = Object.fromEntries(tracks.filter((track) => !['베토벤', '슈베르트', '차이콥스키'].includes(track.composer)).map((track) => [track.id, { listenAgain: true, liked: true }]))
+  const reactions = Object.fromEntries(tracks.slice(0, 44).map((track) => [track.id, { listenAgain: true, liked: true }]))
   assert.equal(Object.keys(reactions).length, 44)
   const mappings = {
     'beethoven-moonlight-1': 'beethoven-sonata-op27-2-no14-m1',
@@ -155,5 +155,20 @@ test('77곡 목록에서 슈베르트 4곡을 추가해도 기존 보관·좋아
   const state = migrateMusicStorage(storage)
   assert.deepEqual(state.reactions[existing], { listenAgain: true, liked: true })
   assert.equal(storage.getItem(VERSION_KEY), DATA_VERSION)
-  assert.equal(tracks.filter(({ composer }) => composer === '슈베르트').length, 4)
+  assert.equal(tracks.filter(({ id }) => id.startsWith('schubert-impromptu-d899-')).length, 4)
+})
+
+test('81곡 버전에서 115곡으로 확장해도 기존·신규 보관과 최근 곡을 보존한다', () => {
+  const ids = ['schubert-impromptu-d899-op90-no3', 'schumann-sonata-op11-no1-m2', 'chopin-polonaise-op53']
+  const reactions = Object.fromEntries(ids.map(id => [id, { listenAgain: true, liked: true }]))
+  const storage = memoryStorage({
+    [VERSION_KEY]: 'manual-catalog-6',
+    [STORAGE_KEY]: JSON.stringify(reactions),
+    [RECENT_KEY]: JSON.stringify(ids),
+  })
+  const state = migrateMusicStorage(storage)
+  assert.deepEqual(state.reactions, reactions)
+  assert.deepEqual(JSON.parse(storage.getItem(RECENT_KEY)), ids)
+  assert.equal(state.notice, null)
+  assert.equal(storage.getItem(VERSION_KEY), DATA_VERSION)
 })

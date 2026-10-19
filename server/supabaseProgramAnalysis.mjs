@@ -1,5 +1,6 @@
 import { createSupabaseRest } from './supabaseRest.mjs'
 import { analyzeStoredProgram, CATALOG_HASH, CATALOG_JSON, MATCHER_VERSION } from './programAnalysis.mjs'
+import { validateProgramManifest, programAnalysisCounts } from './programCanary.mjs'
 
 export const evidenceIssue = ({ image, ocr, attempts, results }) => {
   if (!image.is_active || image.image_type !== 'DETAIL') return 'IMAGE_INACTIVE_OR_NOT_DETAIL'
@@ -48,10 +49,50 @@ export const createProgramAnalysisStore = (options = {}) => {
       }
       return { targets, skipped, coverage }
     },
-    async save(analysis) { return request('rpc/save_concert_program_analysis', { body: { p_analysis: analysis, p_catalog_json: CATALOG_JSON } }) },
-    async candidates(kopisId) {
-      return all('concert_program_candidate_status', { matcher_version: `eq.${MATCHER_VERSION}`, catalog_hash: `eq.${CATALOG_HASH}`,
-        analysis_is_current: 'eq.true',
+    async manifestTargets(input) {
+      const manifest=validateProgramManifest(input),inIds=values=>`in.(${[...new Set(values)].join(',')})`
+      const sourceAnalyses=await all('concert_program_analyses',{id:inIds(manifest.targets.map(t=>t.source_analysis_id)),select:'id,ocr_result_id,matcher_version'})
+      const ocrs=await all('concert_image_ocr_results',{id:inIds(manifest.targets.map(t=>t.ocr_result_id))})
+      const images=ocrs.length?await all('concert_program_images',{id:inIds(ocrs.map(o=>o.image_id))}):[]
+      const concerts=images.length?await all('concerts',{id:inIds(images.map(i=>i.concert_id))}):[]
+      const attempts=images.length?await all('concert_image_ocr_attempts',{image_id:inIds(images.map(i=>i.id))}):[]
+      const results=images.length?await all('concert_image_ocr_results',{image_id:inIds(images.map(i=>i.id)),select:'id,image_id,created_at'}):[]
+      const targets=[],skipped=[]
+      for(const item of manifest.targets){
+        const ocr=ocrs.find(o=>o.id===item.ocr_result_id),image=images.find(i=>i.id===ocr?.image_id),concert=concerts.find(c=>c.id===image?.concert_id)
+        const ownAttempts=attempts.filter(a=>a.image_id===image?.id),attempt=[...ownAttempts].sort(latestAttemptFirst)[0]
+        const source=sourceAnalyses.find(a=>a.id===item.source_analysis_id)
+        const reason=!source||source.ocr_result_id!==item.ocr_result_id||source.matcher_version!=='stored-program-2'?'MANIFEST_SOURCE_ANALYSIS_MISMATCH':
+          !ocr||!image||!concert?'MANIFEST_EVIDENCE_MISSING':concert.kopis_id!==item.kopis_id?'MANIFEST_CONCERT_MISMATCH':
+          evidenceIssue({image,ocr,attempts:ownAttempts,results:results.filter(r=>r.image_id===image.id)})
+        if(reason)skipped.push({...item,image_id:image?.id,reason})
+        else targets.push({concert,image,ocr,attempt})
+      }
+      return {targets,skipped,manifest,coverage:{requested_ocr:manifest.expected_count,eligible_ocr:targets.length,source_run_id:manifest.source_run_id,target_set_hash:manifest.target_set_hash}}
+    },
+    async snapshots(input,{version=MATCHER_VERSION}={}) {
+      const manifest=validateProgramManifest(input)
+      const analyses=await all('concert_program_analyses',{ocr_result_id:`in.(${manifest.targets.map(t=>t.ocr_result_id).join(',')})`,matcher_version:`eq.${version}`})
+      const candidates=analyses.length?await all('concert_program_candidate_status',{analysis_id:`in.(${analyses.map(a=>a.id).join(',')})`}):[]
+      return {matcher_version:version,requested_ocr:manifest.expected_count,target_set_hash:manifest.target_set_hash,
+        analysis_records:analyses.length,candidate_records:candidates.length,
+        summary:programAnalysisCounts(analyses.map(a=>({...a.snapshot,candidates:candidates.filter(c=>c.analysis_id===a.id).map(c=>({
+          ...a.snapshot?.candidates?.find(item=>item.candidate_key===c.candidate_key),...c}))}))),
+        analyses:analyses.map(a=>({analysis_id:a.id,ocr_result_id:a.ocr_result_id,matcher_version:a.matcher_version,payload_hash:a.payload_hash,
+          stored_is_current:a.is_current,effective_is_current:candidates.find(c=>c.analysis_id===a.id)?.analysis_is_current??null,
+          snapshot_available:Boolean(a.snapshot),grouping:a.snapshot?.grouping||null,candidates:candidates.filter(c=>c.analysis_id===a.id).map(c=>({candidate_id:c.id,candidate_key:c.candidate_key,
+            logical_work_id:a.snapshot?.candidates?.find(item=>item.candidate_key===c.candidate_key)?.logical_work_id||null,
+            catalog_id:a.snapshot?.candidates?.find(item=>item.candidate_key===c.candidate_key)?.catalog_id||c.track_id||null,
+            track_id:c.track_id,work_id:c.work_id,review_status:c.review_status,effective_status:c.effective_status,stale_reason:c.stale_reason}))}))}
+    },
+    async save(analysis) {
+      if(analysis.matcher_version!==MATCHER_VERSION)throw new Error('SAVE_VERSION_MISMATCH')
+      // No fallback: the legacy RPC drops logical/normalization data and changes v2 current flags.
+      return request('rpc/save_concert_program_analysis_v3', { body: { p_analysis: analysis, p_catalog_json: CATALOG_JSON } })
+    },
+    async candidates(kopisId,{version=MATCHER_VERSION,includeInactive=false}={}) {
+      return all('concert_program_candidate_status', { matcher_version: `eq.${version}`, catalog_hash: `eq.${CATALOG_HASH}`,
+        ...(!includeInactive?{analysis_is_current:'eq.true'}:{}),
         effective_status: 'eq.REVIEW_REQUIRED', ...(kopisId ? { kopis_id: `eq.${kopisId}` } : {}) })
     },
     async detail(id) {
@@ -61,7 +102,8 @@ export const createProgramAnalysisStore = (options = {}) => {
       const [analysis] = await all('concert_program_analyses', { id: `eq.${candidate.analysis_id}` })
       const [ocr] = await all('concert_image_ocr_results', { id: `eq.${analysis.ocr_result_id}`, select: 'id,content_sha256,pipeline_version,processed_at' })
       const reviews = await all('concert_program_reviews', { candidate_id: `eq.${id}` })
-      return { ...candidate, analysis, ocr, reviews, local_version_current: candidate.matcher_version === MATCHER_VERSION && candidate.catalog_hash === CATALOG_HASH }
+      const stored=analysis.snapshot?.candidates?.find(c=>c.candidate_key===candidate.candidate_key)
+      return { ...stored,...candidate, analysis, ocr, reviews, local_version_current: candidate.matcher_version === MATCHER_VERSION && candidate.catalog_hash === CATALOG_HASH }
     },
     async review(id, status, note, expectedAnalysisId) {
       return request('rpc/review_concert_program_candidate', { body: { p_candidate_id: id, p_status: status, p_note: note,
@@ -70,8 +112,8 @@ export const createProgramAnalysisStore = (options = {}) => {
   }
 }
 
-export const analyzeProgramTargets = async (store, { kopisId, save = false } = {}) => {
-  const scope = await store.targets(kopisId)
+export const analyzeProgramTargets = async (store, { kopisId, save = false,manifest } = {}) => {
+  const scope = manifest?await store.manifestTargets(manifest):await store.targets(kopisId)
   const analyses = [], failures = []
   for (const target of scope.targets) {
     try {
@@ -79,11 +121,13 @@ export const analyzeProgramTargets = async (store, { kopisId, save = false } = {
       const id = save ? await store.save(analysis) : null
       analyses.push({ ...analysis, analysis_id: id, kopis_id: target.concert.kopis_id, title: target.concert.title,
         source_url: target.image.source_url })
-    } catch (error) { failures.push({ kopis_id: target.concert.kopis_id, image_id: target.image.id, reason: error.code || 'ANALYSIS_FAILED' }) }
+    } catch (error) { failures.push({ kopis_id: target.concert.kopis_id, image_id: target.image.id,ocr_result_id:target.ocr.id, reason: error.code || (/^[A-Z0-9_]+$/.test(error.message)?error.message:'ANALYSIS_FAILED') }) }
   }
   const candidates = analyses.flatMap((a) => a.candidates)
   const sections = analyses.flatMap((a) => a.sections)
-  return { mode: save ? 'SAVE' : 'DRY_RUN', limited_sample: true, coverage: scope.coverage,
+  return { mode: save ? 'SAVE' : 'DRY_RUN',matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH, limited_sample: true, coverage: scope.coverage,
+    summary:programAnalysisCounts(analyses),expected_new_records:{analyses:analyses.length,candidates:candidates.length,condition:'ASSUMING_NO_EXISTING_IDENTICAL_VERSION_KEY_AND_UNCHANGED_EVIDENCE'},
+    save_receipt:{successful_calls:save?analyses.length:0,meaning:'SAVED_OR_REUSED_ANALYSIS_ID; NOT_NEW_ROW_COUNT'},
     candidate_counts: { total: candidates.length, linked: candidates.filter((c) => c.track_id).length,
       ...Object.fromEntries(['MATCHED','UNREGISTERED','AMBIGUOUS','CONFLICT'].map((k)=>[k,candidates.filter((c)=>c.outcome===k).length])) },
     section_counts: Object.fromEntries(['PROGRAM','NON_PROGRAM','UNCERTAIN'].map((k)=>[k,sections.filter((s)=>s.classification===k).length])),

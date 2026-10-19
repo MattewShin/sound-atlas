@@ -1,0 +1,207 @@
+{
+  "checked_at": "2026-10-19",
+  "source_run_id": "f8930c00-a841-4433-b1da-f54740dca99b",
+  "matcher_version": "stored-program-3",
+  "catalog_hash": "f76ab9d16a30a28f1458be850bea3305c0f394b894389a53517e49ded90ac974",
+  "target_set_hash": "491a8f99d14b8d43f6a958df53c7a52e173a8c24fb8161e31828a225bfca1e1f",
+  "exact_previous_target_set": true,
+  "requested_ocr": 17,
+  "succeeded": 17,
+  "failed": 0,
+  "skipped": 0,
+  "summary": {
+    "analyses": 17,
+    "physical_work_rows": 71,
+    "logical_candidates": 62,
+    "candidate_records": 62,
+    "catalog_linked_candidates": 3,
+    "unique_catalog_ids": 2,
+    "review_required": 62,
+    "zero_candidate_ocr": 6
+  },
+  "stored_v2": {
+    "analyses": 17,
+    "candidate_records": 50,
+    "physical_work_rows": "UNKNOWN",
+    "logical_candidates": "UNKNOWN",
+    "catalog_linked_candidates": 0,
+    "unique_catalog_ids": 0,
+    "review_required": 50,
+    "zero_candidate_ocr": 7
+  },
+  "expected_new_records": {
+    "analyses": 17,
+    "candidates": 62,
+    "review_events": 0,
+    "condition": "No pre-existing same v3 key and evidence remains current; current v3 records=0"
+  },
+  "by_concert": [
+    {
+      "kopis_id": "PF281822",
+      "ocr_result_id": "97d6f4c5-3e04-45b8-91bf-297320af116d",
+      "legacy_candidate_records": 5,
+      "physical_work_rows": 5,
+      "logical_candidates": 5,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF296659",
+      "ocr_result_id": "bbcdf0f0-827c-409a-815d-0b38053f4c64",
+      "legacy_candidate_records": 0,
+      "physical_work_rows": 0,
+      "logical_candidates": 0,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF297103",
+      "ocr_result_id": "27b85fae-43ce-4f48-b79b-b06ff635435c",
+      "legacy_candidate_records": 4,
+      "physical_work_rows": 4,
+      "logical_candidates": 4,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF279448",
+      "ocr_result_id": "d79da3a5-c567-41d1-a8df-05fdd0a65296",
+      "legacy_candidate_records": 8,
+      "physical_work_rows": 8,
+      "logical_candidates": 8,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF293214",
+      "ocr_result_id": "f51b0c80-f56c-4aac-872c-a4ce92576908",
+      "legacy_candidate_records": 0,
+      "physical_work_rows": 0,
+      "logical_candidates": 0,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF299101",
+      "ocr_result_id": "42a32326-2452-42e9-a48b-3cd5afdbaa66",
+      "legacy_candidate_records": 1,
+      "physical_work_rows": 1,
+      "logical_candidates": 1,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF298876",
+      "ocr_result_id": "314e61c5-4742-41fa-8a81-7987bc706793",
+      "legacy_candidate_records": 3,
+      "physical_work_rows": 3,
+      "logical_candidates": 3,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF301406",
+      "ocr_result_id": "156855ed-0b7a-4c17-9760-04d72a41044d",
+      "legacy_candidate_records": 2,
+      "physical_work_rows": 2,
+      "logical_candidates": 2,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF289260",
+      "ocr_result_id": "ed2d1af6-5bc1-49b4-9bc9-196e46dbe342",
+      "legacy_candidate_records": 9,
+      "physical_work_rows": 9,
+      "logical_candidates": 9,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF295548",
+      "ocr_result_id": "71e9536d-f113-4298-ac1d-65984d06128f",
+      "legacy_candidate_records": 0,
+      "physical_work_rows": 24,
+      "logical_candidates": 15,
+      "catalog_linked_candidates": 2
+    },
+    {
+      "kopis_id": "PF301750",
+      "ocr_result_id": "06d7bee8-6fe5-4720-bccf-061c85b3dae7",
+      "legacy_candidate_records": 11,
+      "physical_work_rows": 5,
+      "logical_candidates": 5,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF300523",
+      "ocr_result_id": "87bb2ffd-d61d-4566-a967-7b55732192d4",
+      "legacy_candidate_records": 4,
+      "physical_work_rows": 4,
+      "logical_candidates": 4,
+      "catalog_linked_candidates": 1
+    },
+    {
+      "kopis_id": "PF302048",
+      "ocr_result_id": "0f0067cb-81d9-46e3-985a-49c12e1fde0c",
+      "legacy_candidate_records": 0,
+      "physical_work_rows": 0,
+      "logical_candidates": 0,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF291310",
+      "ocr_result_id": "c97ecc18-7410-40c2-9d81-5df314f2325c",
+      "legacy_candidate_records": 3,
+      "physical_work_rows": 6,
+      "logical_candidates": 6,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF298796",
+      "ocr_result_id": "86242283-53a2-42ad-93c2-280ce903c6be",
+      "legacy_candidate_records": 0,
+      "physical_work_rows": 0,
+      "logical_candidates": 0,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF303430",
+      "ocr_result_id": "89b91f99-0e07-428d-9f82-0c8f6f0b121d",
+      "legacy_candidate_records": 0,
+      "physical_work_rows": 0,
+      "logical_candidates": 0,
+      "catalog_linked_candidates": 0
+    },
+    {
+      "kopis_id": "PF303474",
+      "ocr_result_id": "6f8d1b2f-19b0-45cf-959d-d639a54c4199",
+      "legacy_candidate_records": 0,
+      "physical_work_rows": 0,
+      "logical_candidates": 0,
+      "catalog_linked_candidates": 0
+    }
+  ],
+  "catalog_ids": [
+    "chopin-ballade-op52-no4",
+    "liszt-liebestraum-s541-no3"
+  ],
+  "assertions": {
+    "deterministic": true,
+    "input_unchanged": true,
+    "all_source_quotes_exact": true,
+    "all_hashes_valid": true,
+    "all_version_keys_distinct": true,
+    "all_v2_payload_hashes_distinct": true,
+    "one_catalog_per_logical_work": true,
+    "cli_dry_run_verified": true
+  },
+  "operations": {
+    "db_get_requests": 10,
+    "remote_db_writes": 0,
+    "stored_reanalyses": 0,
+    "ocr_runs": 0,
+    "pipeline_runs": 0,
+    "image_requests": 0,
+    "kopis_requests": 0,
+    "scheduler_changes": 0,
+    "remote_migrations": 0
+  },
+  "deployment": {
+    "v3_rpc_present": false,
+    "v3_existing_analyses": 0,
+    "v3_existing_candidates": 0,
+    "draft_applied_to_remote": false
+  }
+}

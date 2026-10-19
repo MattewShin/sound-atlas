@@ -52,8 +52,10 @@ test('a title before its detached number uses same-row bbox, retaining exact sep
 })
 test('explicit parent sonata and suite titles keep their movement relationships',()=>{
   const a=analyze('PROGRAM\nBeethoven\nSonata No.14 Op.27-2\nI. Adagio\nII. Allegro\nIII. Presto')
-  assert.equal(a.candidates.length,3)
-  assert.deepEqual(a.candidates.map(c=>c.track_id),[1,2,3].map(n=>`beethoven-sonata-op27-2-no14-m${n}`))
+  assert.equal(a.candidates.length,1)
+  assert.equal(a.candidates[0].catalog_id,'beethoven-sonata-op27-2-no14')
+  assert.equal(a.candidates[0].track_id,null)
+  assert.equal(a.candidates[0].scope.kind,'MOVEMENT_SET')
   for(const c of a.candidates){assert.equal(c.identity.title,'Sonata No.14 Op.27-2');assert.deepEqual(c.identity.movement_numbers,[1,2,3]);assert.ok(!c.review_reasons.includes('PARENT_WORK_TITLE_UNCONFIRMED'))}
   const b=analyze('PROGRAM\nA. Example\nSuite Aurora\nI. Dawn Song\nII. Night Song')
   assert.equal(b.candidates.length,1)

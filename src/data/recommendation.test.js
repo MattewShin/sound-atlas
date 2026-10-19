@@ -40,15 +40,16 @@ test('사용자 제공 62곡의 제목·558개 점수·요약·배경·감상 �
 test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출처가 확정 CSV와 전부 일치한다', () => {
   const rows = readFileSync(new URL('../../data/manual/manual-emotions-v1.csv', import.meta.url), 'utf8').trim().split(/\r?\n/)
   assert.deepEqual(rows.shift().split(',').slice(2), emotionKeys)
-  assert.equal(rows.length, 81)
+  assert.equal(rows.length, 115)
   assert.equal(tracks.length, rows.length)
   assert.equal(new Set(tracks.map(({ id }) => id)).size, rows.length)
-  assert.equal(tracks.filter((track) => track.composer === '쇼팽').length, 36)
+  assert.equal(tracks.filter((track) => track.composer === '쇼팽').length, 54)
   assert.equal(tracks.filter((track) => track.composer === '라흐마니노프').length, 4)
   assert.equal(tracks.filter((track) => track.composer === '사티').length, 3)
   assert.equal(tracks.filter((track) => track.composer === '리스트').length, 1)
   assert.equal(tracks.filter((track) => track.composer === '베토벤').length, 21)
-  assert.equal(tracks.filter((track) => track.composer === '슈베르트').length, 4)
+  assert.equal(tracks.filter((track) => track.composer === '슈베르트').length, 8)
+  assert.equal(tracks.filter((track) => track.composer === '슈만').length, 12)
   assert.equal(tracks.filter((track) => track.composer === '차이콥스키').length, 12)
   assert.equal(tracks.filter((track) => track.type === 'piano-concerto' && track.opus === 73 && track.number === 5).length, 3)
   assert.equal(tracks.filter((track) => track.type === 'etude' && track.opus === 10).length, 12)
@@ -67,7 +68,7 @@ test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출�
     assert.equal(track.ratingVersion, RATING_VERSION)
     assert.equal(track.ratingUnit, track.movement ? 'whole-movement' : 'whole-work')
     assert.ok(!('moods' in track) && !('energy' in track))
-    assert.match(track.id, /^(chopin|rachmaninoff|satie|liszt|beethoven|schubert|tchaikovsky)-/)
+    assert.match(track.id, /^(chopin|rachmaninoff|satie|liszt|beethoven|schubert|schumann|tchaikovsky)-/)
   })
   assert.equal(emotions.find(({ key }) => key === 'peacefulness').label, '평안한')
 })
@@ -101,8 +102,8 @@ test('기분 대표곡 후보는 평균 1점 경계를 포함하고 두 감정�
   assert.equal(pickRandomTopRecommendation(result, 0.99).id, 'top', '느낌 추천은 최고점만 추첨')
 })
 
-test('현재 기분별 후보 8~20곡을 고르게 추첨하고 후보 부족과 직전곡 제외를 처리한다', () => {
-  const counts = [9, 9, 8, 18, 15, 20]
+test('현재 기분별 후보 8~32곡을 고르게 추첨하고 후보 부족과 직전곡 제외를 처리한다', () => {
+  const counts = [12, 12, 8, 25, 24, 32]
   feelingOptions.forEach((feeling, index) => {
     const keys = getSuggestedEmotions(feeling)
     const result = getRecommendationResult(tracks, keys)

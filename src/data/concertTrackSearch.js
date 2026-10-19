@@ -11,6 +11,8 @@ const typeAliases = {
   etude: 'etude', prelude: 'prelude', elegy: 'elegy', gymnopedie: 'gymnopedie',
   liebestraum: 'liebestraum',
   impromptu: 'impromptu',
+  scherzo: 'scherzo', polonaise: 'polonaise',
+  'fantaisie-impromptu': 'fantaisie impromptu', 'polonaise-fantaisie': 'polonaise fantaisie',
   seasons: 'the seasons four seasons',
 }
 

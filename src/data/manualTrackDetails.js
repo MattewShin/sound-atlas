@@ -725,5 +725,345 @@ export const manualTrackDetails = {
       "endSeconds": 481,
       "sourceLabel": "크리스티안 짐머만, 피아노 / Krystian Zimerman - Topic / 《Schubert: Impromptus D.899 & D.935》 · Deutsche Grammophon · ℗1991 · UMG 제공 공식 음원 영상"
     }
+  },
+  "schubert-impromptu-d935-op142-no1": {
+    "about": "바단조의 극적인 주제와 손을 교차하며 노래하는 서정적인 대목이 대비됩니다.",
+    "listeningTip": "조용한 부분에서도 사라지지 않는 열기와, 같은 선율이 되돌아올 때의 표정 변화를 따라가 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 591,
+      "sourceLabel": "다니엘 바렌보임 / Daniel Barenboim – Topic / Deutsche Grammophon, ℗1978"
+    }
+  },
+  "schubert-impromptu-d935-op142-no2": {
+    "about": "미뉴에트와 트리오를 닮은 구성의 내림가장조 작품입니다.",
+    "listeningTip": "단정한 화음 선율과 중간부의 유연한 움직임이 만들어 내는 친밀한 분위기를 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 463,
+      "sourceLabel": "크리스티안 짐머만 / Krystian Zimerman – Topic / Deutsche Grammophon, ℗1991"
+    }
+  },
+  "schubert-impromptu-d935-op142-no3": {
+    "about": "‘로자문데’ 선율과 연관된 주제를 다섯 차례 변주합니다.",
+    "listeningTip": "단조 변주의 그늘과 뒤이어 펼쳐지는 따뜻한 음색, 마지막에 단순해지는 선율을 비교해 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 688,
+      "sourceLabel": "크리스티안 짐머만 / Krystian Zimerman – Topic / Deutsche Grammophon, ℗1991"
+    }
+  },
+  "schubert-impromptu-d935-op142-no4": {
+    "about": "강한 엇박 악센트와 음계형 장식에서 헝가리풍 성격이 드러납니다.",
+    "listeningTip": "박자를 비껴가는 강세와 마지막으로 갈수록 몰아치는 추진력을 따라가 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 357,
+      "sourceLabel": "크리스티안 짐머만 / Krystian Zimerman – Topic / Deutsche Grammophon, ℗1991"
+    }
+  },
+  "schumann-sonata-op11-no1-m1": {
+    "about": "느린 서주에서 제시된 선율은 다음 악장의 아리아에도 이어집니다.",
+    "listeningTip": "서주의 몽상적인 분위기와 알레그로의 집요한 리듬 사이에서 같은 음악적 생각이 어떻게 달라지는지 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 721,
+      "sourceLabel": "마우리치오 폴리니 / Maurizio Pollini – Topic / Deutsche Grammophon, ℗1973"
+    }
+  },
+  "schumann-sonata-op11-no1-m2": {
+    "about": "청년기 가곡을 바탕으로 한 아리아이며, 절제하면서도 표현력 있게 연주하도록 지시되어 있습니다.",
+    "listeningTip": "반주의 울림 위에서 길게 이어지는 선율과 과장하지 않는 온기에 집중해 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 189,
+      "sourceLabel": "마우리치오 폴리니 / Maurizio Pollini – Topic / Deutsche Grammophon, ℗1973"
+    }
+  },
+  "schumann-sonata-op11-no1-m3": {
+    "about": "스케르초 사이에 과장된 폴로네즈풍 간주와 레치타티보 같은 대목이 끼어듭니다.",
+    "listeningTip": "갑작스러운 성격 변화와 예상한 박자를 비트는 리듬의 재치를 느껴보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 311,
+      "sourceLabel": "마우리치오 폴리니 / Maurizio Pollini – Topic / Deutsche Grammophon, ℗1973"
+    }
+  },
+  "schumann-sonata-op11-no1-m4": {
+    "about": "여러 에피소드를 거쳐 올림바장조로 마무리되는 피날레입니다.",
+    "listeningTip": "두꺼워지는 화음과 저음의 움직임이 쌓아 올리는 에너지, 마지막에 열리는 밝은 음향을 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 699,
+      "sourceLabel": "마우리치오 폴리니 / Maurizio Pollini – Topic / Deutsche Grammophon, ℗1973"
+    }
+  },
+  "schumann-sonata-op22-no2-m1": {
+    "about": "시작부터 ‘가능한 한 빠르게’를 요구하며, 이후에도 속도를 재촉하는 지시가 등장합니다.",
+    "listeningTip": "빠른 반주에 가려지지 않고 이어지는 선율과, 긴장이 풀렸다 다시 조여지는 흐름을 따라가 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 331,
+      "sourceLabel": "마르타 아르헤리치 / Martha Argerich – Topic / Deutsche Grammophon, ℗1972"
+    }
+  },
+  "schumann-sonata-op22-no2-m2": {
+    "about": "슈만이 청년기에 쓴 가곡을 바탕으로 한 안단티노입니다.",
+    "listeningTip": "부드러운 반주와 노래하는 선율의 호흡, 화음이 바뀔 때 잠시 짙어지는 그늘을 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 296,
+      "sourceLabel": "마르타 아르헤리치 / Martha Argerich – Topic / Deutsche Grammophon, ℗1972"
+    }
+  },
+  "schumann-sonata-op22-no2-m3": {
+    "about": "강한 악센트의 주제와 장조의 익살스러운 에피소드가 대비되는 짧은 악장입니다.",
+    "listeningTip": "무게 있는 첫 리듬과 가볍게 튀는 응답 사이의 성격 차이를 느껴보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 91,
+      "sourceLabel": "마르타 아르헤리치 / Martha Argerich – Topic / Deutsche Grammophon, ℗1972"
+    }
+  },
+  "schumann-sonata-op22-no2-m4": {
+    "about": "클라라의 의견을 받아 새로 쓴 피날레로, 현재 통상 연주되는 론도입니다.",
+    "listeningTip": "두 손이 맞물리는 움직임 속의 서정적인 선율과, 결말을 앞두고 더욱 팽팽해지는 긴장을 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 281,
+      "sourceLabel": "마르타 아르헤리치 / Martha Argerich – Topic / Deutsche Grammophon, ℗1972"
+    }
+  },
+  "schumann-sonata-op14-no3-m1": {
+    "about": "클라라의 주제와 연관된 하행 음형이 바단조의 극적인 전개 속에 스며 있습니다.",
+    "listeningTip": "폭발하는 화음뿐 아니라 낮은 음역에서 지속되는 압력과 선율의 간절함에 귀를 기울여 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 498,
+      "sourceLabel": "블라디미르 호로비츠 / truecrypt 채널 / 1악장 개별 업로드"
+    }
+  },
+  "schumann-sonata-op14-no3-m2": {
+    "about": "개정판에서 복원된 내림라장조의 스케르초이며, 중간부는 라장조로 이동합니다.",
+    "listeningTip": "단단한 화음 리듬과 중간부의 달라진 빛깔, 주제가 돌아오는 방식을 비교해 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 338,
+      "sourceLabel": "블라디미르 호로비츠 / truecrypt 채널 / 2악장 개별 업로드"
+    }
+  },
+  "schumann-sonata-op14-no3-m3": {
+    "about": "클라라 비크의 안단티노를 주제로 한 변주곡입니다.",
+    "listeningTip": "선율의 윤곽을 기억하면서 반주와 음역이 바뀔 때마다 달라지는 슬픔의 깊이를 따라가 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 514,
+      "sourceLabel": "블라디미르 호로비츠 / truecrypt 채널 / 3악장 개별 업로드"
+    }
+  },
+  "schumann-sonata-op14-no3-m4": {
+    "about": "‘가능한 한 가장 빠르게’라는 지시가 붙은 마지막 악장입니다.",
+    "listeningTip": "빠른 음형 자체보다 그 안의 선율과 화성적 긴장이 어떻게 절정으로 모이는지 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 419,
+      "sourceLabel": "블라디미르 호로비츠 / truecrypt 채널 / 4악장 개별 업로드"
+    }
+  },
+  "chopin-scherzo-op20-no1": {
+    "about": "나단조의 격정적인 바깥 부분과 폴란드 성탄 노래를 인용한 중간부가 대비됩니다.",
+    "listeningTip": "중간부의 고요가 돌아오는 폭풍을 얼마나 더 강렬하게 만드는지 느껴보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 533,
+      "sourceLabel": "조성진 / Seong-Jin Cho – Topic / Deutsche Grammophon, ℗2021"
+    }
+  },
+  "chopin-scherzo-op31-no2": {
+    "about": "짧은 질문과 강한 응답으로 시작하며, 서정적인 중간부를 거쳐 화려한 결말에 도달합니다.",
+    "listeningTip": "도입의 머뭇거림이 점차 확신과 추진력으로 바뀌는 과정을 따라가 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 587,
+      "sourceLabel": "조성진 / Seong-Jin Cho – Topic / Deutsche Grammophon, ℗2021"
+    }
+  },
+  "chopin-scherzo-op39-no3": {
+    "about": "강한 옥타브 주제와 성가풍 화음, 흘러내리는 장식 음형이 교차합니다.",
+    "listeningTip": "거친 선언 뒤에 나타나는 고요한 응답과, 마지막에 변화하는 화음의 빛깔을 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 440,
+      "sourceLabel": "조성진 / Seong-Jin Cho – Topic / Deutsche Grammophon, ℗2021"
+    }
+  },
+  "chopin-scherzo-op54-no4": {
+    "about": "네 스케르초 가운데 유일한 장조곡으로, 경쾌한 움직임 사이에 성찰적인 중간부가 놓입니다.",
+    "listeningTip": "가볍게 튀는 리듬과 중간부의 길고 사색적인 선율을 대비해 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 649,
+      "sourceLabel": "조성진 / Seong-Jin Cho – Topic / Deutsche Grammophon, ℗2021"
+    }
+  },
+  "chopin-impromptu-op29-no1": {
+    "about": "유려한 바깥 부분과 단조의 서정적인 중간부로 구성됩니다.",
+    "listeningTip": "빠른 음들을 배경으로 이어지는 선율과, 중간부에서 달라지는 말투 같은 프레이징을 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 254,
+      "sourceLabel": "아르투르 루빈스타인 / Arthur Rubinstein – Topic / Sony Classical 제공, 1964년 녹음"
+    }
+  },
+  "chopin-impromptu-op36-no2": {
+    "about": "반복되는 저음 위의 노래에서 행진곡풍 중간부로 이동하는 자유로운 구성입니다.",
+    "listeningTip": "익숙했던 선율이 다른 조성과 반주로 돌아올 때 생기는 낯선 아름다움을 느껴보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 358,
+      "sourceLabel": "아르투르 루빈스타인 / Arthur Rubinstein – Topic / RCA Red Seal 제공, 1964년 녹음"
+    }
+  },
+  "chopin-impromptu-op51-no3": {
+    "about": "내림사장조의 유연한 흐름과 내림마단조 중간부의 짙은 선율이 대비됩니다.",
+    "listeningTip": "중간부에서 첼로처럼 노래하는 왼손과 그 아래 가라앉지 않는 움직임을 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 282,
+      "sourceLabel": "아르투르 루빈스타인 / Arthur Rubinstein – Topic / RCA Red Seal 제공, 1964년 녹음"
+    }
+  },
+  "chopin-fantaisie-impromptu-op66": {
+    "about": "빠른 바깥 부분과 느리게 노래하는 중간부가 대비되며, 사후에 출판되었습니다.",
+    "listeningTip": "두 손의 엇갈리는 리듬과 중간부의 긴 호흡, 마지막에 남는 선율의 여운을 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 312,
+      "sourceLabel": "아르투르 루빈스타인 / Arthur Rubinstein – Topic / RCA Red Seal 제공"
+    }
+  },
+  "chopin-polonaise-op26-no1": {
+    "about": "쇼팽이 생전에 출판한 첫 독주 폴로네즈 묶음에 속하는 올림다단조 곡입니다.",
+    "listeningTip": "힘 있게 내딛는 리듬과 노래하는 중간부가 만드는 감정의 폭을 느껴보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 460,
+      "sourceLabel": "아르투르 루빈스타인 / Arthur Rubinstein – Topic / RCA Red Seal 제공, 1964년 녹음"
+    }
+  },
+  "chopin-polonaise-op26-no2": {
+    "about": "내림마단조의 낮고 무거운 음향과 장중한 춤 리듬이 중심을 이룹니다.",
+    "listeningTip": "큰 소리의 절정뿐 아니라 조용한 반복 속에서 자라는 불안과 압박감을 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 436,
+      "sourceLabel": "아르투르 루빈스타인 / ArRubMusic 채널"
+    }
+  },
+  "chopin-polonaise-op40-no1": {
+    "about": "‘군대’라는 별명으로 알려진 가장조 작품입니다.",
+    "listeningTip": "빠르기보다 리듬의 무게와 화음의 선명함이 만드는 자신감, 중간부의 힘찬 응답에 집중해 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 251,
+      "sourceLabel": "아르투르 루빈스타인 / LukasSchuch 채널"
+    }
+  },
+  "chopin-polonaise-op40-no2": {
+    "about": "다단조의 작품으로, 같은 작품번호의 밝은 가장조 곡과 뚜렷한 대조를 이룹니다.",
+    "listeningTip": "저음의 무게를 배경으로 떠오르는 선율에서 위엄과 애잔함이 함께 느껴지는 순간을 찾아보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 521,
+      "sourceLabel": "아르투르 루빈스타인 / ArRubMusic 채널"
+    }
+  },
+  "chopin-polonaise-op44": {
+    "about": "강렬한 폴로네즈 속에 마주르카풍 중간부가 들어 있는 확장된 구성입니다.",
+    "listeningTip": "집요한 리듬과 부드러워진 춤의 대비, 처음의 주제가 돌아올 때의 무게를 느껴보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 570,
+      "sourceLabel": "아르투르 루빈스타인 / pianopera 채널 / 1935년 녹음으로 표기"
+    }
+  },
+  "chopin-polonaise-op53": {
+    "about": "‘영웅’으로 알려진 작품으로, 중간부의 연속적인 왼손 옥타브가 특징입니다.",
+    "listeningTip": "화려한 움직임 속에서도 유지되는 넓은 박동과 주선율의 위엄을 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 421,
+      "sourceLabel": "아르투르 루빈스타인 / Bod Mas 채널 / NBC 「Festival of Music」, 1956년으로 표기"
+    }
+  },
+  "chopin-polonaise-fantaisie-op61": {
+    "about": "1846년에 완성되었으며, 폴로네즈 리듬과 자유로운 환상곡적 전개를 결합합니다.",
+    "listeningTip": "서주의 머뭇거림과 멀리 떠도는 화성이 마지막의 충만한 울림으로 모이는 과정을 따라가 보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 774,
+      "sourceLabel": "아르투르 루빈스타인 / Arthur Rubinstein – Topic / RCA Red Seal 제공, 1950년 녹음"
+    }
+  },
+  "chopin-polonaise-op71-no1": {
+    "about": "청소년기에 쓴 라단조 작품으로, 사후 출판된 Op.71에 포함됩니다.",
+    "listeningTip": "당당한 춤 리듬과 화려한 패시지 사이에서 노래하는 선율의 변화를 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 324,
+      "sourceLabel": "니키타 마갈로프 / Nikita Magaloff – Topic / Universal Music Group 제공"
+    }
+  },
+  "chopin-polonaise-op71-no2": {
+    "about": "내림나장조의 초기 작품으로, 사후 출판된 묶음에 속합니다.",
+    "listeningTip": "리듬을 무겁게 누르기보다 선율과 장식이 자연스럽게 이어지는 경쾌한 흐름을 느껴보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 400,
+      "sourceLabel": "아르투르 루빈스타인 / Mansyr19992 채널"
+    }
+  },
+  "chopin-polonaise-op71-no3": {
+    "about": "바단조의 초기 작품으로, Op.71의 마지막 곡입니다.",
+    "listeningTip": "춤의 박동 위에서 길게 이어지는 선율과 장조 부분에서 잠시 밝아지는 색채를 들어보세요.",
+    "pendingPreview": {
+      "provider": "youtube",
+      "startSeconds": 0,
+      "endSeconds": 425,
+      "sourceLabel": "블라디미르 아슈케나지 / Vladimir Ashkenazy – Topic / Decca, ℗1983"
+    }
   }
 }

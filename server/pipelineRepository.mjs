@@ -4,6 +4,7 @@ import { createSupabaseOcr } from './supabaseOcr.mjs'
 import { createProgramAnalysisStore } from './supabaseProgramAnalysis.mjs'
 import { pipelineError } from './pipelineConfig.mjs'
 import { CLEANUP_TABLES, CLEANUP_SCHEMA_VERSION, fallbackCleanupPlan } from './pipelineCleanup.mjs'
+import { MATCHER_VERSION } from './programAnalysis.mjs'
 
 const fields={
   concerts:'id,kopis_id,title,venue,region,start_date,end_date,performance_status,synced_at,program_context_revision',
@@ -42,8 +43,13 @@ export const createPipelineRepository = options => {
       cleanupFunctionsPresent=['plan_expired_concert_cleanup','delete_expired_concert'].every(name=>schema.paths?.[`/rpc/${name}`])
       cleanupSchemaReady=cleanupFunctionsPresent && (await request('rpc/plan_expired_concert_cleanup',{params:{p_limit:'1'}})).schema_version===CLEANUP_SCHEMA_VERSION
       if(!cleanupSchemaReady&&!plan)throw pipelineError('CLEANUP_MIGRATION_REQUIRED')
+      const analysisSchemaReady=Boolean(schema.paths?.['/rpc/save_concert_program_analysis_v3'])
+      if(!analysisSchemaReady&&!plan)throw pipelineError('PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED')
+      const policy=analysisSchemaReady?await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:`eq.${MATCHER_VERSION}`,limit:'1'}}):null
+      const analysisVersionEnabled=policy?policy[0]?.enabled!==false:'UNKNOWN'
+      if(analysisVersionEnabled===false&&!plan)throw pipelineError('PROGRAM_ANALYSIS_VERSION_DISABLED')
       if(cleanupSchemaReady)await request('concert_cleanup_events',{params:{select:'operation_id',limit:'0'}})
-      return {cleanup_schema_ready:cleanupSchemaReady}
+      return {cleanup_schema_ready:cleanupSchemaReady,analysis_schema_ready:analysisSchemaReady,analysis_version_enabled:analysisVersionEnabled,matcher_version:MATCHER_VERSION}
     },
     async cleanupPlan(limit,today,pages){
       if(cleanupFunctionsPresent){

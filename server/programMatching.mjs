@@ -9,7 +9,7 @@ const arrangement = /편곡|재편곡|\barr\.|\barranged\b|\btrans\.|transcripti
 const biography = /수상|콩쿠르|데뷔|과거|지난\s*\d|연주한\s*경력|연주했|performed\s+(?:in|at)|previously/i
 const namedComposer = /(?:[A-Z1]\.\s*)+(?:(?:de|van|von)\s+)?\p{Lu}[\p{L}-]+|^[가-힣]{2,6}\s*\(?\d{4}/u
 const types = Object.entries(workTypePatterns)
-const individuallyNumberedTypes = new Set(['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'seasons'])
+const individuallyNumberedTypes = new Set(['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'polonaise', 'seasons'])
 
 export const extractProgram = (rawText) => {
   const text = normalize(rawText).replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<br\s*\/?\s*>|<\/p>/gi, '\n').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ')
@@ -119,7 +119,7 @@ export const identifyEntry = (entry, work) => {
     if (!catalogue && !exactOpusAndNumber) return { state: 'ambiguous', reason: '작품목록 번호를 확인해야 해요.' }
     if (catalogue && Number(catalogue[1]) !== work.catalogueNumber) return { state: 'different' }
   }
-  const needsNumber = ['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'seasons'].includes(work.type)
+  const needsNumber = individuallyNumberedTypes.has(work.type) && work.number != null
   const needsOpusNumber = ['sonata', 'ballade', 'piano-concerto'].includes(work.type) && work.number != null
   const allSet = /전곡|complete|all\s+(?:etudes|preludes|impromptus|seasons)|(?:all|four|4|twelve|12)\s+(?:the\s+)?(?:impromptus|months|pieces)|전\s*(?:4|12)곡/i.test(text)
   const uniqueAlias = work.type === 'seasons' && !explicitMonths.length && aliases.length === 1 && aliases[0].id === work.id
