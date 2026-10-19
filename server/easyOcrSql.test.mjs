@@ -54,6 +54,19 @@ test('OCR SQL keeps successes across retries, failures, changed content, recolle
     await assert.rejects(record({ ...attempt, id: randomUUID(), status: 'FAILED', error_code: 'EASYOCR_TIMEOUT' }, result))
     await assert.rejects(record({ ...attempt, id: randomUUID(), source_url: 'https://kopis.or.kr/upload/different.png' }))
 
+    // Existing schema accepts the bounded source hash on a failed limit attempt,
+    // without creating a fake successful artifact or rewriting historical rows.
+    const oldAttempts=(await db.query('select * from public.concert_image_ocr_attempts order by id')).rows
+    const limitAttempt={...attempt,id:randomUUID(),status:'FAILED',error_code:'OCR_IMAGE_LIMIT_EXCEEDED',content_sha256:'d'.repeat(64)}
+    await record(limitAttempt,null);await record(limitAttempt,null)
+    assert.equal(await count('concert_image_ocr_results'),2)
+    assert.equal(await count('concert_image_ocr_attempts'),6)
+    const failed=(await db.query('select * from public.concert_image_ocr_attempts where id=$1',[limitAttempt.id])).rows[0]
+    assert.equal(failed.result_id,null);assert.equal(failed.content_sha256,limitAttempt.content_sha256)
+    assert.equal(failed.error_code,'OCR_IMAGE_LIMIT_EXCEEDED')
+    assert.deepEqual((await db.query('select * from public.concert_image_ocr_attempts where id<>$1 order by id',[limitAttempt.id])).rows,oldAttempts)
+    assert.deepEqual((await db.query('select * from public.concert_image_ocr_results order by created_at limit 1')).rows[0],original)
+
     await collect([])
     assert.equal(await count('concert_image_ocr_results'), 2)
     await assert.rejects(record({ ...attempt, id: randomUUID() }), /no longer an active DETAIL/)

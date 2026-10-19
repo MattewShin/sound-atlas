@@ -10,7 +10,7 @@ import { runEasyOcrBatch } from './easyOcrBatch.mjs'
 import { EASYOCR_PIPELINE_VERSION, getEasyOcrConfig, parseEasyOcrArgs } from './easyOcrConfig.mjs'
 import { CollectionError } from './collectionHttp.mjs'
 import { validateEasyOcrResult, createEasyOcrWorker } from './easyOcrWorker.mjs'
-import { downloadKopisImage } from './kopisImageDownload.mjs'
+import { downloadKopisImage, imageValidationKey, IMAGE_LIMIT_CODE } from './kopisImageDownload.mjs'
 import { createSupabaseOcr } from './supabaseOcr.mjs'
 
 const now = () => Date.parse('2026-10-14T00:00:00Z')
@@ -152,6 +152,50 @@ test('download enforces KOPIS source, streams byte caps, validates pixels and ha
   }
   await assert.rejects(download('https://kopis.or.kr/upload/x', { config: { ...config, maxBytes: 1 } }), { code: 'OCR_IMAGE_TOO_LARGE' })
   await assert.rejects(download('https://kopis.or.kr/upload/x', { fetchImpl: async () => new Response('not an image') }), { code: 'OCR_IMAGE_INVALID' })
+})
+
+test('only confirmed pixel/dimension limits get a hashed limit error; corrupt, animated and HTTP failures stay distinct', async () => {
+  const config = { ...getEasyOcrConfig({}), maxPixels: 100000 }
+  const jpeg = async (width, height) => sharp({create:{width,height,channels:3,background:'white'}}).jpeg().toBuffer()
+  const pixel = await jpeg(500,500), tall = await jpeg(1,20001), wide = await jpeg(20001,1)
+  const source = 'https://kopis.or.kr/upload/fixture.jpg'
+  const download = (raw, options={}) => downloadKopisImage(source,{config,fetchImpl:async()=>new Response(raw),...options})
+  for(const [raw,reason] of [[pixel,'PIXEL_LIMIT'],[tall,'DIMENSION_LIMIT'],[wide,'DIMENSION_LIMIT']]){
+    let rejection
+    await assert.rejects(download(raw),error=>{rejection=error;return error.code===IMAGE_LIMIT_CODE && error.imageLimit.reason===reason})
+    assert.equal(rejection.imageLimit.contentHash.length,64)
+    assert.equal(rejection.imageLimit.validationKey,imageValidationKey(config))
+    const saved=[],repo=repository([image(1)],saved)
+    const report=await runEasyOcrBatch({repository:repo,now,download:()=>{throw rejection},worker:{recognize:()=>assert.fail('no Python'),close(){}}})
+    assert.equal(report.failed,1);assert.equal(saved.length,1)
+    assert.equal(saved[0].attempt.content_sha256,rejection.imageLimit.contentHash)
+    assert.equal(saved[0].result,null)
+    const knownLimit={...rejection.imageLimit,sourceUrl:source}
+    assert.equal((await download(raw,{knownLimit})).held,true)
+    await assert.rejects(download(raw,{knownLimit:{...knownLimit,validationKey:'old conditions'}}),{code:IMAGE_LIMIT_CODE})
+  }
+  await assert.rejects(download(Buffer.from('not an image')),{code:'OCR_IMAGE_INVALID'})
+  // A valid header with damaged scan data must not be mislabeled as a limit.
+  const valid=await jpeg(8,12),scan=valid.indexOf(Buffer.from([255,218]))
+  await assert.rejects(download(valid.subarray(0,scan+2)),{code:'OCR_IMAGE_INVALID'})
+  const animated=await sharp(Buffer.concat([Buffer.alloc(12,0),Buffer.alloc(12,255)]),
+    {raw:{width:2,height:4,pageHeight:2,channels:3}}).gif().toBuffer()
+  assert.equal((await sharp(animated).metadata()).pages,2)
+  await assert.rejects(download(animated),{code:'OCR_IMAGE_INVALID'})
+  await assert.rejects(download(valid,{fetchImpl:async()=>new Response('no image',{status:404})}),{code:'OCR_IMAGE_HTTP_404'})
+  let tries=0
+  await assert.rejects(download(valid,{fetchImpl:async()=>{tries++;throw Error('private network error')},delay:async()=>{}}),{code:'OCR_IMAGE_REQUEST_FAILED'})
+  assert.equal(tries,3)
+})
+
+test('an unchanged held source creates no OCR attempt or cache lookup and continues to the next image',async()=>{
+  const saved=[],repo=repository([image(1),image(2)],saved)
+  repo.findResult=async id=>{assert.equal(id,image(2).id);return null}
+  let calls=0
+  const report=await runEasyOcrBatch({repository:repo,now,limit:1,
+    download:async()=>++calls===1?{held:true,contentHash:'a'.repeat(64)}:downloaded,worker:worker()})
+  assert.equal(report.held,1);assert.equal(report.attempted,1);assert.equal(report.failed,0)
+  assert.equal(report.saved,1);assert.equal(saved.length,1);assert.equal(saved[0].attempt.image_id,image(2).id)
 })
 
 test('Supabase candidates use active DETAIL/date/status filters and traverse later pages', async () => {

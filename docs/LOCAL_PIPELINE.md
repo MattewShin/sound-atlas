@@ -1,5 +1,11 @@
 # 로컬 통합 배치와 Windows 정기 실행
 
+강제 종료 후 남는 RUNNING 기록은 [실행 생존 확인·중단 복구·Windows 진단](PIPELINE_INTERRUPTION.md)을 따릅니다. latest는 읽기 전용으로 복구 상태를 계산하고, 다음 정상 run이 이전 기록을 확정합니다. 실제 run의 stdout/stderr와 Node 종료 영수증은 `.cache/concert-pipeline/launches/`에 저장합니다.
+
+공연일 우선 분배와 명시적 30분 프로필(`initial`, `daily`)은 [우선순위·처리량·예약 교체 안내](PIPELINE_PRIORITY.md)를 따릅니다. 기존 예약은 자동 변경하지 않으며 수동 실행 결과를 확인한 뒤 교체합니다. 아래 기존 기본값 안내는 custom/기존 예약 기준입니다.
+
+확인된 이미지 해상도 한도 초과는 기본 24시간 간격으로 원본 변경을 확인하며, 동일 원본의 OCR·FAILED 기록을 반복 생성하지 않습니다. 성공 상태에서도 `ocr_holds`로 보류 사유와 다음 확인 시각을 볼 수 있습니다. [오류 코드·최초 기준 확립·집계·적용 안내](OCR_IMAGE_LIMIT_HOLDS.md)를 참고하세요. 새 SQL·환경변수·예약 재등록은 필요 없습니다.
+
 기존 수집·EasyOCR·분석·RPC를 묶었습니다. 현재 run 순서는 **환경 점검 → 지난 공연 실제 삭제 → 수집 → EasyOCR → 분석**입니다. 한국 시간 `end_date < 오늘`인 공연과 종속 자료를 기본 최대 100개 삭제합니다. [삭제 기준·마이그레이션·원격 조회 결과](EXPIRED_CONCERT_CLEANUP.md)를 먼저 확인하세요. 자동 분석은 REVIEW_REQUIRED이며 확정·반려는 하지 않습니다. 배치 성공만으로 검색에 노출되지 않고, 기존 Supabase 검색의 유효한 CONFIRMED + EXACT 조건을 통과해야 합니다. 카탈로그·matcher_version(`stored-program-2`)·OCR 설정·검색 기본값은 변경하지 않았습니다.
 
 **plan → 수동 1회 실행 → 결과 확인 → 예약 등록** 순서로 진행하세요. 이번 구현 검증에서는 실제 데이터의 plan과 읽기만 수행했습니다. 실제 통합 배치의 수집·OCR·DB 쓰기 및 작업 등록은 사용자가 실행할 단계입니다.
@@ -14,7 +20,7 @@ Set-Location 'C:\Users\CNXK\dev\sound-atlas'
 $LASTEXITCODE
 ```
 
-plan은 DB와 로컬 파일만 읽습니다. KOPIS 호출·이미지 다운로드·OCR·DB 쓰기·잠금 생성·진행 상태/실행 결과 파일 변경을 하지 않습니다. JSON은 콘솔에만 출력합니다. 아직 수집하지 않은 공연 수와 원격 이미지 변경 여부, 실제로 필요한 새 OCR 수는 UNKNOWN으로 표시합니다. 기존 OCR `--dry-run`은 실제 판독을 수행하므로 plan과 다릅니다.
+plan은 DB와 로컬 파일만 읽습니다. KOPIS 호출·이미지 다운로드·OCR·DB 쓰기·잠금 생성·진행 상태/실행 결과 파일 변경을 하지 않습니다. JSON은 콘솔에만 출력합니다. 체크포인트에서 확인된 미수집 대기는 집계하며, 미탐색 KOPIS 공연 수와 원격 이미지 변경 여부, 실제로 필요한 새 OCR 수는 UNKNOWN으로 표시합니다. 기존 OCR `--dry-run`은 실제 판독을 수행하므로 plan과 다릅니다.
 
 plan은 Node 버전·Python 실행 파일·모델 파일 존재·DB 접근·필요 테이블/RPC 노출 여부를 점검합니다. KOPIS 인증과 Python 의존성/모델 로딩은 plan에서 실행하지 않았다고 표시합니다. 실제 run은 첫 DB 쓰기 전에 Python 의존성/모델을 로컬에서 로딩해 확인하고 KOPIS 목록 요청으로 인증을 확인합니다. 모델 다운로드는 허용하지 않습니다.
 
@@ -57,9 +63,9 @@ npm run pipeline -- latest
 
 ## 대상 진행·재사용·실패
 
-수집은 목록의 상태/페이지 커서와 발견한 공연 ID·기간을 로컬 진행 파일에 저장합니다. 같은 첫 페이지 10개로 되돌아가지 않습니다. 목록에서 새로 발견한 대기 대상과 DB의 오래된 synced_at 대상을 번갈아 선택합니다. 최근 24시간 내 성공한 공연은 생략하고, 기간을 벗어난 대기 공연도 제거합니다. 기본 10개면 두 종류가 모두 있을 때 각각 진행하며, 한쪽이 비면 나머지를 처리합니다. 매일 날짜가 바뀌어도 커서를 초기화하지 않습니다. API 목록은 실행 중 변경될 수 있으므로 완전한 스냅샷은 아니며, 마지막 페이지/상태 이후 다시 첫 페이지로 순환해 재탐색합니다.
+수집은 목록의 상태/페이지 커서와 발견한 공연 ID·기간을 로컬 진행 파일에 저장합니다. 미처리와 기존 자료 갱신을 기본 4:1로 분배하며, 공연일 구간과 공연 간 순환을 적용합니다. 최근 24시간 내 성공한 공연은 생략하고, 기간을 벗어난 대기 공연도 제거합니다. 한쪽이 비면 나머지가 슬롯을 사용합니다. 대기열 크기와 무관하게 ListPages 안에서 목록 커서를 전진시키며, 매일 날짜가 바뀌어도 커서를 초기화하지 않습니다. API 목록은 실행 중 변경될 수 있으므로 완전한 스냅샷은 아니며, 마지막 페이지/상태 이후 다시 첫 페이지로 순환해 재탐색합니다.
 
-OCR은 미처리/실패 재시도 이미지와 재확인 시각이 지난 성공 이미지를 번갈아 선택합니다. ImageChecks로 다운로드 탐색도 제한합니다. 현재 바이트의 SHA-256과 pipeline 버전이 같으면 성공 결과를 재사용합니다. 정상 캐시 재사용은 완료 시도나 수동 검토 상태를 바꾸지 않습니다. 중간에 실패/다른 결과가 기록된 경우에는 현재 바이트가 기존 성공 결과와 같음을 확인한 새 성공 시도만 기록하고 OCR 원문은 재판독하지 않습니다. 이 경우 새 시도에 대한 재분석·재검토가 필요하며 과거 확정을 자동 부활시키지 않습니다.
+OCR도 미처리/실패 복구와 기존 성공/보류 자료 재확인을 기본 4:1로 분배하며 공연일과 공연 간 순환을 적용합니다. ImageChecks로 다운로드 탐색도 제한합니다. 현재 바이트의 SHA-256과 pipeline 버전이 같으면 성공 결과를 재사용합니다. 정상 캐시 재사용은 완료 시도나 수동 검토 상태를 바꾸지 않습니다. 중간에 실패/다른 결과가 기록된 경우에는 현재 바이트가 기존 성공 결과와 같음을 확인한 새 성공 시도만 기록하고 OCR 원문은 재판독하지 않습니다. 이 경우 새 시도에 대한 재분석·재검토가 필요하며 과거 확정을 자동 부활시키지 않습니다.
 
 분석은 기존 유효성 검사로 현재 성공 OCR을 선택합니다. OCR 결과/완료 시도·이미지/공연 revision·공연 문맥·카탈로그 hash·matcher 버전이 같은 현재 분석은 **후보 0개도 재사용**합니다. 후보/수동 확정·반려 이력을 초기화하지 않습니다. 이미 다른 분석으로 교체된 동일 키는 재활성화하지 않고 보류 사유를 표시합니다. 원문·후보를 새로 만들기 위해 임의로 matcher 버전을 올리지 않습니다.
 
@@ -117,7 +123,7 @@ Get-TimeZone
 # .\scripts\Manage-ConcertPipelineTask.ps1 -Action Register -Time '10:30'
 ```
 
-현재 PC는 **Korea Standard Time(UTC+09:00)**이므로 기본 매일 09:00은 한국 시간입니다. 스크립트는 다른 PC 시간대면 등록을 중단하며 시스템 시간대를 변경하지 않습니다. 현재 사용자가 로그인한 상태에서 Interactive/Limited로 실행하고 관리자 권한·암호 저장을 기본 요구하지 않습니다. StartWhenAvailable로 놓친 예약을 조건이 충족되는 이후 시점에 실행하도록 준비했습니다. 로그아웃·절전·전원/배터리 조건에 따라 실제 실행 가능 시점은 달라집니다. 시스템 전원 설정이나 WakeToRun은 변경하지 않습니다. [Microsoft 작업 설정 문서](https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtasksettingsset)와 [실행 사용자 문서](https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtaskprincipal)를 기준으로 구성했습니다.
+현재 PC는 **Korea Standard Time(UTC+09:00)**이므로 기본 매일 09:00은 한국 시간입니다. 스크립트는 다른 PC 시간대면 등록을 중단하며 시스템 시간대를 변경하지 않습니다. 현재 사용자가 로그인한 상태에서 Interactive/Limited로 실행하고 관리자 권한·암호 저장을 기본 요구하지 않습니다. StartWhenAvailable로 놓친 예약을 조건이 충족되는 이후 시점에 실행하도록 준비했습니다. 새 등록의 최초 트리거는 미래의 09:00으로 지정하므로 등록 직후 지난 실행을 시작하지 않습니다. WakeToRun은 기본 true이며 전역 전원 설정은 변경하지 않습니다. 실제 깨우기는 하드웨어·Windows 깨우기 타이머 정책에 의존하고, Interactive 예약은 로그인한 사용자가 필요합니다. [Microsoft 작업 설정 문서](https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtasksettingsset)와 [실행 사용자 문서](https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtaskprincipal)를 기준으로 구성했습니다.
 
 작업에는 절대 PowerShell/Node 경로·프로젝트 작업 디렉터리·비밀값 없는 숫자 인자만 저장합니다. .env는 프로젝트 절대 경로로 읽고 Python은 기존 EASYOCR_PYTHON 또는 `.venv/Scripts/python.exe`를 사용합니다. NoProfile이므로 가상환경 수동 활성화에 의존하지 않습니다. 동일 예약의 중복은 IgnoreNew, 수동/예약 통합 배치의 중복은 로컬 잠금으로 막습니다. 기존 같은 이름의 작업을 자동 덮어쓰지 않습니다.
 

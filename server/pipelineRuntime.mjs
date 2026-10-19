@@ -6,7 +6,7 @@ import { createPipelineRepository } from './pipelineRepository.mjs'
 import { createCollectionKopisClient } from './concertCollector.mjs'
 import { getEasyOcrConfig, EASYOCR_ENGINE_VERSION } from './easyOcrConfig.mjs'
 import { createEasyOcrWorker } from './easyOcrWorker.mjs'
-import { downloadKopisImage } from './kopisImageDownload.mjs'
+import { downloadKopisImage, imageValidationKey } from './kopisImageDownload.mjs'
 import { pipelineError } from './pipelineConfig.mjs'
 import { terminateOwnedProcess } from './pipelineProcess.mjs'
 
@@ -32,7 +32,7 @@ export const createPipelineRuntime = ({env=process.env,signal,fetchImpl=fetch}={
   const client=createCollectionKopisClient(options)
   const worker=createEasyOcrWorker({config,terminateImpl:terminateOwnedProcess})
   return {
-    repository,client,worker,
+    repository,client,worker,imageValidationKey:imageValidationKey(config),
     namespace:createHash('sha256').update(new URL(env.SUPABASE_URL).origin).digest('hex').slice(0,16),
     async preflight({plan}){
       if(Number(process.versions.node.split('.')[0])!==22)throw pipelineError('NODE_22_REQUIRED')
@@ -42,6 +42,6 @@ export const createPipelineRuntime = ({env=process.env,signal,fetchImpl=fetch}={
       if(!plan)await probePython(config,signal)
       return {...schema,node:process.versions.node,python_file_checked:true,model_files_checked:true,python_dependencies_checked:!plan,kopis_authentication:plan?'NOT_CHECKED_IN_PLAN':'CHECKED_ON_FIRST_LIST_REQUEST'}
     },
-    download:url=>downloadKopisImage(url,{config,signal,fetchImpl}),
+    download:(url,options={})=>downloadKopisImage(url,{config,signal,fetchImpl,knownLimit:options.knownLimit}),
   }
 }

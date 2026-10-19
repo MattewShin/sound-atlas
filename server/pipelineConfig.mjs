@@ -1,13 +1,21 @@
 export const PIPELINE_DEFAULTS = Object.freeze({ cleanupLimit: 100, collectLimit: 10, ocrLimit: 3, analysisLimit: 10,
   listPages: 4, dbPages: 20, imageChecks: 10, maxSeconds: 900, recheckHours: 24 })
+export const PIPELINE_PROFILES = Object.freeze({
+  initial:{collectLimit:20,ocrLimit:20,analysisLimit:20,imageChecks:40,maxSeconds:1800},
+  daily:{collectLimit:10,ocrLimit:20,analysisLimit:20,imageChecks:40,maxSeconds:1800},
+})
 export const pipelineError = code => Object.assign(new Error(code), { code })
 export const parsePipelineArgs = args => {
   const command = args[0] || 'help'
   if (!['run','plan','latest','help'].includes(command)) throw pipelineError('INVALID_COMMAND')
-  const options = { ...PIPELINE_DEFAULTS }
+  let profile='custom'
+  for(let i=1;i<args.length;i+=2)if(args[i]==='--profile')profile=args[i+1]
+  if(profile!=='custom'&&!PIPELINE_PROFILES[profile])throw pipelineError('INVALID_PROFILE')
+  const options = { ...PIPELINE_DEFAULTS,...PIPELINE_PROFILES[profile] }
   const names = { 'cleanup-limit':'cleanupLimit','collect-limit':'collectLimit', 'ocr-limit':'ocrLimit', 'analysis-limit':'analysisLimit',
     'list-pages':'listPages', 'db-pages':'dbPages', 'image-checks':'imageChecks', 'max-seconds':'maxSeconds', 'recheck-hours':'recheckHours' }
   for (let i=1;i<args.length;i++) {
+    if(args[i]==='--profile'){i++;continue}
     const key=names[args[i]?.replace(/^--/,'')], value=args[++i]
     if (!key || !/^[1-9]\d*$/.test(value||'') || !Number.isSafeInteger(Number(value))) throw pipelineError('INVALID_ARGUMENT')
     options[key]=Number(value)

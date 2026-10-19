@@ -11,6 +11,11 @@ import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
 import { analysisSelection } from './pipelineSelection.mjs'
 import { createCollectionKopisClient } from './concertCollector.mjs'
 import { fallbackCleanupPlan, cleanupCounts } from './pipelineCleanup.mjs'
+import sharp from 'sharp'
+import { getOcrImageConfig } from './ocrImageConfig.mjs'
+import { downloadKopisImage, imageValidationKey } from './kopisImageDownload.mjs'
+import { ocrSelection } from './pipelineSelection.mjs'
+import { CollectionError } from './collectionHttp.mjs'
 
 const base=Date.parse('2026-10-15T00:00:00Z')
 const cleanup=async path=>{assert.ok(resolve(path).startsWith(resolve(tmpdir())+sep)&&basename(path).startsWith('atlas-pipeline-'));await rm(path,{recursive:true,force:true})}
@@ -69,7 +74,7 @@ test('pipeline uses collect -> OCR -> analysis, caps attempts and resumes past t
   assert.ok(h.calls.indexOf('saveConcert')<h.calls.indexOf('recognize'))
   assert.ok(h.calls.indexOf('cleanupPlan')<h.calls.indexOf('list:02:1'))
   assert.ok(h.calls.lastIndexOf('saveOcr')<h.calls.indexOf('saveAnalysis'))
-  assert.equal(h.state.collection.page,2);assert.equal(h.state.collection.pending.length,90)
+  assert.equal(h.state.collection.cycle,1);assert.equal(h.state.collection.pending.length,90)
   const first=h.data.concerts.map(c=>c.kopis_id)
   h.calls.length=0
   const b=await h.run()
@@ -176,6 +181,7 @@ test('HTTP 400 diagnostics preserve previous data and reviews, continue other co
   const oldConcert=structuredClone(h.data.concerts[0]),oldImages=structuredClone(h.data.images)
   const reviewed=h.data.candidates[0];reviewed.review_status='CONFIRMED';reviewed.review_note='Existing manual review'
   h.advance(25*3600000)
+  h.state.priority.collect.slot=4 // Exercise the reserved maintenance slot.
   const detail=h.runtime.client.detail;let requests=0
   const failedClient=createCollectionKopisClient({env:{KOPIS_SERVICE_KEY:'fixture-secret'},delay:async()=>{},
     fetchImpl:async()=>{requests++;return new Response('service=fixture-secret private upstream body',{status:400,headers:{'Content-Type':'text/html; charset=UTF-8'}})}})
@@ -211,6 +217,152 @@ test('failed image does not block others; cache verification can recover failure
   assert.equal(h.data.attempts.filter(a=>a.image_id===image.id).at(-1).result_id,artifact.id)
 })
 
+const heldHarness=async()=>{
+  const h=harness(),config={...getOcrImageConfig({}),maxPixels:100000}
+  const jpeg=async(width,height)=>sharp({create:{width,height,channels:3,background:'white'}}).jpeg().toBuffer()
+  const bytes=new Map([[listing(1).styurls.styurl,await jpeg(500,500)],[listing(2).styurls.styurl,await jpeg(8,12)]])
+  h.runtime.imageValidationKey=imageValidationKey(config)
+  h.runtime.client.list=async()=>[listing(1),listing(2)]
+  h.runtime.download=async(url,options={})=>{h.calls.push('download:'+url);return downloadKopisImage(url,{config,knownLimit:options.knownLimit,
+    fetchImpl:async()=>new Response(bytes.get(url)||Buffer.from('corrupt'))})}
+  await h.run({collectLimit:2,ocrLimit:3})
+  h.runtime.client.list=async()=>[];h.runtime.repository.collector.save=async()=>{}
+  return {...h,config,bytes,jpeg,bad:h.data.images.find(i=>i.source_url===listing(1).styurls.styurl),good:h.data.images.find(i=>i.source_url===listing(2).styurls.styurl)}
+}
+
+test('image limit baseline preserves history, waits 24 hours, reports holds in read-only plan and suppresses identical failures after restart',async()=>{
+  const h=await heldHarness(),first=h.reports.at(-1),key='ocr:'+h.bad.id
+  assert.equal(first.status,'PARTIAL');assert.equal(first.stages.ocr.new_limit_failures,1)
+  assert.equal(first.stages.ocr.failed,1);assert.equal(first.stages.ocr.succeeded,1)
+  assert.equal(first.ocr_holds.count,1);assert.equal(first.ocr_holds.items[0].reason,'PIXEL_LIMIT')
+  assert.equal(h.state.retries[key].until,base+24*3600000)
+  assert.equal(h.data.results.some(r=>r.image_id===h.bad.id),false)
+  const failed=h.data.attempts.find(a=>a.image_id===h.bad.id)
+  assert.equal(failed.status,'FAILED');assert.match(failed.content_sha256,/^[a-f0-9]{64}$/)
+  h.data.candidates[0].review_status='CONFIRMED';h.data.candidates[0].review_note='Keep manual decision'
+  const original=structuredClone(h.data)
+  // The on-disk checkpoint schema is sufficient after a process restart.
+  const directory=await mkdtemp(join(tmpdir(),'atlas-pipeline-hold-'))
+  try{
+    const local=createPipelineLocal(directory,'hold',{})
+    await local.saveState(h.state);Object.assign(h.state,await local.readState())
+  }finally{await cleanup(directory)}
+  h.advance(24*3600000-1);h.calls.length=0
+  const before=JSON.stringify(h.state),plan=await h.run({},true)
+  assert.equal(plan.plan.ocr_held,1);assert.equal(plan.ocr_holds.count,1)
+  assert.equal(plan.ocr_holds.items[0].status,'WAITING_SOURCE_RECHECK')
+  assert.equal(Date.parse(plan.ocr_holds.items[0].next_check_at),base+24*3600000)
+  assert.deepEqual(h.calls,['preflight','snapshot','cleanupPlan','reviews','close'])
+  assert.equal(JSON.stringify(h.state),before);assert.deepEqual(h.data,original)
+  h.calls.length=0
+  const waiting=await h.run({collectLimit:1,ocrLimit:3})
+  assert.equal(waiting.status,'SUCCESS');assert.equal(waiting.stages.ocr.held_skipped,1)
+  assert.equal(h.calls.some(c=>c.startsWith('download:')),false)
+  h.advance(1);h.calls.length=0
+  const duePlan=await h.run({},true)
+  assert.equal(duePlan.ocr_holds.items[0].status,'SOURCE_RECHECK_DUE')
+  assert.equal(h.calls.some(c=>c.startsWith('download:')),false)
+  h.calls.length=0
+  const unchanged=await h.run({collectLimit:1,ocrLimit:3})
+  assert.equal(unchanged.status,'SUCCESS');assert.equal(unchanged.stages.ocr.failed,0)
+  assert.equal(unchanged.stages.ocr.held_unchanged,1);assert.equal(unchanged.stages.ocr.attempted,0)
+  assert.equal(unchanged.ocr_holds.count,1);assert.equal(h.state.retries[key].failures,1)
+  assert.equal(h.state.retries[key].until,base+48*3600000)
+  assert.equal(h.calls.includes('recognize'),false);assert.equal(h.calls.includes('saveOcr'),false)
+  assert.equal(h.calls.includes('saveAnalysis'),false);assert.deepEqual(h.data,original)
+})
+
+test('changed oversized bytes are a new failure; changed valid bytes return to OCR and analysis without altering other evidence',async()=>{
+  const h=await heldHarness(),originalFailed=structuredClone(h.data.attempts.find(a=>a.image_id===h.bad.id))
+  h.data.candidates[0].review_status='CONFIRMED';h.data.candidates[0].review_note='Preserved'
+  const goodEvidence=structuredClone({result:h.data.results.find(r=>r.image_id===h.good.id),
+    analysis:h.data.analyses.find(a=>a.image_id===h.good.id),candidates:h.data.candidates})
+  h.bytes.set(h.bad.source_url,await h.jpeg(501,500));h.advance(24*3600000)
+  const changed=await h.run({collectLimit:1,ocrLimit:3})
+  assert.equal(changed.status,'PARTIAL');assert.equal(changed.stages.ocr.new_limit_failures,1)
+  assert.equal(changed.stages.ocr.held_unchanged,0);assert.equal(changed.ocr_holds.count,1)
+  const attempts=h.data.attempts.filter(a=>a.image_id===h.bad.id)
+  assert.equal(attempts.length,2);assert.notEqual(attempts[0].content_sha256,attempts[1].content_sha256)
+  assert.equal(h.data.results.some(r=>r.image_id===h.bad.id),false)
+  h.bytes.set(h.bad.source_url,await h.jpeg(16,16));h.advance(24*3600000);h.calls.length=0
+  const recovered=await h.run({collectLimit:1,ocrLimit:3})
+  assert.equal(recovered.status,'SUCCESS');assert.equal(recovered.ocr_holds.count,0)
+  assert.equal(recovered.stages.ocr.succeeded,1);assert.equal(recovered.stages.analysis.succeeded,1)
+  assert.equal(h.state.retries['ocr:'+h.bad.id],undefined)
+  assert.deepEqual(h.data.attempts.find(a=>a.id===originalFailed.id),originalFailed)
+  assert.deepEqual(h.data.results.find(r=>r.image_id===h.good.id),goodEvidence.result)
+  assert.deepEqual(h.data.analyses.find(a=>a.image_id===h.good.id),goodEvidence.analysis)
+  assert.deepEqual(h.data.candidates.filter(c=>c.analysis_id===goodEvidence.analysis.id),goodEvidence.candidates)
+  assert.equal(h.bad.is_active,true)
+})
+
+test('generic historical INVALID does not establish a hold; changed URL or validation conditions invalidate a known hold',async()=>{
+  const h=await heldHarness(),key='ocr:'+h.bad.id
+  const snapshot=structuredClone(h.data)
+  assert.equal(ocrSelection(snapshot,h.state,base,24,h.runtime.imageValidationKey).ready.some(i=>i.id===h.bad.id),false)
+  assert.equal(ocrSelection(snapshot,h.state,base,24,'changed limits').ready.some(i=>i.id===h.bad.id),true)
+  snapshot.images.find(i=>i.id===h.bad.id).source_url='https://kopis.or.kr/upload/replacement.jpg'
+  assert.equal(ocrSelection(snapshot,h.state,base,24,h.runtime.imageValidationKey).ready.some(i=>i.id===h.bad.id),true)
+  // Pre-upgrade FAILED record has no content hash. It remains untouched; a new
+  // bounded download/validation is needed before establishing a baseline.
+  delete h.state.retries[key].image_limit
+  const legacy=h.data.attempts.find(a=>a.image_id===h.bad.id)
+  legacy.error_code='OCR_IMAGE_INVALID';legacy.content_sha256=null
+  const savedLegacy=structuredClone(legacy)
+  h.advance(24*3600000)
+  const first=await h.run({collectLimit:1,ocrLimit:3})
+  assert.equal(first.ocr_holds.count,1)
+  assert.deepEqual(h.data.attempts.find(a=>a.id===legacy.id),savedLegacy)
+  assert.equal(h.data.attempts.filter(a=>a.image_id===h.bad.id).length,2)
+})
+
+test('other corrupt images keep PARTIAL policy while an unchanged limit hold is skipped',async()=>{
+  const h=await heldHarness()
+  h.bytes.set(h.good.source_url,Buffer.from('damaged'));h.advance(24*3600000);h.calls.length=0
+  const report=await h.run({collectLimit:1,ocrLimit:3})
+  assert.equal(report.status,'PARTIAL');assert.equal(report.stages.ocr.failed,1)
+  assert.equal(report.stages.ocr.held_unchanged,1);assert.equal(report.stages.ocr.new_limit_failures,0)
+  assert.equal(report.errors.some(e=>e.id===h.good.id&&e.code==='OCR_IMAGE_INVALID'),true)
+  assert.equal(report.ocr_holds.count,1);assert.equal(report.ocr_holds.items[0].image_id,h.bad.id)
+  assert.equal(h.data.results.filter(r=>r.image_id===h.good.id).length,1)
+})
+
+test('URL/condition changes are revalidated before the old hold expires; source-check HTTP failures remain distinct',async()=>{
+  const h=await heldHarness(),key='ocr:'+h.bad.id
+  h.bad.source_url='https://kopis.or.kr/upload/replacement.png'
+  h.bytes.set(h.bad.source_url,await h.jpeg(10,10))
+  const recovery=await h.run({collectLimit:1,ocrLimit:3})
+  assert.equal(recovery.ocr_holds.count,0);assert.equal(recovery.stages.ocr.succeeded,1)
+  const changed=await heldHarness()
+  changed.config.maxPixels=110000;changed.runtime.imageValidationKey=imageValidationKey(changed.config)
+  const updated=await changed.run({collectLimit:1,ocrLimit:3})
+  assert.equal(updated.stages.ocr.new_limit_failures,1)
+  assert.equal(changed.data.attempts.filter(a=>a.image_id===changed.bad.id).length,2)
+  assert.equal(changed.state.retries['ocr:'+changed.bad.id].image_limit.validationKey,changed.runtime.imageValidationKey)
+  const failing=await heldHarness(),download=failing.runtime.download
+  failing.advance(24*3600000)
+  failing.runtime.download=(url,options)=>url===failing.bad.source_url?downloadKopisImage(url,{config:failing.config,
+    fetchImpl:async()=>new Response('not image data',{status:404})}):download(url,options)
+  const failed=await failing.run({collectLimit:1,ocrLimit:3})
+  assert.equal(failed.status,'PARTIAL');assert.equal(failed.stages.ocr.new_limit_failures,0)
+  assert.equal(failed.ocr_holds.count,1);assert.equal(failed.ocr_holds.items[0].last_check_error,'OCR_IMAGE_HTTP_404')
+  assert.equal(failing.state.retries['ocr:'+failing.bad.id].until,base+48*3600000)
+  assert.equal(failing.data.attempts.filter(a=>a.image_id===failing.bad.id).at(-1).error_code,'OCR_IMAGE_HTTP_404')
+  assert.equal(h.state.retries[key],undefined)
+})
+
+test('a limit failure cannot establish suppression if its FAILED attempt was not saved',async()=>{
+  const h=await heldHarness()
+  delete h.state.retries['ocr:'+h.bad.id]
+  h.advance(24*3600000)
+  const save=h.runtime.repository.ocr.saveAttempt
+  h.runtime.repository.ocr.saveAttempt=(attempt,result)=>attempt.image_id===h.bad.id?Promise.reject(new CollectionError('SUPABASE_HTTP_503','Local simulated DB failure')):save(attempt,result)
+  const report=await h.run({collectLimit:1,ocrLimit:3})
+  assert.equal(report.status,'PARTIAL');assert.equal(report.ocr_holds.count,0)
+  assert.equal(report.errors.some(e=>e.code==='SUPABASE_HTTP_503'),true)
+  assert.equal(h.state.retries['ocr:'+h.bad.id].image_limit,undefined)
+})
+
 test('plan does not call collection, downloads, OCR, writes, checkpoints or mutate state',async()=>{
   const h=harness();await h.run({collectLimit:1,ocrLimit:1})
   const before=JSON.stringify(h.state),data=JSON.stringify(h.data);h.calls.length=0
@@ -232,6 +384,31 @@ test('deadline and cancellation are partial, never report whole success or conti
   assert.equal(interruptedPreflight.exit_code,1)
   assert.equal(interruptedPreflight.stages.preflight.status,'INTERRUPTED')
   assert.equal(early.calls.includes('snapshot'),false)
+})
+
+test('deadline preserves completed checkpoints and does not complete or back off the interrupted next concert',async()=>{
+  const h=harness(),detail=h.runtime.client.detail
+  let requested=0
+  h.runtime.client.detail=async id=>{if(++requested===2)h.advance(31000);return detail(id)}
+  const result=await h.run({collectLimit:3,maxSeconds:30})
+  assert.equal(result.status,'PARTIAL');assert.equal(result.time_limit_reached,true)
+  assert.equal(h.data.concerts.length,1);assert.equal(result.stages.collection.succeeded,1)
+  assert.equal(h.state.priority.collect.slot,1)
+  const ids=h.calls.filter(c=>c.startsWith('detail:')).map(c=>c.slice(7))
+  assert.equal(h.state.collection.pending.includes(ids[1]),true)
+  assert.equal(h.state.retries['collect:'+ids[1]],undefined)
+  assert.equal(result.stages.collection.duration_ms,31000)
+  assert.equal(h.reports.at(-1).time_limit_reached,true)
+})
+
+test('deadline after image download starts no OCR or FAILED write and leaves the unfinished priority slot uncommitted',async()=>{
+  const h=harness(),download=h.runtime.download
+  h.runtime.download=async url=>{const value=await download(url);h.advance(31000);return value}
+  const result=await h.run({collectLimit:2,ocrLimit:2,maxSeconds:30})
+  assert.equal(result.status,'PARTIAL');assert.equal(result.time_limit_reached,true)
+  assert.equal(h.calls.includes('recognize'),false);assert.equal(h.calls.includes('saveOcr'),false)
+  assert.equal(h.state.priority.ocr,undefined);assert.equal(h.data.attempts.length,0)
+  assert.equal(result.stages.ocr.duration_ms,31000)
 })
 
 test('lock excludes live owners regardless of age, recovers dead owner and releases safely',async()=>{

@@ -113,7 +113,8 @@ Windows에서는 Python 3.12 가상환경을 사용합니다. 이번 PC의 PATH�
 | `EASYOCR_DEPENDENCY_FAILED` | EasyOCR 1.7.2, CPU torch/torchvision, `pip check` |
 | `EASYOCR_MODEL_INIT_FAILED` | 모델 다운로드 연결과 `.cache/easyocr/models` |
 | `EASYOCR_TIMEOUT` | 이미지 크기와 CPU 처리 시간, 최초 모델 준비 시간 |
-| `OCR_SOURCE_BLOCKED`, `OCR_IMAGE_TOO_LARGE`, `OCR_IMAGE_INVALID` | 이미지 출처·용량·해상도·형식 |
+| `OCR_IMAGE_LIMIT_EXCEEDED` | 확인된 픽셀·가로/세로 제한 초과. [통합 배치 보류·재확인](OCR_IMAGE_LIMIT_HOLDS.md) |
+| `OCR_SOURCE_BLOCKED`, `OCR_IMAGE_TOO_LARGE`, `OCR_IMAGE_INVALID` | 이미지 출처·용량·지원 형식/손상/디코딩/다중 페이지 |
 | `SUPABASE_HTTP_400/403/404` | 마이그레이션·권한·RPC·서버 키가 같은 프로젝트인지 |
 
 Python에는 DB/KOPIS 비밀키를 넘기지 않고, 원문 예외·요청 헤더·키 포함 URL을 로그에 출력하지 않습니다. 브라우저 빌드에는 로컬 배치 모듈과 비밀키를 포함하지 않습니다.

@@ -6,19 +6,35 @@ import { getTrackTarget } from '../src/data/workCatalog.js'
 import { runEasyOcrBatch } from './easyOcrBatch.mjs'
 import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
 import { safeCode, fatalCode, koreanTime, pipelineError } from './pipelineConfig.mjs'
-import { analysisSelection, ocrSelection, retryDue, failedItem, completedItem, interleave, latestAttempt } from './pipelineSelection.mjs'
+import { analysisSelection, ocrSelection, collectionSelection, retryDue, failedItem, completedItem, latestAttempt, imageLimitHold, imageLimitHolds } from './pipelineSelection.mjs'
 import { cleanupPlanForReport, emptyCleanupCounts, pruneExpiredPipelineState } from './pipelineCleanup.mjs'
+import { commitPriority, priorityPreview, bucketCounts } from './pipelinePriority.mjs'
 
-const stage = () => ({status:'NOT_RUN',succeeded:0,failed:0,reused:0,skipped:0,limit_reached:false,remaining:null})
-export const runConcertPipeline = async ({runtime,local,state,options,plan=false,signal,now=Date.now,onProgress=()=>{}}) => {
+const stage = () => ({status:'NOT_RUN',succeeded:0,failed:0,reused:0,skipped:0,limit_reached:false,remaining:null,duration_ms:0})
+export const runConcertPipeline = async ({runtime,local,state,options,plan=false,signal,now=Date.now,onProgress=()=>{},runId=randomUUID(),execution}) => {
   const started=now();let conditions=collectionConditions(started)
-  const report={run_id:randomUUID(),mode:plan?'PLAN':'RUN',started_at:koreanTime(started),finished_at:null,duration_ms:0,
-    status:'RUNNING',exit_code:0,conditions,limits:options,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH,
+  const report={run_id:runId,execution,mode:plan?'PLAN':'RUN',started_at:koreanTime(started),finished_at:null,duration_ms:0,
+    status:'RUNNING',exit_code:null,last_progress_at:koreanTime(started),last_completed_stage:null,conditions,limits:options,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH,
     stages:{preflight:stage(),cleanup:stage(),collection:stage(),ocr:stage(),analysis:stage()},errors:[],review:{new_candidates:0,new_linked_candidates:0,priority:[]},
-    coverage:'LIMITED_SAMPLE',retry:'Rerun the same run command after retry_at; use plan and latest to inspect.'}
-  const persist=async()=>{if(!plan){await local.saveState(state);await local.saveReport(report)}}
+    coverage:'LIMITED_SAMPLE',time_limit_reached:false,priority_selection:{collection:[],ocr:[],analysis:[]},
+    retry:'Rerun the same run command after retry_at; use plan and latest to inspect.'}
+  let activeStage,stageStarted
+  const completedAnalyses=new Set()
+  const finishStage=()=>{if(activeStage){Object.assign(report.stages[activeStage],{started_at:koreanTime(stageStarted),finished_at:koreanTime(now()),duration_ms:Math.max(0,now()-stageStarted)});if(['SUCCEEDED','PARTIAL'].includes(report.stages[activeStage].status))report.last_completed_stage=activeStage;activeStage=null}}
+  const startStage=name=>{finishStage();activeStage=name;stageStarted=now();report.stages[name].started_at=koreanTime(stageStarted)}
+  const workload=()=>{
+    if(!snapshot)return
+    const c=collectionSelection(snapshot,state,now(),options.recheckHours),o=ocrSelection(snapshot,state,now(),options.recheckHours,runtime.imageValidationKey),a=analysisSelection(snapshot,state,now(),runtime.imageValidationKey)
+    const imageItems=items=>items.map(i=>i.concerts?i:{...i,concerts:snapshot.concerts.find(c=>c.id===i.concert_id)})
+    report.known_backlog={basis:'LAST_DB_SNAPSHOT_AND_CHECKPOINT',collection:{unit:'concerts',new:bucketCounts(c.new,now()),recheck:bucketCounts(c.recheck,now()),cooldown:bucketCounts(c.cooldown,now()),unseen_kopis:'UNKNOWN'},
+      ocr:{unit:'images',new:bucketCounts(o.new,now()),recheck:bucketCounts(o.recheck,now()),cooldown:bucketCounts(imageItems(o.cooldown),now()),held:bucketCounts(imageItems(o.held),now()),new_ocr_after_hash:'UNKNOWN'},
+      analysis:{unit:'images',ready:bucketCounts(a.ready.filter(t=>!completedAnalyses.has(t.key)),now()),blocked:bucketCounts(a.blocked.map(i=>({concerts:snapshot.concerts.find(c=>c.id===snapshot.images.find(x=>x.id===i.image_id)?.concert_id)})),now()),completed:a.reused.length+completedAnalyses.size}}
+  }
+  const refreshHolds=()=>{if(snapshot){const items=imageLimitHolds(snapshot,state,runtime.imageValidationKey,now());report.ocr_holds={count:items.length,items}}}
+  const persist=async()=>{refreshHolds();report.last_progress_at=koreanTime(now());report.duration_ms=Math.max(0,now()-started);if(activeStage)report.stages[activeStage].duration_ms=Math.max(0,now()-stageStarted);if(!plan){await local.saveState(state);await local.saveReport(report)}}
   const checkpoint=async()=>{await persist();onProgress({event:'checkpoint',stages:report.stages})}
-  const check=()=>{if(signal?.aborted||now()-started>=options.maxSeconds*1000)throw pipelineError('BATCH_INTERRUPTED')}
+  const check=()=>{if(now()-started>=options.maxSeconds*1000||signal?.reason==='TIME_LIMIT')report.time_limit_reached=true
+    if(signal?.aborted||report.time_limit_reached)throw pipelineError('BATCH_INTERRUPTED')}
   const problem=(where,error,id,retryKey)=>{
     const key=retryKey||(where==='collection'?'collect:':where+':')+id
     const code=safeCode(error)
@@ -34,25 +50,34 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
   }
   let snapshot,preflightDone=false
   try {
+    startStage('preflight')
     report.stages.preflight.status='RUNNING'
     report.environment=await runtime.preflight({plan});check()
     snapshot=await runtime.repository.snapshot(conditions,options.dbPages);check()
     report.stages.preflight={...stage(),status:'SUCCEEDED',succeeded:1};preflightDone=true
     if(plan){
+      startStage('cleanup')
       const cleanup=await runtime.repository.cleanupPlan(options.cleanupLimit,conditions.from,options.dbPages);check()
       report.stages.cleanup={...stage(),status:'PLANNED',plan:cleanupPlanForReport(cleanup,options.cleanupLimit),remaining:cleanup.total,
         limit_reached:cleanup.total>cleanup.targets.length}
-      const ocr=ocrSelection(snapshot,state,now(),options.recheckHours),analysis=analysisSelection(snapshot,state,now())
+      const ocr=ocrSelection(snapshot,state,now(),options.recheckHours,runtime.imageValidationKey),analysis=analysisSelection(snapshot,state,now(),runtime.imageValidationKey)
+      const collection=collectionSelection(snapshot,state,now(),options.recheckHours)
+      report.priority_selection={collection:collection.ready.slice(0,options.collectLimit).map(priorityPreview),
+        ocr:ocr.ready.slice(0,options.imageChecks).map(priorityPreview),analysis:analysis.ready.slice(0,options.analysisLimit).map(priorityPreview)}
       report.plan={known_concerts:snapshot.concerts.length,active_detail_images:snapshot.images.length,
         collection_api_candidates:'UNKNOWN_UNTIL_KOPIS_LIST',new_or_changed_images_after_collection:'UNKNOWN',
         images_due_for_download_check:ocr.ready.length,new_ocr_attempts:'UNKNOWN_UNTIL_IMAGE_HASH_CHECK',
-        ocr_cooldown:ocr.cooldown.length,ocr_recent:ocr.recent.length,analysis_ready:analysis.ready.length,
+        ocr_cooldown:ocr.cooldown.length,ocr_recent:ocr.recent.length,ocr_held:ocr.held.length,analysis_ready:analysis.ready.length,
         analysis_reused:analysis.reused.length,analysis_blocked:analysis.blocked,analysis_cooldown:analysis.cooldown.length,
         collection_cursor:state.collection,checkpoint_changed:false,kopis_calls:0,image_downloads:0,ocr_calls:0,db_writes:0,
+        read_capacity:{list_max_raw_rows:options.listPages*100,db_rows_per_table_or_relation_batch:options.dbPages*100,db_scan_overflow:'EXPLICIT_DB_SCAN_LIMIT_ERROR'},
+        ocr_selection_semantics:'Ordered download-check candidates; stop at imageChecks or new OCR attempt cap. Cache/change outcomes are UNKNOWN until download.',
         selected_analysis_ocr_ids:analysis.ready.slice(0,options.analysisLimit).map(t=>t.ocr.id)}
       report.status='PLAN_READY'
+      finishStage()
     } else {
       await persist()
+      startStage('cleanup')
       const cleanup=report.stages.cleanup;cleanup.status='RUNNING';cleanup.deleted_counts=emptyCleanupCounts();cleanup.deleted=[]
       cleanup.attempted=0;cleanup.remaining='UNKNOWN'
       const deletedTargets=[]
@@ -89,11 +114,12 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       cleanup.status=cleanup.failed?'PARTIAL':'SUCCEEDED';await persist();check()
       const removedInRun=new Set(deletedTargets.map(c=>c.kopis_id))
       // Collection authentication is independent of successful cleanup.
+      startStage('collection')
       const c=report.stages.collection;c.status='RUNNING';c.pages=0;c.attempted=0;c.listing_cycle_completed=false
       let first,firstError
       if(!retryDue(state,'listing',now())){firstError=pipelineError('LISTING_RETRY_WAIT');c.failed++;problem('collection',firstError,undefined,'listing')}
       else try {first=await runtime.client.list({conditions,state:conditions.states[state.collection.state],page:state.collection.page});c.pages++;completedItem(state,'listing',now())}
-      catch(e){c.pages++;firstError=e;failedItem(state,'listing',now());c.failed++;problem('collection',e,undefined,'listing')}
+      catch(e){if(safeCode(e)==='BATCH_INTERRUPTED')throw e;c.pages++;firstError=e;failedItem(state,'listing',now());c.failed++;problem('collection',e,undefined,'listing')}
       const cutoff=now()-options.recheckHours*3600000
       const known=new Map(snapshot.concerts.map(x=>[x.kopis_id,x]))
       const prune=()=>{state.collection.pending=[...new Set(state.collection.pending)].filter(id=>{
@@ -102,13 +128,13 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       });const pending=new Set(state.collection.pending);for(const id of Object.keys(state.collection.dates))if(!pending.has(id))delete state.collection.dates[id]}
       prune()
       let usedFirst=false,completedCycle=false
-      while(!firstError && state.collection.pending.filter(id=>retryDue(state,'collect:'+id,now())).length<options.collectLimit*2 && !completedCycle){
+      while(!firstError && !completedCycle){
         check()
         if(usedFirst && c.pages>=options.listPages)break
         const cursor=state.collection
         let rows
         try {rows=usedFirst?await runtime.client.list({conditions,state:conditions.states[cursor.state],page:cursor.page}):first;if(usedFirst)c.pages++;usedFirst=true}
-        catch(e){c.pages++;failedItem(state,'listing',now());c.failed++;problem('collection',e,undefined,'listing');break}
+        catch(e){if(safeCode(e)==='BATCH_INTERRUPTED')throw e;c.pages++;failedItem(state,'listing',now());c.failed++;problem('collection',e,undefined,'listing');break}
         const signature=hashJson(rows.map(r=>r?.mt20id))
         if(rows.length===100 && signature===cursor.lastSignature){failedItem(state,'listing',now());c.failed++;problem('collection',pipelineError('PAGINATION_STALLED'),undefined,'listing');break}
         for(const row of rows){
@@ -121,19 +147,20 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
         prune();await checkpoint()
       }
       c.listing_cycle_completed=completedCycle
-      const due=snapshot.concerts.filter(x=>Date.parse(x.synced_at)<=cutoff&&retryDue(state,'collect:'+x.kopis_id,now()))
-        .sort((a,b)=>a.synced_at.localeCompare(b.synced_at)||a.kopis_id.localeCompare(b.kopis_id)).map(x=>x.kopis_id)
-      const discovery=state.collection.pending.filter(id=>retryDue(state,'collect:'+id,now()))
-      const selection=[...new Set(interleave(discovery,due,state.lanes.collect))].filter(id=>!removedInRun.has(id))
-      c.cooldown=state.collection.pending.length-discovery.length
-      for(const id of selection.slice(0,options.collectLimit)){
+      const collection=collectionSelection(snapshot,state,now(),options.recheckHours)
+      const selection=collection.ready.filter(item=>!removedInRun.has(item.id))
+      c.cooldown=collection.cooldown.length;c.new_processed=0;c.rechecked=0
+      for(const item of selection.slice(0,options.collectLimit)){
+        const id=item.id
         check();c.attempted++;const key='collect:'+id
+        report.priority_selection.collection.push(priorityPreview(item))
         try{
           const row=await runtime.client.detail(id);check()
           const normalized=normalizeCollectionDetail(row,id,{...conditions,from:collectionConditions(now()).from},new Date(now()).toISOString())
-          await runtime.repository.collector.save(normalized);c.succeeded++;completedItem(state,key,now())
+          await runtime.repository.collector.save(normalized);c.succeeded++;c[item.work_kind==='NEW'?'new_processed':'rechecked']++;completedItem(state,key,now())
           state.collection.pending=state.collection.pending.filter(x=>x!==id)
-        }catch(e){c.failed++;failedItem(state,key,now());if(/^OUT_OF_SCOPE_/.test(safeCode(e)))state.collection.pending=state.collection.pending.filter(x=>x!==id);problem('collection',e,id)}
+        }catch(e){if(safeCode(e)==='BATCH_INTERRUPTED')throw e;c.failed++;failedItem(state,key,now());if(/^OUT_OF_SCOPE_/.test(safeCode(e)))state.collection.pending=state.collection.pending.filter(x=>x!==id);problem('collection',e,id)}
+        commitPriority(state,'collect',item)
         state.lanes.collect=1-state.lanes.collect;await checkpoint()
       }
       c.limit_reached=selection.length>=options.collectLimit
@@ -141,15 +168,20 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       c.remaining={known_due_not_attempted:Math.max(0,selection.length-c.attempted),discovery_pending:state.collection.pending.length,unseen_kopis:'UNKNOWN'}
       c.status=c.failed?'PARTIAL':'SUCCEEDED';await persist();check()
       // Read current DB independently of collection successes, including older valid OCR.
+      startStage('ocr')
       snapshot=await runtime.repository.snapshot(conditions,options.dbPages)
       const o=report.stages.ocr;o.status='RUNNING';o.attempted=0;o.checked=0;o.cached_recovery_records=0
-      const selected=ocrSelection(snapshot,state,now(),options.recheckHours)
+      const selected=ocrSelection(snapshot,state,now(),options.recheckHours,runtime.imageValidationKey)
+      o.held_unchanged=0;o.new_limit_failures=0;o.new_processed=0;o.rechecked=0
+      o.held_skipped=selected.held.filter(image=>!retryDue(state,'ocr:'+image.id,now())).length
       o.skipped=selected.cooldown.length+selected.recent.length
       for(const image of selected.ready){
         if(o.checked>=options.imageChecks||o.attempted>=options.ocrLimit)break
         check();o.checked++;(state.owners||={})[image.key]=image.concerts.kopis_id
+        report.priority_selection.ocr.push(priorityPreview(image))
+        const knownLimit=imageLimitHold(state,image,runtime.imageValidationKey)
         const repository={...runtime.repository.ocr,async *candidates(){yield image}}
-        const result=await runEasyOcrBatch({repository,limit:1,signal,now,download:runtime.download,
+        const result=await runEasyOcrBatch({repository,limit:1,signal,now,check,download:url=>runtime.download(url,{knownLimit}),
           worker:{recognize:(...args)=>runtime.worker.recognize(...args),close(){}},
           onCached:async({cached,downloaded,startedAt,finishedAt})=>{
             const latest=latestAttempt(snapshot,image.id)
@@ -164,20 +196,49 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
             o.cached_recovery_records++
           }})
         o.attempted+=result.attempted;o.succeeded+=result.saved;o.reused+=result.cached
-        if(result.failed||result.cancelled){failedItem(state,image.key,now());o.failed+=result.failed||1;for(const e of result.failures)problem('ocr',{code:e.persistenceError||e.code},image.id)}
+        if(result.held){
+          // A byte-identical known rejection is neither success nor a new failure.
+          state.retries[image.key]={...state.retries[image.key],until:now()+options.recheckHours*3600000,
+            image_limit:{...knownLimit,checkedAt:now()}}
+          delete state.retries[image.key].last_check_error
+          state.touched[image.key]=now();o.held_unchanged++;o.held_skipped++;o.skipped++
+        }else if(result.cancelled){
+          // Interrupted work supplies no new source evidence. Keep any already
+          // established hold rather than replacing it with generic backoff.
+          o.failed++
+        }else if(result.failed){
+          failedItem(state,image.key,now());o.failed+=result.failed||1
+          for(const e of result.failures){
+            if(e.imageLimit && !e.persistenceError){
+              state.retries[image.key].image_limit={...e.imageLimit,sourceUrl:image.source_url,checkedAt:now()}
+              state.retries[image.key].until=now()+options.recheckHours*3600000;o.new_limit_failures++
+            }else if(knownLimit && /^OCR_IMAGE_(HTTP_\d{3}|REQUEST_FAILED|TOO_LARGE|EMPTY)$/.test(e.code)){
+              // A failed source check cannot establish new bytes. Retain the last
+              // confirmed hold and its daily cadence; still report this new error.
+              state.retries[image.key].image_limit=knownLimit
+              state.retries[image.key].until=now()+options.recheckHours*3600000
+              state.retries[image.key].last_check_error=e.persistenceError||e.code
+            }
+            problem('ocr',{code:e.persistenceError||e.code},image.id)
+          }
+        }
         else completedItem(state,image.key,now())
+        if(!result.cancelled){commitPriority(state,'ocr',image);o[image.work_kind==='NEW'?'new_processed':'rechecked']++}
         state.lanes.ocr=1-state.lanes.ocr;await checkpoint()
       }
       o.limit_reached=o.attempted>=options.ocrLimit||o.checked>=options.imageChecks
+      o.ocr_limit_reached=o.attempted>=options.ocrLimit;o.image_check_limit_reached=o.checked>=options.imageChecks
       o.remaining={known_due_not_checked:Math.max(0,selected.ready.length-o.checked),new_ocr_needed:'UNKNOWN_UNTIL_HASH_CHECK'}
       o.status=o.failed?'PARTIAL':'SUCCEEDED';check()
+      startStage('analysis')
       snapshot=await runtime.repository.snapshot(conditions,options.dbPages)
       const a=report.stages.analysis;a.status='RUNNING'
-      const analyses=analysisSelection(snapshot,state,now());a.reused=analyses.reused.length;a.skipped=analyses.blocked.length+analyses.cooldown.length
+      const analyses=analysisSelection(snapshot,state,now(),runtime.imageValidationKey);a.reused=analyses.reused.length;a.skipped=analyses.blocked.length+analyses.cooldown.length
       for(const target of analyses.ready.slice(0,options.analysisLimit)){
         check();(state.owners||={})[target.key]=target.concert.kopis_id
+        report.priority_selection.analysis.push(priorityPreview(target))
         try{
-          const ocr=await runtime.repository.ocrResult(target.ocr.id)
+          const ocr=await runtime.repository.ocrResult(target.ocr.id);check()
           const analysis=analyzeStoredProgram({...target,ocr})
           const analysisId=await runtime.repository.analysis.save(analysis)
           const candidates=await runtime.repository.candidates(analysisId)
@@ -190,14 +251,16 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
               track_id:x.track_id,track:getTrackTarget(x.track_id)?.title||'Registered track',
               show:`npm run program:analyze -- show ${x.id}`})))
           }else a.reused++
-          a.succeeded++;completedItem(state,target.key,now())
-        }catch(e){a.failed++;failedItem(state,target.key,now());problem('analysis',e,target.ocr.id,target.key)}
+          a.succeeded++;completedAnalyses.add(target.key);completedItem(state,target.key,now())
+        }catch(e){if(safeCode(e)==='BATCH_INTERRUPTED')throw e;a.failed++;failedItem(state,target.key,now());problem('analysis',e,target.ocr.id,target.key)}
+        commitPriority(state,'analysis',target)
         await checkpoint()
       }
       a.limit_reached=analyses.ready.length>=options.analysisLimit
       a.remaining={known_ready_not_attempted:Math.max(0,analyses.ready.length-options.analysisLimit),blocked:analyses.blocked.length,cooldown:analyses.cooldown.length}
       a.status=a.failed?'PARTIAL':'SUCCEEDED'
       report.status=Object.values(report.stages).some(x=>x.failed)?'PARTIAL':'SUCCESS'
+      finishStage()
     }
     const reviews=await runtime.repository.reviewSummary(options.dbPages)
     const pendingReviews=reviews.filter(x=>x.matcher_version===MATCHER_VERSION&&x.catalog_hash===CATALOG_HASH&&!x.stale_reason)
@@ -217,11 +280,16 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
     const code=safeCode(error)
     report.errors.push({stage:preflightDone?'execution':'preflight',code})
     report.status=code==='BATCH_INTERRUPTED'?'PARTIAL':!preflightDone||fatalCode(code)?'FATAL':'PARTIAL';report.exit_code=report.status==='FATAL'?2:1
+    if(code==='BATCH_INTERRUPTED')report.termination_reason=report.time_limit_reached?'TIME_LIMIT':String(signal?.reason||'CANCELLED')
     for(const s of Object.values(report.stages))if(s.status==='RUNNING'){s.status=code==='BATCH_INTERRUPTED'?'INTERRUPTED':'FAILED';if(!s.failed)s.failed=1}
   }finally{
+    finishStage()
     await runtime.worker?.close()
     for(const s of Object.values(report.stages))if(s.status==='RUNNING')s.status='INTERRUPTED'
     report.finished_at=koreanTime(now());report.duration_ms=Math.max(0,now()-started)
+    report.time_limit_reached ||= now()-started>=options.maxSeconds*1000||signal?.reason==='TIME_LIMIT'
+    workload()
+    refreshHolds()
     if(!plan)await persist()
   }
   return report

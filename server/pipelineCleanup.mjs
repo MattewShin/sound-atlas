@@ -54,6 +54,7 @@ export const pruneExpiredPipelineState = (state, today, deleted=[]) => {
   const before=state.collection.pending.length
   state.collection.pending=state.collection.pending.filter(id=>!expired.has(id))
   for(const id of expired)delete state.collection.dates[id]
+  for(const stage of Object.values(state.priority||{}))for(const id of expired)if(stage.served)delete stage.served[id]
   let keys=0
   for(const key of new Set([...Object.keys(state.retries),...Object.keys(state.touched),...Object.keys(state.owners||{})])){
     if(expired.has(state.owners?.[key]) || (key.startsWith('collect:')&&expired.has(key.slice(8)))

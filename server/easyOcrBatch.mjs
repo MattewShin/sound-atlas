@@ -10,15 +10,21 @@ const makeAttempt = ({ image, id, startedAt, finishedAt, hash, status, errorCode
   duration_ms: Math.max(0, finishedAt - startedAt),
 })
 
-const processImage = async (image, { repository, download, worker, dryRun, force, now, signal, onProgress, onCached }) => {
-  const outcome = { attempted: 0, recognized: 0, saved: 0, cached: 0 }
+const processImage = async (image, { repository, download, worker, dryRun, force, now, signal, onProgress, onCached, check }) => {
+  const outcome = { attempted: 0, recognized: 0, saved: 0, cached: 0, held: 0 }
   const startedAt = now(), id = randomUUID()
-  let downloaded, result, stage = 'download'
+  let downloaded, result, rejectedHash, stage = 'download'
   const attempt = (status, errorCode) => makeAttempt({ image, id, startedAt, finishedAt: now(),
-    hash: downloaded?.contentHash, status, errorCode })
+    hash: downloaded?.contentHash || rejectedHash, status, errorCode })
   try {
+    check()
     onProgress({ event: 'image_start', imageId: image.id, kopisId: image.concerts.kopis_id })
     downloaded = await download(image.source_url)
+    check()
+    if (downloaded.held) {
+      onProgress({ event: 'image_held_unchanged', imageId: image.id })
+      return { ...outcome, held: 1 }
+    }
     stage = 'cache'
     // Hash current bytes even for known URLs; a changed image must be recognized again.
     const cached = !dryRun && !force && await repository.findResult(image.id, downloaded.contentHash)
@@ -29,14 +35,19 @@ const processImage = async (image, { repository, download, worker, dryRun, force
     }
     outcome.attempted = 1
     stage = 'recognize'
+    check()
     result = await worker.recognize(downloaded, { signal })
     outcome.recognized = 1
   } catch (error) {
-    if (signal?.aborted) return { ...outcome, cancelled: true }
+    if (signal?.aborted || error.code === 'BATCH_INTERRUPTED') return { ...outcome, cancelled: true }
     outcome.attempted = 1
     const failure = { imageId: image.id, kopisId: image.concerts.kopis_id, stage,
       code: error instanceof CollectionError ? error.code : 'EASYOCR_FAILED',
       reason: error instanceof CollectionError ? error.message : 'Image OCR failed (raw error suppressed)' }
+    if (error instanceof CollectionError && error.code === 'OCR_IMAGE_LIMIT_EXCEEDED' && error.imageLimit) {
+      failure.imageLimit = { ...error.imageLimit, attemptId: id }
+      rejectedHash = error.imageLimit.contentHash
+    }
     if (!dryRun) {
       try { await repository.saveAttempt(attempt('FAILED', failure.code), null) }
       catch (saveError) { failure.persistenceError = saveError instanceof CollectionError ? saveError.code : 'OCR_SAVE_FAILED' }
@@ -63,12 +74,12 @@ const processImage = async (image, { repository, download, worker, dryRun, force
 }
 
 export const runEasyOcrBatch = async ({ repository, download, worker, limit = 3, dryRun = false, listOnly = false,
-  force = false, now = Date.now, signal, onProgress = () => {}, onCached }) => {
+  force = false, now = Date.now, signal, onProgress = () => {}, onCached, check = () => {} }) => {
   if (!Number.isSafeInteger(limit) || limit < 1) throw new CollectionError('INVALID_LIMIT', 'limit must be a positive safe integer')
   const started = now()
   const report = { conditions: collectionConditions(started), imageType: 'DETAIL', pipelineVersion: EASYOCR_PIPELINE_VERSION,
     limit, limitedSample: true, dryRun, listOnly, force, scanned: 0, attempted: 0, recognized: 0, saved: 0,
-    cached: 0, failures: [], preview: [], limitReached: false, cancelled: false }
+    cached: 0, held: 0, failures: [], preview: [], limitReached: false, cancelled: false }
   try {
     if (!dryRun && !listOnly) await repository.preflight()
     for await (const image of repository.candidates({ now: started })) {
@@ -79,8 +90,8 @@ export const runEasyOcrBatch = async ({ repository, download, worker, limit = 3,
         if (report.scanned >= limit) { report.limitReached = true; break }
         continue
       }
-      const outcome = await processImage(image, { repository, download, worker, dryRun, force, now, signal, onProgress, onCached })
-      for (const count of ['attempted', 'recognized', 'saved', 'cached']) report[count] += outcome[count]
+      const outcome = await processImage(image, { repository, download, worker, dryRun, force, now, signal, onProgress, onCached, check })
+      for (const count of ['attempted', 'recognized', 'saved', 'cached', 'held']) report[count] += outcome[count]
       if (outcome.failure) report.failures.push(outcome.failure)
       if (outcome.preview && report.preview.length < 3) report.preview.push(outcome.preview)
       if (outcome.cancelled) { report.cancelled = true; break }
