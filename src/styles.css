@@ -130,6 +130,10 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .recommendation-list-count, .recommendation-list-end { margin: 20px 0 12px; color: #737c76; font-size: 11px; line-height: 1.6; text-align: center; }.recommendations-load-more > span { font-size: 10px; font-weight: 400; }
 .featured-artwork { float: right; width: 92px; margin: 16px 0 10px 14px; }
 .featured-artwork .mini-art { height: 92px; }
+/* 슈만의 새 초상화는 얼굴이 그림 위쪽에 있어 카드와 상세에서 같은 위치로 맞춥니다. */
+.mini-art img[src$="/schumann-kaiser-1850.jpg"],
+.track-detail-image img[src$="/schumann-kaiser-1850.jpg"] { object-position: center 7%; }
+.featured-artwork .mini-art img[src$="/schumann-kaiser-1850.jpg"] { transform: scale(1.7); transform-origin: center 5%; }
 .track-copy { max-width: none; }
 .track-copy h2 { overflow-wrap: anywhere; font-size: 22px; }
 .preview-pending { clear: both; margin: 18px 0 0; border-top: 1px solid #cbd6ca; padding-top: 12px; color: #65766c; font-size: 11px; }
@@ -419,4 +423,51 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
   .track-copy { max-width: calc(100% - 102px); }
   .mini-track { flex-basis: 168px; }
   .preference-row { grid-template-columns: 78px minmax(0, 1fr) 38px; gap: 6px; }
+}
+.recommendation-input-control button, .keyword-choice-list button { min-height: 44px; font-size: 16px; }
+.composer-picker { margin-top: 20px; }
+.composer-trigger { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 48px; border: 1px solid #c9d1c3; border-radius: 15px; padding: 10px 15px; color: #245a53; background: #fffaf0; font-size: 16px; font-weight: 700; text-align: left; }
+.composer-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.composer-tags li { display: inline-flex; align-items: center; border-radius: 99px; padding-left: 13px; color: #31534d; background: #e4eee5; font-size: 16px; }
+.composer-tags button { width: 44px; min-height: 44px; border: 0; border-radius: 50%; color: #31534d; background: transparent; font-size: 22px; }
+.composer-backdrop { position: fixed; z-index: 60; inset: 0; display: flex; align-items: flex-end; justify-content: center; background: rgba(27,38,35,.4); }
+.composer-dialog { display: flex; flex-direction: column; width: min(100%, 520px); max-height: 92dvh; overflow: hidden; border-radius: 25px 25px 0 0; padding: 20px 20px 0; color: #263b36; background: #f7f3eb; box-shadow: 0 -12px 36px rgba(27,38,35,.2); font-size: 16px; line-height: 1.6; }
+.composer-dialog-header { display: flex; flex-shrink: 0; align-items: flex-start; gap: 8px; }
+.composer-dialog h2 { flex: 1; margin: 5px 0 0; color: #245a53; font-size: 21px; line-height: 1.5; overflow-wrap: anywhere; }
+.composer-dialog button, .composer-dialog input { font: inherit; }
+.composer-dialog button { min-height: 44px; cursor: pointer; }
+.composer-close { flex: 0 0 44px; width: 44px; border: 1px solid #d7d3c8; border-radius: 50%; color: #52615c; background: #fffaf0; font-size: 25px !important; }
+#composer-guide { flex-shrink: 0; margin: 14px 0; color: #53635b; }
+.composer-search { display: grid; flex-shrink: 0; gap: 6px; color: #31534d; font-weight: 700; }
+.composer-search input { box-sizing: border-box; width: 100%; min-height: 48px; border: 1px solid #b8c6b8; border-radius: 12px; padding: 10px 12px; color: #263b36; background: #fffdf7; font-weight: 400; }
+.composer-limit { flex-shrink: 0; min-height: 26px; margin: 6px 0; color: #825533; font-size: 16px; }
+.composer-options { display: grid; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; gap: 8px; padding: 2px 3px 12px; }
+.composer-options button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; border: 1px solid #d8d4c9; border-radius: 13px; padding: 10px 14px; color: #53635b; background: #fffaf0; text-align: left; }
+.composer-options button.selected { border: 2px solid #245a53; padding: 9px 13px; color: #245a53; background: #e4eee5; font-weight: 700; }
+.composer-options button:disabled { color: #777b72; background: #eeece4; cursor: not-allowed; }
+.composer-check { display: grid; flex: 0 0 24px; width: 24px; height: 24px; place-items: center; border: 1px solid #aab8a7; border-radius: 7px; }
+.selected .composer-check { border-color: #245a53; color: #fffaf0; background: #245a53; }
+.composer-no-results { margin: 16px 0 24px; text-align: center; }
+.composer-footer { flex-shrink: 0; border-top: 1px solid #ddd7c9; padding: 12px 0 max(16px, env(safe-area-inset-bottom)); background: #f7f3eb; }
+.composer-footer p { margin: 0 0 10px; color: #31534d; font-weight: 700; }
+.composer-footer > div { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
+.composer-footer button { min-height: 48px; border: 1px solid #245a53; border-radius: 13px; font-weight: 700; }
+.composer-reset { color: #245a53; background: #fffaf0; }
+.composer-apply { color: #fffaf0; background: #245a53; }
+.composer-picker button:focus-visible, .composer-dialog :focus-visible, .composer-result button:focus-visible { outline: 3px solid #b26c3d; outline-offset: 3px; }
+.composer-result { margin: 16px 0; border: 1px solid #d6dacb; border-radius: 15px; padding: 14px; color: #31534d; background: #eeeede; font-size: 16px; line-height: 1.6; overflow-wrap: anywhere; }
+.composer-result p { margin: 0; font-weight: 700; }
+.composer-result > span { display: block; margin-top: 4px; }
+.composer-result button { display: block; min-height: 44px; margin-top: 6px; border: 0; padding: 8px 0; color: #245a53; background: transparent; font-size: 16px; text-align: left; text-decoration: underline; text-underline-offset: 4px; }
+.composer-mode-guide { margin: 14px 0; color: #53635b; font-size: 16px; line-height: 1.6; }
+@media (min-width: 680px) {
+  .composer-backdrop { align-items: center; padding: 24px; }
+  .composer-dialog { max-height: min(90dvh, 780px); border-radius: 25px; }
+}
+@media (max-height: 540px) {
+  .composer-dialog { max-height: 100dvh; padding-top: 8px; }
+  #composer-guide { margin: 6px 0; }
+  .composer-dialog h2 { font-size: 18px; }
+  .composer-footer { padding-top: 6px; }
+  .composer-footer p { margin-bottom: 4px; }
 }

@@ -1,5 +1,6 @@
 import './emma/emma.test.js'
 import '../src/data/recommendation.test.js'
+import '../src/data/composerSelection.test.js'
 import '../src/data/catalogAdditions.test.js'
 import '../src/data/catalogAdditions20261020.test.js'
 import '../src/data/mobileTypography.test.js'
@@ -40,6 +41,7 @@ import { verifyConcertSearchInteractions } from './concertSearchDomTest.mjs'
 import { verifyTargetConcertInteractions } from './targetConcertDomTest.mjs'
 import { verifyDbConcertInteractions } from './dbConcertDomTest.mjs'
 import { verifyMusicSelectionInteractions } from './musicSelectionDomTest.mjs'
+import { verifyComposerSelectionInteractions } from './composerSelectionDomTest.mjs'
 import { verifyWeeklySelectionInteractions } from './weeklySelectionDomTest.mjs'
 import { verifyHomeDiscoveryInteractions } from './homeDiscoveryDomTest.mjs'
 import { weeklySelections } from '../src/data/weeklySelections.js'
@@ -56,6 +58,10 @@ try {
   try { unlinkSync(compiledPath) } catch { /* 컴파일 실패 시 파일 없음 */ }
 }
 const render = (component, props = {}) => renderToStaticMarkup(React.createElement(component, props))
+
+test('작곡가 선택·검색·임시 변경·포커스·추천 조건·보관함 전환을 검증한다', async () => {
+  await verifyComposerSelectionInteractions(components.default)
+})
 
 test('홈 탐색의 재진입·로그인·조건 변경·모달·보관 상태와 주간 소개 제목을 검증한다', async () => {
   await verifyHomeDiscoveryInteractions(components.default)

@@ -1,11 +1,5 @@
 import { getWorkId, workCatalog } from './workCatalog.js'
-
-const composerAliases = {
-  쇼팽: 'chopin', 베토벤: 'beethoven', 라흐마니노프: 'rachmaninoff rachmaninov',
-  리스트: 'liszt', 사티: 'satie', 바흐: 'bach', 드뷔시: 'debussy',
-  모차르트: 'mozart', 브람스: 'brahms', 슈베르트: 'schubert', 슈만: 'schumann',
-  차이콥스키: 'tchaikovsky tchaikowsky',
-}
+import { composerAliases } from './composerSelection.js'
 const typeAliases = {
   ballade: 'ballade', 'piano-concerto': 'piano concerto', sonata: 'sonata',
   etude: 'etude', prelude: 'prelude', elegy: 'elegy', gymnopedie: 'gymnopedie',

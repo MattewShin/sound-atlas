@@ -10,11 +10,11 @@ export const composerImages = {
   쇼팽: '/composers/chopin-wodzinska-card-800x600.jpg',
   드뷔시: '/composers/debussy-card-800x600.jpg',
   리스트: '/composers/liszt-card-800x600.jpg',
-  모차르트: '/composers/mozart-card-800x600.jpg',
+  모차르트: '/composers/mozart-krafft-1819.jpg',
   라흐마니노프: '/composers/rachmaninoff-card-800x600.jpg',
   사티: '/composers/satie-card-800x600.jpg',
   슈베르트: '/composers/schubert-card-800x600.jpg',
-  슈만: '/composers/schumann-card-800x600.jpg',
+  슈만: '/composers/schumann-kaiser-1850.jpg',
   차이콥스키: '/composers/tchaikovsky-portrait-card-800x600.jpg',
 }
 export const tracks = manualRatings.map((track) => ({
