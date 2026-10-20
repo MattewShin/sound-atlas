@@ -98,7 +98,7 @@ test('separate work blocks isolate Debussy/Brahms and Brahms/Chopin identities, 
     [['Piano: D',230,650]],tableRow('F Chopin','Ballade No.4 in F Minor Op.52')])
   const a=analyzeStoredProgram(f).candidates
   assert.equal(a.length,5)
-  assert.deepEqual(a.map(c=>c.identity.composer),['C Debussy','J Brahms','J Brahms','쇼팽','쇼팽'])
+  assert.deepEqual(a.map(c=>c.identity.composer),['C Debussy','브람스','브람스','쇼팽','쇼팽'])
   assert.deepEqual(a.map(c=>c.identity.catalogues.map(n=>n.number)),[[],[118],[],[27],[52]])
   assert.deepEqual(a[1].identity.opus_following_numbers,[2])
   assert.deepEqual(a[3].identity.work_numbers,[8])
@@ -185,7 +185,7 @@ test('multiple different explicit names never resolve an unidentified bilingual 
   const a=analyzeStoredProgram(f).candidates
   assert.equal(a.length,3)
   assert.equal(a[0].identity.composer,null)
-  assert.equal(a[1].identity.composer,'J Brahms')
+  assert.equal(a[1].identity.composer,'브람스')
   assert.equal(a[2].identity.composer,'슈만')
   assert.ok(a[0].evidence.every(e=>e.role!=='COMPOSER'||e.quote==='이름 미확정'))
 })

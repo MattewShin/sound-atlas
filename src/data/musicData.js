@@ -6,6 +6,7 @@ import { manualTrackDetails } from './manualTrackDetails.js'
 export const composerImages = {
   바흐: '/composers/bach-card-800x600.jpg',
   베토벤: '/composers/beethoven-stieler-card-800x600.jpg',
+  브람스: '/composers/brahms-brasch-card-800x600.jpg',
   쇼팽: '/composers/chopin-wodzinska-card-800x600.jpg',
   드뷔시: '/composers/debussy-card-800x600.jpg',
   리스트: '/composers/liszt-card-800x600.jpg',

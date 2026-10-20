@@ -23,6 +23,7 @@ export const resolveConcertProgram = (concert, trackList, works = concertWorks) 
     const linkedTracks = [...new Map(trackList.filter((track) => explicitIds.has(track.id)
       || track.workId === work.id
       || (track.composer === work.composer && track.type === work.type && track.number === work.number
+        && (track.bookNumber || null) === (work.bookNumber || null)
         && (work.opus != null || work.catalogue != null) && track.opus === work.opus
         && (track.opusPart || null) === (work.opusPart || null) && (track.opusSuffix || '') === (work.opusSuffix || '')
         && (track.catalogue || null) === (work.catalogue || null) && (track.catalogueNumber || null) === (work.catalogueNumber || null)))

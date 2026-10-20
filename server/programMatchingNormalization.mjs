@@ -1,9 +1,9 @@
-import { composerPatterns, workTypePatterns, workCatalog, musicalKeysIn, getTrackTarget } from '../src/data/workCatalog.js'
+import { composerPatterns, composerIdentityText, workTypePatterns, workCatalog, musicalKeysIn, getTrackTarget } from '../src/data/workCatalog.js'
 
 const unique = values => [...new Set(values)]
 const plain = value => String(value || '').normalize('NFKC').normalize('NFD').replace(/[\u0300-\u036f]/g,'').normalize('NFC')
-const systems = {op:'OP',bwv:'BWV',kv:'K',k:'K',d:'D',s:'S',woo:'WOO',hob:'HOB',rv:'RV'}
-const prefixes = {OP:'Op.',BWV:'BWV',K:'K.',D:'D.',S:'S.',WOO:'WoO',HOB:'Hob.',RV:'RV'}
+const systems = {op:'OP',bwv:'BWV',kv:'K',k:'K',d:'D',s:'S',b:'B',woo:'WOO',hob:'HOB',rv:'RV'}
+const prefixes = {OP:'Op.',BWV:'BWV',K:'K.',D:'D.',S:'S.',B:'B.',WOO:'WoO',HOB:'Hob.',RV:'RV'}
 const genreBoundary = text => Object.values(workTypePatterns).some(re=>re.test(text)) || /^(?:intermezzo|nocturne|suite|variations?)$/i.test(text)
 const roman = text => {
   if(!/^(?=.)M{0,3}(?:CM|CD|D?C{0,3})(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3})$/.test(text))return null
@@ -18,14 +18,14 @@ export const normalizeMatchingText = raw => {
   const change=(code,re,replacement)=>{const next=text.replace(re,replacement);if(next!==text){changes.push(code);text=next}}
   if(text!==raw)changes.push('UNICODE_MATCHING_COPY')
   change('UNICODE_HYPHEN',/[\u2010-\u2015\u2212]/g,'-')
-  change('KEY_CATALOGUE_BOUNDARY',/(major|minor)(?=(?:Op|BWV|KV|K|D|S|WoO|Hob|RV)[.:]?\s*\d)/gi,'$1 ')
+  change('KEY_CATALOGUE_BOUNDARY',/(major|minor)(?=(?:Op|BWV|KV|K|D|S|B|WoO|Hob|RV)[.:]?\s*\d)/gi,'$1 ')
   change('ADJACENT_NUMBER_PREFIX',/(\d)(?=(?:No|Nos|Nr)[.:]?\s*\d)/g,'$1 ')
-  change('ADJACENT_CATALOGUE_PREFIX',/(\d)(?=(?:Op|BWV|KV|K|D|S|WoO|Hob|RV)[.:]?\s*\d)/g,'$1 ')
+  change('ADJACENT_CATALOGUE_PREFIX',/(\d)(?=(?:Op|BWV|KV|K|D|S|B|WoO|Hob|RV)[.:]?\s*\d)/g,'$1 ')
   change('GENRE_NUMBER_BOUNDARY',/\b([\p{L}]+)(?=(?:No|Nos|Nr)[.:]?\s*\d)/gu,(all,genre)=>genreBoundary(genre)?`${genre} `:all)
   change('NUMBER_IN_BOUNDARY',/(\d)in(?=\s*[A-G](?:\s*-?\s*(?:flat|sharp|[#♯b♭]))?\s*(?:major|minor)\b)/gi,'$1 in ')
   change('GENRE_IN_KEY_BOUNDARY',/\b([\p{L}]+)in(?=\s*[A-G](?:\s*-?\s*(?:flat|sharp|[#♯b♭]))?\s*(?:major|minor)\b)/giu,
     (all,genre)=>genreBoundary(genre)?`${genre} in `:all)
-  change('CATALOGUE_PREFIX',/\b(Op|BWV|KV|K|D|S|WoO|Hob|RV)\s*[.:]?\s*(?=\d)/gi,
+  change('CATALOGUE_PREFIX',/\b(Op|BWV|KV|K|D|S|B|WoO|Hob|RV)\s*[.:]?\s*(?=\d)/gi,
     (_,prefix)=>`${prefixes[systems[prefix.toLowerCase()]]} `)
   change('HOB_SECTION_PREFIX',/\bHob\s*[.:]?\s*(?=[IVXLCDMIl]+\s*[:.]\s*\d)/g,'Hob. ')
   change('NUMBER_PREFIX',/\b(Nos?|Nr)\s*[.:]?\s*(?=\d|[IVX])/gi,(_,label)=>/^nos$/i.test(label)?'Nos. ':'No. ')
@@ -37,7 +37,7 @@ export const normalizeMatchingText = raw => {
 }
 
 export const canonicalComposers = value => {
-  const text=plain(value)
+  const text=composerIdentityText(plain(value))
   return Object.entries(composerPatterns).filter(([name,re])=>text===name||re.test(text)).map(([name])=>name)
 }
 const typesIn = text => unique([
@@ -81,7 +81,7 @@ export const normalizeMatchingVariant = (variant,declaredComposer) => {
     const section=roman(m[1]);if(!section)addIssue('UNCERTAIN_ROMAN_CATALOGUE_SECTION',m[1],m.index)
     catalogues.push({system:'HOB',section:section?m[1]:null,number:Number(m[2]),suffix:'',part:null,matched_text:m[0],...tokenSources(records,m.index)})
   }
-  for(const m of text.matchAll(/\b(Op|BWV|K|D|S|WoO|Hob|RV)\.?\s*(\d+)([a-z]?)(?:\s*[-/]\s*(\d+))?(?![\p{L}\p{N}])/giu)){
+  for(const m of text.matchAll(/\b(Op|BWV|K|D|S|B|WoO|Hob|RV)\.?\s*(\d+)([a-z]?)(?:\s*[-/]\s*(\d+))?(?![\p{L}\p{N}])/giu)){
     catalogues.push({system:systems[m[1].toLowerCase()],section:null,number:Number(m[2]),suffix:m[3].toLowerCase(),part:m[4]?Number(m[4]):null,
       matched_text:m[0],...tokenSources(records,m.index)})
     if(/[IlO]/.test(m[3]))addIssue('UNCERTAIN_CATALOGUE_DIGIT',m[0],m.index)
@@ -99,13 +99,13 @@ export const normalizeMatchingVariant = (variant,declaredComposer) => {
   for(const c of catalogues)if(c.system==='OP'&&c.part!==null)numbers.push({role:'OPUS_MEMBER_NUMBER',number:c.part,matched_text:c.matched_text,source_line_index:c.source_line_index,source_quote:c.source_quote,matching_start:c.matching_start})
   for(const m of text.matchAll(/\bNos?\.\s*\S*/g))if(!numbers.some(n=>n.matching_start===m.index))addIssue('UNRESOLVED_NUMBER_BOUNDARY',m[0],m.index)
   for(const m of text.matchAll(/\bNos?\.\s*\d+\s*[-/~]\s*\d+/g))addIssue('UNCERTAIN_ITEM_RANGE',m[0],m.index)
-  for(const m of text.matchAll(/\b(?:No|Nos|Op|BWV|K|D|S|WoO|RV)\.?\s*([IlO][\dIlOVX]*)(?![\p{L}\p{N}])|\b(?:No|Nos)\.\s*[&,]|제\s*[IlO]\d*\s*번/gu)){
+  for(const m of text.matchAll(/\b(?:No|Nos|Op|BWV|K|D|S|B|WoO|RV)\.?\s*([IlO][\dIlOVX]*)(?![\p{L}\p{N}])|\b(?:No|Nos)\.\s*[&,]|제\s*[IlO]\d*\s*번/gu)){
     if(m[1]&&m[1]!=='I'&&roman(m[1])!==null&&/^Nos?/.test(m[0]))continue
     addIssue('UNCERTAIN_NUMERIC_TOKEN',m[0],m.index)
   }
   for(const m of text.matchAll(/\b[Il]{2,}\b/g))if(roman(m[0])===null)addIssue('UNCERTAIN_ROMAN_LABEL',m[0],m.index)
   const collections=[],movements=[],excerpts=[]
-  for(const m of text.matchAll(/제?\s*(\d+)\s*집|\b(?:book|volume|vol\.|livre)\s*(\d+|[IVXLCDMIl]+)\b/gi)){
+  for(const m of text.matchAll(/제?\s*(\d+)\s*(?:집|권)|\b(?:book|volume|vol\.|livre)\s*(\d+|[IVXLCDMIl]+)\b/gi)){
     const raw=m[1]||m[2],number=/^\d+$/.test(raw)?Number(raw):roman(raw)
     if(number===null)addIssue('UNCERTAIN_COLLECTION_NUMBER',raw,m.index)
     else collections.push({number,matched_text:m[0],...tokenSources(records,m.index)})
@@ -185,6 +185,7 @@ export const matchNormalizedProgramWork = (identity,declaredComposer,{catalog=wo
     if(types.some(type=>type!==w.type))reject.push('CONFLICTING_WORK_TYPES')
     if(workNumbers.some(n=>n!==w.number))reject.push('WORK_NUMBER_MISMATCH')
     if(opusNumbers.some(n=>n!==(w.opusPart||w.number)))reject.push('OPUS_MEMBER_MISMATCH')
+    if(w.bookNumber!=null&&(!collections.length||collections.some(n=>n!==w.bookNumber)))reject.push('BOOK_NUMBER_REQUIRED_OR_MISMATCH')
     if(w.opusPart&&!catalogues.some(c=>c.system==='OP'&&c.part===w.opusPart)&&!opusNumbers.includes(w.opusPart)&&!workNumbers.includes(w.number))reject.push('OPUS_MEMBER_REQUIRED')
     if(collectionsTypes.has(w.type)&&!workNumbers.length&&!opusNumbers.length&&!ownAlias)reject.push('ITEM_NUMBER_REQUIRED')
     if(!expected.length&&!workNumbers.length&&!opusNumbers.length&&!ownAlias)reject.push('EXPLICIT_ITEM_IDENTITY_REQUIRED')

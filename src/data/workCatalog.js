@@ -3,12 +3,17 @@ import { manualTrackDetails } from './manualTrackDetails.js'
 
 export const composerPatterns = {
   쇼팽: /쇼팽|\bchopin\b/i, 베토벤: /베토벤|\bbeethoven\b/i,
+  브람스: /브람스|\bbrahms\b/i, 모차르트: /모차르트|\bmozart\b/i,
   라흐마니노프: /라흐마니노프|\brachmanin(?:off|ov)\b/i,
   사티: /사티|\bsatie\b/i, 리스트: /리스트|\bliszt\b/i,
   슈베르트: /슈베르트|\bschubert\b/i,
   슈만: /슈만|\bschumann\b/i,
   차이콥스키: /차이콥스키|\btchaikovsk(?:y|i)\b|\btchaikowsky\b/i,
 }
+// 주제 원작자의 이름은 변주곡 작곡가와 구분합니다. 원문·인용은 수정하지 않습니다.
+export const composerIdentityText = value => String(value || '')
+  .replace(/\bon\s+(?:a|an|the)\s+theme\s+by\s+[^\n,;]*?(?=\s+(?:Op|BWV|KV|K|D|S|B)\.?\s*\d|$)/gi, ' ')
+  .replace(/[가-힣]+\s*(?=주제에\s*의한\s*변주곡)/g, ' ')
 export const workTypePatterns = {
   'piano-concerto': /피아노\s*협주곡|piano\s+concerto/i,
   sonata: /소나타|\bsonata\b/i, ballade: /발라드|\bballade?s?\b/i,
@@ -21,6 +26,13 @@ export const workTypePatterns = {
   // 번호·작품번호 없는 Scherzo는 소나타의 악장명일 수 있습니다.
   scherzo: /(?:스케르초|\bscherzos?\b)(?=[^\n]*(?:\bop[.:]?\s*\d|\bno[.:]?\s*\d|제?\s*\d+\s*번))/i,
   polonaise: /(?<!환상)(?<!환상 )폴로네즈|\bpolonaises?\b(?![\s-]+fantaisie)/i,
+  nocturne: /녹턴|\bnocturnes?\b/i,
+  rhapsody: /랩소디|광시곡|\brhapsod(?:y|ies|ie)\b/i,
+  capriccio: /카프리치오|\bcapricci(?:o|os)\b/i,
+  intermezzo: /인터메조|간주곡|\bintermezz(?:o|i)\b/i,
+  romance: /로망스|\bromances?\b/i,
+  variations: /변주곡|주제와\s*변주|\bvariations?\b/i,
+  fantasy: /환상곡|\bfantas(?:y|ia|ie)\b(?![\s-]+impromptu)/i,
   seasons: /사계|\b(?:the|four)\s+seasons\b|\bseasons\b/i,
 }
 
@@ -43,7 +55,7 @@ export const workCatalog = Object.fromEntries(manualRatings.map((track) => {
     aliases: [track.alias, ...(aliasTranslations[track.alias] || []), track.aliasEn, ...(track.aliasesEn || [])].filter(Boolean),
     composer: track.composer, type: track.type, cycleId: track.cycleId, monthEn: track.monthEn,
     opus: track.opus, opusPart: track.opusPart,
-    opusSuffix: track.opusSuffix, number: track.number, catalogue: track.catalogue, catalogueNumber: track.catalogueNumber,
+    opusSuffix: track.opusSuffix, number: track.number, bookNumber: track.bookNumber, catalogue: track.catalogue, catalogueNumber: track.catalogueNumber,
     musicalKeys: [...new Set(siblings.flatMap(({ id }) => musicalKeysIn(manualTrackDetails[id]?.about)))],
     trackIds: siblings.map(({ id }) => id),
   }]

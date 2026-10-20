@@ -172,3 +172,30 @@ test('81곡 버전에서 115곡으로 확장해도 기존·신규 보관과 최�
   assert.equal(state.notice, null)
   assert.equal(storage.getItem(VERSION_KEY), DATA_VERSION)
 })
+
+test('115곡 버전에서 188곡으로 확장해도 보관·좋아요·최근 곡을 유지한다', () => {
+  const ids = ['chopin-polonaise-op53', 'chopin-nocturne-b49', 'brahms-sonata-op5-no3-m5', 'mozart-fantasy-k397']
+  const reactions = Object.fromEntries(ids.map(id => [id, { listenAgain: true, liked: true }]))
+  const storage = memoryStorage({
+    [VERSION_KEY]: 'manual-catalog-7', [STORAGE_KEY]: JSON.stringify(reactions), [RECENT_KEY]: JSON.stringify(ids),
+  })
+  const state = migrateMusicStorage(storage)
+  assert.deepEqual(state.reactions, reactions)
+  assert.deepEqual(JSON.parse(storage.getItem(RECENT_KEY)), ids)
+  assert.equal(state.notice, null)
+  assert.equal(storage.getItem(VERSION_KEY), DATA_VERSION)
+})
+
+test('Op.35 단일 곡 삭제 시 다른 곡의 보관은 유지하고 기존 반응을 두 권에 임의 배분하지 않는다', () => {
+  const oldId = 'brahms-variations-op35', keptId = 'brahms-variations-op24'
+  const storage = memoryStorage({
+    [VERSION_KEY]: 'manual-catalog-8',
+    [STORAGE_KEY]: JSON.stringify({ [oldId]: { listenAgain: true, liked: true }, [keptId]: { listenAgain: true, liked: true } }),
+    [RECENT_KEY]: JSON.stringify([oldId, keptId]),
+  })
+  const state = migrateMusicStorage(storage)
+  assert.deepEqual(state.reactions, { [keptId]: { listenAgain: true, liked: true } })
+  assert.deepEqual(JSON.parse(storage.getItem(RECENT_KEY)), [keptId])
+  assert.equal(storage.getItem(VERSION_KEY), DATA_VERSION)
+  assert.ok(state.notice.includes('1개'))
+})

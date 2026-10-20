@@ -40,10 +40,12 @@ test('사용자 제공 62곡의 제목·558개 점수·요약·배경·감상 �
 test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출처가 확정 CSV와 전부 일치한다', () => {
   const rows = readFileSync(new URL('../../data/manual/manual-emotions-v1.csv', import.meta.url), 'utf8').trim().split(/\r?\n/)
   assert.deepEqual(rows.shift().split(',').slice(2), emotionKeys)
-  assert.equal(rows.length, 115)
+  assert.equal(rows.length, 189)
   assert.equal(tracks.length, rows.length)
   assert.equal(new Set(tracks.map(({ id }) => id)).size, rows.length)
-  assert.equal(tracks.filter((track) => track.composer === '쇼팽').length, 54)
+  assert.equal(tracks.filter((track) => track.composer === '쇼팽').length, 75)
+  assert.equal(tracks.filter((track) => track.composer === '브람스').length, 38)
+  assert.equal(tracks.filter((track) => track.composer === '모차르트').length, 15)
   assert.equal(tracks.filter((track) => track.composer === '라흐마니노프').length, 4)
   assert.equal(tracks.filter((track) => track.composer === '사티').length, 3)
   assert.equal(tracks.filter((track) => track.composer === '리스트').length, 1)
@@ -55,9 +57,9 @@ test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출�
   assert.equal(tracks.filter((track) => track.type === 'etude' && track.opus === 10).length, 12)
   assert.equal(tracks.filter((track) => track.type === 'etude' && track.opus === 25).length, 12)
   assert.equal(tracks.filter((track) => track.type === 'sonata' && track.composer === '쇼팽').length, 8)
-  assert.equal(tracks.filter((track) => track.type === 'ballade').length, 4)
+  assert.equal(tracks.filter((track) => track.type === 'ballade' && track.composer === '쇼팽').length, 4)
   rows.forEach((row, i) => {
-    const [title, alias, ...scores] = row.split(',')
+    const [title, alias, ...scores] = row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(value => value.startsWith('"') ? value.slice(1, -1).replace(/""/g, '"') : value)
     const track = tracks[i]
     assert.equal(formatTrackTitle(track), title)
     assert.equal(track.alias, alias)
@@ -68,7 +70,7 @@ test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출�
     assert.equal(track.ratingVersion, RATING_VERSION)
     assert.equal(track.ratingUnit, track.movement ? 'whole-movement' : 'whole-work')
     assert.ok(!('moods' in track) && !('energy' in track))
-    assert.match(track.id, /^(chopin|rachmaninoff|satie|liszt|beethoven|schubert|schumann|tchaikovsky)-/)
+    assert.match(track.id, /^(chopin|brahms|mozart|rachmaninoff|satie|liszt|beethoven|schubert|schumann|tchaikovsky)-/)
   })
   assert.equal(emotions.find(({ key }) => key === 'peacefulness').label, '평안한')
 })
@@ -102,8 +104,8 @@ test('기분 대표곡 후보는 평균 1점 경계를 포함하고 두 감정�
   assert.equal(pickRandomTopRecommendation(result, 0.99).id, 'top', '느낌 추천은 최고점만 추첨')
 })
 
-test('현재 기분별 후보 8~32곡을 고르게 추첨하고 후보 부족과 직전곡 제외를 처리한다', () => {
-  const counts = [12, 12, 8, 25, 24, 32]
+test('현재 기분별 후보 23~53곡을 고르게 추첨하고 후보 부족과 직전곡 제외를 처리한다', () => {
+  const counts = [27, 27, 23, 53, 37, 48]
   feelingOptions.forEach((feeling, index) => {
     const keys = getSuggestedEmotions(feeling)
     const result = getRecommendationResult(tracks, keys)
@@ -342,7 +344,7 @@ test('작곡가 이미지와 활성 상세 연결이 유효하고 진단도 새 
   }
   assert.ok(Object.keys(trackDetails).every((id) => tracks.some((track) => track.id === id)))
   assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview && track.composer === '베토벤').length, 21)
-  assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview).length, 115)
+  assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview).length, 189)
   assert.deepEqual(buildRecommendationDiagnosis().emotions.map(({ key }) => key), emotionKeys)
 })
 

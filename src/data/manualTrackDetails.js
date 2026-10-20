@@ -1099,5 +1099,819 @@ export const manualTrackDetails = {
       "endSeconds": 425,
       "sourceLabel": "블라디미르 아슈케나지 / Vladimir Ashkenazy – Topic / Decca, ℗1983"
     }
+  },
+  "chopin-nocturne-op9-no1": {
+    "about": "초기 녹턴집 Op.9의 첫 곡으로, 성악적인 선율과 넓은 왼손 반주가 결합된다.",
+    "listeningTip": "중간부의 강한 감정 고조와 첫 선율이 돌아올 때의 변화를 비교한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "WnFs85pLmj4",
+      "startSeconds": 0,
+      "endSeconds": 328,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op9-no2": {
+    "about": "쇼팽 녹턴 가운데 가장 널리 알려진 작품으로 반복되는 선율이 점차 장식된다.",
+    "listeningTip": "같은 멜로디가 꾸밈음과 미세한 리듬 변화로 새롭게 들리는 과정을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Nu48Z45ibxQ",
+      "startSeconds": 0,
+      "endSeconds": 267,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op9-no3": {
+    "about": "Op.9의 마지막 곡으로 부드러운 바깥 부분과 움직임이 거세지는 중간부가 대비된다.",
+    "listeningTip": "부점 리듬과 왼손 반주가 만드는 흔들리는 긴장감을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "sx31YcLXAug",
+      "startSeconds": 0,
+      "endSeconds": 411,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op15-no1": {
+    "about": "F장조의 온화한 선율 사이에 빠르고 강렬한 중간부가 삽입된다.",
+    "listeningTip": "중간부의 격한 셋잇단음형이 처음의 고요함을 어떻게 바꾸는지 살펴본다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "waoKj8tAb7A",
+      "startSeconds": 0,
+      "endSeconds": 261,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op15-no2": {
+    "about": "느린 바깥 부분과 빠른 중간 부분이 뚜렷하게 대비되는 녹턴이다.",
+    "listeningTip": "오른손의 가벼운 장식과 중간부의 불안한 반복음 사이의 온도 차이를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "u-vmSSkFdwE",
+      "startSeconds": 0,
+      "endSeconds": 239,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op15-no3": {
+    "about": "G단조의 서정적인 선율과 코랄을 연상시키는 종결부가 특징이다.",
+    "listeningTip": "장식이 절제되고 화성이 단순해지면서 분위기가 정화되는 마지막 부분을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "L1w2_2WG5q4",
+      "startSeconds": 0,
+      "endSeconds": 306,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op27-no1": {
+    "about": "C-sharp단조의 어두운 외부와 폭발적인 중간부를 지닌 대규모 녹턴이다.",
+    "listeningTip": "낮은 베이스의 반복과 옥타브가 긴장감을 단계적으로 끌어올리는 과정을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "8lvNjO3TQAA",
+      "startSeconds": 0,
+      "endSeconds": 340,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op27-no2": {
+    "about": "D-flat장조의 성악적인 선율을 다양한 장식과 내성 진행으로 확장한다.",
+    "listeningTip": "장식음 아래에서 유지되는 긴 호흡의 선율선을 놓치지 않고 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "E_2PjSzZO9o",
+      "startSeconds": 0,
+      "endSeconds": 377,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op32-no1": {
+    "about": "비교적 간결한 B장조 녹턴이지만 종결부에서 극적인 방향 전환이 일어난다.",
+    "listeningTip": "평온한 본문과 갑작스러운 마지막 화음의 대비를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "U92QEmtR63E",
+      "startSeconds": 0,
+      "endSeconds": 284,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op32-no2": {
+    "about": "A-flat장조의 유연한 주제와 보다 격렬한 중간 부분이 교차한다.",
+    "listeningTip": "당김음과 악센트가 부드러운 박자를 흔드는 방식을 살펴본다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "ttLRonyyMak",
+      "startSeconds": 0,
+      "endSeconds": 349,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op37-no1": {
+    "about": "G단조 선율 사이에 화음 중심의 밝은 중간부가 놓인다.",
+    "listeningTip": "단선율적인 탄식이 코랄풍 화음으로 넓어질 때의 공간감을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "nTF_g18L9II",
+      "startSeconds": 0,
+      "endSeconds": 291,
+      "sourceLabel": "Arthur Rubinstein / Arthur Rubinstein – Topic"
+    }
+  },
+  "chopin-nocturne-op37-no2": {
+    "about": "G장조의 지속적인 리듬이 뱃노래와 비슷한 유동감을 만든다.",
+    "listeningTip": "양손 사이를 오가는 선율과 부드러운 화성 변화를 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "ymouzrzzgZ0",
+      "startSeconds": 0,
+      "endSeconds": 416,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op48-no1": {
+    "about": "쇼팽 녹턴 중 가장 극적이고 규모가 큰 작품 가운데 하나다.",
+    "listeningTip": "느린 탄식이 이중 옥타브와 화음으로 확대되며 절정에 도달하는 구조를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "h_vZtpjNKVE",
+      "startSeconds": 0,
+      "endSeconds": 357,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op48-no2": {
+    "about": "F-sharp단조의 유동적인 리듬과 중간부의 거친 악센트가 결합된다.",
+    "listeningTip": "반복되는 리듬이 매번 다른 화성과 강세를 만나 불안을 만드는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "nqEk73LvnzQ",
+      "startSeconds": 0,
+      "endSeconds": 441,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op55-no1": {
+    "about": "F단조의 단순한 첫 선율이 중간부에서 촘촘한 성부 진행으로 확장된다.",
+    "listeningTip": "왼손과 오른손이 서로 모방하며 밀도를 높이는 부분에 집중한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "NONg06Pf0v8",
+      "startSeconds": 0,
+      "endSeconds": 342,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op55-no2": {
+    "about": "후기 쇼팽의 대위적 서법과 정교한 장식이 두드러지는 녹턴이다.",
+    "listeningTip": "최상성부의 노래뿐 아니라 그 아래에서 움직이는 내성 선율도 함께 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "MyVFBkHepRw",
+      "startSeconds": 0,
+      "endSeconds": 349,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op62-no1": {
+    "about": "1846년에 출판된 후기 녹턴으로 긴 선율과 다성적인 진행이 결합된다.",
+    "listeningTip": "장식이 선율을 가리는 것이 아니라 호흡을 확장하는 방식을 살펴본다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "2oYaEHzn6Kg",
+      "startSeconds": 0,
+      "endSeconds": 412,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op62-no2": {
+    "about": "Op.62의 두 번째 곡으로 서정적인 주제와 당김음이 섞인 중간부가 대비된다.",
+    "listeningTip": "표면의 고요함과 내부 리듬의 흔들림을 함께 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "zf8YUL_jlF0",
+      "startSeconds": 0,
+      "endSeconds": 322,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-op72-no1": {
+    "about": "쇼팽의 초기 작품으로 사후 Op.72 No.1이라는 번호로 출판되었다.",
+    "listeningTip": "단순한 주제가 중간부의 빠른 음형을 거친 뒤 더욱 쓸쓸하게 돌아오는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "vJpAIOFN5WQ",
+      "startSeconds": 0,
+      "endSeconds": 284,
+      "sourceLabel": "Arthur Rubinstein / ArRubMusic"
+    }
+  },
+  "chopin-nocturne-b49": {
+    "about": "‘Lento con gran espressione’로도 알려진 초기 작품이며 생전에는 출판되지 않았다.",
+    "listeningTip": "오른손 선율과 왼손의 조용한 행진 리듬이 만드는 회상적인 분위기를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "2dOCW0rFWsI",
+      "startSeconds": 0,
+      "endSeconds": 234,
+      "sourceLabel": "Earl Wild / Earl Wild – Topic"
+    }
+  },
+  "chopin-nocturne-b108": {
+    "about": "C단조의 사후 출판 녹턴으로 규모와 장식은 작지만 직접적인 비애가 두드러진다.",
+    "listeningTip": "단순한 선율이 반음계 화성과 만나 어두워지는 순간을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "8ywMVdb4D6I",
+      "startSeconds": 0,
+      "endSeconds": 200,
+      "sourceLabel": "Luke Faulkner / Luke Faulkner – Topic"
+    }
+  },
+  "brahms-sonata-op1-no1-m1": {
+    "about": "브람스가 스무 살 무렵 발표한 초기 소나타의 첫 악장이다.",
+    "listeningTip": "관현악적인 화음과 서정적인 두 번째 주제가 충돌하고 결합하는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "h5ORMiGoxEk",
+      "startSeconds": 0,
+      "endSeconds": 483,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op1-no1-m2": {
+    "about": "독일 민요를 바탕으로 한 변주 형식의 느린 악장이다.",
+    "listeningTip": "같은 선율이 음역·리듬·반주를 바꾸며 표정을 달리하는 과정을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "1SRUPWfRVCc",
+      "startSeconds": 0,
+      "endSeconds": 341,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op1-no1-m3": {
+    "about": "빠른 주부와 서정적으로 확장되는 트리오로 구성된다.",
+    "listeningTip": "날카로운 리듬이 트리오에서 넓은 화음과 노래로 전환되는 순간을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "hadCHdFsP6E",
+      "startSeconds": 0,
+      "endSeconds": 320,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op1-no1-m4": {
+    "about": "소나타의 동기를 회수하면서 론도에 가까운 흐름을 만드는 피날레다.",
+    "listeningTip": "반복되는 주제가 점차 힘을 얻어 C장조의 종결로 향하는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "nRJkgENPxJo",
+      "startSeconds": 0,
+      "endSeconds": 369,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op2-no2-m1": {
+    "about": "Op.1보다 먼저 작곡되었지만 두 번째 작품번호로 출판된 초기 소나타다.",
+    "listeningTip": "짧은 동기가 여러 조성과 음역으로 이동하며 긴장을 유지하는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "-N2hpJrFWzM",
+      "startSeconds": 0,
+      "endSeconds": 329,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op2-no2-m2": {
+    "about": "느린 주제를 여러 표정으로 변화시키는 변주 악장이다.",
+    "listeningTip": "장식이 늘어나도 유지되는 선율의 윤곽과 베이스 진행을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "nAeVdz1B-3w",
+      "startSeconds": 0,
+      "endSeconds": 361,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op2-no2-m3": {
+    "about": "압축된 스케르초와 대조적인 트리오로 구성된다.",
+    "listeningTip": "짧게 끊기는 리듬과 넓게 노래하는 중간 부분의 차이를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "cI0zKvLNPNE",
+      "startSeconds": 0,
+      "endSeconds": 234,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op2-no2-m4": {
+    "about": "서주와 주요부가 긴밀하게 연결된 소나타의 마지막 악장이다.",
+    "listeningTip": "처음의 어두운 화성이 빠른 주요부에서도 계속 흔적을 남기는지 들어본다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "kEblmVIigLM",
+      "startSeconds": 0,
+      "endSeconds": 670,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op5-no3-m1": {
+    "about": "다섯 악장으로 이루어진 브람스 최대 규모의 피아노 소나타가 시작되는 악장이다.",
+    "listeningTip": "강력한 첫 주제와 서정적인 두 번째 주제가 재현부에서 변화하는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "tq_xVqdvkPI",
+      "startSeconds": 0,
+      "endSeconds": 445,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic, 1949 recording"
+    }
+  },
+  "brahms-sonata-op5-no3-m2": {
+    "about": "시적 표제가 붙은 느린 악장으로 친밀한 선율과 웅대한 화음이 공존한다.",
+    "listeningTip": "조용한 도입 선율이 옥타브와 두꺼운 화음으로 확대되는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "rLBLZ7xQvv8",
+      "startSeconds": 0,
+      "endSeconds": 737,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op5-no3-m3": {
+    "about": "빠른 주부와 장중한 트리오가 대조되는 세 번째 악장이다.",
+    "listeningTip": "악센트의 위치와 저음 도약이 추진력을 만드는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "LREP_qVtD2c",
+      "startSeconds": 0,
+      "endSeconds": 265,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op5-no3-m4": {
+    "about": "‘Rückblick’, 즉 회상을 뜻하는 성격의 인터메조다.",
+    "listeningTip": "2악장의 재료가 장송 행진처럼 변형되어 나타나는 부분을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "w3WEGdkFDQI",
+      "startSeconds": 0,
+      "endSeconds": 207,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-sonata-op5-no3-m5": {
+    "about": "앞 악장들의 정서를 종합하는 대규모 피날레다.",
+    "listeningTip": "불안한 주요 주제가 장조의 넓은 화음으로 바뀌는 종결부를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "IfoWVYp9T04",
+      "startSeconds": 0,
+      "endSeconds": 422,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-rhapsody-op79-no1": {
+    "about": "1879년에 출판된 두 랩소디 중 첫 곡으로 복합적인 단락 구조를 지닌다.",
+    "listeningTip": "B단조의 추진력이 D장조 중간부에서 어떻게 이완되는지 비교한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "dNvH56Oa7lw",
+      "startSeconds": 0,
+      "endSeconds": 561,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-rhapsody-op79-no2": {
+    "about": "짧은 동기를 반복·변형하며 긴장을 누적하는 G단조 랩소디다.",
+    "listeningTip": "세 음 동기와 당김음이 곡 전체를 결속하는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "CCWoHEJyQ9E",
+      "startSeconds": 0,
+      "endSeconds": 359,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-capriccio-op116-no1": {
+    "about": "1892년경 완성된 일곱 개의 환상곡 Op.116을 여는 카프리치오다.",
+    "listeningTip": "강한 악센트 사이에서 잠시 나타나는 부드러운 구절을 대비해 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "pp6CKr8SwMg",
+      "startSeconds": 0,
+      "endSeconds": 120,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op116-no2": {
+    "about": "Op.116의 첫 인터메조로 빠른 바깥 부분과 느린 중간부가 연결된다.",
+    "listeningTip": "끊임없는 셋잇단음과 긴 선율이 만드는 이중적인 흐름을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "xr0nj4qbF94",
+      "startSeconds": 0,
+      "endSeconds": 229,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-capriccio-op116-no3": {
+    "about": "‘Allegro passionato’로 표시된 G단조 카프리치오다.",
+    "listeningTip": "짧은 동기가 옥타브와 화음을 통해 확장되는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Y_lqiYZLnZs",
+      "startSeconds": 0,
+      "endSeconds": 158,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op116-no4": {
+    "about": "E장조의 느린 인터메조로 짧은 동기와 미세한 화성 변화가 중심이다.",
+    "listeningTip": "선율보다 성부 사이의 화음 이동과 여백에 귀를 기울인다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "hgkQu6ZfAIw",
+      "startSeconds": 0,
+      "endSeconds": 261,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op116-no5": {
+    "about": "짧고 응축된 E단조 인터메조다.",
+    "listeningTip": "반복되는 음형이 화성에 따라 애잔함과 긴장 사이를 오가는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "9GjMibc1jQY",
+      "startSeconds": 0,
+      "endSeconds": 210,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op116-no6": {
+    "about": "‘Andantino teneramente’로 표시된 E장조 인터메조다.",
+    "listeningTip": "부드러운 주제와 중간부의 무거운 저음이 만드는 정서적 거리를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "rsLPQ8rZDsM",
+      "startSeconds": 0,
+      "endSeconds": 246,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-capriccio-op116-no7": {
+    "about": "Op.116의 마지막을 장식하는 D단조 카프리치오다.",
+    "listeningTip": "교차 리듬과 불규칙한 악센트가 종결까지 긴장을 유지하는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "8SOJFZj5iZ8",
+      "startSeconds": 0,
+      "endSeconds": 156,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op117-no1": {
+    "about": "헤르더가 번역한 스코틀랜드 자장가의 구절을 표제로 둔 Op.117의 첫 곡이다.",
+    "listeningTip": "반복되는 선율 아래에서 내성이 미묘하게 변하는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "7-tBf0qYcsI",
+      "startSeconds": 0,
+      "endSeconds": 315,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op117-no2": {
+    "about": "B-flat단조의 인터메조로 넓은 선율보다 작은 동기의 변화가 중심이다.",
+    "listeningTip": "양손 사이를 이동하는 아르페지오 속에서 숨은 선율을 찾아 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Mnb7hrmieGw",
+      "startSeconds": 0,
+      "endSeconds": 274,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op117-no3": {
+    "about": "Op.117을 닫는 C-sharp단조 인터메조다.",
+    "listeningTip": "짧은 동기가 낮은 음역에서 반복될수록 화성이 어두워지는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "68ocgOznfTg",
+      "startSeconds": 0,
+      "endSeconds": 324,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op118-no1": {
+    "about": "Op.118을 여는 짧은 A단조 인터메조다.",
+    "listeningTip": "두꺼운 화음과 반음계 진행이 다음 곡으로 이어질 여운을 만드는지 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "LzFOxE7jPM8",
+      "startSeconds": 0,
+      "endSeconds": 112,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op118-no2": {
+    "about": "Op.118 가운데 가장 널리 연주되는 A장조 인터메조다.",
+    "listeningTip": "주선율과 중간 성부가 대화하며 같은 구절을 다르게 물들이는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "rGBYaJH8Vhw",
+      "startSeconds": 0,
+      "endSeconds": 364,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-ballade-op118-no3": {
+    "about": "G단조의 발라드로 Op.118의 서정적인 곡들 사이에 강한 대비를 만든다.",
+    "listeningTip": "행진하는 주부와 부드러운 중간부의 리듬 변화를 비교한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "ZQvKWrBd5Z0",
+      "startSeconds": 0,
+      "endSeconds": 188,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op118-no4": {
+    "about": "F단조의 인터메조로 대위적인 성부와 당김음이 중심을 이룬다.",
+    "listeningTip": "양손이 교차하듯 주고받는 동기가 긴장감을 유지하는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Kr-JZoUOm6g",
+      "startSeconds": 0,
+      "endSeconds": 153,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-romance-op118-no5": {
+    "about": "F장조의 로망스로 주제와 변주에 가까운 구성을 지닌다.",
+    "listeningTip": "중간 변주에서 리듬과 음역이 바뀌어도 선율의 평온함이 유지되는지 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "WI4Hrn4a7DI",
+      "startSeconds": 0,
+      "endSeconds": 250,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-intermezzo-op118-no6": {
+    "about": "Op.118의 마지막을 장식하는 E-flat단조 인터메조다.",
+    "listeningTip": "낮은 음역의 동기와 중간부의 격정이 마지막에 어떻게 가라앉는지 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "zqLnSep7YSM",
+      "startSeconds": 0,
+      "endSeconds": 292,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-variations-op9": {
+    "about": "슈만의 《다채로운 소품》에 나오는 주제를 사용한 1854년 작품이다.",
+    "listeningTip": "원래 주제가 조각나거나 내성으로 숨어드는 과정을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Cx9Tije-nwk",
+      "startSeconds": 0,
+      "endSeconds": 1166,
+      "sourceLabel": "Julius Katchen / cantseetheforest"
+    }
+  },
+  "brahms-variations-op18b": {
+    "about": "현악 6중주 제1번 Op.18의 2악장을 브람스가 피아노용으로 옮긴 작품이다.",
+    "listeningTip": "현악기의 긴 호흡을 화음·옥타브·내성으로 재현하는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "SrSMJ0JNJ2E",
+      "startSeconds": 0,
+      "endSeconds": 796,
+      "sourceLabel": "Roberto Plano / Fazioli Pianoforti"
+    }
+  },
+  "brahms-variations-op21-no1": {
+    "about": "Op.21을 구성하는 두 개의 독립적인 변주곡 가운데 첫 작품이다.",
+    "listeningTip": "외형적인 화려함보다 베이스와 화성 구조가 변화하는 과정에 집중한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "dMJzDVcVhDQ",
+      "startSeconds": 0,
+      "endSeconds": 1002,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-variations-op21-no2": {
+    "about": "민속적인 선율과 리듬을 사용한 Op.21의 두 번째 변주곡이다.",
+    "listeningTip": "악센트와 속도가 변화하면서 춤의 성격이 격렬해지는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "2kb6n7aoR7I",
+      "startSeconds": 0,
+      "endSeconds": 359,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-variations-op24": {
+    "about": "헨델의 건반 모음곡에 수록된 아리아를 바탕으로 25개의 변주와 푸가를 구성했다.",
+    "listeningTip": "각 변주의 음색·리듬 변화가 마지막 푸가에서 하나의 건축물처럼 결합되는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "QqDFu2Wffqs",
+      "startSeconds": 0,
+      "endSeconds": 1588,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic"
+    }
+  },
+  "brahms-variations-op35-book1": {
+    "about": "파가니니 카프리스 No.24의 주제를 바탕으로 한 제1권은 주제와 14개의 변주로 구성된다.",
+    "listeningTip": "도약·겹음·옥타브와 강한 리듬이 변주마다 새로운 피아노 기교로 발전하는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "PrFKU1bdoQU",
+      "startSeconds": 0,
+      "endSeconds": 686,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic / Book 1"
+    }
+  },
+  "brahms-variations-op35-book2": {
+    "about": "같은 주제를 다시 사용한 제2권도 14개의 독립적인 변주로 구성되며, 제1권보다 대위적인 움직임과 음색 변화가 두드러진다.",
+    "listeningTip": "양손의 교차와 성부 진행, 불규칙한 악센트가 밀도를 높이는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "_u9I9dAi3EE",
+      "startSeconds": 0,
+      "endSeconds": 578,
+      "sourceLabel": "Julius Katchen / Julius Katchen – Topic / Book 2"
+    }
+  },
+  "mozart-variations-k24": {
+    "about": "열 살의 모차르트가 네덜란드에서 접한 노래를 바탕으로 만든 초기 변주곡이다.",
+    "listeningTip": "단순한 주제가 장식음과 리듬 변화로 점차 활기를 얻는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "94X-ftDuZF8",
+      "startSeconds": 0,
+      "endSeconds": 359,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k25": {
+    "about": "1766년 네덜란드 체류기에 만들어진 초기 건반 변주곡이다.",
+    "listeningTip": "박자의 성격을 유지하면서 양손의 역할과 음형이 달라지는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "aKjIThuyXBE",
+      "startSeconds": 0,
+      "endSeconds": 373,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k179": {
+    "about": "요한 크리스티안 피셔의 미뉴에트를 바탕으로 한 12개의 변주곡이다.",
+    "listeningTip": "장식적인 변주 사이에 나타나는 단조 변주의 색채 변화를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "x7eIFfS9ERY",
+      "startSeconds": 0,
+      "endSeconds": 1049,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k180": {
+    "about": "살리에리 오페라의 선율을 사용한 여섯 개의 변주곡이다.",
+    "listeningTip": "춤의 기본 박자가 각 변주에서 얼마나 다르게 강조되는지 살펴본다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "ZF9I_IZVMro",
+      "startSeconds": 0,
+      "endSeconds": 513,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k264": {
+    "about": "파리 시기에 니콜라 데제드의 아리에트를 바탕으로 만든 작품이다.",
+    "listeningTip": "장식적인 변주와 느린 표현적 변주가 만드는 장거리 흐름을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "RZnj53tAgZE",
+      "startSeconds": 0,
+      "endSeconds": 941,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k265": {
+    "about": "프랑스 노래 ‘Ah, vous dirai-je, maman’을 사용한 모차르트의 대표적인 피아노 변주곡이다.",
+    "listeningTip": "선율을 유지하면서 리듬·조성·손의 배치가 달라지는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "PebSDzt4FoQ",
+      "startSeconds": 0,
+      "endSeconds": 730,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k353": {
+    "about": "‘La belle Françoise’를 바탕으로 만든 12개의 변주곡이다.",
+    "listeningTip": "단조 변주와 느린 변주에서 밝은 주제가 어떻게 다른 감정을 얻는지 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "ds6dIp5N4V0",
+      "startSeconds": 0,
+      "endSeconds": 861,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k354": {
+    "about": "《세비야의 이발사》에 사용된 보드롱의 로망스를 바탕으로 한 작품이다.",
+    "listeningTip": "오페라처럼 질문하고 응답하는 프레이즈와 장식의 성격을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "JrMJ1tuhWXk",
+      "startSeconds": 0,
+      "endSeconds": 1029,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k398": {
+    "about": "파이지엘로 오페라의 아리아를 바탕으로 1783년경 작곡되었다.",
+    "listeningTip": "성악적인 주제가 건반의 짧은 음형과 대위적인 움직임으로 바뀌는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "zOXHpgzjCxo",
+      "startSeconds": 0,
+      "endSeconds": 405,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k455": {
+    "about": "글루크 오페라의 아리에트를 바탕으로 한 1784년의 변주곡이다.",
+    "listeningTip": "코믹한 리듬이 단조·느린 변주를 거쳐 마지막에 다시 생기를 찾는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "t-kW7yyhty4",
+      "startSeconds": 0,
+      "endSeconds": 783,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k500": {
+    "about": "특정 외부 선율이 아닌 알레그레토 주제를 사용한 1786년의 작품이다.",
+    "listeningTip": "화려한 장식보다 화성·성부 배치의 변화가 주제를 새롭게 만드는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "5B_-xr9OV6U",
+      "startSeconds": 0,
+      "endSeconds": 570,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k573": {
+    "about": "첼리스트 장피에르 뒤포르의 미뉴에트를 바탕으로 1789년 포츠담에서 작곡되었다.",
+    "listeningTip": "후기 모차르트 특유의 대위적 성부와 단조 변주의 깊이를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "QA3lEQn2CkM",
+      "startSeconds": 0,
+      "endSeconds": 861,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-variations-k613": {
+    "about": "징슈필 《어리석은 정원사》의 노래를 바탕으로 한 1791년의 후기 작품이다.",
+    "listeningTip": "가벼운 주제가 후반 변주에서 촘촘한 성부와 힘찬 리듬을 얻는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "sKc60IsjV6U",
+      "startSeconds": 0,
+      "endSeconds": 883,
+      "sourceLabel": "Ronald Brautigam / Ronald Brautigam – Topic"
+    }
+  },
+  "mozart-fantasy-k397": {
+    "about": "단편으로 남은 D단조 환상곡으로 현재 연주되는 종결부의 전승에는 판본 문제가 있다.",
+    "listeningTip": "자유로운 느린 도입과 빠른 D장조 종결부의 급격한 분위기 전환을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "J0W1b1F3uqM",
+      "startSeconds": 0,
+      "endSeconds": 436,
+      "sourceLabel": "Mitsuko Uchida / Mitsuko Uchida – Topic"
+    }
+  },
+  "mozart-fantasy-k475": {
+    "about": "1785년에 작곡되어 피아노 소나타 K.457과 함께 출판된 대규모 환상곡이다.",
+    "listeningTip": "템포와 조성이 계속 바뀌어도 첫머리의 반음계 동기가 전체를 묶는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "HoLCmG5SJ5w",
+      "startSeconds": 0,
+      "endSeconds": 796,
+      "sourceLabel": "Mitsuko Uchida / Mitsuko Uchida – Topic"
+    }
   }
 }

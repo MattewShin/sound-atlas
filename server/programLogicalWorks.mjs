@@ -17,7 +17,7 @@ const family = member => member.identity.type || [
 // catalogue facts. In particular, Ill is never silently converted into III.
 export const sourceComponents = member => member.evidence.filter(e=>e.role!=='COMPOSER').flatMap(e=>{
   const result=[], add=(role,raw,number=null,title=null)=>result.push({role,raw,number,title,line_index:e.line_index,source_text:e.quote})
-  for(const m of e.quote.matchAll(/제?\s*(\d+)\s*집|\b(?:book|volume|vol\.|livre)\s*(\d+|[IVX]+)\b/gi)) {
+  for(const m of e.quote.matchAll(/제?\s*(\d+)\s*(?:집|권)|\b(?:book|volume|vol\.|livre)\s*(\d+|[IVX]+)\b/gi)) {
     add('COLLECTION',m[0],Number(m[1]||m[2])||roman[m[2]?.toUpperCase()]||null)
   }
   for(const m of e.quote.matchAll(/(?:^|[-–—]\s*)(VIII|VII|VI|IV|III|II|IX|V|I)[.)]?\s+(?=\p{L})/gu)) {

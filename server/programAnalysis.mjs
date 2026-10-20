@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { composerPatterns, workTypePatterns, workCatalog, musicalKeysIn, getTrackTarget } from '../src/data/workCatalog.js'
+import { composerPatterns, composerIdentityText, workTypePatterns, workCatalog, musicalKeysIn, getTrackTarget } from '../src/data/workCatalog.js'
 import { checkProgramContext } from './programContext.mjs'
 import { numberedTitle, nearbyNumberLabel, splitUnparentedItems } from './programItemBoundaries.mjs'
 import { composerWorkGeometry, performerLine, intervalLine, sameWorkRow } from './programComposerBlocks.mjs'
@@ -31,10 +31,13 @@ const stop = /^\s*(?:profile|biograph\w*|artists?|performers?|program\s+notes?|�
 const biography = /졸업|학사|석사|박사|학위|입학|수상|역임|출강|교수|음반|과거\s*공연|지난\s*공연|경력|취득|연주했|연주하였|협연했|영감|previously|graduat|university|conservatory|awards?|performed|recorded|recording|inspired|discography/i
 const tempo = /^(?:[IVXIl1]+[.)]?\s+)?(?:molto|allegro|adagio|andante|largo|presto|moderato|lento|vivace|scherzo|rondo|quasi|tempo)\b/i
 const performer = /orchestra|피아노\s*:|piano\s*:|intermission|인터미션|휴식/i
-const numberToken = /\b(?:(?:op|bwv|kv|hob)\.?\s*|[kds](?:\.\s*|\s+))(?:\d|[IlO](?=\d|\s|$))/i
+const numberToken = /\b(?:(?:op|bwv|kv|hob)\.?\s*|[bkds](?:\.\s*|\s+))(?:\d|[IlO](?=\d|\s|$))/i
 const typeIn = (s) => Object.entries(workTypePatterns).find(([, re]) => re.test(s))?.[0] || null
-const knownComposers = (s) => Object.entries(composerPatterns).filter(([name, re]) =>
-  new RegExp(`(^|[^가-힣])${name}(?:의|가|를|을)?(?=$|[^가-힣])`).test(s) || re.test(s.replace(/[가-힣]+/g, ' '))).map(([name]) => name)
+const knownComposers = (value) => {
+  const s = composerIdentityText(value)
+  return Object.entries(composerPatterns).filter(([name, re]) =>
+    new RegExp(`(^|[^가-힣])${name}(?:의|가|를|을)?(?=$|[^가-힣])`).test(s) || re.test(s.replace(/[가-힣]+/g, ' '))).map(([name]) => name)
+}
 const unknownHeading = (s) => /^(?:[A-Z]\.\s*|[A-Z]\s+)+(?:[A-Z][a-zA-Z-]+\s*){1,3}$/.test(s.split('(')[0].trim())
   || (/^(?:[A-Z][a-zA-Z-]{2,}|[가-힣]{2,6})(?:\s*\([^)]*)?$/.test(s.trim()) && !tempo.test(s) && !/^(?:song|program|programme|piano|guitar|concert|artist|intermission)$/i.test(s.trim()))
   || /^(?:Prokofiev|Mendelssohn|Saint-Saens|Franck|Mozart|Bach|Haydn|Debussy|Ravel|Villa-Lobos|Pujol|Spanish Folk)$/i.test(s.trim())
@@ -64,7 +67,7 @@ const evidence = (line, role) => ({ role, quote: line.text, start: line.start, e
 
 export const extractIdentity = (raw) => {
   const text = normalized(raw)
-  const catalogues = [...text.matchAll(/\b(Op|BWV|KV|K|D|S|Hob)[.:]?\s*(\d+)([a-z]?)(?:\s*[-/]\s*(\d+))?/gi)]
+  const catalogues = [...text.matchAll(/\b(Op|BWV|KV|K|D|S|B|Hob)[.:]?\s*(\d+)([a-z]?)(?:\s*[-/]\s*(\d+))?/gi)]
     .map((m) => ({ system: m[1].toUpperCase().replace('KV', 'K'), number: Number(m[2]), suffix: m[3].toLowerCase(), part: m[4] ? Number(m[4]) : null, raw: m[0] }))
   const opus = catalogues.find((c) => c.system === 'OP')
   const nums = [...text.matchAll(/\b(?:nos?|nr)\.?\s*(\d+)|제?\s*(\d+)\s*번/gi)].map((m) => ({ number: Number(m[1] || m[2]), index: m.index, raw: m[0] }))

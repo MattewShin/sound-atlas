@@ -3,7 +3,7 @@ import { getWorkId, workCatalog } from './workCatalog.js'
 const composerAliases = {
   쇼팽: 'chopin', 베토벤: 'beethoven', 라흐마니노프: 'rachmaninoff rachmaninov',
   리스트: 'liszt', 사티: 'satie', 바흐: 'bach', 드뷔시: 'debussy',
-  모차르트: 'mozart', 슈베르트: 'schubert', 슈만: 'schumann',
+  모차르트: 'mozart', 브람스: 'brahms', 슈베르트: 'schubert', 슈만: 'schumann',
   차이콥스키: 'tchaikovsky tchaikowsky',
 }
 const typeAliases = {
@@ -12,6 +12,8 @@ const typeAliases = {
   liebestraum: 'liebestraum',
   impromptu: 'impromptu',
   scherzo: 'scherzo', polonaise: 'polonaise',
+  nocturne: 'nocturne', rhapsody: 'rhapsody rhapsodie', capriccio: 'capriccio',
+  intermezzo: 'intermezzo', romance: 'romance', variations: 'variations', fantasy: 'fantasy fantasia fantasie',
   'fantaisie-impromptu': 'fantaisie impromptu', 'polonaise-fantaisie': 'polonaise fantaisie',
   seasons: 'the seasons four seasons',
 }

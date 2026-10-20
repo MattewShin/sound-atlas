@@ -1,4 +1,4 @@
-import { composerPatterns, workTypePatterns, workCatalog, getTrackTarget, musicalKeysIn } from '../src/data/workCatalog.js'
+import { composerPatterns, composerIdentityText, workTypePatterns, workCatalog, getTrackTarget, musicalKeysIn } from '../src/data/workCatalog.js'
 import { checkProgramContext } from './programContext.mjs'
 
 const normalize = (text) => String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC')
@@ -9,7 +9,7 @@ const arrangement = /편곡|재편곡|\barr\.|\barranged\b|\btrans\.|transcripti
 const biography = /수상|콩쿠르|데뷔|과거|지난\s*\d|연주한\s*경력|연주했|performed\s+(?:in|at)|previously/i
 const namedComposer = /(?:[A-Z1]\.\s*)+(?:(?:de|van|von)\s+)?\p{Lu}[\p{L}-]+|^[가-힣]{2,6}\s*\(?\d{4}/u
 const types = Object.entries(workTypePatterns)
-const individuallyNumberedTypes = new Set(['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'polonaise', 'seasons'])
+const individuallyNumberedTypes = new Set(['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'polonaise', 'nocturne', 'rhapsody', 'capriccio', 'intermezzo', 'romance', 'variations', 'seasons'])
 
 export const extractProgram = (rawText) => {
   const text = normalize(rawText).replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<br\s*\/?\s*>|<\/p>/gi, '\n').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ')
@@ -26,7 +26,8 @@ export const extractProgram = (rawText) => {
   for (const source of sections) {
     let composer = null, composerLine = '', current = null
     for (const line of source.lines) {
-      const foundComposer = Object.entries(composerPatterns).find(([, pattern]) => pattern.test(line))?.[0]
+      const composerText = composerIdentityText(line)
+      const foundComposer = Object.entries(composerPatterns).find(([, pattern]) => pattern.test(composerText))?.[0]
       const typeMatch = types.find(([, pattern]) => pattern.test(line))
       const type = typeMatch?.[0]
       const prefix = typeMatch ? line.slice(0, line.search(typeMatch[1])).replace(/^\s*\d+[.)]?\s*/, '').trim() : line.trim()
@@ -37,7 +38,7 @@ export const extractProgram = (rawText) => {
       if (type) {
         // 한/영 반복 표기는 별도 근거로 유지하되 동일 작품 ID는 나중에 중복 제거합니다.
         current = { composer, type, signature: line, lines: composerLine && composerLine !== line ? [composerLine, line] : [line], biography: biography.test(line),
-          conflictingComposers: Object.values(composerPatterns).filter((pattern) => pattern.test(line)).length > 1 }
+          conflictingComposers: Object.values(composerPatterns).filter((pattern) => pattern.test(composerText)).length > 1 }
         entries.push(current)
       } else if (current) {
         if (/^\s*(?:op\.?|s\.)\s*\d/i.test(line)) current.signature += ' ' + line
@@ -87,6 +88,14 @@ export const identifyEntry = (entry, work) => {
   if (entry.composer !== work.composer) return { state: 'different' }
   if (entry.conflictingComposers) return { state: 'ambiguous', reason: '한 작품 표기에 여러 작곡가가 섞여 추가 확인이 필요해요.' }
   const text = entry.signature
+  if (work.bookNumber != null) {
+    const roman = { I: 1, II: 2 }
+    const books = [...text.matchAll(/제?\s*(\d+)\s*권|\b(?:book|volume|vol\.|livre)\s*(\d+|II|I)\b/gi)]
+      .map(m => Number(m[1] || m[2]) || roman[m[2]?.toUpperCase()])
+    if (books.length !== 1 || books[0] !== work.bookNumber) return {
+      state: books.length === 1 ? 'different' : 'ambiguous', reason: '개별 권 번호를 확인해야 작품을 확정할 수 있어요.',
+    }
+  }
   if (/\b(?:no|nr)\.?\s*[Il](?=$|[\s,.;])/iu.test(text)) return { state: 'ambiguous', reason: '곡번호의 I/l 표기는 다른 식별 근거와 함께 다시 확인해야 해요.' }
   const aliases = Object.values(workCatalog).filter((candidate) => candidate.composer === work.composer && candidate.type === work.type && candidate.aliases.some((alias) => aliasIn(text, alias)))
   const numbers = [...numbersIn(text), ...(work.type === 'seasons' ? seasonNumbersIn(text) : [])]

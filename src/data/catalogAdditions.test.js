@@ -14,7 +14,7 @@ const seconds = value => value.split(':').map(Number).reduce((m, s) => m * 60 + 
 test('신규 34곡의 306개 점수·제목·설명·출처·재생 구간을 사용자 입력과 대조한다', () => {
   assert.equal(inputs.length, 34)
   assert.equal(new Set(inputs.map(input => input.id)).size, 34)
-  assert.deepEqual(tracks.slice(81).map(track => track.id), inputs.map(input => input.id))
+  assert.deepEqual(tracks.slice(81, 115).map(track => track.id), inputs.map(input => input.id))
   for (const input of inputs) {
     const track = tracks.find(track => track.id === input.id)
     const detail = trackDetails[input.id]

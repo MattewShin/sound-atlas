@@ -1,6 +1,7 @@
 import './emma/emma.test.js'
 import '../src/data/recommendation.test.js'
 import '../src/data/catalogAdditions.test.js'
+import '../src/data/catalogAdditions20261020.test.js'
 import '../src/data/mobileTypography.test.js'
 import '../src/data/halfPointRatings.test.js'
 import '../src/data/storage.test.js'
@@ -196,7 +197,7 @@ test('첫 화면에는 새 9개 선택과 활성곡만 있으며 Energy 선택�
   assert.equal(discoveryIds.length, 4)
   assert.equal(new Set(discoveryIds).size, 4)
   assert.ok(discoveryIds.every((id) => tracks.some((track) => track.id === id && track.ratingStatus === 'complete')))
-  assert.ok(!/ENERGY|얼마나 깊게|강렬하게|녹턴/.test(html))
+  assert.ok(!/ENERGY|얼마나 깊게|강렬하게/.test(html))
 })
 test('전체 활성곡 상세·보관함은 제목·별칭·감상 정보·이미지와 정확한 영상 상태를 렌더링한다', () => {
   for (const track of tracks) {
@@ -219,7 +220,7 @@ test('전체 활성곡 상세·보관함은 제목·별칭·감상 정보·이�
   }
   const library = render(components.LibraryScreen, { savedTracks: tracks })
   assert.equal((library.match(/class="saved-track-card/g) ?? []).length, tracks.length)
-  assert.ok(!/녹턴/.test(library))
+  assert.ok(library.includes('쇼팽 녹턴 Op.9 No.1'))
   tracks.slice(36).forEach((track) => assert.ok(library.includes(formatTrackTitle(track))))
   const missing = render(components.TrackDetailSheet, { track: { ...tracks[0], emotionScores: undefined }, selectedKeys: [], isOpen: true })
   assert.ok(!missing.includes('미평가'))
