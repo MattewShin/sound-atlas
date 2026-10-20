@@ -28,6 +28,7 @@ const harness=()=>{
   const local={async saveState(){calls.push('checkpoint')},async saveReport(r){reports.push(structuredClone(r))}}
   const stamp=()=>new Date(time+(tick++)).toISOString()
   const runtime={
+    rollout:{writeVersion:'stored-program-3',reviewVersion:'stored-program-3',searchVersion:'stored-program-2',scheduleEnabled:true},
     async preflight({plan}){calls.push('preflight');return {plan}},
     client:{async list({page,state}){calls.push(`list:${state}:${page}`);return page===1?Array.from({length:100},(_,i)=>listing(i+1)):[]},async detail(id){calls.push('detail:'+id);return listing(Number(id.slice(2))-900000)}},
     worker:{async recognize(){calls.push('recognize');return {raw_text:'PROGRAM\nChopin Ballade No.1 Op.23',detections:[],width:800,height:300,engine_version:'fixture',torch_version:'fixture',mean_confidence:null}},close(){calls.push('close')}},

@@ -2,7 +2,8 @@ import { createSupabaseRest } from './supabaseRest.mjs'
 import { ConcertApiError, apiDate, safeUrl } from './kopisData.mjs'
 import { koreaDate, MAX_CONCERT_SEARCH_DAYS, validateConcertQuery } from '../src/data/concertSearchConfig.js'
 import { getTrackTarget } from '../src/data/workCatalog.js'
-import { CATALOG_HASH, MATCHER_VERSION } from './programAnalysis.mjs'
+import { CATALOG_HASH } from './programAnalysis.mjs'
+import { getProgramSearchVersion } from './programRollout.mjs'
 
 // Existing private, invoker-security view supplies evidence freshness (including
 // active DETAIL images). Never select OCR text, identity, bbox or review notes.
@@ -12,14 +13,16 @@ const states = ['공연예정', '공연중']
 const unavailable = () => new ConcertApiError('DB_SEARCH_UNAVAILABLE', '확인된 공연을 조회하지 못했어요. 잠시 후 다시 시도해주세요.', 503)
 
 export const createSupabaseConcertSearch = ({ env = process.env, fetchImpl = fetch, delay, now = Date.now } = {}) => {
-  let request
+  let request,searchVersion
+  try {searchVersion=getProgramSearchVersion(env)}catch{/* Fail closed, including explicit empty values. */}
   try { request = createSupabaseRest({ env, fetchImpl, delay }) } catch { /* reported without exposing configuration values */ }
-  const config = () => ({ backend: 'supabase', configured: Boolean(request), cacheTtlMs: 0, maxSearchDays: MAX_CONCERT_SEARCH_DAYS })
+  const config = () => ({ backend: 'supabase', configured: Boolean(request&&searchVersion), analysisVersion:searchVersion||null,cacheTtlMs: 0, maxSearchDays: MAX_CONCERT_SEARCH_DAYS })
   const search = async (input) => {
     let query
     try { query = validateConcertQuery(input) } catch { throw new ConcertApiError('INVALID_QUERY', '지역과 관람 기간을 올바르게 선택해주세요. 최대 31일까지 조회할 수 있어요.', 400) }
     const target = typeof input.targetTrackId === 'string' && getTrackTarget(input.targetTrackId)
     if (!target) throw new ConcertApiError('INVALID_TARGET', '등록된 곡 ID를 선택해주세요.', 400)
+    if(!searchVersion)throw new ConcertApiError('PROGRAM_SEARCH_VERSION_INVALID','공연 검색 버전 설정을 확인해주세요.',503)
     if (!request) throw new ConcertApiError('DB_SEARCH_NOT_CONFIGURED', '확인된 공연 검색의 서버 연결 설정이 필요해요.', 503)
     const timestamp = now(), today = koreaDate(timestamp), from = query.from > today ? query.from : today
     const concerts = new Map()
@@ -32,7 +35,7 @@ export const createSupabaseConcertSearch = ({ env = process.env, fetchImpl = fet
             select: selection, track_id: `eq.${target.trackId}`, work_id: `eq.${target.workId}`,
             review_status: 'eq.CONFIRMED', effective_status: 'eq.CONFIRMED', relation: 'eq.EXACT', outcome: 'eq.MATCHED',
             is_effectively_confirmed: 'eq.true', analysis_is_current: 'eq.true', stale_reason: 'is.null',
-            matcher_version: `eq.${MATCHER_VERSION}`, catalog_hash: `eq.${CATALOG_HASH}`,
+            matcher_version: `eq.${searchVersion}`, catalog_hash: `eq.${CATALOG_HASH}`,
             'concerts.start_date': `lte.${query.to}`, 'concerts.end_date': `gte.${from}`,
             'concerts.performance_status': 'in.(공연예정,공연중)',
             ...(query.region === '전국' ? {} : { 'concerts.region': `eq.${query.region}` }),
@@ -47,7 +50,7 @@ export const createSupabaseConcertSearch = ({ env = process.env, fetchImpl = fet
             if (row.track_id !== target.trackId || row.work_id !== target.workId || row.relation !== 'EXACT' || row.outcome !== 'MATCHED'
               || row.review_status !== 'CONFIRMED' || row.effective_status !== 'CONFIRMED' || row.is_effectively_confirmed !== true
               || row.analysis_is_current !== true || row.stale_reason !== null
-              || row.matcher_version !== MATCHER_VERSION || row.catalog_hash !== CATALOG_HASH
+              || row.matcher_version !== searchVersion || row.catalog_hash !== CATALOG_HASH
               || !states.includes(c.performance_status) || !apiDate(c.start_date) || !apiDate(c.end_date)
               || c.start_date > c.end_date || c.start_date > query.to || c.end_date < from
               || (query.region !== '전국' && c.region !== query.region)) continue
@@ -58,7 +61,7 @@ export const createSupabaseConcertSearch = ({ env = process.env, fetchImpl = fet
               dateFrom: c.start_date, dateTo: c.end_date, performanceStatus: c.performance_status,
               sourceUrl: `https://kopis.or.kr/por/db/pblprfr/pblprfrView.do?mt20id=${c.kopis_id}`,
               sourceLabel: '저장된 프로그램 수동 검토 결과', fetchedAt: c.synced_at,
-              searchBackend: 'supabase', programStatus: 'verified', programVerification: 'reviewed-db',
+              searchBackend: 'supabase',programAnalysisVersion:searchVersion, programStatus: 'verified', programVerification: 'reviewed-db',
               programWorkIds: [target.workId], programTrackIds: [target.trackId],
               targetMatch: { targetTrackId: target.trackId, workId: target.workId, status: 'matched',
                 evidenceKind: 'reviewed-db', relation: 'EXACT', reviewStatus: 'CONFIRMED', completed: true,
@@ -71,7 +74,7 @@ export const createSupabaseConcertSearch = ({ env = process.env, fetchImpl = fet
         }
       } catch { throw unavailable() }
     }
-    return { backend: 'supabase', query, targetTrackId: target.trackId,
+    return { backend: 'supabase',analysisVersion:searchVersion, query, targetTrackId: target.trackId,
       concerts: [...concerts.values()].sort((a,b) => a.dateFrom.localeCompare(b.dateFrom) || a.kopisId.localeCompare(b.kopisId)),
       fetchedAt: new Date(timestamp).toISOString(), fromCache: false, cacheTtlMs: 0 }
   }

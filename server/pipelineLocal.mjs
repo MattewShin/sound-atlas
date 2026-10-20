@@ -143,7 +143,7 @@ export const createPipelineLocal = (directory,namespace,env,{inspect=inspectProc
       if(view.status==='INTERRUPTED'&&view.termination?.original_status==='RUNNING'){
         await atomicJson(join(directory,'runs',view.run_id+'.json'),view,env)
         await atomicJson(join(directory,'latest.json'),view,env)
-      }else if(['SUCCESS','PARTIAL','FATAL'].includes(view.status)){
+      }else if(['SUCCESS','PARTIAL','FATAL','SKIPPED_ROLLOUT_GATE'].includes(view.status)){
         await atomicJson(join(directory,'latest.json'),view,env)
       }
       return view

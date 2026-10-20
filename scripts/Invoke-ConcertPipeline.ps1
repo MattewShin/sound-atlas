@@ -111,12 +111,20 @@ try {
             $versionInfo = $versionLine | ConvertFrom-Json
             $receipt.matcher_version = $versionInfo.matcher_version
             $receipt.catalog_hash = $versionInfo.catalog_hash
+            $receipt.rollout = $versionInfo.rollout
           } catch { $receipt.version_record_error = 'VERSION_EVENT_INVALID' }
         }
         $receipt.node_exit_code = $pipelineExit
         $receipt.node_exit_code_unsigned = [uint32]([long]$pipelineExit -band 0xffffffffL)
         $receipt.node_finished_at = $nodeProcess.ExitTime.ToUniversalTime().ToString('o')
         $receipt.status = switch ($pipelineExit) { 0 {'SUCCESS'} 1 {'PARTIAL'} 2 {'FATAL'} 3 {'DUPLICATE_SKIPPED'} default {if ($receipt.node_exit_code_unsigned -eq 3221225786) {'EXTERNAL_CONTROL_TERMINATION'} else {'NATIVE_EXIT_FAILURE'}} }
+        if ($pipelineExit -eq 0) {
+          $resultLine = [IO.File]::ReadLines($stdoutPath) | Where-Object { $_ -match '"event":"pipeline_result"' } | Select-Object -Last 1
+          if ($resultLine) {
+            try { if (($resultLine | ConvertFrom-Json).status -eq 'SKIPPED_ROLLOUT_GATE') { $receipt.status = 'SKIPPED_ROLLOUT_GATE' } }
+            catch { $receipt.result_record_error = 'RESULT_EVENT_INVALID' }
+          }
+        }
         if ([IO.File]::Exists($stdoutPath)) { [Console]::Out.Write([IO.File]::ReadAllText($stdoutPath)) }
         if ([IO.File]::Exists($stderrPath)) { [Console]::Error.Write([IO.File]::ReadAllText($stderrPath)) }
       } catch {

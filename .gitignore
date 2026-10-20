@@ -12,3 +12,6 @@ dist/
 *.local
 data/kopis-*.local.json
 .DS_Store
+
+.vercel
+.env*

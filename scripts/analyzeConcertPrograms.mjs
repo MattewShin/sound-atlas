@@ -3,10 +3,11 @@ import { getTrackTarget } from '../src/data/workCatalog.js'
 import { readFile } from 'node:fs/promises'
 import { MATCHER_VERSION, CATALOG_HASH } from '../server/programAnalysis.mjs'
 import { validateProgramManifest } from '../server/programCanary.mjs'
+import {getProgramRollout,getProgramReviewVersion} from '../server/programRollout.mjs'
 
 export const parseProgramArgs = (args) => {
   const result = { command: args[0] || 'help' }
-  if (!['help', 'targets', 'analyze', 'snapshots', 'list', 'show', 'confirm', 'reject'].includes(result.command)) throw new Error('UNKNOWN_COMMAND')
+  if (!['help','config','preflight', 'targets', 'analyze', 'snapshots', 'list', 'show', 'confirm', 'reject'].includes(result.command)) throw new Error('UNKNOWN_COMMAND')
   let index = 1
   if (['show', 'confirm', 'reject'].includes(result.command)) {
     result.id = args[index++]
@@ -30,7 +31,9 @@ export const parseProgramArgs = (args) => {
   if (result.command !== 'analyze' && (result.save || result.dryRun)) throw new Error('ANALYZE_FLAGS_ONLY')
   if(result.manifestPath&&(!['targets','analyze','snapshots'].includes(result.command)||result.kopisId))throw new Error('MANIFEST_SCOPE_CONFLICT')
   if(result.command==='snapshots'&&!result.manifestPath)throw new Error('OCR_MANIFEST_PATH_REQUIRED')
-  if(result.version&&!['list','snapshots'].includes(result.command)||result.includeInactive&&result.command!=='list')throw new Error('READ_VERSION_FLAGS_ONLY')
+  if(result.version&&!['analyze','list','snapshots'].includes(result.command)||result.includeInactive&&result.command!=='list')throw new Error('READ_VERSION_FLAGS_ONLY')
+  if(result.command==='analyze'&&result.save&&(!result.manifestPath||result.version!=='stored-program-3'))throw new Error('V3_SAVE_REQUIRES_MANIFEST_AND_EXPLICIT_VERSION')
+  if(result.command==='analyze'&&result.version&&result.version!=='stored-program-3')throw new Error('WRITE_VERSION_NOT_IMPLEMENTED')
   if (['confirm', 'reject'].includes(result.command)) {
     if (!result.note?.trim() || result.note.length > 2000) throw new Error('REVIEW_NOTE_REQUIRED_MAX_2000')
     if (!/^[0-9a-f-]{36}$/i.test(result.analysisId || '')) throw new Error('COPY_ANALYSIS_ID_FROM_SHOW')
@@ -41,9 +44,10 @@ export const parseProgramArgs = (args) => {
 const help = `Stored OCR analysis (no downloads or OCR execution):
 npm run program:analyze -- targets [--kopis-id PF296289]
 npm run program:analyze -- analyze --dry-run [--kopis-id PF296289]
-npm run program:analyze -- analyze --save [--kopis-id PF296289]
 npm run program:analyze -- analyze --dry-run --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json
-npm run program:analyze -- analyze --save --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json
+npm run program:analyze -- analyze --save --version stored-program-3 --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json
+npm run program:analyze -- config
+npm run program:analyze -- preflight
 npm run program:analyze -- snapshots --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json [--version stored-program-3]
 npm run program:analyze -- list [--kopis-id PF296289] [--version stored-program-2 --include-inactive]
 npm run program:analyze -- show <candidate-uuid>
@@ -53,19 +57,21 @@ All automatic candidates are REVIEW_REQUIRED. Inspect show and original image be
 Reviewer is an unauthenticated local service-role operator, not a logged-in app user.
 Current extraction/grouping/matcher version: ${MATCHER_VERSION}. v3 saving requires the reviewed v3 SQL draft; dry-run uses GET only.`
 
-export const runProgramCli = async (args, { store, print = console.log } = {}) => {
+export const runProgramCli = async (args, { store, print = console.log,env=process.env } = {}) => {
   const opts = parseProgramArgs(args)
   if (opts.command === 'help') { print(help); return }
+  if(opts.command==='config'){const config={implementation_version:MATCHER_VERSION,...getProgramRollout(env)};print(JSON.stringify(config,null,2));return config}
   if(opts.manifestPath)opts.manifest=validateProgramManifest(JSON.parse(await readFile(opts.manifestPath,'utf8')))
-  store ||= createProgramAnalysisStore()
+  store ||= createProgramAnalysisStore({env})
   let output
-  if (opts.command === 'targets') {
+  if(opts.command==='preflight')output={...await store.preflightSave(),rollout:getProgramRollout(env),db_writes:0}
+  else if (opts.command === 'targets') {
     const scope = opts.manifest?await store.manifestTargets(opts.manifest):await store.targets(opts.kopisId)
-    output = { ...scope,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH, limited_sample: true, targets: scope.targets.map(({ concert, image, ocr }) => ({ kopis_id: concert.kopis_id,
-      title: concert.title, image_id: image.id, ocr_result_id: ocr.id, source_url: image.source_url, characters: ocr.raw_text.length })) }
-  } else if (opts.command === 'analyze') output = await analyzeProgramTargets(store, opts)
-  else if (opts.command === 'snapshots')output=await store.snapshots(opts.manifest,{version:opts.version||MATCHER_VERSION})
-  else if (opts.command === 'list') output = {matcher_version:opts.version||MATCHER_VERSION,local_matcher_version:MATCHER_VERSION,candidates:await store.candidates(opts.kopisId,opts)}
+    output = { ...scope,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH, limited_sample: true, targets: scope.targets.map(({ concert, image, ocr,attempt }) => ({ kopis_id: concert.kopis_id,
+      title: concert.title, image_id: image.id, ocr_result_id: ocr.id,source_attempt_id:attempt.id,image_revision:image.evidence_revision||0,concert_revision:concert.program_context_revision||0, source_url: image.source_url, characters: ocr.raw_text.length })) }
+  } else if (opts.command === 'analyze') output = await analyzeProgramTargets(store, {...opts,env})
+  else if (opts.command === 'snapshots')output=await store.snapshots(opts.manifest,{version:getProgramReviewVersion({PROGRAM_REVIEW_VERSION:opts.version||getProgramReviewVersion(env)})})
+  else if (opts.command === 'list') {const version=getProgramReviewVersion({PROGRAM_REVIEW_VERSION:opts.version||getProgramReviewVersion(env)});output = {matcher_version:version,review_version:version,local_matcher_version:MATCHER_VERSION,candidates:await store.candidates(opts.kopisId,{...opts,version})}}
   else if (opts.command === 'show') {
     output = await store.detail(opts.id)
     output.local_matcher_version=MATCHER_VERSION

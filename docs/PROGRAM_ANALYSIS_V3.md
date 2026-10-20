@@ -1,5 +1,7 @@
 # stored-program-3 준비 및 canary 계획
 
+2026-10-20 추가: 버전 선택과 예약 게이트를 분리했습니다. [현재 전환 절차](PROGRAM_ROLLOUT.md)를 우선 사용하세요. 아래 2026-10-19 수치는 당시 읽기 전용 진단 기록이며 현재 DB를 다시 조회한 값은 아닙니다.
+
 2026-10-19 검증 기록입니다. **운영 저장·예약 변경·SQL 적용을 실행하지 않았습니다.**
 
 ## 버전·키·hash
@@ -20,11 +22,11 @@
 
 1. 분석에 nullable `snapshot` JSONB를 추가해 v3 전체 payload를 보존합니다. 기존 v2 payload·후보·검토·현재 플래그·시각은 갱신하지 않습니다.
 2. 현재 분석의 unique index를 **이미지+버전당 현재 분석**으로 변경합니다. 새 snapshot은 같은 버전의 이전 현재 플래그만 변경합니다.
-3. 후보 상태 view는 활성 버전들 중 이미지의 가장 최근 snapshot을 조회 시 선택합니다. v2 레코드는 그대로 두고 superseded 여부만 계산합니다. 빈 후보의 새 snapshot도 이전 후보를 supersede합니다.
+3. 후보 상태 view는 이미지의 가장 최근 snapshot을 **버전 내부에서** 선택합니다. v3 생성은 v2의 현재 상태에 영향을 주지 않습니다. 빈 후보 snapshot도 같은 버전의 이전 후보만 supersede합니다.
 4. `save_concert_program_analysis_v3`는 full snapshot, 논리 작품당 후보 하나·catalog 판정 최대 하나, generation 버전, idempotency와 기존 증거 검증을 보호합니다. 실패 시 한 이미지 transaction 전체가 롤백됩니다.
 5. `concert_program_version_policy`로 특정 버전을 제외할 수 있습니다. 정책 행이 없으면 허용합니다. 검토 RPC도 계산된 현재 상태를 검사합니다. RLS와 service-role 접근 범위를 유지합니다.
 
-코드는 v3 전용 RPC만 호출하며 legacy RPC로 fallback하지 않습니다. RPC가 없으면 예약 배치는 **수집·이미지 다운로드·Python/OCR 전에 preflight에서 `PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED`로 중단**합니다. 제외 정책이 있으면 `PROGRAM_ANALYSIS_VERSION_DISABLED`로 중단합니다. 읽기 전용 plan에는 `matcher_version`, `analysis_schema_ready`, `analysis_version_enabled`가 표시됩니다. 운영 DB에는 아직 전용 RPC가 없는 것을 GET 메타데이터로 확인했습니다.
+코드는 v3 전용 RPC만 호출하며 legacy RPC로 fallback하지 않습니다. 기본 예약 게이트가 닫혀 있으면 SQL 확인 전 `SKIPPED_ROLLOUT_GATE`로 종료합니다. 예약 활성화 후에는 RPC가 없으면 `PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED`, 제외 정책이 있으면 `PROGRAM_ANALYSIS_VERSION_DISABLED`로 preflight에서 중단합니다. 수동 canary도 SQL/RPC preflight를 요구합니다. 읽기 전용 plan에는 schema 준비 상태가 표시됩니다.
 
 ## 정확한 17건과 dry-run 결과
 
@@ -58,7 +60,7 @@ npm.cmd run program:analyze -- analyze --dry-run --ocr-manifest docs/PROGRAM_ANA
 사용자가 SQL 초안·검색 영향·버전 전환을 검토하고 별도 운영 적용을 결정한 뒤에만 다음 저장 명령을 사용합니다.
 
 ```powershell
-npm.cmd run program:analyze -- analyze --save --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json
+npm.cmd run program:analyze -- analyze --save --version stored-program-3 --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json
 ```
 
 manifest의 OCR만 대상으로 하며 전체 공연 탐색이나 다른 OCR로 대체하지 않습니다. source 분석 누락, 이미지 비활성, OCR 교체/새 실패가 있으면 해당 UUID를 제외하고 사유와 종료 코드 1을 반환합니다. 다른 적격 대상은 계속 처리합니다. 같은 명령으로 재시도하면 성공했던 동일 키는 재사용됩니다. 종료 공연 cleanup으로 근거가 삭제되면 당초 17개 모두를 저장할 수 없습니다.
@@ -78,9 +80,9 @@ snapshots에서 `analysis_records=17`, `candidate_records=62`, summary 연결=3�
 
 기본 후보 목록은 로컬 코드의 v3 + 현재 catalog hash + 계산된 현재 분석 + REVIEW_REQUIRED만 조회합니다. v2 후보 UUID의 show는 계속 가능하며 `local_version_current=false`가 표시됩니다. 과거 대기 목록은 `list --version stored-program-2 --include-inactive`로 읽을 수 있습니다. 이 옵션은 쓰기 버전을 바꾸지 않습니다. v2 확정·반려와 검토 이력을 v3로 복사하지 않습니다.
 
-검색 경로도 현재 matcher 버전을 사용하고 유효한 수동 CONFIRMED만 검색합니다. **새 코드 배포/서버 재시작 시 v2 확정 결과가 새 코드의 검색에서 제외될 수 있습니다.** canary 저장만으로 검색 가능한 공연이 증가하지 않습니다. 부모 catalog ID만 있는 후보를 임의 악장 track_id로 확정하지 않습니다.
+검색은 명시적인 `PROGRAM_SEARCH_VERSION`(기본 v2)의 유효한 수동 CONFIRMED만 조회합니다. v3 canary 저장·확정은 v2 검색에 영향을 주지 않습니다. 부모 catalog ID만 있는 후보를 임의 악장 track_id로 확정하지 않습니다.
 
-예약 인자에 matcher 버전은 고정되어 있지 않습니다. 등록된 프로젝트의 Node 진입점이 현재 모듈을 import합니다. 새 코드 사용 + v3 SQL/RPC 준비 + 제외 정책 없음 + 최신/활성 OCR 근거가 조건입니다. 조건이 갖춰지면 다음 실제 예약은 v2를 v3 완료로 재사용하지 않고 기존 상한·우선순위 내에서 새 버전을 저장합니다. **canary 밖의 대상도 선택될 수 있으므로 SQL 적용·수동 canary·검토·예약 활성 시점을 먼저 결정**해야 합니다. 이번에는 예약을 바꾸거나 실행하지 않았습니다.
+예약 인자에 matcher 버전은 고정되어 있지 않습니다. 명시적인 `PROGRAM_ANALYSIS_SCHEDULE_ENABLED=true`에 더해 v3 SQL/RPC·제외 정책 없음·현재 근거가 필요합니다. SQL 적용만으로는 예약의 실제 처리가 시작되지 않습니다. 수동 저장은 예약 설정과 무관하게 manifest와 명시적 v3를 요구합니다. 이번에는 예약을 바꾸거나 실행하지 않았습니다.
 
 문제 발생 시 사용할 미실행 제외 SQL 예시입니다. v3나 v2 분석을 삭제/갱신하지 않고 정책 행만 바꿉니다.
 
@@ -90,7 +92,7 @@ values ('stored-program-3',false,'Exclude v3 pending canary review')
 on conflict(matcher_version) do update set enabled=excluded.enabled,note=excluded.note;
 ```
 
-v3는 계산된 현재 분석과 새 저장/배치에서 제외됩니다. 여전히 증거가 유효한 v2는 DB view의 현재 선택으로 돌아올 수 있습니다. **v3를 필터링하는 새 클라이언트가 v2로 자동 fallback하는 것은 아닙니다.** 검색 복구에는 실제 v2 구현을 가진 이전 배포본도 복구해야 합니다. 새 파서의 문자열만 v2로 낮춰 저장하면 안 됩니다. 재허용은 사용자 결정 후 정책 enabled를 true로 바꾸는 별도 운영 작업입니다.
+v3는 현재 분석과 새 저장/배치에서 제외됩니다. v2 현재 상태는 독립적으로 유지됩니다. 검색 복구는 `PROGRAM_SEARCH_VERSION=stored-program-2`로 명시한 뒤 API 재시작/재배포로 수행합니다. 두 버전을 자동 합치지 않습니다. 새 파서의 write 문자열을 v2로 낮춰 저장하면 안 됩니다.
 
 ## 검증·미실행 사항
 

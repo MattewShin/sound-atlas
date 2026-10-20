@@ -9,6 +9,7 @@ import { safeCode, fatalCode, koreanTime, pipelineError } from './pipelineConfig
 import { analysisSelection, ocrSelection, collectionSelection, retryDue, failedItem, completedItem, latestAttempt, imageLimitHold, imageLimitHolds } from './pipelineSelection.mjs'
 import { cleanupPlanForReport, emptyCleanupCounts, pruneExpiredPipelineState } from './pipelineCleanup.mjs'
 import { commitPriority, priorityPreview, bucketCounts } from './pipelinePriority.mjs'
+import {getProgramRollout} from './programRollout.mjs'
 
 const stage = () => ({status:'NOT_RUN',succeeded:0,failed:0,reused:0,skipped:0,limit_reached:false,remaining:null,duration_ms:0})
 export const runConcertPipeline = async ({runtime,local,state,options,plan=false,signal,now=Date.now,onProgress=()=>{},runId=randomUUID(),execution}) => {
@@ -50,6 +51,14 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
   }
   let snapshot,preflightDone=false
   try {
+    const rollout=runtime.rollout||getProgramRollout()
+    report.rollout=rollout
+    if(!plan&&!rollout.scheduleEnabled){
+      report.status='SKIPPED_ROLLOUT_GATE';report.exit_code=0;report.termination_reason='PROGRAM_ANALYSIS_SCHEDULE_DISABLED'
+      report.stages.analysis.status='SKIPPED_ROLLOUT_GATE'
+      report.retry='No automatic failure retry. Enable PROGRAM_ANALYSIS_SCHEDULE_ENABLED only after rollout verification.'
+      return report
+    }
     startStage('preflight')
     report.stages.preflight.status='RUNNING'
     report.environment=await runtime.preflight({plan});check()
@@ -263,7 +272,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       finishStage()
     }
     const reviews=await runtime.repository.reviewSummary(options.dbPages)
-    const pendingReviews=reviews.filter(x=>x.matcher_version===MATCHER_VERSION&&x.catalog_hash===CATALOG_HASH&&!x.stale_reason)
+    const pendingReviews=reviews.filter(x=>x.matcher_version===rollout.reviewVersion&&x.catalog_hash===CATALOG_HASH&&!x.stale_reason)
     report.review.total_review_required=pendingReviews.length
     for(const x of pendingReviews.filter(x=>x.track_id)){
       const concert=snapshot.concerts.find(c=>c.kopis_id===x.kopis_id)
@@ -290,7 +299,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
     report.time_limit_reached ||= now()-started>=options.maxSeconds*1000||signal?.reason==='TIME_LIMIT'
     workload()
     refreshHolds()
-    if(!plan)await persist()
+    if(!plan){if(report.status==='SKIPPED_ROLLOUT_GATE')await local.saveReport(report);else await persist()}
   }
   return report
 }

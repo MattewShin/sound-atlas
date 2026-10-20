@@ -5,8 +5,9 @@ import { createSupabaseConcertSearch } from './supabaseConcertSearch.mjs'
 import { createConcertSearchService } from './concertSearchService.mjs'
 import { createConcertApiHandler } from './api.mjs'
 import { createVercelConcertHandler } from './vercel.mjs'
-import { CATALOG_HASH, MATCHER_VERSION } from './programAnalysis.mjs'
+import { CATALOG_HASH } from './programAnalysis.mjs'
 
+const SEARCH_VERSION='stored-program-2'
 const env = { SUPABASE_URL: 'https://fixture.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'private-fixture-key', CONCERT_SEARCH_BACKEND: 'supabase' }
 const now = () => Date.parse('2026-10-15T01:00:00Z')
 const query = { region: '서울', from: '2026-10-15', to: '2026-11-14', targetTrackId: 'beethoven-sonata-op27-2-no14-m2' }
@@ -14,7 +15,7 @@ const id = n => `00000000-0000-4000-8000-${String(n).padStart(12,'0')}`
 const fixture = (n, changes = {}) => ({
   id: id(n), concert_id: id(900), track_id: query.targetTrackId, work_id: 'beethoven-sonata-op27-2-no14',
   relation: 'EXACT', outcome: 'MATCHED', review_status: 'CONFIRMED', effective_status: 'CONFIRMED',
-  is_effectively_confirmed: true, analysis_is_current: true, stale_reason: null, matcher_version: MATCHER_VERSION, catalog_hash: CATALOG_HASH,
+  is_effectively_confirmed: true, analysis_is_current: true, stale_reason: null, matcher_version: SEARCH_VERSION, catalog_hash: CATALOG_HASH,
   source_url: 'https://kopis.or.kr/upload/source.png',
   concerts: { kopis_id: 'PF999900', title: 'Local confirmed concert', venue: 'Local hall', region: '서울',
     start_date: '2026-10-17', end_date: '2026-10-17', performance_status: '공연예정', synced_at: '2026-10-15T00:00:00Z' },
@@ -61,7 +62,7 @@ test('DB search requires current compatible CONFIRMED EXACT evidence and project
   assert.equal(c.searchBackend,'supabase')
   for(const privateValue of ['PRIVATE','bbox','raw_text','review_note','candidate_key','catalog_hash','private-fixture-key']) assert.ok(!JSON.stringify(result).includes(privateValue),privateValue)
   const params=calls[0].url.searchParams
-  for(const [key,value]of Object.entries({track_id:`eq.${query.targetTrackId}`,relation:'eq.EXACT',review_status:'eq.CONFIRMED',is_effectively_confirmed:'eq.true',stale_reason:'is.null',matcher_version:`eq.${MATCHER_VERSION}`,catalog_hash:`eq.${CATALOG_HASH}`,'concerts.region':'eq.서울','concerts.end_date':'gte.2026-10-15'}))assert.equal(params.get(key),value,key)
+  for(const [key,value]of Object.entries({track_id:`eq.${query.targetTrackId}`,relation:'eq.EXACT',review_status:'eq.CONFIRMED',is_effectively_confirmed:'eq.true',stale_reason:'is.null',matcher_version:`eq.${SEARCH_VERSION}`,catalog_hash:`eq.${CATALOG_HASH}`,'concerts.region':'eq.서울','concerts.end_date':'gte.2026-10-15'}))assert.equal(params.get(key),value,key)
   assert.ok(!params.get('select').includes('*'))
   assert.ok(!/identity|evidence,|review_note|raw_text/.test(params.get('select')))
   assert.equal(calls.length,1,'one DB GET; no KOPIS, image, OCR, analysis RPC or write')

@@ -34,7 +34,7 @@ test('exact OCR manifest validates identity sets and cannot override the generat
   const f=fixture(),manifest={schema_version:'program-ocr-canary-1',source_run_id:randomUUID(),expected_count:1,targets:[{ocr_result_id:f.ocr.id,source_analysis_id:randomUUID(),kopis_id:f.concert.kopis_id}]}
   assert.equal(validateProgramManifest(manifest).target_set_hash,hashJson([f.ocr.id]))
   assert.throws(()=>validateProgramManifest({...manifest,expected_count:2,targets:[manifest.targets[0],manifest.targets[0]]}),/INVALID/)
-  assert.throws(()=>parseProgramArgs(['analyze','--version','stored-program-2']),/READ_VERSION/)
+  assert.throws(()=>parseProgramArgs(['analyze','--version','stored-program-2']),/WRITE_VERSION/)
   assert.throws(()=>parseProgramArgs(['analyze','--ocr-manifest','x.json','--kopis-id','PF1']),/CONFLICT/)
   assert.equal(parseProgramArgs(['snapshots','--ocr-manifest','x.json','--version','stored-program-2']).version,'stored-program-2')
 })
@@ -57,15 +57,16 @@ test('manifest dry-run fetches only stored evidence with GET and never broadens 
 
 test('one failed target can be retried without losing successful versioned analyses',async()=>{
   const a=fixture(),b=fixture(),rows=new Map();let fail=true
-  const store={targets:async()=>({targets:[a,b],coverage:{},skipped:[]}),save:async analysis=>{
+  const manifest={schema_version:'program-ocr-canary-1',source_run_id:randomUUID(),expected_count:2,targets:[a,b].map(f=>({ocr_result_id:f.ocr.id,source_analysis_id:randomUUID(),kopis_id:f.concert.kopis_id}))}
+  const store={preflightSave:async()=>{},manifestTargets:async()=>({targets:[a,b],coverage:{},skipped:[]}),save:async analysis=>{
     if(analysis.ocr_result_id===a.ocr.id&&fail)throw new Error('LOCAL_TRANSIENT_FAILURE')
     const key=analysis.ocr_result_id+analysis.matcher_version
     if(!rows.has(key))rows.set(key,randomUUID())
     return rows.get(key)
   }}
-  const first=await analyzeProgramTargets(store,{save:true});assert.equal(first.failures.length,1);assert.equal(rows.size,1)
+  const first=await analyzeProgramTargets(store,{save:true,manifest,version:'stored-program-3'});assert.equal(first.failures.length,1);assert.equal(rows.size,1)
   const preserved=first.analyses[0].analysis_id;fail=false
-  const second=await analyzeProgramTargets(store,{save:true});assert.equal(second.failures.length,0);assert.equal(rows.size,2)
+  const second=await analyzeProgramTargets(store,{save:true,manifest,version:'stored-program-3'});assert.equal(second.failures.length,0);assert.equal(rows.size,2)
   assert.equal(second.analyses.find(x=>x.ocr_result_id===b.ocr.id).analysis_id,preserved)
 })
 

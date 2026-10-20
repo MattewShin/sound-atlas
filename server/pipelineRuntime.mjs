@@ -9,6 +9,7 @@ import { createEasyOcrWorker } from './easyOcrWorker.mjs'
 import { downloadKopisImage, imageValidationKey } from './kopisImageDownload.mjs'
 import { pipelineError } from './pipelineConfig.mjs'
 import { terminateOwnedProcess } from './pipelineProcess.mjs'
+import {getProgramRollout} from './programRollout.mjs'
 
 const probePython = (config,signal) => new Promise((resolve,reject)=>{
   if(signal?.aborted){reject(pipelineError('BATCH_INTERRUPTED'));return}
@@ -32,6 +33,7 @@ export const createPipelineRuntime = ({env=process.env,signal,fetchImpl=fetch}={
   const client=createCollectionKopisClient(options)
   const worker=createEasyOcrWorker({config,terminateImpl:terminateOwnedProcess})
   return {
+    rollout:getProgramRollout(env),
     repository,client,worker,imageValidationKey:imageValidationKey(config),
     namespace:createHash('sha256').update(new URL(env.SUPABASE_URL).origin).digest('hex').slice(0,16),
     async preflight({plan}){

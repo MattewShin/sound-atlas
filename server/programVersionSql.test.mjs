@@ -4,6 +4,7 @@ import {randomUUID} from 'node:crypto'
 import {readFile} from 'node:fs/promises'
 import {PGlite} from '@electric-sql/pglite'
 import {analyzeStoredProgram,CATALOG_JSON,CATALOG_HASH,hashJson} from './programAnalysis.mjs'
+import {createSupabaseConcertSearch} from './supabaseConcertSearch.mjs'
 
 const rehash=value=>{const {payload_hash,...body}=value;return {...body,payload_hash:hashJson(body)}}
 
@@ -53,10 +54,15 @@ test('v3 SQL draft preserves v2 rows and reviews, stores complete logical eviden
     assert.equal(snapshot,null);assert.deepEqual(preservedV2,originalV2)
     assert.deepEqual((await rows('concert_program_candidates')).filter(c=>c.analysis_id===oldId),originalCandidates)
     assert.deepEqual(await rows('concert_program_reviews'),originalReviews)
-    assert.equal((await rows('concert_program_candidate_status')).find(c=>c.id===oldCandidate.id).stale_reason,'ANALYSIS_SUPERSEDED')
+    assert.equal((await rows('concert_program_candidate_status')).find(c=>c.id===oldCandidate.id).is_effectively_confirmed,true,'v3 canary cannot hide v2 confirmed evidence')
+    const publicSearch=createSupabaseConcertSearch({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture'},now:()=>Date.parse('2026-10-19T00:00:00Z'),fetchImpl:async(url,init)=>{
+      assert.equal(init.method,'GET');assert.equal(url.searchParams.get('matcher_version'),'eq.stored-program-2')
+      return new Response(JSON.stringify((await rows('concert_program_candidate_status')).map(c=>({...c,concerts:concert})).sort((a,b)=>a.id.localeCompare(b.id))))
+    }})
+    assert.equal((await publicSearch.search({region:'서울',from:'2026-10-19',to:'2026-10-20',targetTrackId:'chopin-ballade-op52-no4'})).concerts.length,1)
     assert.equal(await saveLegacy(old),oldId)
-    assert.equal((await rows('concert_program_candidate_status')).find(c=>c.id===oldCandidate.id).stale_reason,'ANALYSIS_SUPERSEDED','old version retry never reactivates old evidence')
-    await assert.rejects(db.query('select public.review_concert_program_candidate($1,$2,$3,$4,$5,$6)',[oldCandidate.id,'CONFIRMED','Retry old decision',oldId,'stored-program-2',CATALOG_HASH]),/no longer current/)
+    assert.equal((await rows('concert_program_candidate_status')).find(c=>c.id===oldCandidate.id).stale_reason,null,'each version retains its own current snapshot')
+    await assert.rejects(db.query('select public.review_concert_program_candidate($1,$2,$3,$4,$5,$6)',[oldCandidate.id,'CONFIRMED','Retry old decision',oldId,'stored-program-3',CATALOG_HASH]),/no longer current/)
     const changed=structuredClone(analyses[0]);changed.candidates[0].matching.variants[0].normalized_text+=' changed'
     await assert.rejects(save(changed),/increment matcher/,'same hash cannot hide changed complete JSON')
     await assert.rejects(save(rehash(changed)),/increment matcher/,'changed hash cannot replace same version key')

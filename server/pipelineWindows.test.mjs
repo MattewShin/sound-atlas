@@ -107,6 +107,13 @@ test('Windows run wrapper waits for Node, drains stdout/stderr, writes atomic re
     const external=records.find(r=>r.node_exit_code_unsigned===3221225786)
     assert.ok(external);assert.equal(external.status,'EXTERNAL_CONTROL_TERMINATION')
     assert.equal(external.system_awake.release_succeeded,true)
+    await writeFile(join(scripts,'runConcertPipeline.mjs'),`console.log(JSON.stringify({event:'analysis_version',matcher_version:'stored-program-3',rollout:{scheduleEnabled:false,searchVersion:'stored-program-2'}}));console.log(JSON.stringify({event:'pipeline_result',status:'SKIPPED_ROLLOUT_GATE'}))`)
+    const gated=execute(['-File',join(scripts,'Invoke-ConcertPipeline.ps1'),'-Mode','run','-NodePath',process.execPath])
+    assert.equal(gated.status,0,gated.stderr)
+    const gatedFiles=await readdir(launches)
+    const gatedReceipts=await Promise.all(gatedFiles.filter(f=>f.endsWith('.json')).map(async f=>JSON.parse(await readFile(join(launches,f),'utf8'))))
+    const skipped=gatedReceipts.find(r=>r.status==='SKIPPED_ROLLOUT_GATE')
+    assert.ok(skipped);assert.equal(skipped.node_exit_code,0);assert.equal(skipped.rollout.scheduleEnabled,false);assert.ok(skipped.finished_at)
   }finally{assert.ok(resolve(directory).startsWith(resolve(tmpdir())+sep));await rm(directory,{recursive:true,force:true})}
 })
 

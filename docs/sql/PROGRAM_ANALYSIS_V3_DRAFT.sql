@@ -15,7 +15,8 @@ alter table public.concert_program_version_policy enable row level security;
 revoke all on public.concert_program_version_policy from public, anon, authenticated;
 grant select,insert,update on public.concert_program_version_policy to service_role;
 -- Absence of a policy means enabled. Disable only v3 with an explicit policy;
--- selection falls back to the latest enabled snapshot without editing v2 rows.
+-- current evidence is selected WITHIN each version; explicit consumers choose
+-- one version. A v3 canary cannot supersede the v2 public-search snapshot.
 create or replace function public.save_concert_program_analysis(p_analysis jsonb, p_catalog_json text)
 returns uuid language plpgsql security invoker set search_path = '' as $$
 declare
@@ -134,7 +135,7 @@ join public.concert_program_images image on image.id = analysis.image_id
 cross join lateral (select analysis.is_current
   and not exists (select 1 from public.concert_program_version_policy p where p.matcher_version=analysis.matcher_version and not p.enabled)
   and not exists (select 1 from public.concert_program_analyses newer
-    where newer.image_id=analysis.image_id and newer.is_current
+    where newer.image_id=analysis.image_id and newer.matcher_version=analysis.matcher_version and newer.is_current
       and not exists (select 1 from public.concert_program_version_policy p where p.matcher_version=newer.matcher_version and not p.enabled)
       and (newer.created_at,newer.id) > (analysis.created_at,analysis.id)) as selected) current_choice
 cross join lateral (select case when not current_choice.selected then 'ANALYSIS_SUPERSEDED'

@@ -5,9 +5,10 @@ import { numberedTitle, nearbyNumberLabel, splitUnparentedItems } from './progra
 import { composerWorkGeometry, performerLine, intervalLine, sameWorkRow } from './programComposerBlocks.mjs'
 import { groupLogicalWorks } from './programLogicalWorks.mjs'
 import { matchNormalizedProgramWork } from './programMatchingNormalization.mjs'
+import { PROGRAM_IMPLEMENTATION_VERSION } from './programRollout.mjs'
 
 // One version covers extraction, logical grouping and matching semantics.
-export const MATCHER_VERSION = 'stored-program-3'
+export const MATCHER_VERSION = PROGRAM_IMPLEMENTATION_VERSION
 export const hashJson = (value) => createHash('sha256').update(JSON.stringify(value)).digest('hex')
 // Include every field consumed by identification, including keys derived from track details.
 export const CATALOG_JSON = JSON.stringify({ works: workCatalog,
