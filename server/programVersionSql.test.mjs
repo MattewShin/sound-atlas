@@ -37,7 +37,7 @@ test('v3 SQL draft preserves v2 rows and reviews, stores complete logical eviden
     // Existing v2 storage cannot retain the new logical/normalization fields.
     assert.equal(originalV2.snapshot,undefined)
     await db.exec('reset role')
-    await db.exec(await readFile(new URL('../docs/sql/PROGRAM_ANALYSIS_V3_DRAFT.sql',import.meta.url),'utf8'))
+    await db.exec(await readFile(new URL('../supabase/drafts/PROGRAM_ANALYSIS_V3_DRAFT.sql',import.meta.url),'utf8'))
     await db.exec('set role service_role')
     const save=async a=>(await db.query('select public.save_concert_program_analysis_v3($1,$2) id',[JSON.stringify(a),CATALOG_JSON])).rows[0].id
     const nextId=await save(analyses[0])

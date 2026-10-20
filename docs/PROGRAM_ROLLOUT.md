@@ -71,10 +71,10 @@ npm.cmd run program:analyze -- config
 
 ## 2. v3 SQL/RPC 적용
 
-별도 승인된 운영 절차로 [SQL 초안 전체](sql/PROGRAM_ANALYSIS_V3_DRAFT.sql)를 적용합니다. CLI를 쓰는 경우 별도로 준비한 DB 연결 환경변수와 psql이 필요합니다. 연결 문자열을 출력하지 않습니다.
+별도 승인된 운영 절차로 [SQL 초안 전체](../supabase/drafts/PROGRAM_ANALYSIS_V3_DRAFT.sql)를 적용합니다. CLI를 쓰는 경우 별도로 준비한 DB 연결 환경변수와 psql이 필요합니다. 연결 문자열을 출력하지 않습니다.
 
 ```powershell
-psql $env:SUPABASE_DB_URL -v ON_ERROR_STOP=1 -f .\docs\sql\PROGRAM_ANALYSIS_V3_DRAFT.sql
+psql $env:SUPABASE_DB_URL -v ON_ERROR_STOP=1 -f .\supabase\drafts\PROGRAM_ANALYSIS_V3_DRAFT.sql
 if ($LASTEXITCODE -ne 0) { throw 'SQL application failed' }
 npm.cmd run program:analyze -- preflight
 ```

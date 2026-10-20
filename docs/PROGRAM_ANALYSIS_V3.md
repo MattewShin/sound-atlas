@@ -18,7 +18,7 @@
 
 기존 RPC/unique key는 새 문자열을 허용하지만, 저장 시 이전 버전의 `is_current`를 false로 바꿉니다. 또한 `logical_works`, `grouping`, 매칭 전용 근거와 catalog 부모 연결 등 새 payload 필드를 저장하지 않습니다. 따라서 문자열 변경만으로 운영 저장하지 않습니다.
 
-[미실행 SQL 초안](sql/PROGRAM_ANALYSIS_V3_DRAFT.sql)은 자동 migration 디렉터리 밖에 있습니다. 기존 202610140001·202610140002·202610150001 스키마 이후 적용하는 초안입니다.
+[미실행 SQL 초안](../supabase/drafts/PROGRAM_ANALYSIS_V3_DRAFT.sql)은 `supabase/drafts`에 두어 자동 migration 디렉터리와 구분합니다. 기존 202610140001·202610140002·202610150001 스키마 이후 적용하는 초안입니다.
 
 1. 분석에 nullable `snapshot` JSONB를 추가해 v3 전체 payload를 보존합니다. 기존 v2 payload·후보·검토·현재 플래그·시각은 갱신하지 않습니다.
 2. 현재 분석의 unique index를 **이미지+버전당 현재 분석**으로 변경합니다. 새 snapshot은 같은 버전의 이전 현재 플래그만 변경합니다.
