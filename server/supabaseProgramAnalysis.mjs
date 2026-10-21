@@ -2,6 +2,9 @@ import { createSupabaseRest } from './supabaseRest.mjs'
 import { analyzeStoredProgram, CATALOG_HASH, CATALOG_JSON, MATCHER_VERSION } from './programAnalysis.mjs'
 import { validateProgramManifest, programAnalysisCounts } from './programCanary.mjs'
 import {getProgramWriteVersion,getProgramReviewVersion} from './programRollout.mjs'
+import {workIdentity,confirmationValidity,canonicalIdentityJson} from './programWorkIdentity.mjs'
+import {koreaDate} from '../src/data/concertSearchConfig.js'
+const currentCatalog={...JSON.parse(CATALOG_JSON),catalog_hash:CATALOG_HASH}
 
 export const evidenceIssue = ({ image, ocr, attempts, results }) => {
   if (!image.is_active || image.image_type !== 'DETAIL') return 'IMAGE_INACTIVE_OR_NOT_DETAIL'
@@ -35,6 +38,7 @@ export const createProgramAnalysisStore = (options = {}) => {
       getProgramWriteVersion(options.env||process.env)
       const schema=await request('')
       if(!schema.paths?.['/rpc/save_concert_program_analysis_v3'])throw new Error('PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED')
+      if(!schema.paths?.['/rpc/review_concert_program_candidate_identity']||!schema.paths?.['/rpc/save_concert_program_rematch'])throw new Error('PROGRAM_WORK_IDENTITY_MIGRATION_REQUIRED')
       const policy=await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:'eq.stored-program-3',limit:'1'}})
       if(!Array.isArray(policy))throw new Error('DB_ROWS_INVALID')
       if(policy[0]?.enabled===false)throw new Error('PROGRAM_ANALYSIS_VERSION_DISABLED')
@@ -104,9 +108,10 @@ export const createProgramAnalysisStore = (options = {}) => {
     },
     async candidates(kopisId,{version=getProgramReviewVersion(options.env||process.env),includeInactive=false}={}) {
       version=getProgramReviewVersion({PROGRAM_REVIEW_VERSION:version})
-      return all('concert_program_candidate_status', { matcher_version: `eq.${version}`, catalog_hash: `eq.${CATALOG_HASH}`,
+      const rows=await all('concert_program_candidate_status', { matcher_version: `eq.${version}`,
         ...(!includeInactive?{analysis_is_current:'eq.true'}:{}),
         effective_status: 'eq.REVIEW_REQUIRED', ...(kopisId ? { kopis_id: `eq.${kopisId}` } : {}) })
+      return rows.map(c=>({...c,rematch_required:(c.matching_catalog_hash||c.catalog_hash)!==CATALOG_HASH}))
     },
     async detail(id) {
       const reviewVersion=getProgramReviewVersion(options.env||process.env)
@@ -116,13 +121,43 @@ export const createProgramAnalysisStore = (options = {}) => {
       const [analysis] = await all('concert_program_analyses', { id: `eq.${candidate.analysis_id}` })
       const [ocr] = await all('concert_image_ocr_results', { id: `eq.${analysis.ocr_result_id}`, select: 'id,content_sha256,pipeline_version,processed_at' })
       const reviews = await all('concert_program_reviews', { candidate_id: `eq.${id}` })
-      const stored=analysis.snapshot?.candidates?.find(c=>c.candidate_key===candidate.candidate_key)
-      return { ...stored,...candidate, analysis, ocr, reviews,review_version:reviewVersion, local_version_current: candidate.matcher_version === reviewVersion && candidate.catalog_hash === CATALOG_HASH }
+      const stored=candidate.rematch_snapshot||analysis.snapshot?.candidates?.find(c=>c.candidate_key===candidate.candidate_key)
+      const sourceCatalogHash=candidate.matching_catalog_hash||analysis.catalog_hash
+      const [catalog]=await request('concert_program_catalogs',{params:{select:'catalog',catalog_hash:`eq.${sourceCatalogHash}`,limit:'1'}})
+      const sourceIdentity=workIdentity(catalog?.catalog,candidate.work_id),currentIdentity=workIdentity(currentCatalog,candidate.work_id)
+      const validity=confirmationValidity({...candidate,concerts:{end_date:candidate.concert_end_date}},currentCatalog,{version:reviewVersion,today:koreaDate((options.now||Date.now)())})
+      return { ...stored,...candidate, analysis, ocr, reviews,review_version:reviewVersion,
+        ...validity,...(candidate.review_status!=='CONFIRMED'?{stale_reason:candidate.stale_reason,is_effectively_confirmed:false}:{}),
+        db_is_effectively_confirmed:candidate.is_effectively_confirmed,current_work_identity_hash:currentIdentity?.hash??null,
+        matching_catalog_hash:sourceCatalogHash,catalog_hash_changed:sourceCatalogHash!==CATALOG_HASH,global_catalog_hash_is_exclusion_reason:false,
+        source_identity_matches_current:Boolean(sourceIdentity&&sourceIdentity.hash===currentIdentity?.hash),
+        local_version_current:candidate.matcher_version===reviewVersion&&Boolean(sourceIdentity&&sourceIdentity.hash===currentIdentity?.hash) }
     },
     async review(id, status, note, expectedAnalysisId) {
-      return request('rpc/review_concert_program_candidate', { body: { p_candidate_id: id, p_status: status, p_note: note,
-        p_analysis_id: expectedAnalysisId, p_matcher_version: getProgramReviewVersion(options.env||process.env), p_catalog_hash: CATALOG_HASH } })
+      return request('rpc/review_concert_program_candidate_identity', { body: { p_candidate_id: id, p_status: status, p_note: note,
+        p_analysis_id: expectedAnalysisId, p_matcher_version: getProgramReviewVersion(options.env||process.env), p_catalog_json: CATALOG_JSON } })
     },
+    async rematchSources(kopisId){
+      const candidates=await all('concert_program_candidate_status',{matcher_version:`eq.${MATCHER_VERSION}`,...(kopisId?{kopis_id:`eq.${kopisId}`}:{})})
+      const analyses=await all('concert_program_analyses'),reviews=await all('concert_program_reviews'),concerts=await all('concerts')
+      return candidates.filter(c=>!c.rematch_source_candidate_id).map(c=>{
+        const analysis=analyses.find(a=>a.id===c.analysis_id)
+        return {...c,analysis,concert:concerts.find(k=>k.id===analysis.concert_id),review_history:reviews.filter(r=>r.candidate_id===c.id),
+          existing_rematches:candidates.filter(n=>n.rematch_source_candidate_id===c.id),
+          evidence_stale_reason:c.evidence_stale_reason??(c.stale_reason==='ANALYSIS_SUPERSEDED'?null:c.stale_reason),
+          protected_equivalent_review:candidates.some(n=>n.id!==c.id&&analyses.find(a=>a.id===n.analysis_id)?.ocr_result_id===analysis.ocr_result_id&&canonicalIdentityJson(n.evidence)===canonicalIdentityJson(c.evidence)&&reviews.some(r=>r.candidate_id===n.id))}
+      })
+    },
+    async saveRematch(id,candidate){return request('rpc/save_concert_program_rematch',{body:{p_source_candidate_id:id,p_catalog_json:CATALOG_JSON,p_candidate:candidate}})},
+    async backfillScope(kopisId){
+      const candidates=await all('concert_program_candidate_status',{review_status:'eq.CONFIRMED',...(kopisId?{kopis_id:`eq.${kopisId}`}:{})})
+      const analyses=await all('concert_program_analyses'),reviews=await all('concert_program_reviews'),concerts=await all('concerts')
+      const catalogs=await request('concert_program_catalogs',{params:{select:'catalog_hash,catalog',limit:'1000'}})
+      if(!Array.isArray(catalogs)||catalogs.length===1000)throw new Error('CATALOG_SCAN_LIMIT')
+      const ocrs=await all('concert_image_ocr_results',{select:'id,content_sha256,pipeline_version,raw_text'}),attempts=await all('concert_image_ocr_attempts',{select:'id,result_id,content_sha256'})
+      return candidates.map(c=>{const analysis=analyses.find(a=>a.id===c.analysis_id);return {...c,analysis,ocr:ocrs.find(o=>o.id===analysis.ocr_result_id),attempt:attempts.find(t=>t.id===analysis.source_attempt_id),reviews:reviews.filter(r=>r.candidate_id===c.id),concert:concerts.find(k=>k.id===c.concert_id),source_catalog:catalogs.find(k=>k.catalog_hash===(c.matching_catalog_hash||c.catalog_hash))?.catalog}})
+    },
+    async backfillIdentity(target,manifest){return request('rpc/backfill_concert_program_review_identity',{body:{p_candidate_id:target.candidate_id,p_review_id:target.review_id,p_catalog_json:CATALOG_JSON,p_expected_hash:target.work_identity_hash,p_source_git_commit:manifest.git_commit,p_verified_catalog_hash:manifest.source_catalog_hash}})},
   }
 }
 

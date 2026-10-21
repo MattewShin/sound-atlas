@@ -45,11 +45,13 @@ export const createPipelineRepository = options => {
       if(!cleanupSchemaReady&&!plan)throw pipelineError('CLEANUP_MIGRATION_REQUIRED')
       const analysisSchemaReady=Boolean(schema.paths?.['/rpc/save_concert_program_analysis_v3'])
       if(!analysisSchemaReady&&!plan)throw pipelineError('PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED')
+      const identitySchemaReady=Boolean(schema.paths?.['/rpc/review_concert_program_candidate_identity']&&schema.paths?.['/rpc/save_concert_program_rematch'])
+      if(!identitySchemaReady&&!plan)throw pipelineError('PROGRAM_WORK_IDENTITY_MIGRATION_REQUIRED')
       const policy=analysisSchemaReady?await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:`eq.${MATCHER_VERSION}`,limit:'1'}}):null
       const analysisVersionEnabled=policy?policy[0]?.enabled!==false:'UNKNOWN'
       if(analysisVersionEnabled===false&&!plan)throw pipelineError('PROGRAM_ANALYSIS_VERSION_DISABLED')
       if(cleanupSchemaReady)await request('concert_cleanup_events',{params:{select:'operation_id',limit:'0'}})
-      return {cleanup_schema_ready:cleanupSchemaReady,analysis_schema_ready:analysisSchemaReady,analysis_version_enabled:analysisVersionEnabled,matcher_version:MATCHER_VERSION}
+      return {cleanup_schema_ready:cleanupSchemaReady,analysis_schema_ready:analysisSchemaReady,work_identity_schema_ready:identitySchemaReady,analysis_version_enabled:analysisVersionEnabled,matcher_version:MATCHER_VERSION}
     },
     async cleanupPlan(limit,today,pages){
       if(cleanupFunctionsPresent){
@@ -85,7 +87,7 @@ export const createPipelineRepository = options => {
     candidates(analysisId){return all('concert_program_candidates',{analysis_id:`eq.${analysisId}`},20,'id,analysis_id,track_id,review_status')},
     async reviewSummary(pages){
       return all('concert_program_candidate_status', {analysis_is_current:'eq.true',effective_status:'eq.REVIEW_REQUIRED'},pages,
-        'id,track_id,kopis_id,concert_title,analysis_id,matcher_version,catalog_hash,stale_reason')
+        'id,track_id,kopis_id,concert_title,analysis_id,matcher_version,catalog_hash,matching_catalog_hash,stale_reason')
     },
   }
 }

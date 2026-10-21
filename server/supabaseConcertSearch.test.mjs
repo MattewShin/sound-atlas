@@ -5,7 +5,9 @@ import { createSupabaseConcertSearch } from './supabaseConcertSearch.mjs'
 import { createConcertSearchService } from './concertSearchService.mjs'
 import { createConcertApiHandler } from './api.mjs'
 import { createVercelConcertHandler } from './vercel.mjs'
-import { CATALOG_HASH } from './programAnalysis.mjs'
+import { CATALOG_HASH,CATALOG_JSON } from './programAnalysis.mjs'
+import {workIdentity} from './programWorkIdentity.mjs'
+import {EASYOCR_PIPELINE_VERSION} from './easyOcrConfig.mjs'
 
 const SEARCH_VERSION='stored-program-2'
 const env = { SUPABASE_URL: 'https://fixture.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'private-fixture-key', CONCERT_SEARCH_BACKEND: 'supabase' }
@@ -17,6 +19,8 @@ const fixture = (n, changes = {}) => ({
   relation: 'EXACT', outcome: 'MATCHED', review_status: 'CONFIRMED', effective_status: 'CONFIRMED',
   is_effectively_confirmed: true, analysis_is_current: true, stale_reason: null, matcher_version: SEARCH_VERSION, catalog_hash: CATALOG_HASH,
   source_url: 'https://kopis.or.kr/upload/source.png',
+  confirmed_work_identity_hash:workIdentity(JSON.parse(CATALOG_JSON),'beethoven-sonata-op27-2-no14').hash,
+  confirmation_matcher_version:SEARCH_VERSION,confirmation_pipeline_version:EASYOCR_PIPELINE_VERSION,
   concerts: { kopis_id: 'PF999900', title: 'Local confirmed concert', venue: 'Local hall', region: '서울',
     start_date: '2026-10-17', end_date: '2026-10-17', performance_status: '공연예정', synced_at: '2026-10-15T00:00:00Z' },
   // Even unexpected extra fields from an upstream response cannot enter the DTO.
@@ -42,7 +46,8 @@ test('DB search requires current compatible CONFIRMED EXACT evidence and project
     {review_status:'REVIEW_REQUIRED'}, {review_status:'REJECTED'}, {effective_status:'REVIEW_REQUIRED'},
     {stale_reason:'LATEST_OCR_NOT_SUCCESSFUL',is_effectively_confirmed:false},
     {stale_reason:'IMAGE_INACTIVE_OR_NOT_DETAIL',is_effectively_confirmed:false},
-    {analysis_is_current:false}, {is_effectively_confirmed:false}, {matcher_version:'stored-program-1'}, {catalog_hash:'b'.repeat(64)},
+    {analysis_is_current:false}, {is_effectively_confirmed:false}, {matcher_version:'stored-program-1'}, {confirmed_work_identity_hash:'b'.repeat(64)},
+    {confirmed_work_identity_hash:null},{confirmation_pipeline_version:'incompatible'},
     {track_id:'beethoven-sonata-op27-2-no14-m1'}, {work_id:'another-work'},
     {relation:'WHOLE_WORK_REFERENCE'}, {relation:'ARRANGEMENT_OR_EXCERPT'}, {outcome:'CONFLICT'},
     {concerts:{...fixture(1).concerts,region:'부산'}},
@@ -62,9 +67,11 @@ test('DB search requires current compatible CONFIRMED EXACT evidence and project
   assert.equal(c.searchBackend,'supabase')
   for(const privateValue of ['PRIVATE','bbox','raw_text','review_note','candidate_key','catalog_hash','private-fixture-key']) assert.ok(!JSON.stringify(result).includes(privateValue),privateValue)
   const params=calls[0].url.searchParams
-  for(const [key,value]of Object.entries({track_id:`eq.${query.targetTrackId}`,relation:'eq.EXACT',review_status:'eq.CONFIRMED',is_effectively_confirmed:'eq.true',stale_reason:'is.null',matcher_version:`eq.${SEARCH_VERSION}`,catalog_hash:`eq.${CATALOG_HASH}`,'concerts.region':'eq.서울','concerts.end_date':'gte.2026-10-15'}))assert.equal(params.get(key),value,key)
+  for(const [key,value]of Object.entries({track_id:`eq.${query.targetTrackId}`,relation:'eq.EXACT',review_status:'eq.CONFIRMED',is_effectively_confirmed:'eq.true',stale_reason:'is.null',matcher_version:`eq.${SEARCH_VERSION}`,confirmed_work_identity_hash:`eq.${fixture(1).confirmed_work_identity_hash}`,'concerts.region':'eq.서울','concerts.end_date':'gte.2026-10-15'}))assert.equal(params.get(key),value,key)
+  assert.equal(params.has('catalog_hash'),false)
   assert.ok(!params.get('select').includes('*'))
-  assert.ok(!/identity|evidence,|review_note|raw_text/.test(params.get('select')))
+  assert.ok(!/(?:^|,)identity(?:,|$)|(?:^|,)evidence(?:,|$)|review_note|raw_text/.test(params.get('select')))
+  assert.ok(!JSON.stringify(result).includes('confirmed_work_identity_hash'))
   assert.equal(calls.length,1,'one DB GET; no KOPIS, image, OCR, analysis RPC or write')
 })
 

@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
-import { analyzeStoredProgram, extractIdentity, CATALOG_HASH } from './programAnalysis.mjs'
+import { analyzeStoredProgram, extractIdentity, CATALOG_HASH,MATCHER_VERSION } from './programAnalysis.mjs'
 import { evidenceIssue, analyzeProgramTargets, createProgramAnalysisStore } from './supabaseProgramAnalysis.mjs'
 import { parseProgramArgs, runProgramCli } from '../scripts/analyzeConcertPrograms.mjs'
 
@@ -341,7 +341,7 @@ test('CLI requires a single UUID, prior analysis ID and note; refuses unresolved
   assert.throws(() => parseProgramArgs(['confirm',randomUUID(),'--note','checked']), /ANALYSIS/)
   let writes = 0
   const id = randomUUID(), analysisId = randomUUID()
-  const store = { detail: async () => ({ local_version_current: true, analysis_id: analysisId, track_id: null }), review: async () => { writes++ } }
+  const store = { detail: async () => ({ local_version_current: true,matcher_version:MATCHER_VERSION, analysis_id: analysisId, track_id: null }), review: async () => { writes++ } }
   await assert.rejects(runProgramCli(['confirm',id,'--analysis-id',analysisId,'--note','checked'],{ store, print:()=>{} }), /CANNOT_CONFIRM/)
   assert.equal(writes, 0)
 })

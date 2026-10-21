@@ -272,7 +272,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       finishStage()
     }
     const reviews=await runtime.repository.reviewSummary(options.dbPages)
-    const pendingReviews=reviews.filter(x=>x.matcher_version===rollout.reviewVersion&&x.catalog_hash===CATALOG_HASH&&!x.stale_reason)
+    const pendingReviews=reviews.filter(x=>x.matcher_version===rollout.reviewVersion&&(x.matching_catalog_hash||x.catalog_hash)===CATALOG_HASH&&!x.stale_reason)
     report.review.total_review_required=pendingReviews.length
     for(const x of pendingReviews.filter(x=>x.track_id)){
       const concert=snapshot.concerts.find(c=>c.kopis_id===x.kopis_id)

@@ -59,7 +59,7 @@ test('v3 SQL draft preserves v2 rows and reviews, stores complete logical eviden
       assert.equal(init.method,'GET');assert.equal(url.searchParams.get('matcher_version'),'eq.stored-program-2')
       return new Response(JSON.stringify((await rows('concert_program_candidate_status')).map(c=>({...c,concerts:concert})).sort((a,b)=>a.id.localeCompare(b.id))))
     }})
-    assert.equal((await publicSearch.search({region:'서울',from:'2026-10-19',to:'2026-10-20',targetTrackId:'chopin-ballade-op52-no4'})).concerts.length,1)
+    assert.equal((await publicSearch.search({region:'서울',from:'2026-10-19',to:'2026-10-20',targetTrackId:'chopin-ballade-op52-no4'})).concerts.length,0,'legacy null identity requires the separate verified backfill migration')
     assert.equal(await saveLegacy(old),oldId)
     assert.equal((await rows('concert_program_candidate_status')).find(c=>c.id===oldCandidate.id).stale_reason,null,'each version retains its own current snapshot')
     await assert.rejects(db.query('select public.review_concert_program_candidate($1,$2,$3,$4,$5,$6)',[oldCandidate.id,'CONFIRMED','Retry old decision',oldId,'stored-program-3',CATALOG_HASH]),/no longer current/)

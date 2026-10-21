@@ -2,12 +2,15 @@ import { createSupabaseRest } from './supabaseRest.mjs'
 import { ConcertApiError, apiDate, safeUrl } from './kopisData.mjs'
 import { koreaDate, MAX_CONCERT_SEARCH_DAYS, validateConcertQuery } from '../src/data/concertSearchConfig.js'
 import { getTrackTarget } from '../src/data/workCatalog.js'
-import { CATALOG_HASH } from './programAnalysis.mjs'
+import { CATALOG_JSON, CATALOG_HASH } from './programAnalysis.mjs'
 import { getProgramSearchVersion } from './programRollout.mjs'
+import { workIdentity, confirmationValidity } from './programWorkIdentity.mjs'
+import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
+const currentCatalog={...JSON.parse(CATALOG_JSON),catalog_hash:CATALOG_HASH}
 
 // Existing private, invoker-security view supplies evidence freshness (including
 // active DETAIL images). Never select OCR text, identity, bbox or review notes.
-const selection = 'id,concert_id,track_id,work_id,relation,outcome,review_status,effective_status,is_effectively_confirmed,analysis_is_current,stale_reason,matcher_version,catalog_hash,source_url,concerts!inner(kopis_id,title,venue,region,start_date,end_date,performance_status,synced_at)'
+const selection = 'id,concert_id,track_id,work_id,relation,outcome,review_status,effective_status,is_effectively_confirmed,analysis_is_current,stale_reason,matcher_version,catalog_hash,confirmed_work_identity_hash,confirmation_matcher_version,confirmation_pipeline_version,source_url,concerts!inner(kopis_id,title,venue,region,start_date,end_date,performance_status,synced_at)'
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const states = ['공연예정', '공연중']
 const unavailable = () => new ConcertApiError('DB_SEARCH_UNAVAILABLE', '확인된 공연을 조회하지 못했어요. 잠시 후 다시 시도해주세요.', 503)
@@ -22,6 +25,8 @@ export const createSupabaseConcertSearch = ({ env = process.env, fetchImpl = fet
     try { query = validateConcertQuery(input) } catch { throw new ConcertApiError('INVALID_QUERY', '지역과 관람 기간을 올바르게 선택해주세요. 최대 31일까지 조회할 수 있어요.', 400) }
     const target = typeof input.targetTrackId === 'string' && getTrackTarget(input.targetTrackId)
     if (!target) throw new ConcertApiError('INVALID_TARGET', '등록된 곡 ID를 선택해주세요.', 400)
+    const identity=workIdentity(currentCatalog,target.workId)
+    if(!identity)throw unavailable()
     if(!searchVersion)throw new ConcertApiError('PROGRAM_SEARCH_VERSION_INVALID','공연 검색 버전 설정을 확인해주세요.',503)
     if (!request) throw new ConcertApiError('DB_SEARCH_NOT_CONFIGURED', '확인된 공연 검색의 서버 연결 설정이 필요해요.', 503)
     const timestamp = now(), today = koreaDate(timestamp), from = query.from > today ? query.from : today
@@ -35,7 +40,8 @@ export const createSupabaseConcertSearch = ({ env = process.env, fetchImpl = fet
             select: selection, track_id: `eq.${target.trackId}`, work_id: `eq.${target.workId}`,
             review_status: 'eq.CONFIRMED', effective_status: 'eq.CONFIRMED', relation: 'eq.EXACT', outcome: 'eq.MATCHED',
             is_effectively_confirmed: 'eq.true', analysis_is_current: 'eq.true', stale_reason: 'is.null',
-            matcher_version: `eq.${searchVersion}`, catalog_hash: `eq.${CATALOG_HASH}`,
+            matcher_version: `eq.${searchVersion}`, confirmed_work_identity_hash:`eq.${identity.hash}`,
+            confirmation_matcher_version:`eq.${searchVersion}`,confirmation_pipeline_version:`eq.${EASYOCR_PIPELINE_VERSION}`,
             'concerts.start_date': `lte.${query.to}`, 'concerts.end_date': `gte.${from}`,
             'concerts.performance_status': 'in.(공연예정,공연중)',
             ...(query.region === '전국' ? {} : { 'concerts.region': `eq.${query.region}` }),
@@ -50,7 +56,7 @@ export const createSupabaseConcertSearch = ({ env = process.env, fetchImpl = fet
             if (row.track_id !== target.trackId || row.work_id !== target.workId || row.relation !== 'EXACT' || row.outcome !== 'MATCHED'
               || row.review_status !== 'CONFIRMED' || row.effective_status !== 'CONFIRMED' || row.is_effectively_confirmed !== true
               || row.analysis_is_current !== true || row.stale_reason !== null
-              || row.matcher_version !== searchVersion || row.catalog_hash !== CATALOG_HASH
+              || !confirmationValidity(row,currentCatalog,{version:searchVersion,today}).is_effectively_confirmed
               || !states.includes(c.performance_status) || !apiDate(c.start_date) || !apiDate(c.end_date)
               || c.start_date > c.end_date || c.start_date > query.to || c.end_date < from
               || (query.region !== '전국' && c.region !== query.region)) continue

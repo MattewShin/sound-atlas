@@ -5,7 +5,9 @@ import {getProgramRollout,getProgramReviewVersion,getProgramSearchVersion} from 
 import {createSupabaseConcertSearch} from './supabaseConcertSearch.mjs'
 import {createProgramAnalysisStore,analyzeProgramTargets} from './supabaseProgramAnalysis.mjs'
 import {runProgramCli,parseProgramArgs} from '../scripts/analyzeConcertPrograms.mjs'
-import {CATALOG_HASH} from './programAnalysis.mjs'
+import {CATALOG_HASH,CATALOG_JSON} from './programAnalysis.mjs'
+import {workIdentity} from './programWorkIdentity.mjs'
+import {EASYOCR_PIPELINE_VERSION} from './easyOcrConfig.mjs'
 import {runConcertPipeline} from './concertPipeline.mjs'
 import {initialPipelineState} from './pipelineLocal.mjs'
 import {PIPELINE_DEFAULTS} from './pipelineConfig.mjs'
@@ -20,7 +22,8 @@ const f=()=>{
 }
 const query={region:'서울',from:'2026-10-20',to:'2026-10-21',targetTrackId:'chopin-ballade-op52-no4'}
 const row=(t,version,status='CONFIRMED')=>({id:randomUUID(),concert_id:t.concert.id,concerts:t.concert,track_id:query.targetTrackId,work_id:query.targetTrackId,
-  relation:'EXACT',outcome:'MATCHED',matcher_version:version,catalog_hash:CATALOG_HASH,review_status:status,effective_status:status,is_effectively_confirmed:status==='CONFIRMED',analysis_is_current:true,stale_reason:null,source_url:t.image.source_url})
+  relation:'EXACT',outcome:'MATCHED',matcher_version:version,catalog_hash:CATALOG_HASH,review_status:status,effective_status:status,is_effectively_confirmed:status==='CONFIRMED',analysis_is_current:true,stale_reason:null,source_url:t.image.source_url,
+  confirmed_work_identity_hash:workIdentity(JSON.parse(CATALOG_JSON),query.targetTrackId).hash,confirmation_matcher_version:version,confirmation_pipeline_version:EASYOCR_PIPELINE_VERSION})
 
 test('rollout defaults split v3 writes/review from v2 public search and disabled integrated runs',async()=>{
   const settings=getProgramRollout({})
@@ -69,7 +72,7 @@ test('review lists use explicit v3 and a normal empty state while old UUID detai
   const store=createProgramAnalysisStore({env,fetchImpl:async(url,init)=>{
     calls.push(url);assert.equal(init.method,'GET')
     const table=url.pathname.split('/').at(-1)
-    const values={concert_program_candidate_status:url.searchParams.has('id')?[candidate]:[],concert_program_analyses:[{id:candidate.analysis_id,ocr_result_id:t.ocr.id}],concert_image_ocr_results:[t.ocr],concert_program_reviews:[]}
+    const values={concert_program_candidate_status:url.searchParams.has('id')?[candidate]:[],concert_program_analyses:[{id:candidate.analysis_id,ocr_result_id:t.ocr.id}],concert_image_ocr_results:[t.ocr],concert_program_reviews:[],concert_program_catalogs:[{catalog:JSON.parse(CATALOG_JSON)}]}
     return new Response(JSON.stringify(values[table]))
   }})
   const listed=await runProgramCli(['list'],{store,env:{},print:()=>{}})
@@ -106,7 +109,7 @@ test('unscoped saves and implicit/old versions are blocked before preflight even
 test('SQL/RPC preflight blocks canary before POST when schema is absent or version policy disables writes',async()=>{
   for(const ready of [false,true]){
     const calls=[],store=createProgramAnalysisStore({env,fetchImpl:async(url,init)=>{
-      calls.push(init.method);return new Response(JSON.stringify(url.pathname==='/rest/v1/'?{paths:ready?{'/rpc/save_concert_program_analysis_v3':{}}:{}}:[{enabled:false}]))
+      calls.push(init.method);return new Response(JSON.stringify(url.pathname==='/rest/v1/'?{paths:ready?{'/rpc/save_concert_program_analysis_v3':{},'/rpc/review_concert_program_candidate_identity':{},'/rpc/save_concert_program_rematch':{}}:{}}:[{enabled:false}]))
     }})
     await assert.rejects(store.preflightSave(),ready?/DISABLED/:/MIGRATION_REQUIRED/)
     assert.ok(calls.every(method=>method==='GET'))

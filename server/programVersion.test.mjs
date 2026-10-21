@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {randomUUID} from 'node:crypto'
-import {analyzeStoredProgram,programAnalysisCacheKey,MATCHER_VERSION,CATALOG_HASH,hashJson} from './programAnalysis.mjs'
+import {analyzeStoredProgram,programAnalysisCacheKey,MATCHER_VERSION,CATALOG_HASH,CATALOG_JSON,hashJson} from './programAnalysis.mjs'
 import {validateProgramManifest} from './programCanary.mjs'
 import {analyzeProgramTargets,createProgramAnalysisStore} from './supabaseProgramAnalysis.mjs'
 import {createPipelineRepository} from './pipelineRepository.mjs'
@@ -74,7 +74,7 @@ test('legacy candidate UUID remains readable without a v3 snapshot and CLI names
   const f=fixture(),candidate={id:randomUUID(),analysis_id:randomUUID(),matcher_version:'stored-program-2',catalog_hash:CATALOG_HASH,track_id:null}
   const store=createProgramAnalysisStore({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture'},fetchImpl:async(url,init)=>{
     assert.equal(init.method,'GET')
-    const rows={concert_program_candidate_status:[candidate],concert_program_analyses:[{id:candidate.analysis_id,ocr_result_id:f.ocr.id}],concert_image_ocr_results:[f.ocr],concert_program_reviews:[]}
+    const rows={concert_program_candidate_status:[candidate],concert_program_analyses:[{id:candidate.analysis_id,ocr_result_id:f.ocr.id}],concert_image_ocr_results:[f.ocr],concert_program_reviews:[],concert_program_catalogs:[{catalog:JSON.parse(CATALOG_JSON)}]}
     return new Response(JSON.stringify(rows[url.pathname.split('/').at(-1)]))
   }})
   const shown=await runProgramCli(['show',candidate.id],{store,print:()=>{}})
@@ -90,6 +90,8 @@ test('scheduled repository rejects an absent v3 RPC before writes while read-onl
   await assert.rejects(repo.preflight(),{code:'PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED'})
   const plan=await repo.preflight({plan:true});assert.equal(plan.matcher_version,MATCHER_VERSION);assert.equal(plan.analysis_schema_ready,false)
   paths['/rpc/save_concert_program_analysis_v3']={}
+  await assert.rejects(repo.preflight(),{code:'PROGRAM_WORK_IDENTITY_MIGRATION_REQUIRED'})
+  paths['/rpc/review_concert_program_candidate_identity']={};paths['/rpc/save_concert_program_rematch']={}
   const disabled=createPipelineRepository({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture'},fetchImpl:async(url,init)=>{
     assert.equal(init.method,'GET')
     return new Response(JSON.stringify(url.pathname==='/rest/v1/'?{paths}:url.pathname.endsWith('/plan_expired_concert_cleanup')?{schema_version:CLEANUP_SCHEMA_VERSION}:url.pathname.endsWith('/concert_program_version_policy')?[{enabled:false}]:[]))
