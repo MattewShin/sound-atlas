@@ -1913,5 +1913,1116 @@ export const manualTrackDetails = {
       "endSeconds": 796,
       "sourceLabel": "Mitsuko Uchida / Mitsuko Uchida – Topic"
     }
+  },
+  "schumann-kinderszenen-op15-no1": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "내성의 잔물결 위에서 윗성부 선율이 숨 쉬는 방식과 반복될 때마다 달라지는 화성의 빛깔을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "T34Wxq0SLNA",
+      "startSeconds": 0,
+      "endSeconds": 113,
+      "sourceLabel": "Martha Argerich / Martha Argerich - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no2": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "불쑥 튀어나오는 악센트와 쉼표가 만드는 말투, 중간의 주저하는 듯한 표정 변화를 살핀다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "DghL45KLeBo",
+      "startSeconds": 0,
+      "endSeconds": 64,
+      "sourceLabel": "Martha Argerich / Martha Argerich - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no3": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "짧게 튀는 음형을 가볍게 유지하면서 갑작스러운 방향 전환과 추격의 긴장감을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "twZ43rdzZlA",
+      "startSeconds": 0,
+      "endSeconds": 32,
+      "sourceLabel": "Vladimir Horowitz / Vladimir Horowitz - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no4": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "반복 음형이 매번 조금씩 더 간절해지는 과정과 종지에서 완전히 풀리지 않는 표정을 느낀다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "enGvCQh6Yhs",
+      "startSeconds": 0,
+      "endSeconds": 59,
+      "sourceLabel": "Martha Argerich / Martha Argerich - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no5": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "춤추듯 흔들리는 박과 간결한 프레이즈가 만드는 작고 단단한 행복에 집중한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "9WXwHkcLy38",
+      "startSeconds": 0,
+      "endSeconds": 41,
+      "sourceLabel": "Kun-Woo Paik / Kun-Woo Paik - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no6": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "두터운 화음의 과장된 위엄과 그 안에 숨어 있는 장난스러운 리듬의 대비를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "4kXYdrMBkj8",
+      "startSeconds": 0,
+      "endSeconds": 48,
+      "sourceLabel": "Martha Argerich / Martha Argerich - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no7": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "선율의 긴 호흡, 안쪽 성부의 섬세한 이동, 종지 직전의 망설임을 서두르지 않고 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "OippNH2lREU",
+      "startSeconds": 0,
+      "endSeconds": 175,
+      "sourceLabel": "Martha Argerich / Martha Argerich - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no8": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "부드럽게 오가는 성부와 중간부의 살짝 어두워진 빛깔이 되돌아올 때의 안도감을 느낀다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Wy1a3RetE20",
+      "startSeconds": 0,
+      "endSeconds": 51,
+      "sourceLabel": "Martha Argerich / Martha Argerich - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no9": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "반복되는 도약 리듬의 탄력과 짧은 곡 안에서 커졌다 사라지는 영웅적 몸짓을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "1H5E9UPkK_Q",
+      "startSeconds": 0,
+      "endSeconds": 40,
+      "sourceLabel": "Vladimir Horowitz / Vladimir Horowitz - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no10": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "당김음과 지연음이 만드는 머뭇거림, 안쪽에서 은근히 바뀌는 화성의 그늘을 살핀다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "_xVfmC73eoQ",
+      "startSeconds": 0,
+      "endSeconds": 108,
+      "sourceLabel": "Cyprien Katsaris / Cyprien Katsaris - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no11": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "거친 악센트와 급격한 음역 이동 뒤에 찾아오는 순간적인 정적이 공포를 키우는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "0zxLqNg6OfQ",
+      "startSeconds": 0,
+      "endSeconds": 93,
+      "sourceLabel": "Martha Argerich / Martha Argerich - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no12": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "끝으로 갈수록 느슨해지는 호흡과 마지막 구절이 완전히 닫히지 않은 채 다음 곡으로 이어지는 느낌을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "yg48wS_dh-U",
+      "startSeconds": 0,
+      "endSeconds": 143,
+      "sourceLabel": "Martha Argerich / Martha Argerich - Topic"
+    }
+  },
+  "schumann-kinderszenen-op15-no13": {
+    "about": "1838년에 완성된 13곡의 연작으로, 어린이를 위한 교본이라기보다 어른이 되돌아보는 유년의 기억을 그린 작품이다.",
+    "listeningTip": "낭독처럼 자유로운 쉼과 화음 사이의 침묵, 마지막 울림이 남기는 회고의 여백을 음미한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "wbSX4mC9j9k",
+      "startSeconds": 0,
+      "endSeconds": 151,
+      "sourceLabel": "Vladimir Ashkenazy / Vladimir Ashkenazy - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op12-no1": {
+    "about": "1837년에 쓰인 8곡의 연작으로, 낭만문학적 상상력과 슈만의 충동적인 플로레스탄·내향적인 오이제비우스 성격이 교차한다.",
+    "listeningTip": "박의 경계가 흐려지는 반주 위에서 긴 선율을 따라가며 중간부의 미세한 동요를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "7RSX8pu0Hvc",
+      "startSeconds": 0,
+      "endSeconds": 234,
+      "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op12-no2": {
+    "about": "1837년에 쓰인 8곡의 연작으로, 낭만문학적 상상력과 슈만의 충동적인 플로레스탄·내향적인 오이제비우스 성격이 교차한다.",
+    "listeningTip": "주제의 상승 도약, 강한 당김음, 서정적 중간부 뒤 재점화되는 추진력을 대비해 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "BP2EkdW6JFA",
+      "startSeconds": 0,
+      "endSeconds": 187,
+      "sourceLabel": "Wilhelm Kempff / Wilhelm Kempff - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op12-no3": {
+    "about": "1837년에 쓰인 8곡의 연작으로, 낭만문학적 상상력과 슈만의 충동적인 플로레스탄·내향적인 오이제비우스 성격이 교차한다.",
+    "listeningTip": "상행하는 물음과 하행하는 응답이 성부 사이에서 교대하는 방식, 해결을 미루는 화성을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "0jdnIU_dYR0",
+      "startSeconds": 0,
+      "endSeconds": 158,
+      "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op12-no4": {
+    "about": "1837년에 쓰인 8곡의 연작으로, 낭만문학적 상상력과 슈만의 충동적인 플로레스탄·내향적인 오이제비우스 성격이 교차한다.",
+    "listeningTip": "툭 끊기는 프레이즈와 갑작스러운 셈여림 변화가 만드는 기민한 대화를 즐긴다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "qgvWuCEnLWk",
+      "startSeconds": 0,
+      "endSeconds": 190,
+      "sourceLabel": "Alfred Brendel / Alfred Brendel - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op12-no5": {
+    "about": "1837년에 쓰인 8곡의 연작으로, 낭만문학적 상상력과 슈만의 충동적인 플로레스탄·내향적인 오이제비우스 성격이 교차한다.",
+    "listeningTip": "쉼 없이 흐르는 내성 리듬과 양손의 대화, 중앙의 서정이 폭풍 속에서 어떻게 버티는지 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "kFTdZgP711o",
+      "startSeconds": 0,
+      "endSeconds": 226,
+      "sourceLabel": "Vladimir Ashkenazy / Vladimir Ashkenazy - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op12-no6": {
+    "about": "1837년에 쓰인 8곡의 연작으로, 낭만문학적 상상력과 슈만의 충동적인 플로레스탄·내향적인 오이제비우스 성격이 교차한다.",
+    "listeningTip": "서술하듯 말하는 느린 부분과 민첩한 에피소드의 성격 전환, 마지막의 익살을 살핀다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "kxV8NwIHgOY",
+      "startSeconds": 0,
+      "endSeconds": 154,
+      "sourceLabel": "Severin von Eckardstein / Severin von Eckardstein - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op12-no7": {
+    "about": "1837년에 쓰인 8곡의 연작으로, 낭만문학적 상상력과 슈만의 충동적인 플로레스탄·내향적인 오이제비우스 성격이 교차한다.",
+    "listeningTip": "빠른 외성 아래 숨은 선율과 헤미올라성 악센트가 박자를 흔드는 효과를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "P7dpbKcd1d4",
+      "startSeconds": 0,
+      "endSeconds": 144,
+      "sourceLabel": "Severin von Eckardstein / Severin von Eckardstein - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op12-no8": {
+    "about": "1837년에 쓰인 8곡의 연작으로, 낭만문학적 상상력과 슈만의 충동적인 플로레스탄·내향적인 오이제비우스 성격이 교차한다.",
+    "listeningTip": "씩씩한 첫 부분이 점차 무너져 조용한 회상으로 바뀌는 장거리 호흡과 종결의 잔향을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "mfXcRF-wV20",
+      "startSeconds": 0,
+      "endSeconds": 272,
+      "sourceLabel": "Murray Perahia / Murray Perahia - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op111-no1": {
+    "about": "1851년 뒤셀도르프 시기에 완성된 세 곡으로, 후기 슈만 특유의 응축된 화성과 급격한 정서 전환을 담는다.",
+    "listeningTip": "성급히 몰아치는 주제와 내성의 반음계가 만드는 압박, 잠깐 열린 서정의 틈을 대비한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "aWBQ_k3ovoQ",
+      "startSeconds": 0,
+      "endSeconds": 143,
+      "sourceLabel": "Severin von Eckardstein / Severin von Eckardstein - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op111-no2": {
+    "about": "1851년 뒤셀도르프 시기에 완성된 세 곡으로, 후기 슈만 특유의 응축된 화성과 급격한 정서 전환을 담는다.",
+    "listeningTip": "긴 호흡의 선율을 받치는 중간 성부와 종지마다 남는 화성적 망설임에 귀를 기울인다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "fbSXTArJukw",
+      "startSeconds": 0,
+      "endSeconds": 309,
+      "sourceLabel": "Severin von Eckardstein / Severin von Eckardstein - Topic"
+    }
+  },
+  "schumann-fantasiestucke-op111-no3": {
+    "about": "1851년 뒤셀도르프 시기에 완성된 세 곡으로, 후기 슈만 특유의 응축된 화성과 급격한 정서 전환을 담는다.",
+    "listeningTip": "강박적인 리듬이 반복될수록 화성과 음역이 확대되는 과정, 마지막의 단호한 집중을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "TM4R_fgb4yI",
+      "startSeconds": 0,
+      "endSeconds": 218,
+      "sourceLabel": "Severin von Eckardstein / Severin von Eckardstein - Topic"
+    }
+  },
+  "schumann-kreisleriana-op16-no1": {
+    "about": "1838년에 작곡된 8곡의 환상적 연작으로, E. T. A. 호프만의 괴짜 악장 크라이슬러를 빌려 광기와 서정이 교차하는 예술가상을 그린다.",
+    "listeningTip": "급격한 강약 변화와 비대칭적으로 끊기는 구절이 만드는 불안정한 에너지를 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "mR3GqKA25cg",
+      "startSeconds": 0,
+      "endSeconds": 173,
+      "sourceLabel": "Hélène Grimaud / Hélène Grimaud - Topic"
+    }
+  },
+  "schumann-kreisleriana-op16-no2": {
+    "about": "1838년에 작곡된 8곡의 환상적 연작으로, E. T. A. 호프만의 괴짜 악장 크라이슬러를 빌려 광기와 서정이 교차하는 예술가상을 그린다.",
+    "listeningTip": "주요 선율의 깊은 호흡과 두 개의 간주부에서 돌연 바뀌는 리듬·음색을 큰 구조로 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "qpi__Bi7A5U",
+      "startSeconds": 0,
+      "endSeconds": 580,
+      "sourceLabel": "Martha Argerich / Martha Argerich - Topic"
+    }
+  },
+  "schumann-kreisleriana-op16-no3": {
+    "about": "1838년에 작곡된 8곡의 환상적 연작으로, E. T. A. 호프만의 괴짜 악장 크라이슬러를 빌려 광기와 서정이 교차하는 예술가상을 그린다.",
+    "listeningTip": "악센트가 박의 중심을 비트는 방식과 중간부의 무거운 행진이 대비되는 순간을 잡는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Y_HUvLRIDUs",
+      "startSeconds": 0,
+      "endSeconds": 226,
+      "sourceLabel": "Wilhelm Kempff / Wilhelm Kempff - Topic"
+    }
+  },
+  "schumann-kreisleriana-op16-no4": {
+    "about": "1838년에 작곡된 8곡의 환상적 연작으로, E. T. A. 호프만의 괴짜 악장 크라이슬러를 빌려 광기와 서정이 교차하는 예술가상을 그린다.",
+    "listeningTip": "레치타티보 같은 선율의 쉼과 낮은 음역의 응답, 불완전한 종지의 여백을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "qtDgNNs05uY",
+      "startSeconds": 0,
+      "endSeconds": 216,
+      "sourceLabel": "Vladimir Ashkenazy / Vladimir Ashkenazy - Topic"
+    }
+  },
+  "schumann-kreisleriana-op16-no5": {
+    "about": "1838년에 작곡된 8곡의 환상적 연작으로, E. T. A. 호프만의 괴짜 악장 크라이슬러를 빌려 광기와 서정이 교차하는 예술가상을 그린다.",
+    "listeningTip": "짧은 동기의 집요한 되풀이와 순간적으로 방향을 트는 프레이즈가 만드는 긴장을 즐긴다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "y1S9GnGkvkk",
+      "startSeconds": 0,
+      "endSeconds": 179,
+      "sourceLabel": "Vladimir Ashkenazy / Vladimir Ashkenazy - Topic"
+    }
+  },
+  "schumann-kreisleriana-op16-no6": {
+    "about": "1838년에 작곡된 8곡의 환상적 연작으로, E. T. A. 호프만의 괴짜 악장 크라이슬러를 빌려 광기와 서정이 교차하는 예술가상을 그린다.",
+    "listeningTip": "장식음 뒤에 숨은 선율선과 내성의 반음계가 평온을 은근히 흔드는 지점을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "diTOSR1szOI",
+      "startSeconds": 0,
+      "endSeconds": 231,
+      "sourceLabel": "Radu Lupu / Radu Lupu - Topic"
+    }
+  },
+  "schumann-kreisleriana-op16-no7": {
+    "about": "1838년에 작곡된 8곡의 환상적 연작으로, E. T. A. 호프만의 괴짜 악장 크라이슬러를 빌려 광기와 서정이 교차하는 예술가상을 그린다.",
+    "listeningTip": "푸가처럼 쫓고 쫓기는 성부와 갑작스러운 코랄성 구간의 극단적 대비를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "1UZWYzte9kA",
+      "startSeconds": 0,
+      "endSeconds": 128,
+      "sourceLabel": "Maurizio Pollini / Maurizio Pollini - Topic"
+    }
+  },
+  "schumann-kreisleriana-op16-no8": {
+    "about": "1838년에 작곡된 8곡의 환상적 연작으로, E. T. A. 호프만의 괴짜 악장 크라이슬러를 빌려 광기와 서정이 교차하는 예술가상을 그린다.",
+    "listeningTip": "왼손의 어긋난 악센트 위로 주제가 미끄러지는 감각과 소멸하듯 끝나는 결말을 살핀다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "NR2vbJQaKe4",
+      "startSeconds": 0,
+      "endSeconds": 215,
+      "sourceLabel": "Vladimir Horowitz / Vladimir Horowitz - Topic"
+    }
+  },
+  "schumann-allegro-op8": {
+    "about": "1831년에 착수해 1832년에 완성한 초기 대규모 피아노곡으로, 훗날의 소나타적 야심과 고난도 피아니즘을 예고한다.",
+    "listeningTip": "도약하는 주제와 옥타브·화음의 추진력, 서정적 대조부가 재현될 때의 긴장 변화를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "lEwjMmElaH8",
+      "startSeconds": 0,
+      "endSeconds": 554,
+      "sourceLabel": "Maurizio Pollini / Maurizio Pollini - Topic"
+    }
+  },
+  "schumann-arabeske-op18": {
+    "about": "1839년 빈에서 작곡된 소품으로, 친근한 론도 형식 안에 슈만의 내밀한 시정과 세련된 장식성을 담았다.",
+    "listeningTip": "되돌아오는 주제의 가벼움과 두 삽화의 어두운 그림자, 느린 후주의 뜻밖의 깊이를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "i3W_Oyrv86E",
+      "startSeconds": 0,
+      "endSeconds": 429,
+      "sourceLabel": "Vladimir Horowitz / Vladimir Horowitz - Topic"
+    }
+  },
+  "schumann-blumenstuck-op19": {
+    "about": "1839년 빈에서 쓴 변주적 성격의 소품으로, 여러 짧은 단락이 하나의 친밀한 노래로 엮인다.",
+    "listeningTip": "반복 주제가 각 단락의 음색과 조성에 따라 미묘하게 달라지는 방식, 자연스러운 연결을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "ck_jmUqm4_I",
+      "startSeconds": 0,
+      "endSeconds": 480,
+      "sourceLabel": "Sviatoslav Richter / Sviatoslav Richter - Topic"
+    }
+  },
+  "schumann-humoreske-op20": {
+    "about": "1839년 빈에서 짧은 기간에 완성한 대규모 연속곡으로, ‘유머’를 익살보다 상반된 감정의 공존이라는 낭만주의적 의미로 펼친다.",
+    "listeningTip": "서로 다른 단락을 잇는 반복 동기와 ‘내면의 목소리’가 암시하는 숨은 선율, 끝까지 이어지는 정서의 변신을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "eAU2umv4X_Q",
+      "startSeconds": 0,
+      "endSeconds": 1655,
+      "sourceLabel": "András Schiff / András Schiff - Topic"
+    }
+  },
+  "liszt-etude-s139-no1": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "양손을 가로지르는 화음과 급상승 음형이 한 호흡의 서곡으로 결집되는 추진력을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "TWYvy5Zqd1E",
+      "startSeconds": 0,
+      "endSeconds": 61,
+      "sourceLabel": "Steven Spooner / Steven Spooner - Topic"
+    }
+  },
+  "liszt-etude-s139-no2": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "엇갈린 손의 타격감과 반복 동기가 음역을 넓히며 압력을 키우는 과정을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "UNslNR8jE_w",
+      "startSeconds": 0,
+      "endSeconds": 126,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s139-no3": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "부드러운 반주 위에서 선율이 먼 곳까지 호흡하는 방식과 중앙부의 완만한 고조를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Kf3XK3qLDDM",
+      "startSeconds": 0,
+      "endSeconds": 321,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s139-no4": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "말발굽 같은 반복 리듬이 시련을 관통해 장대한 승리 주제로 변모하는 전체 곡선을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "aJaFaSyseqI",
+      "startSeconds": 0,
+      "endSeconds": 456,
+      "sourceLabel": "Yunchan Lim / Yunchan Lim - Topic"
+    }
+  },
+  "liszt-etude-s139-no5": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "양손의 빠른 3도·6도가 음량보다 가벼운 색채로 번쩍이며 중심을 피해 다니는 움직임을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Ifk5Swd8WHk",
+      "startSeconds": 0,
+      "endSeconds": 230,
+      "sourceLabel": "Yunchan Lim / The Cliburn"
+    }
+  },
+  "liszt-etude-s139-no6": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "낮은 음역의 무게가 아르페지오와 화음의 층을 더하며 거대한 절정으로 성장하는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "zUc9CaJn0gM",
+      "startSeconds": 0,
+      "endSeconds": 326,
+      "sourceLabel": "Yunchan Lim / Yunchan Lim - Topic"
+    }
+  },
+  "liszt-etude-s139-no7": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "행진 주제의 점음표 리듬과 넓은 도약이 장식적 패시지 속에서도 선명하게 유지되는지 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "cDliWO8MppU",
+      "startSeconds": 0,
+      "endSeconds": 278,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s139-no8": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "불규칙한 악센트와 옥타브의 돌진, 중간의 노래가 다시 난폭한 질주에 삼켜지는 순간을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "7cBJzSMCq-M",
+      "startSeconds": 0,
+      "endSeconds": 288,
+      "sourceLabel": "Yunchan Lim / The Cliburn"
+    }
+  },
+  "liszt-etude-s139-no9": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "즉흥적으로 번지는 장식 아래 핵심 선율의 호흡을 놓치지 말고, 회상이 흐려지는 코다를 음미한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "wT_AvJu9lE8",
+      "startSeconds": 0,
+      "endSeconds": 667,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s139-no10": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "왼손의 성급한 추진과 오른손의 도약 선율이 충돌하며 절정의 밀도를 높이는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "4OGutDAvQWc",
+      "startSeconds": 0,
+      "endSeconds": 258,
+      "sourceLabel": "Yunchan Lim / Yunchan Lim - Topic"
+    }
+  },
+  "liszt-etude-s139-no11": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "멀리 울리는 종 모티프가 화성의 색채를 바꾸고, 사랑의 선율이 거대한 절정으로 피어나는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "vI67mdW5ofA",
+      "startSeconds": 0,
+      "endSeconds": 549,
+      "sourceLabel": "Yunchan Lim / Yunchan Lim - Topic"
+    }
+  },
+  "liszt-etude-s139-no12": {
+    "about": "1851년에 확정하고 1852년에 출판한 12곡의 연습곡집으로, 젊은 시절의 두 판본을 다듬어 기교와 시적 표제를 결합했으며 스승 체르니에게 헌정했다.",
+    "listeningTip": "미세한 떨림이 점차 음역과 음량을 넓혀 거대한 폭풍이 되었다가 멀어지는 음향 원근을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "6VLnaXKuVWA",
+      "startSeconds": 0,
+      "endSeconds": 326,
+      "sourceLabel": "Yunchan Lim / Yunchan Lim - Topic"
+    }
+  },
+  "liszt-etude-s141-no1": {
+    "about": "1851년에 이전 판본을 개정한 6곡의 연습곡집으로, 파가니니의 바이올린 기교를 피아노의 음색·도약·반복음 기법으로 재창조했다.",
+    "listeningTip": "지속되는 떨림 속에서도 주제의 윤곽과 저음의 도약이 만드는 공간감을 분리해 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "yZzCZ--9Oxc",
+      "startSeconds": 0,
+      "endSeconds": 313,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s141-no2": {
+    "about": "1851년에 이전 판본을 개정한 6곡의 연습곡집으로, 파가니니의 바이올린 기교를 피아노의 음색·도약·반복음 기법으로 재창조했다.",
+    "listeningTip": "짧은 동기가 여러 음역으로 튀어 다니며 손의 교차와 화음으로 확대되는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "plSNS3LDxt0",
+      "startSeconds": 0,
+      "endSeconds": 328,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s141-no3": {
+    "about": "1851년에 이전 판본을 개정한 6곡의 연습곡집으로, 파가니니의 바이올린 기교를 피아노의 음색·도약·반복음 기법으로 재창조했다.",
+    "listeningTip": "반복되는 종 음과 멀리 도약하는 선율의 균형, 변주마다 달라지는 타건 색채를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "NGGVJcsLi98",
+      "startSeconds": 0,
+      "endSeconds": 291,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s141-no4": {
+    "about": "1851년에 이전 판본을 개정한 6곡의 연습곡집으로, 파가니니의 바이올린 기교를 피아노의 음색·도약·반복음 기법으로 재창조했다.",
+    "listeningTip": "양손 사이로 이동하는 단선율의 착시와 화성 변화가 아르페지오의 색을 바꾸는 순간을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "d7F_IH5LHeI",
+      "startSeconds": 0,
+      "endSeconds": 113,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s141-no5": {
+    "about": "1851년에 이전 판본을 개정한 6곡의 연습곡집으로, 파가니니의 바이올린 기교를 피아노의 음색·도약·반복음 기법으로 재창조했다.",
+    "listeningTip": "호른을 흉내 낸 신호와 새소리 같은 장식이 서로 메아리치는 거리감을 즐긴다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "q9IgUfKEu_o",
+      "startSeconds": 0,
+      "endSeconds": 196,
+      "sourceLabel": "Minsoo Sohn / Minsoo Sohn - Topic"
+    }
+  },
+  "liszt-etude-s141-no6": {
+    "about": "1851년에 이전 판본을 개정한 6곡의 연습곡집으로, 파가니니의 바이올린 기교를 피아노의 음색·도약·반복음 기법으로 재창조했다.",
+    "listeningTip": "각 변주가 옥타브·트레몰로·도약 등 서로 다른 기교로 같은 주제의 성격을 바꾸는 방식을 비교한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "iktFHtFHrC0",
+      "startSeconds": 0,
+      "endSeconds": 298,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s144-no1": {
+    "about": "1840년대 후반에 정리된 《세 개의 연주회용 연습곡》 S.144로, 표제적 정서와 무대용 기교를 하나의 시적 장면으로 결합한다.",
+    "listeningTip": "반복되는 하행 음형이 반주·선율·절정의 재료로 계속 변형되는 과정을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Ny9e6GkF8MY",
+      "startSeconds": 0,
+      "endSeconds": 566,
+      "sourceLabel": "Leslie Howard / Leslie Howard - Topic"
+    }
+  },
+  "liszt-etude-s144-no2": {
+    "about": "1840년대 후반에 정리된 《세 개의 연주회용 연습곡》 S.144로, 표제적 정서와 무대용 기교를 하나의 시적 장면으로 결합한다.",
+    "listeningTip": "빠른 패시지의 균일함보다 그 위에 떠오르는 노래와 순간적인 화성의 그늘을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "bqbsC6Hvdx4",
+      "startSeconds": 0,
+      "endSeconds": 289,
+      "sourceLabel": "Evgeny Kissin / Evgeny Kissin - Topic"
+    }
+  },
+  "liszt-etude-s144-no3": {
+    "about": "1840년대 후반에 정리된 《세 개의 연주회용 연습곡》 S.144로, 표제적 정서와 무대용 기교를 하나의 시적 장면으로 결합한다.",
+    "listeningTip": "세 손으로 연주하는 듯한 착시 속에서 중간 성부 선율을 따라가며 절정 이후의 긴 이완을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "qypYyZLVKIs",
+      "startSeconds": 0,
+      "endSeconds": 319,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s145-no1": {
+    "about": "1860년대 초의 《두 개의 연주회용 연습곡》 S.145로, 후기 낭만의 색채 묘사와 정교한 기교를 응축했다.",
+    "listeningTip": "끊임없는 잔물결 속에서 선율이 여러 성부로 옮겨 가는 과정과 페달로 생기는 색채를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Yqq1ub8TJ5o",
+      "startSeconds": 0,
+      "endSeconds": 254,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-etude-s145-no2": {
+    "about": "1860년대 초의 《두 개의 연주회용 연습곡》 S.145로, 후기 낭만의 색채 묘사와 정교한 기교를 응축했다.",
+    "listeningTip": "은밀한 반음계 주제와 밝은 토카타 주제가 교대하며 마지막에 합쳐지는 효과를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "5Z5XI76lZnE",
+      "startSeconds": 0,
+      "endSeconds": 174,
+      "sourceLabel": "Daniil Trifonov / Daniil Trifonov - Topic"
+    }
+  },
+  "liszt-sonata-s178-m1": {
+    "about": "1852~1853년에 작곡해 로베르트 슈만에게 헌정한 단일악장 소나타로, 여러 악장의 기능을 하나의 연속 구조 안에 통합했다.",
+    "listeningTip": "도입의 하행 음계와 도약 동기가 서정 주제·푸가·코다에서 어떻게 성격을 바꾸는지 장기적으로 추적한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "GfgBORsUhW4",
+      "startSeconds": 0,
+      "endSeconds": 1837,
+      "sourceLabel": "Krystian Zimerman / Krystian Zimerman - Topic"
+    }
+  },
+  "liszt-ballade-s170-no1": {
+    "about": "1840년대 후반에 완성된 첫 번째 발라드로, 구체적 줄거리보다 대비되는 주제와 변형을 통해 서사적 긴장을 구축한다.",
+    "listeningTip": "침울한 하행 동기와 칸타빌레 주제가 교대하며 마지막에 영웅적으로 확대되는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "fp-g6AI2e2I",
+      "startSeconds": 0,
+      "endSeconds": 443,
+      "sourceLabel": "Tyler Hay / Tyler Hay - Topic"
+    }
+  },
+  "liszt-ballade-s171-no2": {
+    "about": "1853년에 완성된 대규모 발라드로, 종종 뷔르거의 《레노레》와 연결되지만 리스트가 명시한 고정 프로그램은 없다.",
+    "listeningTip": "반음계적 저음 주제가 되돌아올 때마다 커지는 위협과 서정 주제가 종결에서 변용되는 의미를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "aThjU95-mD4",
+      "startSeconds": 0,
+      "endSeconds": 823,
+      "sourceLabel": "Nelson Freire / Nelson Freire - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s160-no1": {
+    "about": "1835~1836년 스위스 여행의 인상을 바탕으로 한 《순례의 해 제1년: 스위스》에 속하며, 초기작을 대폭 개정해 1855년에 출판했다.",
+    "listeningTip": "낮은 음역의 선언이 넓은 화음과 트레몰로로 확장되는 과정, 영웅적 리듬과 목가적 메아리의 대비를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "iJEIEd2V3GI",
+      "startSeconds": 0,
+      "endSeconds": 375,
+      "sourceLabel": "Christian Chamorel / Christian Chamorel - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s160-no2": {
+    "about": "1835~1836년 스위스 여행의 인상을 바탕으로 한 《순례의 해 제1년: 스위스》에 속하며, 초기작을 대폭 개정해 1855년에 출판했다.",
+    "listeningTip": "일정한 물결 음형을 흔들지 않으면서 오른손의 긴 노래와 화성의 미세한 반사를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "-pm4PiguzxQ",
+      "startSeconds": 0,
+      "endSeconds": 186,
+      "sourceLabel": "Lazar Berman / Lazar Berman - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s160-no3": {
+    "about": "1835~1836년 스위스 여행의 인상을 바탕으로 한 《순례의 해 제1년: 스위스》에 속하며, 초기작을 대폭 개정해 1855년에 출판했다.",
+    "listeningTip": "민요풍 선율의 장식과 지속 저음이 만드는 열린 공간감, 꾸밈없는 프레이즈를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "mqzPwxKjioI",
+      "startSeconds": 0,
+      "endSeconds": 122,
+      "sourceLabel": "Leslie Howard / Leslie Howard - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s160-no4": {
+    "about": "1835~1836년 스위스 여행의 인상을 바탕으로 한 《순례의 해 제1년: 스위스》에 속하며, 초기작을 대폭 개정해 1855년에 출판했다.",
+    "listeningTip": "빠른 물방울 음형 사이로 선율이 자연스럽게 드러나고 사라지는 음색의 층을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "FafIAVlbi_0",
+      "startSeconds": 0,
+      "endSeconds": 213,
+      "sourceLabel": "Lazar Berman / Lazar Berman - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s160-no5": {
+    "about": "1835~1836년 스위스 여행의 인상을 바탕으로 한 《순례의 해 제1년: 스위스》에 속하며, 초기작을 대폭 개정해 1855년에 출판했다.",
+    "listeningTip": "급상승·급하강 음형과 강한 옥타브가 번개와 돌풍처럼 교대하는 방향감을 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Z1W3KfjH4P0",
+      "startSeconds": 0,
+      "endSeconds": 238,
+      "sourceLabel": "Lazar Berman / Lazar Berman - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s160-no6": {
+    "about": "1835~1836년 스위스 여행의 인상을 바탕으로 한 《순례의 해 제1년: 스위스》에 속하며, 초기작을 대폭 개정해 1855년에 출판했다.",
+    "listeningTip": "단순한 하행 동기가 독백·폭풍·장대한 찬가로 변형되는 긴 호흡과 침묵의 의미를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "9FmEZ8uWZjs",
+      "startSeconds": 0,
+      "endSeconds": 821,
+      "sourceLabel": "Nikolai Lugansky / Nikolai Lugansky - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s160-no7": {
+    "about": "1835~1836년 스위스 여행의 인상을 바탕으로 한 《순례의 해 제1년: 스위스》에 속하며, 초기작을 대폭 개정해 1855년에 출판했다.",
+    "listeningTip": "간결한 선율이 서로 다른 음역에서 메아리치고 장식되는 과정, 가벼운 흔들림을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "U8R3jEZaUmc",
+      "startSeconds": 0,
+      "endSeconds": 220,
+      "sourceLabel": "Leslie Howard / Leslie Howard - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s160-no8": {
+    "about": "1835~1836년 스위스 여행의 인상을 바탕으로 한 《순례의 해 제1년: 스위스》에 속하며, 초기작을 대폭 개정해 1855년에 출판했다.",
+    "listeningTip": "짧은 호소가 음역과 조성을 달리해 되돌아오며 기억의 거리감을 만드는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "HR1RAZUQ5SY",
+      "startSeconds": 0,
+      "endSeconds": 367,
+      "sourceLabel": "Lazar Berman / Lazar Berman - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s160-no9": {
+    "about": "1835~1836년 스위스 여행의 인상을 바탕으로 한 《순례의 해 제1년: 스위스》에 속하며, 초기작을 대폭 개정해 1855년에 출판했다.",
+    "listeningTip": "반복음이 종의 원근을 만들고 중간부의 노래가 점차 따뜻하게 확장되는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "ZlMBbDTmptk",
+      "startSeconds": 0,
+      "endSeconds": 378,
+      "sourceLabel": "Jenő Jandó / Jenő Jandó - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s161-no1": {
+    "about": "이탈리아 여행에서 받은 미술·문학의 인상을 피아노로 옮긴 《순례의 해 제2년: 이탈리아》에 속하며, 1830년대의 구상을 다듬어 1858년에 출판했다.",
+    "listeningTip": "소박한 선법적 주제가 종소리와 아르페지오를 더하며 장엄한 절정에 이르는 층위를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "sJ8-J3JqqkI",
+      "startSeconds": 0,
+      "endSeconds": 451,
+      "sourceLabel": "Yunchan Lim / Yunchan Lim - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s161-no2": {
+    "about": "이탈리아 여행에서 받은 미술·문학의 인상을 피아노로 옮긴 《순례의 해 제2년: 이탈리아》에 속하며, 1830년대의 구상을 다듬어 1858년에 출판했다.",
+    "listeningTip": "낮은 반복음과 엄격한 화음이 침묵을 둘러싸는 방식, 짧은 절정 뒤의 냉엄한 귀환을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "9tbdlXfAI44",
+      "startSeconds": 0,
+      "endSeconds": 245,
+      "sourceLabel": "Wilhelm Kempff / Wilhelm Kempff - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s161-no3": {
+    "about": "이탈리아 여행에서 받은 미술·문학의 인상을 피아노로 옮긴 《순례의 해 제2년: 이탈리아》에 속하며, 1830년대의 구상을 다듬어 1858년에 출판했다.",
+    "listeningTip": "왼손의 일정한 보행 리듬 위로 선율이 장식과 악센트를 바꾸며 성격을 만드는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "cfA017GVL_Q",
+      "startSeconds": 0,
+      "endSeconds": 166,
+      "sourceLabel": "Wilhelm Kempff / Wilhelm Kempff - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s161-no4": {
+    "about": "이탈리아 여행에서 받은 미술·문학의 인상을 피아노로 옮긴 《순례의 해 제2년: 이탈리아》에 속하며, 1830년대의 구상을 다듬어 1858년에 출판했다.",
+    "listeningTip": "반주 속 내성에서 태어난 선율이 높은 음역의 절정으로 옮겨 가는 벨칸토적 호흡을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "Ak__5SrqC_8",
+      "startSeconds": 0,
+      "endSeconds": 373,
+      "sourceLabel": "Yunchan Lim / Yunchan Lim - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s161-no5": {
+    "about": "이탈리아 여행에서 받은 미술·문학의 인상을 피아노로 옮긴 《순례의 해 제2년: 이탈리아》에 속하며, 1830년대의 구상을 다듬어 1858년에 출판했다.",
+    "listeningTip": "불안한 서주의 반음계와 넓은 칸타빌레가 충돌하고 화해하는 과정, 화음의 방향 전환을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "MjU4sMnMpw8",
+      "startSeconds": 0,
+      "endSeconds": 402,
+      "sourceLabel": "Lazar Berman / Lazar Berman - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s161-no6": {
+    "about": "이탈리아 여행에서 받은 미술·문학의 인상을 피아노로 옮긴 《순례의 해 제2년: 이탈리아》에 속하며, 1830년대의 구상을 다듬어 1858년에 출판했다.",
+    "listeningTip": "긴 선율의 숨결과 고음의 장식이 말의 억양처럼 움직이는 방식, 조용한 결말을 음미한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "B-pGo-O-DH0",
+      "startSeconds": 0,
+      "endSeconds": 432,
+      "sourceLabel": "Yunchan Lim / Yunchan Lim - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s161-no7": {
+    "about": "이탈리아 여행에서 받은 미술·문학의 인상을 피아노로 옮긴 《순례의 해 제2년: 이탈리아》에 속하며, 1830년대의 구상을 다듬어 1858년에 출판했다.",
+    "listeningTip": "반복되는 삼전음 동기가 지옥의 폭력, 비탄의 노래, 장대한 구원 주제로 변모하는 서사를 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "7i3Hm4oE5dY",
+      "startSeconds": 0,
+      "endSeconds": 951,
+      "sourceLabel": "Yunchan Lim / Yunchan Lim - Topic"
+    }
+  },
+  "liszt-venezia-e-napoli-s162-no1": {
+    "about": "《순례의 해 제2년》의 보유곡집으로 1859년에 최종 정리했으며, 베네치아와 나폴리의 노래·춤을 화려한 피아노 환상으로 재구성했다.",
+    "listeningTip": "바르카롤의 흔들림과 장식적인 선율이 서로 방해하지 않는 균형, 후반의 화려한 변주를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "5mOmw3lhDK0",
+      "startSeconds": 0,
+      "endSeconds": 367,
+      "sourceLabel": "Leslie Howard / Leslie Howard - Topic"
+    }
+  },
+  "liszt-venezia-e-napoli-s162-no2": {
+    "about": "《순례의 해 제2년》의 보유곡집으로 1859년에 최종 정리했으며, 베네치아와 나폴리의 노래·춤을 화려한 피아노 환상으로 재구성했다.",
+    "listeningTip": "단조 선율 아래의 불길한 반주와 점차 두터워지는 화음이 짧은 비극을 만드는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "59maZwAAJrs",
+      "startSeconds": 0,
+      "endSeconds": 230,
+      "sourceLabel": "Aldo Ciccolini / Aldo Ciccolini - Topic"
+    }
+  },
+  "liszt-venezia-e-napoli-s162-no3": {
+    "about": "《순례의 해 제2년》의 보유곡집으로 1859년에 최종 정리했으며, 베네치아와 나폴리의 노래·춤을 화려한 피아노 환상으로 재구성했다.",
+    "listeningTip": "반복 리듬의 속도감, 민요풍 중간 선율, 코다에서 겹겹이 쌓이는 옥타브와 화음의 상승을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "bEPo--vAFbU",
+      "startSeconds": 0,
+      "endSeconds": 547,
+      "sourceLabel": "Yundi / Yundi - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s163-no1": {
+    "about": "주로 리스트의 후기인 1860~1870년대에 쓰여 1883년에 출판된 《순례의 해 제3년》에 속하며, 화려함보다 종교적 명상·죽음·실험적 화성에 무게를 둔다.",
+    "listeningTip": "단순한 선율과 흔들리는 반주가 음역을 넓히며 빛을 얻는 과정, 침묵에 가까운 종결을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "neSxdgqSVbA",
+      "startSeconds": 0,
+      "endSeconds": 495,
+      "sourceLabel": "Zoltán Kocsis / Zoltán Kocsis - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s163-no2": {
+    "about": "주로 리스트의 후기인 1860~1870년대에 쓰여 1883년에 출판된 《순례의 해 제3년》에 속하며, 화려함보다 종교적 명상·죽음·실험적 화성에 무게를 둔다.",
+    "listeningTip": "반음계적 선율이 사이프러스처럼 위로 뻗고 두터운 화음으로 가라앉는 수직적 움직임을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "jz_pS2bVWxI",
+      "startSeconds": 0,
+      "endSeconds": 407,
+      "sourceLabel": "Alfred Brendel / Alfred Brendel - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s163-no3": {
+    "about": "주로 리스트의 후기인 1860~1870년대에 쓰여 1883년에 출판된 《순례의 해 제3년》에 속하며, 화려함보다 종교적 명상·죽음·실험적 화성에 무게를 둔다.",
+    "listeningTip": "긴 단선율이 불협화음과 트레몰로에 둘러싸이는 과정, 첫 번째 비가보다 더 노출된 고독을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "tfQ_Ui22CZA",
+      "startSeconds": 0,
+      "endSeconds": 463,
+      "sourceLabel": "Leslie Howard / Leslie Howard - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s163-no4": {
+    "about": "주로 리스트의 후기인 1860~1870년대에 쓰여 1883년에 출판된 《순례의 해 제3년》에 속하며, 화려함보다 종교적 명상·죽음·실험적 화성에 무게를 둔다.",
+    "listeningTip": "고음 아르페지오의 투명도와 선율이 물결 사이에서 떠오르는 층, 색채화음이 훗날 인상주의를 예고하는 순간을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "DPRLI7xOy_w",
+      "startSeconds": 0,
+      "endSeconds": 458,
+      "sourceLabel": "Hélène Grimaud / Hélène Grimaud - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s163-no5": {
+    "about": "주로 리스트의 후기인 1860~1870년대에 쓰여 1883년에 출판된 《순례의 해 제3년》에 속하며, 화려함보다 종교적 명상·죽음·실험적 화성에 무게를 둔다.",
+    "listeningTip": "불안정한 조성과 짧은 선율 파편이 응집해 장대한 절정이 되는 과정, 공허한 잔향을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "P38FsTjHpTY",
+      "startSeconds": 0,
+      "endSeconds": 525,
+      "sourceLabel": "Nikolai Evrov / Nikolai Evrov - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s163-no6": {
+    "about": "주로 리스트의 후기인 1860~1870년대에 쓰여 1883년에 출판된 《순례의 해 제3년》에 속하며, 화려함보다 종교적 명상·죽음·실험적 화성에 무게를 둔다.",
+    "listeningTip": "점음표 장송 리듬의 무게와 고음의 비명 같은 화음, 중간부의 잠깐 열린 추모를 대비한다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "hDt_0Zr1fqA",
+      "startSeconds": 0,
+      "endSeconds": 244,
+      "sourceLabel": "Leslie Howard / Leslie Howard - Topic"
+    }
+  },
+  "liszt-annees-de-pelerinage-s163-no7": {
+    "about": "주로 리스트의 후기인 1860~1870년대에 쓰여 1883년에 출판된 《순례의 해 제3년》에 속하며, 화려함보다 종교적 명상·죽음·실험적 화성에 무게를 둔다.",
+    "listeningTip": "낮은 음역에서 시작한 동기가 끈질기게 상승하고 밝아지며 확신에 찬 종결에 이르는 방향을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "nlHI5w2KTCY",
+      "startSeconds": 0,
+      "endSeconds": 172,
+      "sourceLabel": "Leslie Howard / Leslie Howard - Topic"
+    }
+  },
+  "liszt-legend-s175-no1": {
+    "about": "1863년에 완성한 두 곡의 《전설》로, 성 프란치스코에 관한 일화를 회화적 음향과 초월적 피아니즘으로 표현했다.",
+    "listeningTip": "트릴과 장식음으로 묘사한 새소리 사이에서 코랄 선율이 점차 힘과 권위를 얻는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "qrVtd8SjO3Y",
+      "startSeconds": 0,
+      "endSeconds": 623,
+      "sourceLabel": "Alfred Brendel / Alfred Brendel - Topic"
+    }
+  },
+  "liszt-legend-s175-no2": {
+    "about": "1863년에 완성한 두 곡의 《전설》로, 성 프란치스코에 관한 일화를 회화적 음향과 초월적 피아니즘으로 표현했다.",
+    "listeningTip": "물결치는 저음이 거세질수록 코랄 주제가 흔들림 없이 확대되어 승리하는 구조를 따라간다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "1-_JrQVAvWk",
+      "startSeconds": 0,
+      "endSeconds": 524,
+      "sourceLabel": "Alfred Brendel / Alfred Brendel - Topic"
+    }
+  },
+  "liszt-mephisto-waltz-s514-no1": {
+    "about": "1860년 무렵 레나우의 《파우스트》 중 ‘마을 선술집의 춤’을 바탕으로 쓴 작품으로, 네 곡 가운데 장면의 서사를 가장 구체적으로 따른다.",
+    "listeningTip": "불협화음의 조율 장면, 광폭한 춤, 유혹의 선율, 끝의 질주가 하나의 극적 장면으로 이어지는지 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "MEz2m_XL4js",
+      "startSeconds": 0,
+      "endSeconds": 713,
+      "sourceLabel": "Evgeny Kissin / Evgeny Kissin - Topic"
+    }
+  },
+  "liszt-mephisto-waltz-s515-no2": {
+    "about": "1880~1881년에 완성한 두 번째 메피스토 왈츠로, 구체적 줄거리보다 삼전음과 조성의 붕괴를 통해 악마적 춤을 현대적으로 압축한다.",
+    "listeningTip": "도입의 삼전음이 춤 전체를 오염시키고 마지막에 조성적 안정을 거부하는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "zXqoghlGzVQ",
+      "startSeconds": 0,
+      "endSeconds": 669,
+      "sourceLabel": "Kit Armstrong / Kit Armstrong - Topic"
+    }
+  },
+  "liszt-mephisto-waltz-s216-no3": {
+    "about": "1883년에 쓴 후기 작품으로, 제1번의 화려한 서사보다 압축된 동기와 불안정한 화성으로 메피스토적 세계를 재해석한다.",
+    "listeningTip": "짧은 동기가 끊기고 재결합하는 방식, 화려함 뒤에 남는 공허한 음향을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "p_jGufa7p6A",
+      "startSeconds": 0,
+      "endSeconds": 598,
+      "sourceLabel": "Kit Armstrong / Kit Armstrong - Topic"
+    }
+  },
+  "liszt-consolation-s172-no1": {
+    "about": "1849~1850년경 정리되어 1850년에 출판된 6곡의 서정 소품집으로, 화려한 기교보다 노래하는 선율과 종교적·내밀한 위안을 앞세운다.",
+    "listeningTip": "같은 화음이 되돌아올 때 내성의 움직임과 잔향이 정서를 조금씩 바꾸는 것을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "8rDTYTGMMaw",
+      "startSeconds": 0,
+      "endSeconds": 84,
+      "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
+    }
+  },
+  "liszt-consolation-s172-no2": {
+    "about": "1849~1850년경 정리되어 1850년에 출판된 6곡의 서정 소품집으로, 화려한 기교보다 노래하는 선율과 종교적·내밀한 위안을 앞세운다.",
+    "listeningTip": "선율과 반주의 균형, 중간의 짧은 고조가 기본적인 평온을 어떻게 흔드는지 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "461pErH8ce0",
+      "startSeconds": 0,
+      "endSeconds": 194,
+      "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
+    }
+  },
+  "liszt-consolation-s172-no3": {
+    "about": "1849~1850년경 정리되어 1850년에 출판된 6곡의 서정 소품집으로, 화려한 기교보다 노래하는 선율과 종교적·내밀한 위안을 앞세운다.",
+    "listeningTip": "왼손 아르페지오 위에 놓인 노래의 긴 호흡과 장식음이 감정을 과장하지 않고 피어나는 방식을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "a1E26wwblwA",
+      "startSeconds": 0,
+      "endSeconds": 255,
+      "sourceLabel": "Seong-Jin Cho / Seong-Jin Cho - Topic"
+    }
+  },
+  "liszt-consolation-s172-no4": {
+    "about": "1849~1850년경 정리되어 1850년에 출판된 6곡의 서정 소품집으로, 화려한 기교보다 노래하는 선율과 종교적·내밀한 위안을 앞세운다.",
+    "listeningTip": "단순한 주제의 반복에서 성부 배치와 화음의 온기가 달라지는 미세한 변화를 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "U1nJoXkA2Xw",
+      "startSeconds": 0,
+      "endSeconds": 195,
+      "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
+    }
+  },
+  "liszt-consolation-s172-no5": {
+    "about": "1849~1850년경 정리되어 1850년에 출판된 6곡의 서정 소품집으로, 화려한 기교보다 노래하는 선율과 종교적·내밀한 위안을 앞세운다.",
+    "listeningTip": "반주의 물결 속에서 중간 성부까지 노래하게 하고 절정 뒤 호흡이 가라앉는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "kz5YjL-QOTw",
+      "startSeconds": 0,
+      "endSeconds": 147,
+      "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
+    }
+  },
+  "liszt-consolation-s172-no6": {
+    "about": "1849~1850년경 정리되어 1850년에 출판된 6곡의 서정 소품집으로, 화려한 기교보다 노래하는 선율과 종교적·내밀한 위안을 앞세운다.",
+    "listeningTip": "반복 주제가 음역과 화음을 넓히며 얻는 무게, 마지막에 평온으로 돌아오는 균형을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "mYETftFpU_A",
+      "startSeconds": 0,
+      "endSeconds": 166,
+      "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
+    }
+  },
+  "liszt-liebestraum-s541-no1": {
+    "about": "1850년에 출판된 세 곡의 《사랑의 꿈》은 리스트 자신의 가곡을 피아노 독주곡으로 옮긴 작품으로, 제1·2곡은 루트비히 울란트의 시에서 출발한다.",
+    "listeningTip": "가곡에서 온 선율의 문장감과 중간부에서 음역이 넓어지며 사랑이 숭고한 찬가로 변하는 과정을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "D-N_uY6Npmk",
+      "startSeconds": 0,
+      "endSeconds": 457,
+      "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
+    }
+  },
+  "liszt-liebestraum-s541-no2": {
+    "about": "1850년에 출판된 세 곡의 《사랑의 꿈》은 리스트 자신의 가곡을 피아노 독주곡으로 옮긴 작품으로, 제1·2곡은 루트비히 울란트의 시에서 출발한다.",
+    "listeningTip": "부드러운 노래 아래 스민 장송의 그림자와 격정적 중간부 뒤 초월적으로 가라앉는 결말을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "W-AyObhHRKY",
+      "startSeconds": 0,
+      "endSeconds": 251,
+      "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
+    }
   }
 }

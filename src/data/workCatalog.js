@@ -34,6 +34,19 @@ export const workTypePatterns = {
   variations: /변주곡|주제와\s*변주|\bvariations?\b/i,
   fantasy: /환상곡|\bfantas(?:y|ia|ie)\b(?![\s-]+impromptu)/i,
   seasons: /사계|\b(?:the|four)\s+seasons\b|\bseasons\b/i,
+  kinderszenen: /어린이(?:의)?\s*정경|\bkinderszenen\b/i,
+  fantasiestucke: /환상소곡(?:집)?|\bfantasiestucke\b/i,
+  kreisleriana: /크라이슬레리아나|\bkreisleriana\b/i,
+  // Allegro alone remains a tempo label; this catalog entry explicitly names Op.8.
+  allegro: /(?:알레그로|\ballegro\b)(?=[^\n]*\bop[.:]?\s*8\b)/i,
+  arabeske: /아라베스크|\barabeske\b/i,
+  blumenstuck: /꽃의\s*곡|\bblumenstuck\b/i,
+  humoreske: /유모레스크|\bhumoreske\b/i,
+  'annees-de-pelerinage': /순례의\s*해|\bannees\s+de\s+pelerinage\b/i,
+  'venezia-e-napoli': /베네치아와\s*나폴리|\bvenezia\s+e\s+napoli\b/i,
+  legend: /전설|\blegends?\b/i,
+  'mephisto-waltz': /메피스토\s*왈츠|\bmephisto\s+waltz\b/i,
+  consolation: /위안|\bconsolations?\b/i,
 }
 
 // 기존 곡 ID를 변경하지 않고 악장 ID에서 부모 작품을 파생합니다.

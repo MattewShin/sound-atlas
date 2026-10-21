@@ -133,7 +133,7 @@ const aliasIn=(text,alias)=>{
   const escaped=normalizeMatchingText(alias).text.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
   return new RegExp(`(^|[^\\p{L}\\p{N}])${escaped}(?=$|[^\\p{L}\\p{N}])`,'iu').test(text)
 }
-const collectionsTypes=new Set(['etude','prelude','elegy','gymnopedie','liebestraum','impromptu','seasons'])
+const collectionsTypes=new Set(['etude','prelude','elegy','gymnopedie','liebestraum','impromptu','seasons','kinderszenen','fantasiestucke','kreisleriana','annees-de-pelerinage','venezia-e-napoli','legend','consolation'])
 const emptyDecision=(outcome,reasons,work_id=null)=>({track_id:null,work_id,catalog_id:null,relation:'AMBIGUOUS',outcome,reasons,confidence:'UNRESOLVED'})
 
 // All normalized variants constrain one decision. A more legible variant cannot

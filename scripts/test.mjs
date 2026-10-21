@@ -3,6 +3,7 @@ import '../src/data/recommendation.test.js'
 import '../src/data/composerSelection.test.js'
 import '../src/data/catalogAdditions.test.js'
 import '../src/data/catalogAdditions20261020.test.js'
+import '../src/data/catalogAdditions20261021.test.js'
 import '../src/data/mobileTypography.test.js'
 import '../src/data/halfPointRatings.test.js'
 import '../src/data/storage.test.js'
@@ -217,7 +218,10 @@ test('전체 활성곡 상세·보관함은 제목·별칭·감상 정보·이�
     assert.ok(html.includes(preview ? '음원 감상하기' : '미리듣기 준비 중'))
     assert.ok(html.includes(composerImages[track.composer]))
     assert.ok(!html.includes('<iframe'))
-    if (track.movement) assert.equal((html.match(new RegExp(track.movement, 'g')) ?? []).length, 1)
+    if (track.movement) {
+      const heading = html.match(/<h2[^>]*>([\s\S]*?)<\/h2>/)?.[1] || ''
+      assert.equal((heading.match(new RegExp(track.movement, 'g')) ?? []).length, 1)
+    }
     if (track.alias) assert.ok(html.includes(`<span class="track-alias"> [${track.alias}]</span></h2>`))
     if (track.summary) {
       assert.ok(html.includes(`<p class="track-detail-summary">${track.summary}</p>`))

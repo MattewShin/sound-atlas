@@ -9,7 +9,7 @@ const arrangement = /편곡|재편곡|\barr\.|\barranged\b|\btrans\.|transcripti
 const biography = /수상|콩쿠르|데뷔|과거|지난\s*\d|연주한\s*경력|연주했|performed\s+(?:in|at)|previously/i
 const namedComposer = /(?:[A-Z1]\.\s*)+(?:(?:de|van|von)\s+)?\p{Lu}[\p{L}-]+|^[가-힣]{2,6}\s*\(?\d{4}/u
 const types = Object.entries(workTypePatterns)
-const individuallyNumberedTypes = new Set(['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'polonaise', 'nocturne', 'rhapsody', 'capriccio', 'intermezzo', 'romance', 'variations', 'seasons'])
+const individuallyNumberedTypes = new Set(['etude', 'prelude', 'elegy', 'gymnopedie', 'liebestraum', 'impromptu', 'polonaise', 'nocturne', 'rhapsody', 'capriccio', 'intermezzo', 'romance', 'variations', 'seasons', 'kinderszenen', 'fantasiestucke', 'kreisleriana', 'annees-de-pelerinage', 'venezia-e-napoli', 'legend', 'consolation'])
 
 export const extractProgram = (rawText) => {
   const text = normalize(rawText).replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<br\s*\/?\s*>|<\/p>/gi, '\n').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ')
@@ -109,7 +109,8 @@ export const identifyEntry = (entry, work) => {
   const op = allOpus[0]
   if (aliases.length && !aliases.some(({ id }) => id === work.id)) return Number(op?.[1]) === work.opus
     ? { state: 'ambiguous', reason: '별칭과 작품번호가 서로 다른 작품을 가리켜 확인해야 해요.' } : { state: 'different' }
-  const catalogue = work.catalogue && text.match(new RegExp(`\\b${work.catalogue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.?\\s*(\\d+)`, 'i'))
+  const catalogue = work.catalogue && text.match(new RegExp(`\\b${work.catalogue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.?\\s*(\\d+)([a-z]?)`, 'i'))
+  if (catalogue?.[2]) return { state: 'ambiguous', reason: '작품목록 번호의 접미사를 확인해야 해요.' }
   if (work.opus !== null && work.opus !== undefined) {
     if (!op) return { state: 'ambiguous', reason: aliases.length ? '별칭은 연결되지만 작품번호를 확인하지 못해 확정하지 않았어요.' : '작품번호가 없어 작품을 확정할 수 없어요.' }
     if (Number(op[1]) !== work.opus || (op[2] || '').toLowerCase() !== (work.opusSuffix || '')) {
