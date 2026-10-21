@@ -36,14 +36,16 @@ export const createPipelineRuntime = ({env=process.env,signal,fetchImpl=fetch}={
     rollout:getProgramRollout(env),
     repository,client,worker,imageValidationKey:imageValidationKey(config),
     namespace:createHash('sha256').update(new URL(env.SUPABASE_URL).origin).digest('hex').slice(0,16),
-    async preflight({plan}){
+    async preflight({plan,deferPython=false}){
       if(Number(process.versions.node.split('.')[0])!==22)throw pipelineError('NODE_22_REQUIRED')
       try{await access(config.python);await access(join(config.cacheDirectory,'models','craft_mlt_25k.pth'));await access(join(config.cacheDirectory,'models','korean_g2.pth'))}
       catch{throw pipelineError('EASYOCR_PYTHON_OR_MODELS_MISSING')}
       const schema=await repository.preflight({plan})
-      if(!plan)await probePython(config,signal)
-      return {...schema,node:process.versions.node,python_file_checked:true,model_files_checked:true,python_dependencies_checked:!plan,kopis_authentication:plan?'NOT_CHECKED_IN_PLAN':'CHECKED_ON_FIRST_LIST_REQUEST'}
+      if(!plan&&!deferPython)await probePython(config,signal)
+      return {...schema,node:process.versions.node,python_file_checked:true,model_files_checked:true,python_dependencies_checked:!plan&&!deferPython,kopis_authentication:plan?'NOT_CHECKED_IN_PLAN':'CHECKED_ON_FIRST_LIST_REQUEST'}
     },
-    download:(url,options={})=>downloadKopisImage(url,{config,signal,fetchImpl,knownLimit:options.knownLimit}),
+    prepareOcr:({signal:stageSignal})=>probePython(config,stageSignal),
+    ocrStageRepository:stageSignal=>{const scoped=createPipelineRepository({...options,signal:stageSignal});return {ocr:scoped.ocr,ocrResult:scoped.ocrResult}},
+    download:(url,options={})=>downloadKopisImage(url,{config,signal:options.signal||signal,fetchImpl,knownLimit:options.knownLimit}),
   }
 }

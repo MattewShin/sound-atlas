@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
-import { mkdir } from 'node:fs/promises'
+import { mkdir,readFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { parsePipelineArgs, serializePipelineReport, safeCode, koreanTime } from '../server/pipelineConfig.mjs'
 import { acquirePipelineLock, createPipelineLocal } from '../server/pipelineLocal.mjs'
@@ -9,11 +9,14 @@ import { runConcertPipeline } from '../server/concertPipeline.mjs'
 import { collectionConditions } from '../server/concertCollectionConfig.mjs'
 import { MATCHER_VERSION,CATALOG_HASH } from '../server/programAnalysis.mjs'
 import {getProgramRollout} from '../server/programRollout.mjs'
+import {createAnalysisOnlyRuntime} from '../server/pipelineAnalysisOnly.mjs'
+import {validateProgramManifest} from '../server/programCanary.mjs'
+import {createMonotonicDeadline} from '../server/pipelineDeadline.mjs'
 
 const root=fileURLToPath(new URL('../',import.meta.url))
 process.chdir(root)
 const directory=join(root,'.cache','concert-pipeline')
-let lock,timer,heartbeat,local,report,selectedOptions
+let lock,deadline,heartbeat,local,report,selectedOptions
 const runId=randomUUID()
 const cliStarted=Date.now()
 const controller=new AbortController()
@@ -28,6 +31,8 @@ try {
   else if(command==='latest') console.log(serializePipelineReport(await createPipelineLocal(directory,'',process.env).latest()))
   else {
     const rollout=getProgramRollout()
+    const manifest=options.analysisOnly?validateProgramManifest(JSON.parse(await readFile(options.ocrManifestPath,'utf8'))):undefined
+    if(manifest&&(manifest.schema_version!=='program-ocr-manifest-2'||manifest.expected_count>options.analysisLimit))throw Object.assign(new Error('Invalid analysis-only manifest'),{code:'ANALYSIS_ONLY_MANIFEST_LIMIT'})
     if(command==='run'){
       console.log(JSON.stringify({event:'analysis_version',matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH,rollout}))
       lock=await acquirePipelineLock(directory,{runId})
@@ -39,17 +44,18 @@ try {
         started_at:koreanTime(cliStarted),finished_at:koreanTime(Date.now()),duration_ms:Date.now()-cliStarted,limits:options,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH}));process.exitCode=3}
     }
     if(command==='plan'||lock){
-      timer=setTimeout(()=>controller.abort('TIME_LIMIT'),options.maxSeconds*1000)
+      deadline=createMonotonicDeadline({durationMs:options.maxSeconds*1000,parentSignal:controller.signal})
       // Do not initialize credentials, KOPIS clients or Python for a gated run.
       const gated=command==='run'&&!rollout.scheduleEnabled
-      const runtime=gated?{rollout}:createPipelineRuntime({signal:controller.signal})
+      const runtime=gated?{rollout}:options.analysisOnly?createAnalysisOnlyRuntime({signal:deadline.signal,manifest}):createPipelineRuntime({signal:deadline.signal})
       local=createPipelineLocal(directory,runtime.namespace||'',process.env)
       if(lock)await local.recoverPrevious(lock.owner,lock.previousOwner)
       const state=gated?undefined:await local.readState()
-      report=await runConcertPipeline({runtime,local,state,options,plan:command==='plan',signal:controller.signal,runId,execution:lock?.owner,
+      report=await runConcertPipeline({runtime,local,state,options,plan:command==='plan',signal:deadline.signal,budget:deadline,runId,execution:lock?.owner,
         onProgress:({stages})=>console.log(JSON.stringify({event:'progress',matcher_version:MATCHER_VERSION,...Object.fromEntries(['cleanup','collection','ocr','analysis'].map(k=>[k,{succeeded:stages[k].succeeded,failed:stages[k].failed,reused:stages[k].reused}]))}))})
       console.log(serializePipelineReport(report));process.exitCode=report.exit_code
-      console.log(JSON.stringify({event:'pipeline_result',status:report.status,run_id:report.run_id}))
+      console.log(JSON.stringify({event:'pipeline_result',status:report.status,run_id:report.run_id,time_budget:report.time_budget,
+        ocr_time_budget_reached:report.stages.ocr.time_budget_reached||false}))
     }
   }
 }catch(error){
@@ -59,6 +65,6 @@ try {
   console.error(serializePipelineReport(report));process.exitCode=2
   if(lock){try{await mkdir(directory,{recursive:true});await (local||createPipelineLocal(directory,'',process.env)).saveReport(report)}catch{/* console remains available */}}
 }finally{
-  clearTimeout(timer);clearInterval(heartbeat);process.removeListener('SIGINT',onInt);process.removeListener('SIGTERM',onTerm);process.removeListener('SIGBREAK',onBreak)
+  deadline?.dispose();clearInterval(heartbeat);process.removeListener('SIGINT',onInt);process.removeListener('SIGTERM',onTerm);process.removeListener('SIGBREAK',onBreak)
   if(lock)await lock.release()
 }

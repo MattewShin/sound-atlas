@@ -83,11 +83,14 @@ export const createEasyOcrWorker = ({ config, spawnImpl = spawn, terminateImpl =
       if (pending) throw new CollectionError('OCR_WORKER_BUSY', 'Only sequential recognition is supported')
       signal?.throwIfAborted()
       await shutdown
+      signal?.throwIfAborted()
       await mkdir(config.tempDirectory, { recursive: true })
+      signal?.throwIfAborted()
       const id = randomUUID(), path = join(config.tempDirectory, id + '.png')
       const aborted = () => stop(new CollectionError('OCR_ABORTED', 'OCR was cancelled'))
       try {
         await writeFile(path, image.buffer)
+        signal?.throwIfAborted()
         const processChild = start()
         const job = new Promise((resolve, reject) => {
           pending = { id, resolve, reject, timer: setTimeout(() => stop(new CollectionError('EASYOCR_TIMEOUT', 'EasyOCR image timeout exceeded')), config.timeoutMs) }

@@ -84,7 +84,7 @@ export const createPipelineRepository = options => {
       if(!row)throw pipelineError('OCR_RESULT_MISSING')
       return row
     },
-    candidates(analysisId){return all('concert_program_candidates',{analysis_id:`eq.${analysisId}`},20,'id,analysis_id,track_id,review_status')},
+    candidates(analysisId){return all('concert_program_candidates',{analysis_id:`eq.${analysisId}`},20,'id,analysis_id,track_id,work_id,review_status')},
     async reviewSummary(pages){
       return all('concert_program_candidate_status', {analysis_is_current:'eq.true',effective_status:'eq.REVIEW_REQUIRED'},pages,
         'id,track_id,kopis_id,concert_title,analysis_id,matcher_version,catalog_hash,matching_catalog_hash,stale_reason')

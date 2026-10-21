@@ -27,6 +27,11 @@ test('Windows wrapper handles spaces, project-relative env/cwd, caps and native 
     assert.equal(profiled.status,3,profiled.stderr)
     const args=JSON.parse(profiled.stdout).args
     for(const [name,value] of [['collect-limit','20'],['ocr-limit','20'],['analysis-limit','20'],['image-checks','40'],['max-seconds','1800']])assert.equal(args[args.indexOf('--'+name)+1],value)
+    const only=execute(['-File',join(scripts,'Invoke-ConcertPipeline.ps1'),'-Mode','plan','-NodePath',process.execPath,'-Profile','analysis-only','-OcrManifest','pinned fixture.json'])
+    assert.equal(only.status,3,only.stderr)
+    const onlyArgs=JSON.parse(only.stdout).args
+    assert.ok(onlyArgs.includes('--analysis-only'));assert.equal(onlyArgs[onlyArgs.indexOf('--ocr-manifest')+1],'pinned fixture.json')
+    assert.equal(onlyArgs[onlyArgs.indexOf('--analysis-limit')+1],'40');assert.equal(onlyArgs[onlyArgs.indexOf('--max-seconds')+1],'600')
   }finally{assert.ok(resolve(directory).startsWith(resolve(tmpdir())+sep)&&basename(directory).startsWith('atlas-pipeline-'));await rm(directory,{recursive:true,force:true})}
 })
 
@@ -84,13 +89,14 @@ test('Windows run wrapper waits for Node, drains stdout/stderr, writes atomic re
     await mkdir(scripts,{recursive:true});await copyFile('scripts/Invoke-ConcertPipeline.ps1',join(scripts,'Invoke-ConcertPipeline.ps1'))
     await copyFile('scripts/WindowsBatchPower.ps1',join(scripts,'WindowsBatchPower.ps1'))
     await writeFile(join(directory,'.env'),'PIPELINE_TEST_MARKER=fixture\n')
-    await writeFile(join(scripts,'runConcertPipeline.mjs'),`console.log(JSON.stringify({event:'analysis_version',matcher_version:'stored-program-3',catalog_hash:'fixture-hash'}));console.log('O'.repeat(100000));console.error('E'.repeat(100000));setTimeout(()=>{console.log(JSON.stringify({launch:process.env.CLASSIC_ATLAS_LAUNCH_ID,marker:process.env.PIPELINE_TEST_MARKER}));process.exitCode=1},150)`)
+    await writeFile(join(scripts,'runConcertPipeline.mjs'),`console.log(JSON.stringify({event:'analysis_version',matcher_version:'stored-program-3',catalog_hash:'fixture-hash'}));console.log('O'.repeat(100000));console.error('E'.repeat(100000));setTimeout(()=>{console.log(JSON.stringify({launch:process.env.CLASSIC_ATLAS_LAUNCH_ID,marker:process.env.PIPELINE_TEST_MARKER}));console.log(JSON.stringify({event:'pipeline_result',status:'PARTIAL',time_budget:{clock:'MONOTONIC',analysis_and_finalize_reserve_seconds:180,overrun_ms:0},ocr_time_budget_reached:true}));process.exitCode=1},150)`)
     const result=execute(['-File',join(scripts,'Invoke-ConcertPipeline.ps1'),'-Mode','run','-NodePath',process.execPath])
     assert.equal(result.status,1,result.stderr.slice(-1000));assert.ok(result.stdout.includes('fixture'))
     let files=await readdir(launches);assert.equal(files.some(f=>f.endsWith('.tmp')),false)
     const receipt=JSON.parse(await readFile(join(launches,files.find(f=>f.endsWith('.json'))),'utf8'))
     assert.equal(receipt.status,'PARTIAL');assert.equal(receipt.node_exit_code,1)
     assert.equal(receipt.matcher_version,'stored-program-3');assert.equal(receipt.catalog_hash,'fixture-hash')
+    assert.equal(receipt.time_budget.analysis_and_finalize_reserve_seconds,180);assert.equal(receipt.ocr_time_budget_reached,true)
     assert.equal(receipt.system_awake.activation_succeeded,true)
     assert.equal(receipt.system_awake.release_succeeded,true)
     assert.equal(receipt.system_awake.display_required,false)

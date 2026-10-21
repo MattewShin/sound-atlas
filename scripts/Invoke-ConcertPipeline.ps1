@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
   [ValidateSet('plan','run','latest','help')][string]$Mode = 'plan',
-  [ValidateSet('custom','initial','daily')][string]$Profile = 'custom',
+  [ValidateSet('custom','initial','daily','analysis-only')][string]$Profile = 'custom',
+  [string]$OcrManifest,
   [string]$NodePath,
   [ValidateRange(1,1000)][int]$CleanupLimit = 100,
   [ValidateRange(1,1000)][int]$CollectLimit = 10,
@@ -17,7 +18,13 @@ $ErrorActionPreference = 'Stop'
 if ($Profile -ne 'custom') {
   $profileValues = @{ CollectLimit = $(if ($Profile -eq 'initial') { 20 } else { 10 }); OcrLimit = 20; AnalysisLimit = 20; ImageChecks = 40; MaxSeconds = 1800 }
   foreach ($name in $profileValues.Keys) { if (-not $PSBoundParameters.ContainsKey($name)) { Set-Variable -Name $name -Value $profileValues[$name] } }
+  if ($Profile -eq 'analysis-only') {
+    if (-not $PSBoundParameters.ContainsKey('AnalysisLimit')) { $AnalysisLimit = 40 }
+    if (-not $PSBoundParameters.ContainsKey('MaxSeconds')) { $MaxSeconds = 600 }
+  }
 }
+if ($Profile -eq 'analysis-only' -and $Mode -in @('plan','run') -and -not $OcrManifest) { throw 'Analysis-only requires an explicit pinned OCR manifest.' }
+if ($OcrManifest -and $Profile -ne 'analysis-only') { throw 'OCR manifest is only supported with analysis-only.' }
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $pipelineExit = 2
 function Quote-NativeArgument([string]$Value) {
@@ -40,6 +47,7 @@ try {
   try {
     $nodeArguments = @("--env-file-if-exists=$envFile", $entry, $Mode)
     if ($Mode -in @('run','plan')) {
+      if ($Profile -eq 'analysis-only') { $nodeArguments += @('--analysis-only', '--ocr-manifest', $OcrManifest) }
       $nodeArguments += @('--collect-limit', "$CollectLimit", '--ocr-limit', "$OcrLimit", '--analysis-limit', "$AnalysisLimit", '--list-pages', "$ListPages", '--db-pages', "$DbPages", '--image-checks', "$ImageChecks", '--max-seconds', "$MaxSeconds", '--recheck-hours', "$RecheckHours", '--cleanup-limit', "$CleanupLimit")
     }
     if ($Mode -ne 'run') {
@@ -118,6 +126,14 @@ try {
         $receipt.node_exit_code_unsigned = [uint32]([long]$pipelineExit -band 0xffffffffL)
         $receipt.node_finished_at = $nodeProcess.ExitTime.ToUniversalTime().ToString('o')
         $receipt.status = switch ($pipelineExit) { 0 {'SUCCESS'} 1 {'PARTIAL'} 2 {'FATAL'} 3 {'DUPLICATE_SKIPPED'} default {if ($receipt.node_exit_code_unsigned -eq 3221225786) {'EXTERNAL_CONTROL_TERMINATION'} else {'NATIVE_EXIT_FAILURE'}} }
+        $budgetLine = [IO.File]::ReadLines($stdoutPath) | Where-Object { $_ -match '"event":"pipeline_result"' } | Select-Object -Last 1
+        if ($budgetLine) {
+          try {
+            $budgetResult = $budgetLine | ConvertFrom-Json
+            $receipt.time_budget = $budgetResult.time_budget
+            $receipt.ocr_time_budget_reached = $budgetResult.ocr_time_budget_reached
+          } catch { $receipt.result_record_error = 'RESULT_EVENT_INVALID' }
+        }
         if ($pipelineExit -eq 0) {
           $resultLine = [IO.File]::ReadLines($stdoutPath) | Where-Object { $_ -match '"event":"pipeline_result"' } | Select-Object -Last 1
           if ($resultLine) {

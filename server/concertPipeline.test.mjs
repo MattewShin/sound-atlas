@@ -16,6 +16,7 @@ import { getOcrImageConfig } from './ocrImageConfig.mjs'
 import { downloadKopisImage, imageValidationKey } from './kopisImageDownload.mjs'
 import { ocrSelection } from './pipelineSelection.mjs'
 import { CollectionError } from './collectionHttp.mjs'
+import { createMonotonicDeadline } from './pipelineDeadline.mjs'
 
 const base=Date.parse('2026-10-15T00:00:00Z')
 const cleanup=async path=>{assert.ok(resolve(path).startsWith(resolve(tmpdir())+sep)&&basename(path).startsWith('atlas-pipeline-'));await rm(path,{recursive:true,force:true})}
@@ -63,7 +64,7 @@ const harness=()=>{
       async reviewSummary(){calls.push('reviews');return data.candidates.filter(c=>c.review_status==='REVIEW_REQUIRED').map(c=>{const a=data.analyses.find(a=>a.id===c.analysis_id),concert=data.concerts.find(x=>x.id===a.concert_id);return {...c,matcher_version:a.matcher_version,catalog_hash:a.catalog_hash,stale_reason:a.is_current?null:'ANALYSIS_SUPERSEDED',kopis_id:concert.kopis_id,concert_title:concert.title}})},
     },
   }
-  const run=(options={},plan=false,signal)=>runConcertPipeline({runtime,local,state,options:{...PIPELINE_DEFAULTS,...options},plan,now:()=>time,signal})
+  const run=(options={},plan=false,signal,clockOptions={})=>runConcertPipeline({runtime,local,state,options:{...PIPELINE_DEFAULTS,...options},plan,now:()=>time,signal,...clockOptions})
   return {runtime,local,state,data,calls,reports,run,advance:ms=>{time+=ms}}
 }
 
@@ -405,12 +406,87 @@ test('deadline preserves completed checkpoints and does not complete or back off
 
 test('deadline after image download starts no OCR or FAILED write and leaves the unfinished priority slot uncommitted',async()=>{
   const h=harness(),download=h.runtime.download
-  h.runtime.download=async url=>{const value=await download(url);h.advance(31000);return value}
-  const result=await h.run({collectLimit:2,ocrLimit:2,maxSeconds:30})
+  h.runtime.download=async url=>{const value=await download(url);h.advance(211000);return value}
+  const result=await h.run({collectLimit:2,ocrLimit:2,maxSeconds:210})
   assert.equal(result.status,'PARTIAL');assert.equal(result.time_limit_reached,true)
   assert.equal(h.calls.includes('recognize'),false);assert.equal(h.calls.includes('saveOcr'),false)
   assert.equal(h.state.priority.ocr,undefined);assert.equal(h.data.attempts.length,0)
-  assert.equal(result.stages.ocr.duration_ms,31000)
+  assert.equal(result.stages.ocr.duration_ms,211000)
+})
+
+test('fast OCR keeps its count cap and reports the reserved monotonic window',async()=>{
+  const h=harness(),r=await h.run({collectLimit:3,ocrLimit:3,maxSeconds:1800})
+  assert.equal(r.status,'SUCCESS');assert.equal(r.stages.ocr.succeeded,3);assert.equal(r.stages.analysis.succeeded,3)
+  assert.equal(r.stages.ocr.time_budget.stage_deadline_elapsed_ms,1620000)
+  assert.equal(r.stages.ocr.time_budget.processing_deadline_elapsed_ms,1615000)
+  assert.equal(r.stages.ocr.time_budget_reached,false)
+})
+
+test('no remaining OCR budget starts neither Python preparation nor recognition, and analyzes stored OCR',async()=>{
+  const h=harness();await h.run({collectLimit:1,ocrLimit:1})
+  h.data.analyses=[];h.data.candidates=[];h.calls.length=0
+  h.runtime.preflight=async()=>{h.advance(1620000);return {python_dependencies_checked:false}}
+  h.runtime.client.list=async()=>[]
+  h.runtime.prepareOcr=async()=>assert.fail('Python must not start')
+  h.runtime.worker.recognize=async()=>assert.fail('OCR must not start')
+  const r=await h.run({maxSeconds:1800})
+  assert.equal(r.stages.ocr.time_budget_reached,true);assert.equal(r.stages.ocr.checked,0)
+  assert.equal(r.stages.ocr.termination_reason,'OCR_STAGE_BUDGET_EXHAUSTED')
+  assert.equal(r.stages.analysis.succeeded,1);assert.equal(r.stages.analysis.remaining_total_budget_ms_at_start,180000)
+  assert.equal(r.errors.length,0);assert.equal(r.time_limit_reached,false);assert.equal(r.last_completed_stage,'analysis')
+})
+
+const syntheticTimers=()=>{
+  const pending=new Set()
+  return {factory:opts=>createMonotonicDeadline({...opts,setTimer:fn=>{pending.add(fn);return fn},clearTimer:fn=>pending.delete(fn)}),
+    fire(){for(const fn of [...pending]){pending.delete(fn);fn()}},pending}
+}
+test('inflight OCR stage abort stops only the worker, keeps successful OCR for same-run analysis and leaves cancelled slots retryable',async()=>{
+  const h=harness(),timers=syntheticTimers(),recognize=h.runtime.worker.recognize
+  let n=0,stopped=0
+  h.runtime.worker.recognize=(image,{signal})=>{
+    if(++n===1)return recognize(image)
+    return new Promise((resolve,reject)=>{
+      signal.addEventListener('abort',()=>{stopped++;reject(new CollectionError('OCR_ABORTED','fixture cancellation'))},{once:true})
+      h.advance(1615000);timers.fire()
+    })
+  }
+  const r=await h.run({collectLimit:3,ocrLimit:3,maxSeconds:1800},false,undefined,{deadlineFactory:timers.factory})
+  assert.equal(stopped,1);assert.equal(n,2)
+  assert.equal(r.stages.ocr.failed,0);assert.equal(r.stages.ocr.succeeded,1);assert.equal(r.stages.ocr.budget_cancelled_images,1)
+  assert.equal(h.data.attempts.length,1);assert.ok(h.data.attempts.every(a=>a.status==='SUCCEEDED'))
+  assert.equal(r.stages.analysis.succeeded,1);assert.ok(r.stages.analysis.remaining_total_budget_ms_at_start>=180000)
+  assert.equal(r.stages.ocr.remaining.known_unprocessed,2);assert.equal(r.stages.ocr.deferred_targets.length,2)
+  for(const target of r.stages.ocr.deferred_targets){assert.equal(h.state.retries['ocr:'+target.image_id],undefined);assert.equal(h.state.touched['ocr:'+target.image_id],undefined)}
+  const eligible=ocrSelection(h.data,h.state,base+1615000,24,h.runtime.imageValidationKey).ready
+  assert.ok(r.stages.ocr.deferred_targets.every(t=>eligible.some(i=>i.id===t.image_id)))
+  assert.equal(r.errors.length,0);assert.equal(r.exit_code,1);assert.equal(r.time_limit_reached,false)
+  assert.equal(r.last_completed_stage,'analysis');assert.ok(r.finished_at);assert.equal(h.reports.at(-1).finished_at,r.finished_at)
+  assert.equal(timers.pending.size,0)
+})
+test('stage cutoff after download starts no recognition, creates no failed attempt and still reaches analysis',async()=>{
+  const h=harness(),download=h.runtime.download
+  h.runtime.download=async(...args)=>{const result=await download(...args);h.advance(1615000);return result}
+  const r=await h.run({collectLimit:2,ocrLimit:2,maxSeconds:1800})
+  assert.equal(r.stages.ocr.time_budget_reached,true);assert.equal(h.calls.includes('recognize'),false)
+  assert.equal(h.data.attempts.length,0);assert.equal(h.state.priority.ocr,undefined)
+  assert.equal(r.stages.analysis.status,'SUCCEEDED');assert.equal(r.stages.ocr.failed,0)
+})
+test('real image timeout still writes a FAILED attempt and cooldown while other successes are analyzed',async()=>{
+  const h=harness(),recognize=h.runtime.worker.recognize;let n=0
+  h.runtime.worker.recognize=(...args)=>++n===1?Promise.reject(new CollectionError('EASYOCR_TIMEOUT','fixture timeout')):recognize(...args)
+  const r=await h.run({collectLimit:2,ocrLimit:2,maxSeconds:1800})
+  assert.equal(r.stages.ocr.time_budget_reached,false);assert.equal(r.stages.ocr.failed,1)
+  const failed=h.data.attempts.find(a=>a.status==='FAILED');assert.equal(failed.error_code,'EASYOCR_TIMEOUT')
+  assert.ok(h.state.retries['ocr:'+failed.image_id].until>base);assert.equal(r.stages.analysis.succeeded,1)
+})
+test('a success committed before an interrupted save response remains available to same-run analysis without FAILED/cooldown',async()=>{
+  const h=harness(),timers=syntheticTimers(),save=h.runtime.repository.ocr.saveAttempt
+  h.runtime.repository.ocr.saveAttempt=async(...args)=>{await save(...args);h.advance(1615000);timers.fire();throw new CollectionError('BATCH_INTERRUPTED','fixture lost response')}
+  const r=await h.run({collectLimit:1,ocrLimit:1,maxSeconds:1800},false,undefined,{deadlineFactory:timers.factory})
+  assert.equal(h.data.attempts.length,1);assert.equal(h.data.attempts[0].status,'SUCCEEDED')
+  assert.equal(r.stages.ocr.failed,0);assert.equal(r.stages.analysis.succeeded,1)
+  assert.equal(h.state.retries['ocr:'+h.data.images[0].id],undefined)
 })
 
 test('lock excludes live owners regardless of age, recovers dead owner and releases safely',async()=>{

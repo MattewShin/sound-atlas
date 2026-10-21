@@ -141,6 +141,21 @@ test('Python subprocess receives no server keys, times out, is killed, and clean
   } finally { w.close(); await rmdir(directory) }
 })
 
+test('stage cancellation terminates only the owned worker object, drains shutdown and removes its temporary image',async()=>{
+  const directory=await mkdtemp(join(tmpdir(),'atlas-easyocr-test-')),controller=new AbortController(),terminated=[]
+  let started
+  const ready=new Promise(resolve=>{started=resolve}),unrelated={kind:'Vite/other Python',stopped:false}
+  const owned=new EventEmitter();owned.stdin=new PassThrough();owned.stdout=new PassThrough();owned.stderr=new PassThrough()
+  const w=createEasyOcrWorker({config:{...getEasyOcrConfig({}),tempDirectory:directory},
+    spawnImpl:()=>{started();return owned},terminateImpl:child=>{terminated.push(child);return Promise.resolve()}})
+  try{
+    const cancelled=assert.rejects(w.recognize(downloaded,{signal:controller.signal}),{code:'OCR_ABORTED'})
+    await ready;controller.abort('OCR_STAGE_BUDGET_EXHAUSTED');await cancelled;await w.close();await w.close()
+    assert.deepEqual(terminated,[owned]);assert.equal(unrelated.stopped,false)
+    assert.deepEqual(await readdir(directory),[])
+  }finally{await w.close();await rmdir(directory)}
+})
+
 test('download enforces KOPIS source, streams byte caps, validates pixels and hashes original bytes', async () => {
   const buffer = await sharp({ create: { width: 8, height: 12, channels: 3, background: 'white' } }).png().toBuffer()
   const config = getEasyOcrConfig({})

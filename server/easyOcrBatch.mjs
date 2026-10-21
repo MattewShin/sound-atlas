@@ -28,6 +28,7 @@ const processImage = async (image, { repository, download, worker, dryRun, force
     stage = 'cache'
     // Hash current bytes even for known URLs; a changed image must be recognized again.
     const cached = !dryRun && !force && await repository.findResult(image.id, downloaded.contentHash)
+    check()
     if (cached) {
       await onCached?.({ image, cached, downloaded, startedAt, finishedAt: now() })
       onProgress({ event: 'cached', imageId: image.id })
@@ -40,6 +41,10 @@ const processImage = async (image, { repository, download, worker, dryRun, force
     outcome.recognized = 1
   } catch (error) {
     if (signal?.aborted || error.code === 'BATCH_INTERRUPTED') return { ...outcome, cancelled: true }
+    try { check() } catch (boundary) {
+      if(signal?.aborted||boundary.code==='BATCH_INTERRUPTED')return {...outcome,cancelled:true}
+      throw boundary
+    }
     outcome.attempted = 1
     const failure = { imageId: image.id, kopisId: image.concerts.kopis_id, stage,
       code: error instanceof CollectionError ? error.code : 'EASYOCR_FAILED',
@@ -58,9 +63,11 @@ const processImage = async (image, { repository, download, worker, dryRun, force
 
   if (!dryRun) {
     try {
+      check()
       await repository.saveAttempt(attempt('SUCCEEDED'), { ...result, settings: EASYOCR_SETTINGS })
       outcome.saved = 1
     } catch (error) {
+      if(signal?.aborted||error.code==='BATCH_INTERRUPTED')return {...outcome,cancelled:true}
       outcome.failure = { imageId: image.id, kopisId: image.concerts.kopis_id, stage: 'save',
         code: error instanceof CollectionError ? error.code : 'OCR_SAVE_FAILED', reason: 'OCR succeeded but DB result write failed' }
     }
