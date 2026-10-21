@@ -1,4 +1,5 @@
 import { composerPatterns, composerIdentityText, workTypePatterns, workCatalog, musicalKeysIn, getTrackTarget } from '../src/data/workCatalog.js'
+import { parseCatalogueNumber } from './programCatalogueNumber.mjs'
 
 const unique = values => [...new Set(values)]
 const plain = value => String(value || '').normalize('NFKC').normalize('NFD').replace(/[\u0300-\u036f]/g,'').normalize('NFC')
@@ -174,7 +175,7 @@ export const matchNormalizedProgramWork = (identity,declaredComposer,{catalog=wo
   for(const w of works){
     const reject=[]
     const expected=[...(w.opus!==null&&w.opus!==undefined?[{system:'OP',number:w.opus,suffix:w.opusSuffix||'',part:w.opusPart||null}]:[]),
-      ...(w.catalogue?[{system:String(w.catalogue).toUpperCase().replace('KV','K'),number:w.catalogueNumber,suffix:'',part:null}]:[])]
+      ...(w.catalogue?[{system:String(w.catalogue).toUpperCase().replace('KV','K'),...parseCatalogueNumber(w.catalogueNumber),part:null}]:[])]
     const compatible=(c,e)=>c.system===e.system&&c.number===e.number&&(c.suffix||'')===(e.suffix||'')&&(!c.part||c.part===e.part)&&(!c.section||c.section===e.section)
     const catalogueMatch=catalogues.length&&catalogues.every(c=>expected.some(e=>compatible(c,e)))
     if(expected.length&&!catalogueMatch)reject.push(catalogues.length?'CATALOGUE_MISMATCH':'CATALOGUE_REQUIRED')

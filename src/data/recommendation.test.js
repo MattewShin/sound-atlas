@@ -40,7 +40,7 @@ test('사용자 제공 62곡의 제목·558개 점수·요약·배경·감상 �
 test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출처가 확정 CSV와 전부 일치한다', () => {
   const rows = readFileSync(new URL('../../data/manual/manual-emotions-v1.csv', import.meta.url), 'utf8').trim().split(/\r?\n/)
   assert.deepEqual(rows.shift().split(',').slice(2), emotionKeys)
-  assert.equal(rows.length, 290)
+  assert.equal(rows.length, 291)
   assert.equal(tracks.length, rows.length)
   assert.equal(new Set(tracks.map(({ id }) => id)).size, rows.length)
   assert.equal(tracks.filter((track) => track.composer === '쇼팽').length, 75)
@@ -48,7 +48,7 @@ test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출�
   assert.equal(tracks.filter((track) => track.composer === '모차르트').length, 15)
   assert.equal(tracks.filter((track) => track.composer === '라흐마니노프').length, 4)
   assert.equal(tracks.filter((track) => track.composer === '사티').length, 3)
-  assert.equal(tracks.filter((track) => track.composer === '리스트').length, 66)
+  assert.equal(tracks.filter((track) => track.composer === '리스트').length, 67)
   assert.equal(tracks.filter((track) => track.composer === '베토벤').length, 21)
   assert.equal(tracks.filter((track) => track.composer === '슈베르트').length, 8)
   assert.equal(tracks.filter((track) => track.composer === '슈만').length, 48)
@@ -344,7 +344,7 @@ test('작곡가 이미지와 활성 상세 연결이 유효하고 진단도 새 
   }
   assert.ok(Object.keys(trackDetails).every((id) => tracks.some((track) => track.id === id)))
   assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview && track.composer === '베토벤').length, 21)
-  assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview).length, 290)
+  assert.equal(tracks.filter((track) => trackDetails[track.id]?.shortPreview).length, 291)
   assert.deepEqual(buildRecommendationDiagnosis().emotions.map(({ key }) => key), emotionKeys)
 })
 

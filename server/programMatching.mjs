@@ -1,5 +1,6 @@
 import { composerPatterns, composerIdentityText, workTypePatterns, workCatalog, getTrackTarget, musicalKeysIn } from '../src/data/workCatalog.js'
 import { checkProgramContext } from './programContext.mjs'
+import { parseCatalogueNumber } from './programCatalogueNumber.mjs'
 
 const normalize = (text) => String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC')
 const heading = /^\s*[\[【]?(?:(?:전체|일부|full|complete|partial)\s*)?(?:프로그램|연주\s*곡목|곡목|program(?:me)?|[12]\s*부\s*(?:연주\s*곡목)?|part\s*[12]|오늘\s*연주할\s*작품)(?:\s|[\]】:：]|$)/i
@@ -110,7 +111,6 @@ export const identifyEntry = (entry, work) => {
   if (aliases.length && !aliases.some(({ id }) => id === work.id)) return Number(op?.[1]) === work.opus
     ? { state: 'ambiguous', reason: '별칭과 작품번호가 서로 다른 작품을 가리켜 확인해야 해요.' } : { state: 'different' }
   const catalogue = work.catalogue && text.match(new RegExp(`\\b${work.catalogue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.?\\s*(\\d+)([a-z]?)`, 'i'))
-  if (catalogue?.[2]) return { state: 'ambiguous', reason: '작품목록 번호의 접미사를 확인해야 해요.' }
   if (work.opus !== null && work.opus !== undefined) {
     if (!op) return { state: 'ambiguous', reason: aliases.length ? '별칭은 연결되지만 작품번호를 확인하지 못해 확정하지 않았어요.' : '작품번호가 없어 작품을 확정할 수 없어요.' }
     if (Number(op[1]) !== work.opus || (op[2] || '').toLowerCase() !== (work.opusSuffix || '')) {
@@ -127,7 +127,8 @@ export const identifyEntry = (entry, work) => {
   if (work.catalogue) {
     const exactOpusAndNumber = Number(op?.[1]) === work.opus && numbers.includes(work.number)
     if (!catalogue && !exactOpusAndNumber) return { state: 'ambiguous', reason: '작품목록 번호를 확인해야 해요.' }
-    if (catalogue && Number(catalogue[1]) !== work.catalogueNumber) return { state: 'different' }
+    const expected = parseCatalogueNumber(work.catalogueNumber)
+    if (catalogue && (Number(catalogue[1]) !== expected.number || (catalogue[2] || '').toLowerCase() !== expected.suffix)) return { state: 'different' }
   }
   const needsNumber = individuallyNumberedTypes.has(work.type) && work.number != null
   const needsOpusNumber = ['sonata', 'ballade', 'piano-concerto'].includes(work.type) && work.number != null

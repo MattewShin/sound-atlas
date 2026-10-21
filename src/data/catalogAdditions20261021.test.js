@@ -25,8 +25,36 @@ const newTypes=new Set(['kinderszenen','fantasiestucke','kreisleriana','allegro'
 const catalog=()=>({...JSON.parse(CATALOG_JSON),catalog_hash:CATALOG_HASH})
 const seconds=s=>{assert.match(s,/^\d+:[0-5]\d$/);const [m,n]=s.split(':').map(Number);return m*60+n}
 
-test('101 new tracks preserve all 909 supplied scores, bilingual titles, prose and recording segments',()=>{
- assert.equal(input.length,101);assert.equal(newIds.size,101);assert.equal(new Set(tracks.map(t=>t.id)).size,tracks.length)
+test('S.216b has its own stable identity and preserves all 251 previously registered work hashes',()=>{
+ const id='liszt-mephisto-waltz-s216b-no4',current=catalog(),previous=JSON.parse(CATALOG_JSON)
+ delete previous.works[id];previous.targets=previous.targets.filter(t=>t.workId!==id)
+ assert.equal(createHash('sha256').update(JSON.stringify(previous)).digest('hex'),'5809fffe954f1720640817622ef03a4f3385fa289d83ed2d041f2ca2b09e0e50')
+ assert.equal(Object.keys(previous.works).length,251)
+ for(const workId of Object.keys(previous.works))assert.equal(workIdentity(current,workId).hash,workIdentity(previous,workId).hash,workId)
+ const hash=workIdentity(current,id).hash
+ current.works[id].catalogueNumber='216'
+ assert.notEqual(workIdentity(current,id).hash,hash)
+ for(const workId of Object.keys(previous.works))assert.equal(workIdentity(current,workId).hash,workIdentity(previous,workId).hash,workId)
+})
+
+test('Mephisto S.216b matches bilingual suffix variants without crossing S.216, numbers or arrangements',()=>{
+ const id='liszt-mephisto-waltz-s216b-no4',other='liszt-mephisto-waltz-s216-no3'
+ for(const title of ['Liszt Mephisto Waltz No.4 S.216b','F. Liszt Mephisto Waltz Nr.4 S 216B','리스트 메피스토 왈츠 제4번 S.216b']){
+  const m=matchIdentity(extractIdentity(title),'리스트')[0]
+  assert.equal(m.work_id,id);assert.equal(m.relation,'EXACT')
+  assert.equal(matchConcertToTrack({programEvidence:{text:'PROGRAM\n'+title,imageUrls:[]}},id).status,'matched')
+  assert.notEqual(matchConcertToTrack({programEvidence:{text:'PROGRAM\n'+title,imageUrls:[]}},other).status,'matched')
+ }
+ for(const title of ['Liszt Mephisto Waltz No.4 S.216','Liszt Mephisto Waltz No.3 S.216b','Liszt Mephisto Waltz No.4 S.216c','Liszt Mephisto Waltz No.4','Mephisto Waltz No.4 S.216b','Liszt Mephisto Waltz No.4 S.216b arranged for two pianos']){
+  const m=matchIdentity(extractIdentity(title))[0]
+  assert.ok(m.work_id!==id||m.relation!=='EXACT',title)
+  assert.notEqual(matchConcertToTrack({programEvidence:{text:'PROGRAM\n'+title,imageUrls:[]}},id).status,'matched',title)
+ }
+ assert.equal(matchIdentity(extractIdentity('Liszt Mephisto Waltz No.3 S.216'),'리스트')[0].work_id,other)
+})
+
+test('102 new tracks preserve all 918 supplied scores, bilingual titles, prose and recording segments',()=>{
+ assert.equal(input.length,102);assert.equal(newIds.size,102);assert.equal(new Set(tracks.map(t=>t.id)).size,tracks.length)
  assert.deepEqual(tracks.slice(189).map(t=>t.id),input.map(t=>t.id))
  for(const i of input){
   const t=tracks.find(t=>t.id===i.id),d=trackDetails[i.id];assert.ok(t)
@@ -67,14 +95,14 @@ test('catalog expansion exactly preserves every pre-existing catalog field and p
  for(const [id,hash]of Object.entries(protectedHashes))assert.equal(workIdentity(current,id).hash,hash)
 })
 
-test('cycle names never imply first piece, and unsupported S.216b is never merged with S.216',()=>{
+test('cycle names never imply first piece, and distinct S.216b is never merged with S.216',()=>{
  const cases=[['Schumann Kinderszenen Op.15','schumann-kinderszenen-op15-no1'],['Schumann Fantasiestucke Op.12','schumann-fantasiestucke-op12-no1'],['Liszt Consolations S.172','liszt-consolation-s172-no1'],['Liszt Annees de pelerinage S.160','liszt-annees-de-pelerinage-s160-no1']]
  for(const [title,id]of cases){assert.notEqual(matchIdentity(extractIdentity(title),getTrackTarget(id).work.composer)[0].work_id,id);assert.notEqual(matchConcertToTrack({programEvidence:{text:'PROGRAM\n'+title,imageUrls:[]}},id).status,'matched')}
  for(const title of ['Liszt Mephisto Waltz No.4 S.216b','Liszt Mephisto Waltz S.216b']){
   assert.notEqual(matchIdentity(extractIdentity(title),'리스트')[0].work_id,'liszt-mephisto-waltz-s216-no3')
   assert.notEqual(matchConcertToTrack({programEvidence:{text:'PROGRAM\n'+title,imageUrls:[]}},'liszt-mephisto-waltz-s216-no3').status,'matched')
  }
- assert.ok(!tracks.some(t=>/s216b/.test(t.id)))
+ assert.equal(tracks.find(t=>t.id==='liszt-mephisto-waltz-s216b-no4').catalogueNumber,'216b')
  for(const title of ['Liszt Etude S.139 No.1','Schumann Kinderszenen Op.15 No.2'])assert.notEqual(matchIdentity(extractIdentity(title),'슈만')[0].work_id,'schumann-kinderszenen-op15-no1')
 })
 

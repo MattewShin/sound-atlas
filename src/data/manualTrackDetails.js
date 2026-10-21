@@ -3024,5 +3024,16 @@ export const manualTrackDetails = {
       "endSeconds": 251,
       "sourceLabel": "Daniel Barenboim / Daniel Barenboim - Topic"
     }
+  },
+  "liszt-mephisto-waltz-s216b-no4": {
+    "about": "1885년 무렵의 마지막 메피스토 왈츠로 전해지며, 완결된 종결부가 남지 않아 후기 리스트의 파편적이고 실험적인 어법이 더욱 두드러진다.",
+    "listeningTip": "왈츠 리듬이 성립하려다 무너지는 순간과 불협화음이 해결되지 않은 채 남기는 긴장을 듣는다.",
+    "shortPreview": {
+      "provider": "youtube",
+      "videoId": "8e5IgoQc7S4",
+      "startSeconds": 0,
+      "endSeconds": 178,
+      "sourceLabel": "Leslie Howard / Leslie Howard - Topic"
+    }
   }
 }

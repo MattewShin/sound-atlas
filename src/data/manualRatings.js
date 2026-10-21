@@ -7718,5 +7718,34 @@ export const manualRatings = [
     "ratingUnit": "whole-work",
     "titleEn": "Liszt Liebestraum S.541 No.2",
     "summary": "사랑과 죽음이 맞닿은 선율이 황홀하고 애틋한 절정으로 번진다."
+  },
+  {
+    "id": "liszt-mephisto-waltz-s216b-no4",
+    "composer": "리스트",
+    "type": "mephisto-waltz",
+    "opus": null,
+    "number": 4,
+    "catalogue": "S",
+    "catalogueNumber": "216b",
+    "movementNumber": null,
+    "title": "리스트 메피스토 왈츠 No.4 S.216b",
+    "movement": "",
+    "alias": "",
+    "emotionScores": {
+      "wonder": 3,
+      "transcendence": 3.5,
+      "nostalgia": 3,
+      "tenderness": 2,
+      "peacefulness": 1.5,
+      "joy": 2.5,
+      "power": 3.5,
+      "tension": 4,
+      "sadness": 2.5
+    },
+    "ratingSource": "manual",
+    "ratingVersion": "manual-emotions-1",
+    "ratingUnit": "whole-work",
+    "titleEn": "Liszt Mephisto Waltz No.4 S.216b",
+    "summary": "해체된 왈츠 조각이 불길한 유머와 미완의 여백을 남긴다."
   }
 ]
