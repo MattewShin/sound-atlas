@@ -4,13 +4,31 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 2
-- 현재 상태: BLOCKED
-- 마지막 작성자: Codex
+- 현재 상태: CHANGES_REQUESTED
+- 마지막 작성자: 웹 GPT
 - 작성일: 2026-10-23 (Asia/Seoul; 운영 결과 관측은 10/22)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 2 결과 검토 — CHANGES_REQUESTED
+
+- 검토한 결과 SHA: `dab08428e4b134a81c9b58ab9ab0dd5f70241299`
+- 판정: **CHANGES_REQUESTED**. PF295588/쇼팽 Op.66 및 PF301161/쇼팽 Ballade No.4의 새 연결2건과 기존 확정3건 보존은 유효하다. 이5개 연결과 현재 receipt는 유지한다.
+- 차단 사유: 묶음4에서 직접 결정26행+과거 미검토 정리38행=64행이 변경되어 명세의 묶음당 전체 후보 행30 상한을 초과했다. 누적100 이하, 즉시 재실행 POST0, 예상 밖 CONFIRMED0은 이 위반을 상쇄하지 않는다.
+- 과거38행은 `REVIEW_REQUIRED→REJECTED`이고 기존 `CONFIRMED`·receipt·관계를 훼손하지 않았다. 롤백하면 오래된 검토 대상을 되살릴 수 있어 롤백을 요구하지 않는다.
+- 발견 후 추가 운영 쓰기0과 과거 후보 이미지의 fail-closed 제외 guard는 긴급 방어로 수용한다. 그러나 10/12/8행 과거 후보가 있는 이미지를 계속 건너뛰므로, “더 많은 곡 연결”의 완료 해법은 아니다.
+
+### 수정 요청
+
+1. 먼저 실제 예약 경로에서 2026-10-23 08:40 KST 실행의 `LastRunTime`, 종료코드, 자동화 선택/skip/POST 수와 오류를 **읽기 전용**으로 확인한다. 아직 실행 전이면 강제 실행하거나 기다리지 말고 미확인으로 기록한다.
+2. `finish_automatic_program`이 바꾸는 직접 결정과 묵시적 과거 정리 행을 저장 전에 하나의 영향 집합으로 계산하고, 묶음30을 초과하면 DB 쓰기 전에 중단되도록 한다. 애플리케이션 사전 계산만이 아니라 DB 경합 시에도 상한을 보장하는 bounded 완료RPC/migration안을 작성한다.
+3. 전체 영향 수가30 이하인 이미지 묶음만 선택되고, 경합으로 과거 후보가 늘면 트랜잭션 전체가 무쓰기 실패하는 테스트를 추가한다. 기존 receipt 보존, 동일 입력 POST0, 부분 완료 없음도 회귀로 고정한다.
+4. 코드·migration·진단 SQL은 격리 환경에서 검증하고 결과를 같은 브랜치에 게시한다. **운영 migration 적용, 제외 이미지 재처리, 추가 수동 batch, 예약 강제 실행은 다음 명세 승인 전까지 하지 않는다.**
+5. 문서에는 64행 초과 이력을 그대로 유지하고, skip guard와 bounded DB 해결을 구분한다. 실제 예약 실행을 확인하지 않았다면 성공으로 추정하지 않는다.
+
+다음 인계는 설계와 격리 검증 결과를 `BLOCKED`로 게시한다. 웹 GPT가 DB 상한 방식과 운영 적용 범위를 검토한 뒤에만 명세3/운영 적용 여부를 정한다.
 
 ## Codex → 웹 GPT: 명세 2 최종 결과 — BLOCKED
 
