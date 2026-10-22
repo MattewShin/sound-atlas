@@ -77,8 +77,8 @@ README에는 서로 다른 시기의 운영 설명이 함께 있을 수 있다. 
 
 ## 공연 검색 확장 작업 시작
 
-- 현재 작업: CA-SEARCH-20261022-001 / 명세 1. 범위는 CURRENT_TASK.md를 따른다.
-- 명세·결과 브랜치: `codex/ca-search-20261022-001`. 원격 main과 구분해 읽는다.
+- CA-SEARCH-20261022-001 / 명세 1은 ACCEPTED로 종료됐다.
+- 해당 최종 기록은 `docs/collaboration/archive/CA-SEARCH-20261022-001/`에 보관한다.
 - 공동 문서 협업 테스트는 ACCEPTED/PASS로 종료했고, 최종 기록은 `docs/collaboration/archive/CA-COLLAB-20261022-001/`에 보관했다.
 - 이번 사용자 방향: SQL·예약 점검은 최소 선행 확인으로 진행하고 등록곡별 공연 검색 확장 조사를 함께 시작한다.
 - 이 문서의 이전 운영 수치와 설정 확인은 당시 보고다. 이번 작업에서 현재 값을 다시 확인하고 기준 코드 SHA·조회 시각·환경을 붙인다.
@@ -89,4 +89,12 @@ README에는 서로 다른 시기의 운영 설명이 함께 있을 수 있다. 
 - 활성 목록 직접 집계: 291 track / 252 work. 정적 표기 준비 279 READY, 사계의 월 표기 12 UNSUPPORTED_NOTATION. 관측은 2 CONFIRMED_FOUND / 2 UNCONFIRMED / 3 상위 작품만 확인 / 284 조사 범위 귀속 근거 미발견이다.
 - 관측 snapshot: 2026-10-22 10:58 KST, 서울 10/22~11/21, 저장 공연 47개. 두 확정 곡은 같은 PF295548이므로 고유 공연은 1개다.
 - 현 API의 자동화 5 RPC/신규 column 비노출로 자동화 preflight 미충족. 운영 SQL 적용·확정 쓰기·배포·배치 run 없이 조사와 로컬 격리 검증을 완료했다.
-- 자세한 범위·결과·후속 제안은 [현재 HANDOFF](HANDOFF.md), [전곡 조사](docs/CONCERT_SEARCH_COVERAGE_2026-10-22.md), [JSON](docs/CONCERT_SEARCH_COVERAGE_2026-10-22.json)을 참조한다. 이전 수치와 이번 snapshot을 섞어 최신 운영 성과로 해석하지 않는다.
+- 자세한 범위·결과·후속 제안은 [보관된 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md), [전곡 조사](docs/CONCERT_SEARCH_COVERAGE_2026-10-22.md), [JSON](docs/CONCERT_SEARCH_COVERAGE_2026-10-22.json)을 참조한다. 이전 수치와 이번 snapshot을 섞어 최신 운영 성과로 해석하지 않는다.
+
+## 자동 확정 운영 작업 시작
+
+- 현재 작업: CA-AUTO-20261022-001 / 명세 1.
+- 명세 브랜치: `codex/ca-auto-20261022-001`.
+- 사용자 승인 범위: 관리자 읽기 전용 확인, 실제 미적용 시 지정 automation migration 적용, PF295548 한 공연의 제한 dry-run/save canary.
+- 전체 과거 backfill, 무제한 자동 확정, main 병합, Vercel 배포, 예약 시간 변경은 포함하지 않는다.
+- 명확한 EXACT 후보만 자동 CONFIRMED하며 악장·편곡·번호·날짜 범위가 모호한 후보는 확정하지 않는다.

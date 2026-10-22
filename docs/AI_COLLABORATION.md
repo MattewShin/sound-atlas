@@ -87,4 +87,4 @@ Codex는 HANDOFF의 구현자 의견과 질문에 문제·근거·권장안·영
 
 ## 현재 작업 위치 (2026-10-22)
 
-현재 작업은 `CA-SEARCH-20261022-001`이며 명세 브랜치는 `codex/ca-search-20261022-001`다. 이 브랜치의 CURRENT_TASK와 HANDOFF를 읽는다. 기존 main의 최초 READY 문서나 보관된 협업 테스트를 다시 실행하지 않는다. 작업 위치가 바뀌면 새 인계 링크를 따른다.
+현재 작업은 `CA-AUTO-20261022-001`이며 명세 브랜치는 `codex/ca-auto-20261022-001`다. 이 브랜치의 CURRENT_TASK와 HANDOFF를 읽는다. CA-SEARCH-20261022-001은 ACCEPTED로 보관됐으며 다시 실행하지 않는다. 운영 쓰기 허용 범위는 CURRENT_TASK의 지정 migration과 PF295548 제한 canary뿐이다.
