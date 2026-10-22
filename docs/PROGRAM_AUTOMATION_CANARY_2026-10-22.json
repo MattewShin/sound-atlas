@@ -1,0 +1,197 @@
+{
+  "taskId": "CA-AUTO-20261022-001",
+  "specVersion": 1,
+  "status": "BLOCKED",
+  "reportedAt": "2026-10-22 14:21 KST",
+  "timeZone": "Asia/Seoul",
+  "specRef": "aab5f7b23b63d5ec3311e301ee8c28010564ef98",
+  "codeRef": "ad5ab3cf5984146c4b2dc94428a146944af23fab",
+  "original": {
+    "branch": "main",
+    "head": "1607ca201c3a559bc7f28aabe998ef062db02ef9",
+    "uncommittedFiles": 33,
+    "indexPreserved": true,
+    "filesPreserved": true
+  },
+  "production": {
+    "administratorSql": {
+      "status": "NOT_EXECUTED",
+      "reason": "ADMINISTRATOR_SQL_CONNECTION_UNAVAILABLE",
+      "connectionConfigured": false,
+      "psqlAvailable": false,
+      "sqlConnectorAvailable": false
+    },
+    "actualMigrationState": "UNKNOWN",
+    "migration": {
+      "status": "NOT_RUN",
+      "conditionalPrerequisitesVerified": false
+    },
+    "dryRun": {
+      "status": "NOT_RUN",
+      "kopisId": "PF295548"
+    },
+    "saveCanary": {
+      "status": "NOT_RUN",
+      "kopisId": "PF295548"
+    },
+    "repeatRun": {
+      "status": "NOT_VERIFIED"
+    },
+    "receiptPreservation": {
+      "taskWrites": 0,
+      "currentRowsIndependentlyQueried": false
+    },
+    "searchApi": {
+      "status": "NOT_RUN"
+    },
+    "counters": {
+      "administratorSqlStatements": 0,
+      "restGet": 0,
+      "publicGet": 0,
+      "remoteWrites": 0,
+      "migrationsApplied": 0,
+      "canaryRuns": 0,
+      "backfillRuns": 0,
+      "integratedBatchRuns": 0
+    },
+    "deployedCodeRef": "UNKNOWN"
+  },
+  "scheduler": {
+    "status": "READ_ONLY_REGISTERED_CONFIGURATION_VERIFIED",
+    "originalDirectory": true,
+    "coreFilesMatchingFixedCode": [
+      {
+        "path": "scripts/Invoke-ConcertPipeline.ps1",
+        "sha": "c3a2ac6be2eab93e4b38fd0ec52ad97913a14d0c",
+        "sha256": "e01cdcd8d995f052e62f05628b7d326c106ceafaaa77b86dad8556c2f2cdd9d6"
+      },
+      {
+        "path": "scripts/runConcertPipeline.mjs",
+        "sha": "e520b5e3ce266de0743fad4d32ac615a4c4cc88f",
+        "sha256": "25fe0ec939226cfefe1c4e1480df811da2320bc52fab8e13cb60aa5f56174985"
+      },
+      {
+        "path": "server/concertPipeline.mjs",
+        "sha": "06d6904f868b29a946d3a109b8ea558ef2318dc3",
+        "sha256": "b05311ac2109822a73b8d32b3b857f53206d61848f2f13890b62efa4b9bd0115"
+      },
+      {
+        "path": "server/pipelineRepository.mjs",
+        "sha": "7ae09cf16d8d1dc6c3868412d2b93d0c421e1802",
+        "sha256": "5638cb2c8565212ccaa8f1b522d31c56fef71b2fe0a3363c73f7ad201cb3152f"
+      },
+      {
+        "path": "server/pipelineAnalysisOnly.mjs",
+        "sha": "3e4604f514219d023a75051cc5f8038f5890afa7",
+        "sha256": "3c59938fca37aee3a3859b6a1c668bb506465fee3829cb480a13434733d5d7b6"
+      },
+      {
+        "path": "server/programAutomation.mjs",
+        "sha": "560ca4642e2f52a831882bc5bab58b8a77003583",
+        "sha256": "1dc90699092da02ee4519f03f7517c4586b6ac1c376ccc7075fb6580f8f2f834"
+      },
+      {
+        "path": "server/supabaseProgramAutomation.mjs",
+        "sha": "d62afa7717712656edb4498f7382413a91d16bb2",
+        "sha256": "5085b5ad1da290c7da43758c7a2a31dc4f5e851e1f34caaeada8430efccc2f90"
+      },
+      {
+        "path": "server/programAnalysis.mjs",
+        "sha": "a1a0c93ff47472d3fc382fb1cbfea696bf4c354c",
+        "sha256": "414085639a6c2691190e165428d64251bfafacf1dc31eddaf17ca677b91aa657"
+      },
+      {
+        "path": "server/programMatchingNormalization.mjs",
+        "sha": "52c2e4a154484b5dbe9f9e515c4038d5ce3ecd65",
+        "sha256": "340cec34ccaf91e26d48f9dc24c9321439ca272fd3bac31a65b8a45ee3d2c2fd"
+      },
+      {
+        "path": "server/programContext.mjs",
+        "sha": "a287e3e165b1015fb4c1d3cdcaa47dc56f7b5d4d",
+        "sha256": "3c93b74cde4aa03fdd098575260dc1ae5b07d742cb153282740614301725d749"
+      },
+      {
+        "path": "server/supabaseProgramAnalysis.mjs",
+        "sha": "5ad47d8c507bff0e5e14dc0f38e083f7324a82f8",
+        "sha256": "9774a213c391ca644c52b128285e50f77b8d2d7d9c302b76d4c864c56ab19bf4"
+      },
+      {
+        "path": "server/programWorkIdentity.mjs",
+        "sha": "eff25f0a28836bf45aab9c813f9a706fdffa5bc7",
+        "sha256": "4f14a8f8ef3ea97f882798e653250fc7b4ee781b69c223282884f3845e2f29aa"
+      },
+      {
+        "path": "server/programRollout.mjs",
+        "sha": "2d2e69ab9aee4c5e56d2901cc926d8d089c0a19a",
+        "sha256": "2a6691db0399fe2467674b9a609fa15de3fe69fbcc381a2c4d758abc91ddd7b6"
+      },
+      {
+        "path": "src/data/workCatalog.js",
+        "sha": "6b193e41476f315daac8ce2282d254e1a7c47f16",
+        "sha256": "57e74538ee5bff9724bececc1f0d85fb0504e611d5b269efec4866d84bbd7046"
+      },
+      {
+        "path": "supabase/migrations/202610220001_program_automation.sql",
+        "sha": "dd91ab62acb91a49bea4db6a6330c4cb7cf0f6f7",
+        "sha256": "ac5281753c5e65a73415a565b9c435598dc6006e8b11267dac4516c5feae18d8"
+      }
+    ],
+    "dailyTime": "08:40 KST",
+    "nextRun": "2026-10-23 08:40 KST",
+    "lastRun": "2026-10-22 08:40 KST",
+    "lastTaskResult": 1,
+    "executionTimeLimit": "PT32M",
+    "maxSeconds": 1800,
+    "multipleInstances": "IgnoreNew",
+    "configChanged": false,
+    "programBatchSizeExplicit": false,
+    "effectiveWebProgramBatchSize": 1,
+    "automaticImagesLimit": 20,
+    "automaticCandidateLimit": 100,
+    "automaticLimitOneVerified": false,
+    "periodicExpansionAllowed": false
+  },
+  "localValidation": {
+    "environment": "LOCAL_ISOLATED_PGLITE",
+    "productionSqlExecuted": false,
+    "before": {
+      "prerequisiteMissing": 0,
+      "prerequisiteTypeMismatch": 0,
+      "automationPresent": 0,
+      "automationColumnPresent": 0,
+      "permissionsValid": true,
+      "resultTypesValid": true
+    },
+    "after": {
+      "prerequisiteMissing": 0,
+      "prerequisiteTypeMismatch": 0,
+      "automationPresent": 5,
+      "automationColumnPresent": 7,
+      "permissionsValid": true,
+      "resultTypesValid": true
+    }
+  },
+  "tests": {
+    "environment": "Windows PowerShell, Node 22.18.0, npm 10.9.3; isolated shared-code source",
+    "full": {
+      "passed": 365,
+      "failed": 0,
+      "skipped": 0
+    },
+    "build": {
+      "status": "PASS",
+      "warnings": [
+        "EXISTING_CHUNK_OVER_500KB"
+      ]
+    },
+    "productionProof": false
+  },
+  "resumePrerequisites": [
+    "Configure administrator SQL connection locally without publishing credentials",
+    "Execute read-only SQL and distinguish absent/complete/partial schema",
+    "Only absent schema plus matching prerequisites permits designated migration",
+    "Recheck SQL/API permissions, fields and existing receipt digests",
+    "PF295548 dry-run before scoped save; stop on unexpected confirmations",
+    "Prove actual automatic batch cap of one separately from web configuration"
+  ]
+}

@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 1
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화
-- 상태: READY
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -112,20 +112,28 @@ canary 성공 후 현재 `ClassicAtlas-LocalPipeline`의 daily 08:40 KST 경로�
 
 ## 완료 기준
 
-- [ ] 기존 로컬 변경과 사용자 index가 보존됨.
+- [x] 기존 로컬 변경과 사용자 index가 보존됨.
 - [ ] 관리자 읽기 전용 SQL로 운영 DB 실상과 API 노출 차이를 확인함.
 - [ ] 필요한 경우 지정 migration만 원자적으로 적용하고 재검증함.
-- [ ] 기존 수동 확정 2건을 변경하지 않음.
+- [x] 기존 수동 확정 2건을 변경하지 않음.
 - [ ] PF295548 dry-run과 제한 save canary의 모든 후보 결과를 기록함.
 - [ ] 명확한 브람스 후보만 새 자동 확정되고 모호한 후보의 자동 확정은 0임.
 - [ ] 같은 입력 재실행의 새 쓰기가 0임.
 - [ ] 운영 검색에서 브람스와 기존 쇼팽·리스트를 대조함.
 - [ ] 예약 경로·실행 코드·초기 batch size 1 조건을 확인함.
-- [ ] 테스트/build 및 운영 미검증 범위를 구분해 보고함.
-- [ ] HANDOFF와 CURRENT_TASK를 같은 작업 ID·명세 버전·상태로 게시함.
+- [x] 테스트/build 및 운영 미검증 범위를 구분해 보고함.
+- [x] HANDOFF와 CURRENT_TASK를 같은 작업 ID·명세 버전·상태로 게시함.
 
 ## 상태 기록
 
 | 날짜 (Asia/Seoul) | 기록자 | 내용 |
 | --- | --- | --- |
 | 2026-10-22 | 웹 GPT | READY: 사용자 요청에 따라 명확한 후보의 운영 자동 확정을 단계적으로 활성화. 관리자 사전 확인, 필요 시 지정 migration 적용, PF295548 제한 canary까지 승인. 전체 backfill·무제한 쓰기·main 병합은 제외. |
+| 2026-10-22 14:21 KST | Codex | BLOCKED: 관리자 SQL 연결/도구 부재로 실제 미적용·선행조건 확인 불가. 원본33개 파일/index 보존, 핵심15파일 고정 코드 대조, 회귀365/365·build 및 격리 migration/preflight SQL 검증 완료. 운영 SQL·dry-run/save·API 조회·DB 쓰기 미실행. 정기 자동화의 batch size1도 별도 미충족. |
+
+## 현재 차단 지점과 재개 조건
+
+- 관리자 SQL 읽기 연결이 필요하다. 로컬 프로세스/프로젝트 설정에는 REST용 Supabase 연결만 있고 관리자 DB URL·PG 설정·관리 토큰은 없다. psql/supabase/docker 및 연결된 SQL 도구도 확인되지 않았다. 실제 운영 SQL은 실행하지 못했으며 REST 비노출을 실제 미적용으로 대체하지 않았다.
+- 사용자에게 비밀값을 채팅에 보내지 않고 `CLASSIC_ATLAS_DATABASE_URL`을 로컬 환경에 설정해 알려 달라고 요청했다. 답변 대기이며 migration/save 승인을 다시 요청하는 것이 아니다.
+- 관리자 읽기 확인 → absent/complete/partial 구분 → 지정 migration 필요 시 1회 → 권한/receipt 재확인 → PF295548 dry-run → 일치할 때만 scoped save 순서를 유지한다. 이 지점까지 새 운영 쓰기0이다.
+- `PROGRAM_BATCH_SIZE` 명시 설정은 없고 웹 프로그램 확인의 유효값1만 확인했다. daily 자동화는 analysisLimit20·candidateLimit100을 사용하므로 자동 쓰기 상한1을 보장하지 않는다. 정기 자동 확장은 허용하지 않았고 예약을 변경하지 않았다.
