@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 2
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IN_PROGRESS
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,32 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 2 최종 실행 결과 — BLOCKED
+
+- 결과 게시일: 2026-10-23 (Asia/Seoul). 운영 실행·테스트·예약 관측은 2026-10-22의 기록이다. 10/23 예약 실행 결과는 이번 게시 작업에서 새로 조회하지 않았다.
+
+- 결과 작성 시각: 2026-10-22 15:52:38 KST
+
+- 기준 명세 SHA: `6d874178fad7a7fdc1793af23f1bd1273b6dc3ad`.
+- 최종 차단 코드: `b857be6ef25d441971a01e900724a19006957caa`; 상세 실행과 후속 의견은 HANDOFF 및 [실행 증거](docs/PROGRAM_AUTOMATION_EXPANSION_2026-10-22.json).
+- 전체 eligible queue48이미지/41공연/123후보를 쓰기 없이 조사했다. D 대표10개·새OCR5개(성공4/시간초과1)를 조사하고 current분석 누락을 보완했다.
+- 자동화5묶음/15이미지/후보결정62건: CONFIRMED2 + REJECTED60. PF295588/쇼팽Op.66, PF301161/발라드4의 새2연결을 운영 검색에서 확인했다. 기존3확정과 모든 기존receipt 보존, 모든 묶음 즉시 재실행POST0.
+- **BLOCKED**: 묶음4의 완료RPC가 직접 결정26건 외에 과거 미검토38행도 REJECTED로 정리했다. 전체 상태 변경64>묶음30. 누적은100≤100이지만 전체 묶음 기준 통과가 아니다. 이는5묶음 종료 후 감사에서 발견됐으며 발견 후 운영쓰기0이다.
+- 보완: 실제 정기진입점의 전용3/30, impact reader 미확인 시 자동단계만 fail-closed, 과거 미검토 후보가 있는 이미지 제외/완료직전 재확인. plan·실제DB/Python/모델·읽기queue preflight PASS. 다음 예약 실행은 미검증.
+- 전체 회귀373/373·build PASS. 명세1 migration/canary 재실행0, 추가migration/전체backfill/main병합/배포/예약변경0. 원본33파일/index 보존.
+- 최종 남은 전체queue39이미지/33공연/89후보, 예상 신규확정0. active DETAIL OCR공백9개. 이미지 예산5개가 남아도 보수적 후보행 예산은0으로 추가저장하지 않는다.
+
+### 명세 2 완료 기준 점검
+
+- [x] 실제 정기 경로의 전용3/30 및 과거 후보 정리 차단을 검증함.
+- [x] 전체 eligible queue의 분모·예상신규·모든 거절reason을 기록함.
+- [x] 여러 공연 저장과 원본 수동·자동 receipt/검색 보존을 검증함.
+- [x] 5묶음 즉시 재실행 POST0 및 새2연결 API/DTO를 확인함.
+- [x] D의10대표/5OCR 한도 내 원인 조사·분석 누락 개선·회귀를 수행함.
+- [ ] **모든 묶음의 전체 후보 행 상태 변경30 이하**: 묶음4는64행으로 미충족.
+- [x] 초과 발견 후 쓰기 중단·실제예약경로 방어 보완·증거/질문을 같은 브랜치에 게시함.
+- [ ] 검토자의 상한 이력 및 bounded 완료RPC 후속 판단: 아직 수신하지 않음.
 
 ## 사용자 목표
 
@@ -131,7 +157,7 @@ dry-run과 회귀 검증이 통과하면 현재 저장 자료를 작은 묶음�
 
 함수·column이 이미 존재하면 non-idempotent migration을 재실행하지 않는다. 부분 적용 또는 예상과 다른 signature가 있으면 SQL 적용을 중단하고 정확한 차이를 기록한다.
 
-## 3. 조건부 migration 적용 — 이번 작업에서 허용
+## 3. 명세 1의 조건부 migration — 완료 / 명세 2 재실행 금지
 
 사전 확인 결과 migration이 실제로 미적용이고 선행 schema가 충족된 경우에만 다음 파일 전체를 한 트랜잭션으로 운영 DB에 적용한다.
 
@@ -141,7 +167,7 @@ dry-run과 회귀 검증이 통과하면 현재 저장 자료를 작은 묶음�
 
 적용 후 다시 읽기 전용으로 RPC·권한·column·view와 기존 확정 2건 보존을 확인한다. API schema reload가 필요한 경우 migration에 포함된 notify 결과를 확인하되 권한을 우회하지 않는다.
 
-## 4. PF295548 제한 canary
+## 4. 명세 1의 PF295548 제한 canary — 완료 / 명세 2 재실행 금지
 
 운영 쓰기 전 다음 dry-run을 실행하고 결과를 기록한다.
 
@@ -171,7 +197,7 @@ dry-run이 고정 규칙·로컬 대표 결과와 일치할 때만 `PF295548` �
 canary 성공 후 현재 `ClassicAtlas-LocalPipeline`의 daily 08:40 KST 경로가 검증한 자동화 코드와 동일한지 확인한다.
 
 - 시간·daily 프로필·IgnoreNew·PT32M은 임의 변경하지 않는다.
-- 초기 `PROGRAM_BATCH_SIZE`가 1인지 확인한다. 1이 아니거나 확인할 수 없으면 정기 자동 확장을 허용하지 않고 보고한다.
+- 명세1의 초기 batch1 요구는 명세2 A의 전용 자동화3/30과 과거 후보 정리 차단으로 대체한다. 웹 PROGRAM_BATCH_SIZE로 정기 상한을 대신 증명하지 않는다.
 - 전체 과거 후보를 수동으로 일괄 backfill하지 않는다.
 - 통합 전체 배치를 임의로 즉시 실행하지 않는다.
 - 다음 예약 실행에 필요한 preflight가 통과하는 상태까지 준비하고, 실제 다음 실행 결과는 실행 이후 별도 근거로 검토한다.
@@ -196,7 +222,7 @@ canary 성공 후 현재 `ClassicAtlas-LocalPipeline`의 daily 08:40 KST 경로�
 - [x] 명확한 브람스 후보만 새 자동 확정되고 모호한 후보의 자동 확정은 0임.
 - [x] 같은 입력 재실행의 새 쓰기가 0임.
 - [x] 운영 검색에서 브람스와 기존 쇼팽·리스트를 대조함.
-- [ ] 예약 경로·실행 코드·초기 batch size 1 조건을 확인함.
+- [x] 예약 경로·실행 코드·명세2의 전용3/30 및 과거 후보 정리 차단을 확인함(명세1 batch1 조건 대체).
 - [x] 테스트/build 및 운영 미검증 범위를 구분해 보고함.
 - [x] HANDOFF와 CURRENT_TASK를 같은 작업 ID·명세 버전·상태로 게시함.
 
@@ -216,7 +242,7 @@ canary 성공 후 현재 `ClassicAtlas-LocalPipeline`의 daily 08:40 KST 경로�
 - 관리자 읽기 확인 → absent/complete/partial 구분 → 지정 migration 필요 시 1회 → 권한/receipt 재확인 → PF295548 dry-run → 일치할 때만 scoped save 순서를 유지한다. 이 지점까지 새 운영 쓰기0이다.
 - `PROGRAM_BATCH_SIZE` 명시 설정은 없고 웹 프로그램 확인의 유효값1만 확인했다. daily 자동화는 analysisLimit20·candidateLimit100을 사용하므로 자동 쓰기 상한1을 보장하지 않는다. 정기 자동 확장은 허용하지 않았고 예약을 변경하지 않았다.
 
-## 최신 재개 결과 — 2026-10-22 14:45 KST
+## 명세 1 재개 결과 — 2026-10-22 14:45 KST (이전 기록)
 
 - 관리자 연결은 존재/연결 성공 여부만 기록했다. 실제 연결 문자열·비밀번호·대상 hostname/user는 출력·로그·문서·Git에 넣지 않았다.
 - 관리자 READ ONLY 사전 SQL: 선행8함수의 signature/반환형/권한 및 view 일치, 자동화5함수/7컬럼 실제0, 기존 수동 CONFIRMED2건 확인.
@@ -242,3 +268,10 @@ canary 성공 후 현재 `ClassicAtlas-LocalPipeline`의 daily 08:40 KST 경로�
 - 저장 예정: 5묶음, 각 이미지3개, 후보수8/13/0/26/15 = 누적15이미지/62후보. 예상 신규 unique연결2: PF295588/chopin-fantaisie-impromptu-op66, PF301161/chopin-ballade-op52-no4. PF295548 제외. 신규OCR4개와 대표10개, 기존 양성1개만 포함한다. 모든 묶음 live dry-run 확인 후 저장→동일scope즉시POST0→공개검색/기존receipt 보존 확인을 순차 진행한다.
 - 기능/SQL/UI 기존 회귀와 신규6개를 합쳐371/371 PASS, production build PASS. 기존 chunk>500kB 경고 유지. 실제 웹 UI 시각 검사는 별도 미실행이다.
 - 현재 상태 IN_PROGRESS: 위 값은 예상이며 운영 자동 확정 성과가 아니다. [전체 queue dry-run](docs/PROGRAM_AUTOMATION_EXPANSION_DRY_RUN_2026-10-22.json)에 모든 후보의 track/work/outcome/reason을 기록했다.
+
+## 명세 2 상태 기록
+
+| 날짜 (Asia/Seoul) | 기록자 | 내용 |
+| --- | --- | --- |
+| 2026-10-22 | Codex | 명세2 BLOCKED: 15이미지/62결정/새연결2, 과거정리38행을 포함하면 누적100·묶음4는64로 초과. 모든 재실행POST0/기존receipt·검색보존. 발견후쓰기중단, 과거정리위험이미지 제외 guard·373회귀/build·예약읽기검증 완료. 상세 HANDOFF/JSON 참조. |
+

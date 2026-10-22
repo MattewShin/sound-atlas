@@ -1,0 +1,2852 @@
+{
+  "taskId": "CA-AUTO-20261022-001",
+  "specification": 2,
+  "status": "BLOCKED",
+  "recordedAt": "2026-10-22T06:52:38.538Z",
+  "timeZone": "Asia/Seoul",
+  "specificationSha": "6d874178fad7a7fdc1793af23f1bd1273b6dc3ad",
+  "featureBaseSha": "ad5ab3cf5984146c4b2dc94428a146944af23fab",
+  "firstImplementationSha": "bfa5a042396de8337d9a2e249254befc095b2c7e",
+  "finalGuardCodeSha": "b857be6ef25d441971a01e900724a19006957caa",
+  "blocker": {
+    "code": "LEGACY_FINALIZATION_BATCH_ROW_CAP_EXCEEDED",
+    "batch": 4,
+    "directCandidateDecisions": 26,
+    "implicitHistoricalRejects": 38,
+    "totalCandidateStatusTransitions": 64,
+    "allowedPerBatch": 30,
+    "discovered": "Final row-level audit after batch5 completed",
+    "additionalOperationalWritesAfterDiscovery": 0,
+    "futureMitigation": "Scheduled entry now requires an impact reader, skips any image with pending historical candidates, rechecks before analysis and finalization, stops following writes on detected history change. No new migration permitted/applied.",
+    "reviewRequired": "Confirm bounded finalization RPC policy in a follow-up specification. Do not mark this expansion ACCEPTED."
+  },
+  "metrics": {
+    "automaticImages": 15,
+    "candidateDecisionRpcCalls": 62,
+    "newConfirmedReceipts": 2,
+    "newRejectedReceipts": 60,
+    "implicitHistoricalCandidateRejects": 38,
+    "totalCandidateStatusTransitions": 100,
+    "cumulativeCandidateRowCap": 100,
+    "allBatchRowCapsPassed": false,
+    "candidateSummaryUnlinked": 70,
+    "zeroCandidateImages": 10,
+    "newUniqueTrackConcertPairs": 2,
+    "netNewDistinctSearchableTracks": 1,
+    "uniqueEffectivePairs": {
+      "before": 3,
+      "after": 5
+    },
+    "uniqueSearchableTracks": {
+      "before": 3,
+      "after": 4
+    },
+    "automaticDecisionFailures": 0,
+    "automaticDecisionRetryPending": 0,
+    "unexpectedConfirmed": 0,
+    "newDuplicateConfirmed": 0,
+    "remainingImageBudget": 5,
+    "remainingConservativeCandidateRowBudget": 0
+  },
+  "preserved": {
+    "originalBranch": "main",
+    "originalHead": "1607ca201c3a559bc7f28aabe998ef062db02ef9",
+    "original33AndIndexPreserved": true,
+    "originalEnvNotModified": true,
+    "originalReceiptRows": 17,
+    "manualConfirmedReceipts": 2,
+    "priorAutomaticConfirmedReceipts": 1,
+    "receiptDigestComparison": "Full row SHA-256 before/after every batch; all existing receipt rows preserved",
+    "candidateRelationshipsPreserved": true
+  },
+  "initialDryRun": {
+    "readOnly": true,
+    "remoteWrites": 0,
+    "allStoredConcerts": 47,
+    "eligibleQueue": 48,
+    "eligibleConcerts": 41,
+    "candidates": 123,
+    "expectedNewUniqueTrackConcert": 1,
+    "positives": [
+      {
+        "kopisId": "PF295588",
+        "imageId": "b83eb130-0b73-4e35-bbe3-d428482ec7c3",
+        "trackId": "chopin-fantaisie-impromptu-op66",
+        "workId": "chopin-fantaisie-impromptu-op66"
+      }
+    ],
+    "duplicates": 0,
+    "reasons": {
+      "PROGRAM_DATE_SCOPE_AMBIGUOUS": 53,
+      "PROGRAM_EVIDENCE_MISSING": 46,
+      "COMPOSER_OUTSIDE_CATALOG": 16,
+      "PARENT_WORK_TITLE_UNCONFIRMED": 15,
+      "UNCERTAIN_NUMBERED_ITEM_RELATION": 15,
+      "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 119,
+      "CATALOG_TARGET_MISSING": 74,
+      "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 8,
+      "COMPOSER_MISSING": 23,
+      "UNRESOLVED_NUMBER_BOUNDARY": 3,
+      "UNCERTAIN_ROMAN_LABEL": 1,
+      "SCOPE_LABEL_REQUIRES_REVIEW": 1,
+      "OCR_NUMBER_UNCERTAIN": 3,
+      "MULTIPLE_ITEM_NUMBERS": 2,
+      "CHECK_MULTIPLE_WORK_NUMBERS": 1,
+      "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED": 1,
+      "ARRANGEMENT_IDENTITY_UNRESOLVED": 1,
+      "UNCERTAIN_NUMERIC_TOKEN": 2,
+      "CONTEXT_DATE": 8,
+      "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT": 3,
+      "CONFLICTING_COMPOSERS": 1
+    },
+    "stages": {
+      "activeDetail": 66,
+      "usableOcr": 53,
+      "noUsableOcr": 13,
+      "usableOcrNoCandidate": 27,
+      "candidateImages": 26
+    }
+  },
+  "finalDryRun": {
+    "readOnly": true,
+    "remoteWrites": 0,
+    "allStoredConcerts": 47,
+    "eligibleQueue": 39,
+    "eligibleConcerts": 33,
+    "candidates": 89,
+    "expectedNewUniqueTrackConcert": 0,
+    "positives": [],
+    "duplicates": 0,
+    "reasons": {
+      "PROGRAM_DATE_SCOPE_AMBIGUOUS": 53,
+      "PROGRAM_EVIDENCE_MISSING": 39,
+      "COMPOSER_OUTSIDE_CATALOG": 15,
+      "PARENT_WORK_TITLE_UNCONFIRMED": 12,
+      "UNCERTAIN_NUMBERED_ITEM_RELATION": 12,
+      "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 89,
+      "CATALOG_TARGET_MISSING": 51,
+      "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 7,
+      "COMPOSER_MISSING": 18,
+      "UNRESOLVED_NUMBER_BOUNDARY": 3,
+      "UNCERTAIN_ROMAN_LABEL": 1,
+      "SCOPE_LABEL_REQUIRES_REVIEW": 1,
+      "OCR_NUMBER_UNCERTAIN": 3,
+      "MULTIPLE_ITEM_NUMBERS": 2,
+      "CHECK_MULTIPLE_WORK_NUMBERS": 1,
+      "UNCERTAIN_NUMERIC_TOKEN": 2,
+      "CONTEXT_DATE": 8,
+      "CONFLICTING_COMPOSERS": 1
+    },
+    "stages": {
+      "activeDetail": 66,
+      "usableOcr": 57,
+      "noUsableOcr": 9,
+      "usableOcrNoCandidate": 30,
+      "candidateImages": 27
+    }
+  },
+  "representativeAudit": {
+    "limit": 10,
+    "images": 10,
+    "ocrCalls": 0,
+    "matcherSemanticsChanged": false,
+    "improvement": "Prepare missing current analysis from validated successful OCR under the same 3/30 and 20/100 budgets; preserve immutable stored-program-3 extraction semantics.",
+    "cases": [
+      {
+        "kopisId": "PF303383",
+        "imageId": "d2cdff0c-6070-46c2-938e-70a6d16059e4",
+        "eligible": true,
+        "dates": [
+          "2026-11-01",
+          "2026-11-01"
+        ],
+        "status": "공연예정",
+        "candidates": 0,
+        "sections": [
+          {
+            "reason": "NO_IDENTIFIABLE_WORK_LIST"
+          },
+          {
+            "reason": "PROFILE_HISTORY_OR_ADMIN"
+          }
+        ],
+        "characters": 3631,
+        "lines": 134,
+        "programHeading": false,
+        "catalogTokens": 1,
+        "matched": [],
+        "candidateReasons": [],
+        "currentV3Analysis": true,
+        "freshPayloadHash": "0bcb2215af757e4a449f478bc86d6b004b168dcd7033288cf369c6cfa5a5ef57",
+        "confirmedPredictions": 0,
+        "diagnosis": "NO_EXPLICIT_CURRENT_PROGRAM_WORK_EVIDENCE"
+      },
+      {
+        "kopisId": "PF303394",
+        "imageId": "33643da3-4c6b-430d-bc8c-0ae90e632d57",
+        "eligible": true,
+        "dates": [
+          "2026-11-13",
+          "2026-11-13"
+        ],
+        "status": "공연예정",
+        "candidates": 0,
+        "sections": [
+          {
+            "reason": "PROFILE_HISTORY_OR_ADMIN"
+          }
+        ],
+        "characters": 246,
+        "lines": 29,
+        "programHeading": false,
+        "catalogTokens": 1,
+        "matched": [],
+        "candidateReasons": [],
+        "currentV3Analysis": true,
+        "freshPayloadHash": "9eec7c0bbcacaba076be063c27633a053134ab056fc27b1a76169fe4c185f5b3",
+        "confirmedPredictions": 0,
+        "diagnosis": "NO_EXPLICIT_CURRENT_PROGRAM_WORK_EVIDENCE"
+      },
+      {
+        "kopisId": "PF296173",
+        "imageId": "02be7fb5-e623-45e6-9af8-a0572910ee20",
+        "eligible": true,
+        "dates": [
+          "2026-10-29",
+          "2026-10-29"
+        ],
+        "status": "공연예정",
+        "candidates": 0,
+        "sections": [
+          {
+            "reason": "NO_IDENTIFIABLE_WORK_LIST"
+          },
+          {
+            "reason": "NO_IDENTIFIABLE_WORK_LIST"
+          }
+        ],
+        "characters": 202,
+        "lines": 21,
+        "programHeading": false,
+        "catalogTokens": 1,
+        "matched": [],
+        "candidateReasons": [],
+        "currentV3Analysis": true,
+        "freshPayloadHash": "d71acbd434d02be3671309b40c217ea0e6adf9ef4c91dac4d733b6bce586e376",
+        "confirmedPredictions": 0,
+        "diagnosis": "NO_EXPLICIT_CURRENT_PROGRAM_WORK_EVIDENCE"
+      },
+      {
+        "kopisId": "PF300707",
+        "imageId": "c83015d1-0e4a-4635-9dda-221a0e3b9722",
+        "eligible": true,
+        "dates": [
+          "2026-10-22",
+          "2026-10-22"
+        ],
+        "status": "공연예정",
+        "candidates": 0,
+        "sections": [
+          {
+            "reason": "NO_IDENTIFIABLE_WORK_LIST"
+          },
+          {
+            "reason": "NO_IDENTIFIABLE_WORK_LIST"
+          },
+          {
+            "reason": "PROFILE_HISTORY_OR_ADMIN"
+          }
+        ],
+        "characters": 2539,
+        "lines": 206,
+        "programHeading": true,
+        "catalogTokens": 0,
+        "matched": [],
+        "candidateReasons": [],
+        "currentV3Analysis": true,
+        "freshPayloadHash": "1e3f90c8f519e0dd36cc580455e0e7124fbe8fc5a107394b2019588fed5bc9b6",
+        "confirmedPredictions": 0,
+        "diagnosis": "NO_EXPLICIT_CURRENT_PROGRAM_WORK_EVIDENCE"
+      },
+      {
+        "kopisId": "PF301161",
+        "imageId": "a18f28e9-3dbc-4cf8-86de-71c59a74fb47",
+        "eligible": false,
+        "dates": [
+          "2026-10-22",
+          "2026-10-22"
+        ],
+        "status": "공연예정",
+        "candidates": 0,
+        "sections": [
+          {
+            "reason": "PROFILE_HISTORY_OR_ADMIN"
+          }
+        ],
+        "characters": 2230,
+        "lines": 114,
+        "programHeading": false,
+        "catalogTokens": 0,
+        "matched": [],
+        "candidateReasons": [],
+        "currentV3Analysis": false,
+        "freshPayloadHash": "ee1763a15b79e824d5d77ca115258fc7af4d439bea9fc971a97fae968d2f0e29",
+        "confirmedPredictions": 0,
+        "diagnosis": "NO_EXPLICIT_CURRENT_PROGRAM_WORK_EVIDENCE"
+      },
+      {
+        "kopisId": "PF302369",
+        "imageId": "67eb4679-21f3-42a7-a7ff-0706c0b70827",
+        "eligible": true,
+        "dates": [
+          "2026-10-22",
+          "2026-10-22"
+        ],
+        "status": "공연예정",
+        "candidates": 0,
+        "sections": [
+          {
+            "reason": "NO_IDENTIFIABLE_WORK_LIST"
+          },
+          {
+            "reason": "NO_IDENTIFIABLE_WORK_LIST"
+          },
+          {
+            "reason": "PROFILE_HISTORY_OR_ADMIN"
+          }
+        ],
+        "characters": 1617,
+        "lines": 119,
+        "programHeading": false,
+        "catalogTokens": 0,
+        "matched": [],
+        "candidateReasons": [],
+        "currentV3Analysis": true,
+        "freshPayloadHash": "cafe8808defc69131ae126034c1c906f224cd70708ea705968473d7ccd89545f",
+        "confirmedPredictions": 0,
+        "diagnosis": "NO_EXPLICIT_CURRENT_PROGRAM_WORK_EVIDENCE"
+      },
+      {
+        "kopisId": "PF300742",
+        "imageId": "62d6f3f2-d2f9-4729-8cac-2070d31925c5",
+        "eligible": true,
+        "dates": [
+          "2026-10-26",
+          "2026-10-26"
+        ],
+        "status": "공연예정",
+        "candidates": 0,
+        "sections": [
+          {
+            "reason": "NO_IDENTIFIABLE_WORK_LIST"
+          },
+          {
+            "reason": "PROFILE_HISTORY_OR_ADMIN"
+          }
+        ],
+        "characters": 1542,
+        "lines": 34,
+        "programHeading": false,
+        "catalogTokens": 0,
+        "matched": [],
+        "candidateReasons": [],
+        "currentV3Analysis": true,
+        "freshPayloadHash": "fbfeca448b45f64e1ba1775a44b7cc9c26d731fea7a2a3e7e05a5ac6cd0363f3",
+        "confirmedPredictions": 0,
+        "diagnosis": "NO_EXPLICIT_CURRENT_PROGRAM_WORK_EVIDENCE"
+      },
+      {
+        "kopisId": "PF301161",
+        "imageId": "b6fbf16b-0c28-4262-822f-b7d8c076eebe",
+        "eligible": false,
+        "dates": [
+          "2026-10-22",
+          "2026-10-22"
+        ],
+        "status": "공연예정",
+        "candidates": 13,
+        "sections": [
+          {
+            "reason": "EXPLICIT_PROGRAM_HEADING"
+          }
+        ],
+        "characters": 852,
+        "lines": 40,
+        "programHeading": true,
+        "catalogTokens": 6,
+        "matched": [
+          {
+            "track": "chopin-ballade-op52-no4",
+            "outcome": "MATCHED",
+            "relation": "EXACT",
+            "automatic": {
+              "status": "CONFIRMED",
+              "reasons": [
+                "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+              ],
+              "verification": {
+                "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6",
+                "rule": "program-auto-1",
+                "source_reparse": true,
+                "independent_observations": 1
+              }
+            }
+          }
+        ],
+        "candidateReasons": [
+          "WORK_NOT_REGISTERED",
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "KEY_CORROBORATES_IDENTITY",
+          "COMPOSER_OUTSIDE_CATALOG",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE",
+          "PARENT_WORK_TITLE_UNCONFIRMED",
+          "UNCERTAIN_NUMBERED_ITEM_RELATION",
+          "COMPOSER_MISSING"
+        ],
+        "currentV3Analysis": false,
+        "freshPayloadHash": "d9988066be8e800217afd6c46f0d0229ba7edf701622b2f8bf9a06783dc59a40",
+        "confirmedPredictions": 1,
+        "diagnosis": "CURRENT_ANALYSIS_MISSING"
+      },
+      {
+        "kopisId": "PF303303",
+        "imageId": "a6385c54-f7bb-47b1-a62d-8bbc3e49479d",
+        "eligible": true,
+        "dates": [
+          "2026-11-09",
+          "2026-11-09"
+        ],
+        "status": "공연예정",
+        "candidates": 12,
+        "sections": [
+          {
+            "reason": "HEADINGLESS_WORK_LIST_REQUIRES_REVIEW"
+          },
+          {
+            "reason": "PROFILE_HISTORY_OR_ADMIN"
+          },
+          {
+            "reason": "EXPLICIT_PROGRAM_HEADING"
+          }
+        ],
+        "characters": 2416,
+        "lines": 84,
+        "programHeading": true,
+        "catalogTokens": 5,
+        "matched": [],
+        "candidateReasons": [
+          "WORK_NOT_REGISTERED",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE",
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "PARENT_WORK_ONLY_NOT_MOVEMENT_PERFORMANCE",
+          "LOGICAL_SEPARATE_CATALOGUE_CONFLICT"
+        ],
+        "currentV3Analysis": true,
+        "freshPayloadHash": "a3010c4ae83ab69529a8894c1ede73033d77e1d2ed937df5309fc9267c3da3ef",
+        "confirmedPredictions": 0,
+        "diagnosis": "PARENT_ONLY_SCOPE_CANNOT_PROVE_MOVEMENT"
+      },
+      {
+        "kopisId": "PF303424",
+        "imageId": "0f143edf-6f93-48e7-8e16-f2f7b711b75e",
+        "eligible": true,
+        "dates": [
+          "2026-10-26",
+          "2026-10-26"
+        ],
+        "status": "공연예정",
+        "candidates": 14,
+        "sections": [
+          {
+            "reason": "NO_PROGRAM_HEADING"
+          },
+          {
+            "reason": "HEADINGLESS_WORK_LIST_REQUIRES_REVIEW"
+          },
+          {
+            "reason": "EXPLICIT_PROGRAM_HEADING"
+          },
+          {
+            "reason": "PROFILE_HISTORY_OR_ADMIN"
+          }
+        ],
+        "characters": 2041,
+        "lines": 136,
+        "programHeading": true,
+        "catalogTokens": 6,
+        "matched": [],
+        "candidateReasons": [
+          "COMPOSER_MISSING",
+          "PARENT_WORK_TITLE_UNCONFIRMED",
+          "UNCERTAIN_NUMBERED_ITEM_RELATION",
+          "WORK_NOT_REGISTERED",
+          "COMPOSER_OUTSIDE_CATALOG",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "currentV3Analysis": true,
+        "freshPayloadHash": "1d77a0a99cc3bd4747bed5e0608671f79c4af392e73f8b77672f6592931b43c4",
+        "confirmedPredictions": 0,
+        "diagnosis": "UNREGISTERED_OR_AMBIGUOUS_IDENTITY"
+      }
+    ]
+  },
+  "ocrSample": {
+    "counts": {
+      "GET": 7,
+      "POST": 5,
+      "downloads": 5,
+      "ocr": 5
+    },
+    "attempts": [
+      {
+        "imageId": "384cd6b5-b35c-4c01-86bf-004afc09a99d",
+        "status": "SUCCEEDED",
+        "errorCode": null,
+        "characters": 1057
+      },
+      {
+        "imageId": "486acc6c-f5e5-4e21-959b-e5d9948033bd",
+        "status": "SUCCEEDED",
+        "errorCode": null,
+        "characters": 1652
+      },
+      {
+        "imageId": "c2043918-6f56-4b2f-a092-a2a50804334a",
+        "status": "FAILED",
+        "errorCode": "EASYOCR_TIMEOUT",
+        "characters": 0
+      },
+      {
+        "imageId": "d7890e1d-1902-4dd9-878e-e04c2a4dd2a1",
+        "status": "SUCCEEDED",
+        "errorCode": null,
+        "characters": 206
+      },
+      {
+        "imageId": "e0816d56-2c43-4d06-92f8-eaafc54564e3",
+        "status": "SUCCEEDED",
+        "errorCode": null,
+        "characters": 788
+      }
+    ],
+    "report": {
+      "conditions": {
+        "region": "서울",
+        "regionCode": "11",
+        "genreCode": "CCCA",
+        "states": [
+          "02",
+          "01"
+        ],
+        "timeZone": "Asia/Seoul",
+        "from": "2026-10-22",
+        "to": "2026-11-21"
+      },
+      "imageType": "DETAIL",
+      "pipelineVersion": "easyocr-1.7.2-ko-en-cpu-tiles-v1",
+      "limit": 5,
+      "limitedSample": true,
+      "dryRun": false,
+      "listOnly": false,
+      "force": false,
+      "scanned": 5,
+      "attempted": 5,
+      "recognized": 4,
+      "saved": 4,
+      "cached": 0,
+      "held": 0,
+      "failures": [
+        {
+          "imageId": "c2043918-6f56-4b2f-a092-a2a50804334a",
+          "kopisId": "PF303369",
+          "stage": "recognize",
+          "code": "EASYOCR_TIMEOUT",
+          "reason": "EasyOCR image timeout exceeded"
+        }
+      ],
+      "limitReached": true,
+      "cancelled": false,
+      "failed": 1
+    }
+  },
+  "imageTypes": {
+    "POSTER": 47,
+    "DETAIL": 66
+  },
+  "operations": {
+    "migrationStatements": 0,
+    "specificationOneCanaryRuns": 0,
+    "pf295548SaveCalls": 0,
+    "mainMerges": 0,
+    "vercelDeployments": 0,
+    "integratedPipelineRuns": 0,
+    "schedulerMutations": 0,
+    "analysisSaveRpcCalls": 15,
+    "candidateDecisionRpcCalls": 62,
+    "finalizationRpcCalls": 15,
+    "automationPostCalls": 92,
+    "ocrPostCalls": 5,
+    "knownTransport": {
+      "dryRunGet": 140,
+      "dryRunPost": 0,
+      "saveGet": 184,
+      "savePost": 92,
+      "repeatGet": 10,
+      "repeatPost": 0,
+      "publicSearchGet": 20,
+      "ocrGet": 7,
+      "ocrPost": 5
+    },
+    "readOnlyToolCorrection": {
+      "initialLiveGuardStops": 5,
+      "getCalls": 25,
+      "comparisonGetCalls": 4,
+      "postCalls": 0,
+      "cause": "pg int8 revisions were strings while REST revisions are numbers; normalized SQL snapshots using to_jsonb(t), then all five live dry-runs passed",
+      "notAnAutomaticCandidateFailure": true
+    },
+    "requestCountingScope": "Known harness request ledgers only. Separate administrator READ ONLY SQL snapshots and launcher plan GETs are not presented as part of an exact global HTTP total."
+  },
+  "beforeAfter": {
+    "analyses": [
+      93,
+      104
+    ],
+    "candidates": [
+      261,
+      315
+    ],
+    "reviews": [
+      17,
+      79
+    ],
+    "ocrResults": [
+      53,
+      57
+    ],
+    "ocrAttempts": [
+      64,
+      69
+    ]
+  },
+  "batches": [
+    {
+      "batch": 1,
+      "images": [
+        "b83eb130-0b73-4e35-bbe3-d428482ec7c3",
+        "d2cdff0c-6070-46c2-938e-70a6d16059e4",
+        "33643da3-4c6b-430d-bc8c-0ae90e632d57"
+      ],
+      "kopisIds": [
+        "PF295588",
+        "PF303383",
+        "PF303394"
+      ],
+      "imageCount": 3,
+      "decisionRpcCandidates": 8,
+      "implicitHistoricalClosures": 0,
+      "totalCandidateStatusTransitions": 8,
+      "batchAllRowCapPass": true,
+      "summary": {
+        "confirmed": 1,
+        "duplicate_maintained": 0,
+        "unlinked": 9,
+        "retry_pending": 0,
+        "failed": 0,
+        "unchanged": 0,
+        "reasons": {
+          "CATALOG_TARGET_MISSING": 6,
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 7,
+          "COMPOSER_MISSING": 1,
+          "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED": 1,
+          "ARRANGEMENT_IDENTITY_UNRESOLVED": 1,
+          "PROGRAM_EVIDENCE_MISSING": 2
+        },
+        "images_selected": 3,
+        "images_completed": 3,
+        "deferred_images": 0,
+        "limit_reached": true
+      },
+      "requests": {
+        "dry": {
+          "GET": 28,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET concerts": 6,
+            "GET concert_program_images": 6,
+            "GET concert_image_ocr_attempts": 6,
+            "GET concert_image_ocr_results": 6,
+            "GET concert_program_candidate_status": 3
+          }
+        },
+        "save": {
+          "GET": 32,
+          "POST": 14,
+          "paths": {
+            "GET ": 1,
+            "GET rpc/queue_automatic_programs": 1,
+            "GET concerts": 6,
+            "GET concert_program_images": 6,
+            "GET concert_image_ocr_attempts": 6,
+            "GET concert_image_ocr_results": 6,
+            "POST rpc/save_concert_program_analysis_v3": 3,
+            "GET rpc/program_auto_input_hash": 3,
+            "GET concert_program_candidates": 3,
+            "POST rpc/decide_automatic_program_candidate": 8,
+            "POST rpc/finish_automatic_program": 3
+          }
+        },
+        "repeat": {
+          "GET": 2,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET rpc/queue_automatic_programs": 1
+          }
+        }
+      },
+      "priorReceiptRowsPreserved": 17,
+      "relationshipsPreserved": true,
+      "search": [
+        {
+          "trackId": "liszt-liebestraum-s541-no3",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "liszt-liebestraum-s541-no3"
+              ]
+            }
+          ]
+        },
+        {
+          "trackId": "brahms-intermezzo-op118-no2",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "brahms-intermezzo-op118-no2"
+              ]
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-ballade-op52-no4",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-ballade-op52-no4"
+              ]
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-fantaisie-impromptu-op66",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295588",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-fantaisie-impromptu-op66"
+              ]
+            }
+          ]
+        }
+      ],
+      "implicitCloseoutCandidates": []
+    },
+    {
+      "batch": 2,
+      "images": [
+        "b6fbf16b-0c28-4262-822f-b7d8c076eebe",
+        "02be7fb5-e623-45e6-9af8-a0572910ee20",
+        "c83015d1-0e4a-4635-9dda-221a0e3b9722"
+      ],
+      "kopisIds": [
+        "PF301161",
+        "PF296173",
+        "PF300707"
+      ],
+      "imageCount": 3,
+      "decisionRpcCandidates": 13,
+      "implicitHistoricalClosures": 0,
+      "totalCandidateStatusTransitions": 13,
+      "batchAllRowCapPass": true,
+      "summary": {
+        "confirmed": 1,
+        "duplicate_maintained": 0,
+        "unlinked": 14,
+        "retry_pending": 0,
+        "failed": 0,
+        "unchanged": 0,
+        "reasons": {
+          "PROGRAM_EVIDENCE_MISSING": 2,
+          "CATALOG_TARGET_MISSING": 9,
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 12,
+          "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 3,
+          "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED": 1,
+          "ARRANGEMENT_IDENTITY_UNRESOLVED": 4,
+          "COMPOSER_OUTSIDE_CATALOG": 2,
+          "PARENT_WORK_TITLE_UNCONFIRMED": 2,
+          "UNCERTAIN_NUMBERED_ITEM_RELATION": 2,
+          "COMPOSER_MISSING": 1
+        },
+        "images_selected": 3,
+        "images_completed": 3,
+        "deferred_images": 0,
+        "limit_reached": true
+      },
+      "requests": {
+        "dry": {
+          "GET": 28,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET concerts": 6,
+            "GET concert_program_images": 6,
+            "GET concert_image_ocr_attempts": 6,
+            "GET concert_image_ocr_results": 6,
+            "GET concert_program_candidate_status": 3
+          }
+        },
+        "save": {
+          "GET": 36,
+          "POST": 19,
+          "paths": {
+            "GET ": 1,
+            "GET concerts": 7,
+            "GET concert_program_images": 7,
+            "GET concert_image_ocr_attempts": 7,
+            "GET concert_image_ocr_results": 7,
+            "POST rpc/save_concert_program_analysis_v3": 3,
+            "GET rpc/queue_automatic_programs": 1,
+            "GET rpc/program_auto_input_hash": 3,
+            "GET concert_program_candidates": 3,
+            "POST rpc/finish_automatic_program": 3,
+            "POST rpc/decide_automatic_program_candidate": 13
+          }
+        },
+        "repeat": {
+          "GET": 2,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET rpc/queue_automatic_programs": 1
+          }
+        }
+      },
+      "priorReceiptRowsPreserved": 25,
+      "relationshipsPreserved": true,
+      "search": [
+        {
+          "trackId": "liszt-liebestraum-s541-no3",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "liszt-liebestraum-s541-no3"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "brahms-intermezzo-op118-no2",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "brahms-intermezzo-op118-no2"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-ballade-op52-no4",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-ballade-op52-no4"
+              ],
+              "privateFieldsAbsent": true
+            },
+            {
+              "kopisId": "PF301161",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-ballade-op52-no4"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-fantaisie-impromptu-op66",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295588",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-fantaisie-impromptu-op66"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        }
+      ],
+      "implicitCloseoutCandidates": []
+    },
+    {
+      "batch": 3,
+      "images": [
+        "a18f28e9-3dbc-4cf8-86de-71c59a74fb47",
+        "67eb4679-21f3-42a7-a7ff-0706c0b70827",
+        "62d6f3f2-d2f9-4729-8cac-2070d31925c5"
+      ],
+      "kopisIds": [
+        "PF301161",
+        "PF302369",
+        "PF300742"
+      ],
+      "imageCount": 3,
+      "decisionRpcCandidates": 0,
+      "implicitHistoricalClosures": 0,
+      "totalCandidateStatusTransitions": 0,
+      "batchAllRowCapPass": true,
+      "summary": {
+        "confirmed": 0,
+        "duplicate_maintained": 0,
+        "unlinked": 3,
+        "retry_pending": 0,
+        "failed": 0,
+        "unchanged": 0,
+        "reasons": {
+          "PROGRAM_EVIDENCE_MISSING": 3
+        },
+        "images_selected": 3,
+        "images_completed": 3,
+        "deferred_images": 0,
+        "limit_reached": true
+      },
+      "requests": {
+        "dry": {
+          "GET": 28,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET concerts": 6,
+            "GET concert_program_images": 6,
+            "GET concert_image_ocr_attempts": 6,
+            "GET concert_image_ocr_results": 6,
+            "GET concert_program_candidate_status": 3
+          }
+        },
+        "save": {
+          "GET": 36,
+          "POST": 6,
+          "paths": {
+            "GET ": 1,
+            "GET concerts": 7,
+            "GET concert_program_images": 7,
+            "GET concert_image_ocr_attempts": 7,
+            "GET concert_image_ocr_results": 7,
+            "POST rpc/save_concert_program_analysis_v3": 3,
+            "GET rpc/queue_automatic_programs": 1,
+            "GET rpc/program_auto_input_hash": 3,
+            "GET concert_program_candidates": 3,
+            "POST rpc/finish_automatic_program": 3
+          }
+        },
+        "repeat": {
+          "GET": 2,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET rpc/queue_automatic_programs": 1
+          }
+        }
+      },
+      "priorReceiptRowsPreserved": 38,
+      "relationshipsPreserved": true,
+      "search": [
+        {
+          "trackId": "liszt-liebestraum-s541-no3",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "liszt-liebestraum-s541-no3"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "brahms-intermezzo-op118-no2",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "brahms-intermezzo-op118-no2"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-ballade-op52-no4",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-ballade-op52-no4"
+              ],
+              "privateFieldsAbsent": true
+            },
+            {
+              "kopisId": "PF301161",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-ballade-op52-no4"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-fantaisie-impromptu-op66",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295588",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-fantaisie-impromptu-op66"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        }
+      ],
+      "implicitCloseoutCandidates": []
+    },
+    {
+      "batch": 4,
+      "images": [
+        "a6385c54-f7bb-47b1-a62d-8bbc3e49479d",
+        "0f143edf-6f93-48e7-8e16-f2f7b711b75e",
+        "384cd6b5-b35c-4c01-86bf-004afc09a99d"
+      ],
+      "kopisIds": [
+        "PF303303",
+        "PF303424",
+        "PF298811"
+      ],
+      "imageCount": 3,
+      "decisionRpcCandidates": 26,
+      "implicitHistoricalClosures": 38,
+      "totalCandidateStatusTransitions": 64,
+      "batchAllRowCapPass": false,
+      "summary": {
+        "confirmed": 0,
+        "duplicate_maintained": 0,
+        "unlinked": 27,
+        "retry_pending": 0,
+        "failed": 0,
+        "unchanged": 0,
+        "reasons": {
+          "COMPOSER_MISSING": 4,
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 23,
+          "PARENT_WORK_TITLE_UNCONFIRMED": 3,
+          "UNCERTAIN_NUMBERED_ITEM_RELATION": 3,
+          "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 1,
+          "CATALOG_TARGET_MISSING": 17,
+          "COMPOSER_OUTSIDE_CATALOG": 1,
+          "PROGRAM_EVIDENCE_MISSING": 8,
+          "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT": 3
+        },
+        "images_selected": 3,
+        "images_completed": 3,
+        "deferred_images": 0,
+        "limit_reached": true
+      },
+      "requests": {
+        "dry": {
+          "GET": 28,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET concerts": 6,
+            "GET concert_program_images": 6,
+            "GET concert_image_ocr_attempts": 6,
+            "GET concert_image_ocr_results": 6,
+            "GET concert_program_candidate_status": 3
+          }
+        },
+        "save": {
+          "GET": 36,
+          "POST": 32,
+          "paths": {
+            "GET ": 1,
+            "GET concerts": 7,
+            "GET concert_program_images": 7,
+            "GET concert_image_ocr_attempts": 7,
+            "GET concert_image_ocr_results": 7,
+            "POST rpc/save_concert_program_analysis_v3": 3,
+            "GET rpc/queue_automatic_programs": 1,
+            "GET rpc/program_auto_input_hash": 3,
+            "GET concert_program_candidates": 3,
+            "POST rpc/decide_automatic_program_candidate": 26,
+            "POST rpc/finish_automatic_program": 3
+          }
+        },
+        "repeat": {
+          "GET": 2,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET rpc/queue_automatic_programs": 1
+          }
+        }
+      },
+      "priorReceiptRowsPreserved": 38,
+      "relationshipsPreserved": true,
+      "search": [
+        {
+          "trackId": "liszt-liebestraum-s541-no3",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "liszt-liebestraum-s541-no3"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "brahms-intermezzo-op118-no2",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "brahms-intermezzo-op118-no2"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-ballade-op52-no4",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-ballade-op52-no4"
+              ],
+              "privateFieldsAbsent": true
+            },
+            {
+              "kopisId": "PF301161",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-ballade-op52-no4"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-fantaisie-impromptu-op66",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295588",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-fantaisie-impromptu-op66"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        }
+      ],
+      "implicitCloseoutCandidates": [
+        {
+          "id": "0fffb24b-6cdd-4ce3-a0e3-76cc88f01e1b",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "1168a4ea-5b3c-4bb1-b695-e7a3ec8ea854",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "1e598a01-502b-40eb-b9ae-68865e13dc49",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "2a63d388-583a-4beb-94a6-3ceb7108069b",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "2d63b9fd-a076-4a5b-855b-2e05b5b363dd",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "32e13157-8c93-4e38-bcaf-dff472cc10fd",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "37e6d440-4952-48b6-9a79-3adf4147f3ab",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "4358d888-60d0-4a08-90f9-4e8bdd52567f",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "44aa203b-5d0e-4782-9449-fccef2d9d1b8",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "457043d3-8a05-4af0-8534-3fdf53322967",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "4a36c3c4-29e0-417a-90a3-28362c2f2aa6",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "4ed39955-c2e0-4a5a-a710-cc73d25422c7",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "51094e8e-35f4-4d58-b1ab-aa493510c522",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "5149943b-5973-4aa5-83cb-7e0a1989f8a8",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "607942ee-45be-44b9-8c47-b7a7290c5fb3",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "6e3d36c4-ae14-4b54-8c73-05a06710fc37",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "71f01320-6652-45db-8469-cf6e82ba8228",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "79c47a79-d936-4684-ba43-db1b824f42b6",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "7b67ef30-7dee-45d1-9c12-f80261900937",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "7d099888-2055-4826-85fc-9c5a79f99259",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "7d3f1f38-465f-476d-a100-b6d283044bdf",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": "beethoven-sonata-op27-2-no14",
+          "relation": "WHOLE_WORK_REFERENCE",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "8119fba2-c9f4-46b6-b76e-18da433ebabe",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "9fefe807-36a8-4e0c-bec7-82fb68fa7e2d",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "a151b756-639d-432a-8f1f-b3f995fee704",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "a1b383ff-44d6-4660-899f-dfd0018c8d19",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "a6640b50-74cf-4b93-80ea-e9f2f0f99206",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "b29508bb-f4d2-45e8-baa3-cedb5fe5ebb3",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "b39fc761-29a7-44c3-a05f-e89b0eab9c41",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "b43d7390-2831-4da2-98ef-bb743ebeca26",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "b503663e-a4d2-48fa-bd9d-38c5f1f15566",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "b7d6fb1e-6180-4e96-9790-a9d048f2ab9b",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": "beethoven-sonata-op27-2-no14",
+          "relation": "WHOLE_WORK_REFERENCE",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "bb690215-4052-4666-a776-a3d6b8a7f26e",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "c39bbadf-9985-465e-ae09-0179a1e301eb",
+          "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+          "trackId": null,
+          "workId": "beethoven-sonata-op27-2-no14",
+          "relation": "WHOLE_WORK_REFERENCE",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "d63e0f9c-2d81-4aae-bf69-7bf51f826450",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "d9dacbf8-2c78-4ef3-8cdb-90a034142de5",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "eb04059e-c3cb-4b3a-9c8c-54a21a564079",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "f52d5bfc-acd9-4069-ac40-77f76775f3fe",
+          "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        },
+        {
+          "id": "fb2db873-fc8b-461c-8dd7-437a0a14f0bd",
+          "analysisId": "05082697-97e5-413d-af73-8fffcde19252",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "SUPERSEDED_BY_CURRENT_ANALYSIS"
+          ]
+        }
+      ]
+    },
+    {
+      "batch": 5,
+      "images": [
+        "486acc6c-f5e5-4e21-959b-e5d9948033bd",
+        "d7890e1d-1902-4dd9-878e-e04c2a4dd2a1",
+        "e0816d56-2c43-4d06-92f8-eaafc54564e3"
+      ],
+      "kopisIds": [
+        "PF303362",
+        "PF303394",
+        "PF300742"
+      ],
+      "imageCount": 3,
+      "decisionRpcCandidates": 15,
+      "implicitHistoricalClosures": 0,
+      "totalCandidateStatusTransitions": 15,
+      "batchAllRowCapPass": true,
+      "summary": {
+        "confirmed": 0,
+        "duplicate_maintained": 0,
+        "unlinked": 17,
+        "retry_pending": 0,
+        "failed": 0,
+        "unchanged": 0,
+        "reasons": {
+          "PARENT_WORK_TITLE_UNCONFIRMED": 2,
+          "UNCERTAIN_NUMBERED_ITEM_RELATION": 2,
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 15,
+          "NUMBER_TITLE_ASSOCIATION_UNCERTAIN": 1,
+          "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 1,
+          "COMPOSER_MISSING": 3,
+          "CATALOG_TARGET_MISSING": 8,
+          "IDENTITY_CONFLICT_OR_INCOMPLETE": 2,
+          "PROGRAM_EVIDENCE_MISSING": 2
+        },
+        "images_selected": 3,
+        "images_completed": 3,
+        "deferred_images": 0,
+        "limit_reached": true
+      },
+      "requests": {
+        "dry": {
+          "GET": 28,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET concerts": 6,
+            "GET concert_program_images": 6,
+            "GET concert_image_ocr_attempts": 6,
+            "GET concert_image_ocr_results": 6,
+            "GET concert_program_candidate_status": 3
+          }
+        },
+        "save": {
+          "GET": 44,
+          "POST": 21,
+          "paths": {
+            "GET ": 1,
+            "GET concerts": 9,
+            "GET concert_program_images": 9,
+            "GET concert_image_ocr_attempts": 9,
+            "GET concert_image_ocr_results": 9,
+            "POST rpc/save_concert_program_analysis_v3": 3,
+            "GET rpc/queue_automatic_programs": 1,
+            "GET rpc/program_auto_input_hash": 3,
+            "GET concert_program_candidates": 3,
+            "POST rpc/decide_automatic_program_candidate": 15,
+            "POST rpc/finish_automatic_program": 3
+          }
+        },
+        "repeat": {
+          "GET": 2,
+          "POST": 0,
+          "paths": {
+            "GET ": 1,
+            "GET rpc/queue_automatic_programs": 1
+          }
+        }
+      },
+      "priorReceiptRowsPreserved": 64,
+      "relationshipsPreserved": true,
+      "search": [
+        {
+          "trackId": "liszt-liebestraum-s541-no3",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "liszt-liebestraum-s541-no3"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "brahms-intermezzo-op118-no2",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "brahms-intermezzo-op118-no2"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-ballade-op52-no4",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295548",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-ballade-op52-no4"
+              ],
+              "privateFieldsAbsent": true
+            },
+            {
+              "kopisId": "PF301161",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-ballade-op52-no4"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        },
+        {
+          "trackId": "chopin-fantaisie-impromptu-op66",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "verified": [
+            {
+              "kopisId": "PF295588",
+              "relation": "EXACT",
+              "reviewStatus": "CONFIRMED",
+              "workIds": [
+                "chopin-fantaisie-impromptu-op66"
+              ],
+              "privateFieldsAbsent": true
+            }
+          ]
+        }
+      ],
+      "implicitCloseoutCandidates": []
+    }
+  ],
+  "decisions": [
+    {
+      "candidateId": "6ac71649-857b-4239-89e6-db61fd78512a",
+      "analysisId": "de10bf8f-8c07-404e-a798-b3d531f604d3",
+      "concertId": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "16cd71fc-1ca4-4ca6-921a-f037bfc8bf0b",
+      "analysisId": "de10bf8f-8c07-404e-a798-b3d531f604d3",
+      "concertId": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "6e2babb5-b3fb-42ec-a359-81a4cacc02fb",
+      "analysisId": "de10bf8f-8c07-404e-a798-b3d531f604d3",
+      "concertId": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "037047e9-a81a-4876-ab93-3fea8300cc38",
+      "analysisId": "de10bf8f-8c07-404e-a798-b3d531f604d3",
+      "concertId": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "1b4cf0a8-5be5-4f19-904e-518c81774cab",
+      "analysisId": "de10bf8f-8c07-404e-a798-b3d531f604d3",
+      "concertId": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "9b453d6a-c4f4-4eb3-869b-a3ed2ec521c1",
+      "analysisId": "de10bf8f-8c07-404e-a798-b3d531f604d3",
+      "concertId": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "trackId": "chopin-fantaisie-impromptu-op66",
+      "workId": "chopin-fantaisie-impromptu-op66",
+      "statusRequested": "CONFIRMED",
+      "outcome": "AUTO_CONFIRMED",
+      "reasons": [
+        "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+      ]
+    },
+    {
+      "candidateId": "e625a1d9-60e3-42da-b205-4b907c3b85e2",
+      "analysisId": "de10bf8f-8c07-404e-a798-b3d531f604d3",
+      "concertId": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "ARRANGEMENT_IDENTITY_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "a99f6f90-f4dc-4580-9be2-6a75cae61bbc",
+      "analysisId": "de10bf8f-8c07-404e-a798-b3d531f604d3",
+      "concertId": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "acee5b29-87a9-4ac0-bbfb-45c37bd214d7",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+      ]
+    },
+    {
+      "candidateId": "693b8ae0-537e-49ed-96e0-161b4aa2d9b6",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": "chopin-ballade-op52-no4",
+      "workId": "chopin-ballade-op52-no4",
+      "statusRequested": "CONFIRMED",
+      "outcome": "AUTO_CONFIRMED",
+      "reasons": [
+        "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+      ]
+    },
+    {
+      "candidateId": "67e6a18d-f123-4d55-8f88-3659a7854bad",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "ARRANGEMENT_IDENTITY_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "9ec08bf4-9a84-41ad-8a34-624ffc19061e",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "322d7ea5-e5fc-45ca-8204-d1558f36ceac",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "ARRANGEMENT_IDENTITY_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "ef93c856-081d-4d76-ba41-94be15dfa0c3",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_OUTSIDE_CATALOG",
+        "PARENT_WORK_TITLE_UNCONFIRMED",
+        "UNCERTAIN_NUMBERED_ITEM_RELATION",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "e1c79091-d5a2-4910-8c3b-5bc98d8a7944",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_OUTSIDE_CATALOG",
+        "PARENT_WORK_TITLE_UNCONFIRMED",
+        "UNCERTAIN_NUMBERED_ITEM_RELATION",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "1410ced6-74a9-499d-8f6f-71f511a5a455",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+      ]
+    },
+    {
+      "candidateId": "1af71cce-c563-4efe-a582-825a69ff5261",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "d09d01ea-a746-448e-9fd7-11759637fea0",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+      ]
+    },
+    {
+      "candidateId": "3ef12d4d-08e2-4c39-a95c-3c5780b9b842",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "ARRANGEMENT_IDENTITY_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "563b24a8-862e-4622-b325-8ee437356530",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "ARRANGEMENT_IDENTITY_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "191e38ed-4185-4da6-b855-b22772940eef",
+      "analysisId": "2a3941f5-be86-4c82-9e25-8c104f7bafc5",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "f7794774-e7b9-4d46-9938-af2b07c65583",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "a1780ab9-9d47-42c7-b032-5784da765410",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PARENT_WORK_TITLE_UNCONFIRMED",
+        "UNCERTAIN_NUMBERED_ITEM_RELATION",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "7acfa7cd-60d5-450b-b532-90d3429c85b0",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+      ]
+    },
+    {
+      "candidateId": "96676ba4-b780-434d-8f87-83c12547f73a",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "48fac4b5-ca1e-4087-bffe-abd3b8b3f13f",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "57a2d0a0-97f0-45fb-a9da-71f0126af962",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "cc4957c4-6114-46f6-b0ac-b846a13cc155",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_MISSING",
+        "PARENT_WORK_TITLE_UNCONFIRMED",
+        "UNCERTAIN_NUMBERED_ITEM_RELATION",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "7963dd75-87df-442e-81c7-931f7230f032",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "4c98aa06-8bf6-4d08-8640-a28dafacd8dc",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "9baa66a8-826f-4b0c-b4ad-28f915098621",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_OUTSIDE_CATALOG",
+        "PARENT_WORK_TITLE_UNCONFIRMED",
+        "UNCERTAIN_NUMBERED_ITEM_RELATION",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "4ef1de57-2127-4e86-a14c-051c8eb041b2",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "3d619066-1971-4984-bc5f-b20b89b23425",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "e919baa9-0e81-4fc0-b4e8-53876fc0d7d3",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "36b616e8-6d49-4a87-aeef-7e5a8e736f14",
+      "analysisId": "c9850409-b953-48f1-b50c-b70d3791dcd8",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "e70ab551-4cf0-4d84-89af-78a31a71e5e6",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": "beethoven-sonata-op27-2-no14",
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT"
+      ]
+    },
+    {
+      "candidateId": "158e9bd0-dbb2-47c5-83de-b6b0703aebdc",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "9ae3530b-0d46-4861-9f46-09361e5293a8",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PROGRAM_EVIDENCE_MISSING",
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "dffdef40-8882-42b6-a040-d7b9017041d4",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PROGRAM_EVIDENCE_MISSING",
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "7f8d2e28-3e65-4b1f-a926-ea2881c9fe21",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PROGRAM_EVIDENCE_MISSING",
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "cfff982b-246f-490b-baba-e3e21324344c",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PROGRAM_EVIDENCE_MISSING",
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "805e55d8-cd19-445d-a8f0-77a7ea0add83",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PROGRAM_EVIDENCE_MISSING",
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "466bf090-f3ba-445d-bc51-8ee3df2ab650",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PROGRAM_EVIDENCE_MISSING",
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "55e9e279-bee4-44eb-aac3-393babe21223",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PROGRAM_EVIDENCE_MISSING",
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "0822d18e-6172-440d-863a-db4cb8700ba2",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "22c5c68e-5679-4b65-b9e6-bdbdb5d984cf",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": "beethoven-sonata-op27-2-no14",
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT"
+      ]
+    },
+    {
+      "candidateId": "87210c6f-91de-460d-8b6f-c6d12bef48f9",
+      "analysisId": "2ccec36a-a760-437f-966d-2dc3f92ac308",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "trackId": null,
+      "workId": "beethoven-sonata-op27-2-no14",
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT"
+      ]
+    },
+    {
+      "candidateId": "0e6d9676-17e1-437f-bdba-f9da7b020688",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PARENT_WORK_TITLE_UNCONFIRMED",
+        "UNCERTAIN_NUMBERED_ITEM_RELATION",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "NUMBER_TITLE_ASSOCIATION_UNCERTAIN"
+      ]
+    },
+    {
+      "candidateId": "b10de27b-9e90-411a-be61-da18b1352b47",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "PARENT_WORK_TITLE_UNCONFIRMED",
+        "UNCERTAIN_NUMBERED_ITEM_RELATION",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+        "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+      ]
+    },
+    {
+      "candidateId": "faffe7ab-3a25-492a-b688-57fc226dba03",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "80d07f85-7e55-446a-acce-9edc794c1d8c",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "63b34997-2122-4751-a796-9e5c86b5060f",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "1f2fb0cb-88e1-444c-af68-e8d0f8afe2ab",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "IDENTITY_CONFLICT_OR_INCOMPLETE",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "72c34014-1ad0-47c7-b763-6a7fdd934a8d",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "IDENTITY_CONFLICT_OR_INCOMPLETE",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "9b7df99b-ff62-4f6c-84e0-8b4c26bfc18e",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "dea8b796-a7fa-4f5a-9be8-145fcec73e7e",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "2d898d39-d27f-45d8-aa0b-679bc5ce0c55",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "c65d9a0e-6a4d-4aba-9fde-9f1265dadefe",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "0972a837-63d4-4e4d-8369-ec510750257a",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "a57187ed-2215-4f2e-8600-27db8f8ff018",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "86b10f62-e2b7-4adb-9ddf-7012b8641e98",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "COMPOSER_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    },
+    {
+      "candidateId": "bafb730c-b9d1-42b8-9fab-97bbdda231c0",
+      "analysisId": "c0e60e41-9ebc-49a0-8cc1-c2ccbd787777",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "trackId": null,
+      "workId": null,
+      "statusRequested": "REJECTED",
+      "outcome": "AUTO_UNLINKED",
+      "reasons": [
+        "CATALOG_TARGET_MISSING",
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+      ]
+    }
+  ],
+  "newConfirmed": [
+    {
+      "id": "46c6d172-d8df-43f7-adc3-b0d78b65dcc3",
+      "candidate_id": "693b8ae0-537e-49ed-96e0-161b4aa2d9b6",
+      "track_id": "chopin-ballade-op52-no4",
+      "concert_id": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "status": "CONFIRMED",
+      "reviewer_kind": "AUTOMATIC_PROGRAM_RULE",
+      "identity_source": "AUTOMATIC_PROGRAM_RULE",
+      "work_identity_hash": "026e153a8a968462987a5cbce385390ef1be4c763917ca0df8c676a37655e9f7",
+      "receipt_sha256": "9f966da623c0b9a959238312056e7ca9eacddaed9bfd6e4b365509be315b19cb"
+    },
+    {
+      "id": "e7b73b9c-5ad7-438d-86de-1f32c63ec15f",
+      "candidate_id": "9b453d6a-c4f4-4eb3-869b-a3ed2ec521c1",
+      "track_id": "chopin-fantaisie-impromptu-op66",
+      "concert_id": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "status": "CONFIRMED",
+      "reviewer_kind": "AUTOMATIC_PROGRAM_RULE",
+      "identity_source": "AUTOMATIC_PROGRAM_RULE",
+      "work_identity_hash": "9a4fd2f3cc6f1b7b6f4f61d3633b7b2f8fc1a1eb672b26702e85ec50a0453016",
+      "receipt_sha256": "7c9d629a05c6e6b2e8ae427c5c9b0bde04c64c89296ca8ec951a6e584fedc120"
+    }
+  ],
+  "scheduler": {
+    "state": "Ready",
+    "action": [
+      {
+        "execute": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "arguments": "-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -File \"C:\\Users\\CNXK\\dev\\sound-atlas\\scripts\\Invoke-ConcertPipeline.ps1\" -Mode run -Profile daily -NodePath \"C:\\Program Files\\nodejs\\node.exe\" -CollectLimit 10 -OcrLimit 20 -AnalysisLimit 20 -ListPages 4 -DbPages 20 -ImageChecks 40 -MaxSeconds 1800 -RecheckHours 24 -CleanupLimit 100",
+        "workingDirectory": "C:\\Users\\CNXK\\dev\\sound-atlas"
+      }
+    ],
+    "triggers": [
+      {
+        "StartBoundary": "2026-10-22T08:40:00+09:00",
+        "DaysInterval": 1,
+        "Enabled": true
+      }
+    ],
+    "multipleInstances": "IgnoreNew",
+    "executionTimeLimit": "PT32M",
+    "nextRunTime": "2026-10-23T08:40:00.0000000+09:00",
+    "registeredConfigurationVerified": true,
+    "nextScheduledRunExecuted": false,
+    "actualCodeDirectory": "Original root plus seven additive edits; not a checkout of the result branch",
+    "preflight": {
+      "status": "PASS",
+      "recordedAt": "2026-10-22T06:35:52.917Z",
+      "scope": "ACTUAL_SCHEDULE_ENTRY_DIRECTORY_PREFLIGHT_ONLY",
+      "schema": {
+        "cleanup_schema_ready": true,
+        "analysis_schema_ready": true,
+        "work_identity_schema_ready": true,
+        "automation_schema_ready": true,
+        "analysis_version_enabled": true,
+        "matcher_version": "stored-program-3",
+        "node": "22.18.0",
+        "python_file_checked": true,
+        "model_files_checked": true,
+        "python_dependencies_checked": false,
+        "kopis_authentication": "CHECKED_ON_FIRST_LIST_REQUEST"
+      },
+      "pythonDependenciesAndModelsProbe": true,
+      "automatic": {
+        "enabled": true,
+        "image_limit": 3,
+        "candidate_limit": 30,
+        "decisions": 0,
+        "history_policy": "SKIP_PENDING_HISTORICAL_CANDIDATES",
+        "skipped_images": [
+          {
+            "image_id": "c163f31f-ae59-4865-82dd-ef40b3690a1a",
+            "reason": "HISTORICAL_CLOSEOUT_REQUIRES_BOUNDED_RPC",
+            "candidate_rows": 10
+          },
+          {
+            "image_id": "43377dd0-4177-4f11-8f9e-81b18d31ef64",
+            "reason": "HISTORICAL_CLOSEOUT_REQUIRES_BOUNDED_RPC",
+            "candidate_rows": 12
+          },
+          {
+            "image_id": "92039fc8-a640-489a-a73d-2ca30cf43a48",
+            "reason": "HISTORICAL_CLOSEOUT_REQUIRES_BOUNDED_RPC",
+            "candidate_rows": 8
+          }
+        ],
+        "images_selected": 3
+      },
+      "selectedImageIds": [
+        "aebd1ee6-bd2e-4361-b079-4d2f51b4f8af",
+        "7db9a484-ff24-4781-870c-993754b6979f",
+        "3b396483-642a-40de-81d6-da3aca445f7e"
+      ],
+      "requests": {
+        "GET": 49,
+        "POST": 0
+      },
+      "integratedBatchRun": false,
+      "ocrCalls": 0,
+      "imageDownloads": 0,
+      "kopisRequests": 0,
+      "schedulerChanged": false
+    },
+    "codeFiles": [
+      {
+        "path": "server/automaticProgramLimits.mjs",
+        "sha256": "dc5e152b63ed6222c1da6ee46973f8adf700465e3758a1a03f9d36c1ce98ea5f",
+        "isolatedSourceMatches": true
+      },
+      {
+        "path": "server/automaticProgramLimits.test.mjs",
+        "sha256": "fea77d05ecdf9d614a456bf0d5b8f75c17856b7bf9ad22d6e95c7c4625f29b2f",
+        "isolatedSourceMatches": true
+      },
+      {
+        "path": "server/automaticProgramCoverage.mjs",
+        "sha256": "9ca6ad00cde15ccb75ba7bfa3d52c359cd639acf4a1acb79282d21511c6ffeff",
+        "isolatedSourceMatches": true
+      },
+      {
+        "path": "server/automaticProgramCoverage.test.mjs",
+        "sha256": "766bd950f25527835bf7ad4cfaf59db81203d25faffeab25c2393fed79caa7c5",
+        "isolatedSourceMatches": true
+      },
+      {
+        "path": "server/pipelineConfig.mjs",
+        "sha256": "b50a46b374de96236c706178a6aba45fc4ce9c730eb9d3959643ff7de6cc094e",
+        "isolatedSourceMatches": true
+      },
+      {
+        "path": "scripts/runConcertPipeline.mjs",
+        "sha256": "9c37a8902d49e2c3ea4bd84a953d449e28eff4c4fcbbc06018c2a0f2fbc9ad50",
+        "isolatedSourceMatches": true
+      },
+      {
+        "path": "scripts/test.mjs",
+        "sha256": "755259846c828438675b816c53dc8418f444cc4d3ebc11e5027a9f21d4c136b6",
+        "isolatedSourceMatches": true
+      }
+    ]
+  },
+  "validation": {
+    "unitAndSqlAndUiRegression": {
+      "initialFull": 371,
+      "initialPass": 371,
+      "afterGuardFull": {
+        "tests": 373,
+        "pass": 372,
+        "fail": 1,
+        "failedTest": "Windows read-only scheduler Status exceeded child-process timeout under concurrent inspection",
+        "isolatedFailedTestRerun": "PASS",
+        "finalFullRerun": {
+          "tests": 373,
+          "pass": 373,
+          "fail": 0
+        }
+      },
+      "newGuardAndCoverageFocusedTests": {
+        "tests": 8,
+        "pass": 8
+      }
+    },
+    "build": "PASS",
+    "buildWarning": "Existing chunk >500kB",
+    "publicApi": "All two new pairs and three existing pairs EXACT/CONFIRMED after every saved batch",
+    "browserVisualVerified": false,
+    "deployedGitSha": "UNKNOWN",
+    "matcherSemanticsChanged": false,
+    "rawOcrOrCredentialsPublished": false
+  },
+  "publication": {
+    "clientDate": "2026-10-23",
+    "timeZone": "Asia/Seoul",
+    "operationalResultsObservedOn": "2026-10-22",
+    "schedulerSnapshotObservedOn": "2026-10-22",
+    "october23ScheduledRunResultNewlyVerified": false
+  }
+}

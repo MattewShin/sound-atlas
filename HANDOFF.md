@@ -4,13 +4,87 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 2
-- 현재 상태: IN_PROGRESS
+- 현재 상태: BLOCKED
 - 마지막 작성자: Codex
-- 작성일: 2026-10-22 (Asia/Seoul)
+- 작성일: 2026-10-23 (Asia/Seoul; 운영 결과 관측은 10/22)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 2 최종 결과 — BLOCKED
+
+- 결과 게시일: 2026-10-23 (Asia/Seoul). 운영 실행·테스트·예약 관측은 2026-10-22의 기록이다. 10/23 예약 실행 결과는 이번 게시 작업에서 새로 조회하지 않았다.
+
+- 결과 작성 시각: 2026-10-22 15:52:38 KST
+
+- 작업/명세/상태: **CA-AUTO-20261022-001 / 2 / BLOCKED**.
+- 읽은 공동 문서5개: `6d874178fad7a7fdc1793af23f1bd1273b6dc3ad`의 동일 snapshot. 저장 전 계획/코드: `bfa5a042396de8337d9a2e249254befc095b2c7e`. 최종 차단 보완 코드: `b857be6ef25d441971a01e900724a19006957caa`. 기반 matcher/extraction/SQL은 `ad5ab3cf5984146c4b2dc94428a146944af23fab`.
+- 증거: [전체 eligible queue dry-run](docs/PROGRAM_AUTOMATION_EXPANSION_DRY_RUN_2026-10-22.json), [명세2 실행·행 단위 감사 JSON](docs/PROGRAM_AUTOMATION_EXPANSION_2026-10-22.json). 원문 OCR graph·비밀 환경값은 제외했다.
+- 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의 기존33파일 및 index hash 그대로다. 새 작업은 기존에 깨끗했던 runner/config/test-runner3파일과 신규4파일에만 추가했다. switch/reset/stash/pull/stage/원본 commit 및 .env 수정0. 관리자 연결은 존재·성공만 확인했고 문자열/비밀번호/접속 대상을 출력·게시하지 않았다.
+- 명세1 migration/PF295548 canary 재실행0. 관리자 READ ONLY 검사에서 자동화5RPC/7컬럼, 정확한 signature/반환형/권한, 선행8함수/view 정상 확인. 새 migration/전체 backfill/무제한 확정/main병합/배포/통합 pipeline run/예약 변경0.
+
+### 달성 결과와 상한 집계 누락
+
+운영 신규 unique track–concert 연결은 **2건**이며 둘 다 API에서 EXACT/CONFIRMED다. 기존 유효3연결은 유지됐다. 검색 가능한 서로 다른 등록곡은3→4로 증가했다. 발라드4는 기존 검색곡의 다른 공연 연결이므로 신규 등록곡2개로 세지 않는다.
+
+| 공연 | track/work | 새 receipt | 운영 검색 |
+| --- | --- | --- | --- |
+| PF295588 | chopin-fantaisie-impromptu-op66 | e7b73b9c-5ad7-438d-86de-1f32c63ec15f | HTTP200 / EXACT / CONFIRMED |
+| PF301161 | chopin-ballade-op52-no4 | 46c6d172-d8df-43f7-adc3-b0d78b65dcc3 | HTTP200 / EXACT / CONFIRMED |
+
+**상한의 누락을 최종 감사에서 발견했다.** 처음에는 후보 결정 RPC만 셌다. 기존 `finish_automatic_program`은 과거 v3 분석의 미검토 후보도 `SUPERSEDED_BY_CURRENT_ANALYSIS`로 REJECTED 처리하며, 그 행 수에는 SQL 상한이 없다. 4번째 묶음에서 결정 RPC26건 외에 과거38행이 정리됐다. 후보 행 상태 변경까지 포함한 보수적 집계는64행이므로 묶음30을 초과했다. 이 발견은5번째 묶음까지 완료된 뒤의 최종 행 단위 비교에서 이뤄졌다. 발견 후 추가 운영 쓰기는0이다. 이 이력을 사후 수정으로 통과 처리하지 않는다.
+
+| 묶음 | 이미지 | 후보 결정 RPC(거절 포함) | 과거 후보 상태 정리 | 합산 상태 변경 | 자동화 POST | 즉시 재실행 POST |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 3 | 8 | 0 | 8 | 14 | 0 |
+| 2 | 3 | 13 | 0 | 13 | 19 | 0 |
+| 3 | 3 | 0 | 0 | 0 | 6 | 0 |
+| 4 | 3 | 26 | 38 | **64** | 32 | 0 |
+| 5 | 3 | 15 | 0 | 15 | 21 | 0 |
+| 합계 | **15** | **62** | **38** | **100** | **92** | **0** |
+
+직접 결정62건은 새 CONFIRMED receipt2 + REJECTED receipt60이다. 과거38행 정리는 receipt를 만들지 않았으며 원래 candidate/analysis/track/work/relation/identity/evidence 관계는 보존됐다. 누적 이미지15≤20, 상태 변경100≤100이지만 묶음4의 전체 행 상한은 충족하지 못해 전체 상태는 BLOCKED다. 이미지 상한이5개 남아 있어도 보수적 후보 예산은0이다.
+
+runner의 미연결 요약70은 거절 후보60건과 후보0 이미지10개를 합친 값이다. 70개 후보·70개 receipt라고 표현하지 않는다. 자동 결정 실패/재시도0, 예상 밖/중복 새 CONFIRMED0이다.
+
+### 전용 정기 상한과 발견 후 보완
+
+정기 진입점은 자동화 전용 `automaticImageLimit=3`, `automaticCandidateLimit=30`을 사용하며 일반analysis20/OCR20과 별도다. 설정·impact reader를 확인할 수 없으면 자동 queue만 비우고 수집/OCR 예약 전체를 중지하지 않는다.
+
+최종 코드에서는 완료 RPC의 과거 후보 일괄 정리까지 고려해 **과거 REVIEW_REQUIRED 후보가 있는 이미지를 저장 전에 제외**한다. 분석 저장 직전과 완료 직전에도 다시 확인하며, 새 과거 후보·실패·재시도가 발견되면 뒤의 자동 쓰기를 차단한다. 과거 정리까지 포함해 처리하려면 행 상한이 있는 별도 완료 RPC가 필요하다. 이번에는 새 migration을 만들거나 운영 함수를 변경하지 않았다.
+
+실제 root의 같은 launcher를 실행한 plan은 PLAN_READY/DB쓰기0, 자동화3/30과 과거 정리 차단 정책을 표시했다. 실제 디렉터리의 DB schema·Python/모델 probe와 읽기 전용 queue 사전 검사도 PASS(GET49/POST0)다. 사전 검사에서 과거10/12/8행을 가진 이미지3개가 제외되고 다른3개가 선택되는 것을 확인했다. 실제 저장/수집/OCR 실행으로 이 검사를 대체하지 않았다.
+
+10/22 관측 당시 예약은 Enabled/Ready, daily08:40 KST, IgnoreNew, PT32M/1,800초이며 당시 nextRunTime은2026-10-23 08:40이었다. 실제 action/시간/전원 정책은 변경하지 않았다. 정기 경로는 원본 root의 커밋 전 코드+이번7개 추가 변경으로 동작한다. 전체 디렉터리가 결과 SHA로 checkout된 것은 아니다. 최종7파일은 고정 코드 SHA에서 GitHub readback과 로컬/격리본 내용이 모두 같다. **다음 예약의 실제 실행 결과는 아직 확인하지 않았다.**
+
+### 전체 dry-run 분모와 D 조사
+
+관리자 REPEATABLE READ READ ONLY에서 저장47공연 전체를 조회했다. 모든 current analysis image ID를90개 이하로 나눠 queue limit100을 조회했으며 각 partition은100 미만이었다. 페이지 상한으로 일부만 본 결과가 아니다.
+
+- 최초 eligible queue: **48이미지/41공연, fresh후보123개**, 예상 신규 unique연결1(PF295588/Op.66). 중복 예상0. 모든 track/work/outcome/reason은 dry-run JSON에 있다.
+- D 대표10이미지: 후보0인7개는 명시적 현재 프로그램 근거가 부족했다. PF303303은 상위 작품만으로 악장을 확정할 수 없었고 PF303424는 미등록/불명확 identity였다. 프로그램/전기·작품번호·악장·편곡 경계를 느슨하게 만들지 않았다.
+- PF301161의 명확한 발라드4는 성공 OCR 이후 current 분석이 없어 queue에서 빠져 있었다. **누락 분석 준비 경로와 상한/만료/비활성 회귀를 추가**해 실제 연결을 복구했다. extraction/matcher 의미를 같은 stored-program-3 이름으로 바꾸지 않았다. 새 파서 규칙을 운영에 적용한 것으로 보고하지 않는다.
+- 새 OCR은 active DETAIL5이미지만 다운로드5/OCR5/RPC POST5: 성공4·시간초과1(EASYOCR_TIMEOUT). 재시도·제한 완화·추가 OCR0. 시간초과 이미지는 자동 저장에서 제외했다.
+- 전체113이미지는 DETAIL66 + POSTER47이다. 이전의 전체 이미지 기준 OCR부재60을 active DETAIL 재처리 분모로 쓰지 않았다. usable OCR53→57, 현재 성공OCR 없음13→9, OCR있음·후보0 이미지27→30, 후보 이미지26→27이다.
+- 최종 남은 전체 eligible queue는 **39이미지/33공연, fresh후보89개**, 예상 신규 확정0이다. 남은9개 OCR 공백과 명확한 근거 없는 후보를 억지로 연결하지 않았다.
+- 두 새 연결은 서울/2026-10-22~11-21에서 노출됨을 확인했다. 현재 양성 중 기간·지역·공연 상태 때문에 숨겨진 결과는0이다. 다른 필터의 무조건 노출을 보장하지 않는다.
+
+운영 저장 전5묶음 live dry-run은 GET140/POST0으로 통과했다. 초기 로컬 조사 도구는 pg int8 revision을 문자열로 읽어 REST 숫자형과 payload hash가 달랐고, 안전 guard가 GET25/POST0에서 중단했다. to_jsonb 기반 SQL snapshot으로 자료형을 맞춘 뒤 재검증했다. 이 수정은 원문이나 matcher 정책을 바꾸지 않았으며 운영 후보 결정 실패로 세지 않는다.
+
+### 실제 검증·보존과 한계
+
+운영 전체 수치는 분석93→104, 후보261→315, review17→79, OCR결과53→57, OCR시도64→69다. 자동화 POST92 = 분석저장15 + 후보결정62 + 완료15이고 OCR POST5는 별도다. 자동화 저장 GET184, 각 묶음 즉시 재실행 GET2/POST0(합계GET10), 공개 검색GET20을 기록했다. 관리자 READ ONLY SQL과 별도 launcher plan의 GET을 섞어 완전한 전역 HTTP 합계를 주장하지 않는다.
+
+매 묶음에서 이전 모든 receipt의 전체 row digest를 대조했다. 기존 수동2건과 브람스 자동1건을 포함한 최초17개 receipt 및 이후 묶음이 추가한 receipt도 보존됐다. 기존3개 검색과 새2개 연결을 매 묶음 뒤 API로 대조했다. 공개 DTO의 target/track/work/EXACT/CONFIRMED 및 비공개 필드 부재를 확인했다. 실제 브라우저 UI/시각 검사, 새 배포는0이고 배포 SHA는 UNKNOWN이다.
+
+최종 격리 코드 전체 **373/373 PASS**, 신규8개 상한/coverage/과거 정리 차단 테스트 포함. 중간 전체 실행의 Windows read-only Status1개가 시간 제한에 걸렸으나 단독 재검증 및 최종 전체 재실행은 모두 통과했다. build PASS(기존500kB 초과 chunk 경고). 기존33파일/index/branch/HEAD 보존과 게시물의 실제 비밀값 부재를 다시 확인했다.
+
+### 기술 의견·후속 우선순위
+
+1. **Q-003 / BLOCKED**: 묶음4의26 decision RPC와 과거38행 정리를 구분해 검토해 달라. 현재는 전체 상태 변경64>30으로 보수 판정했다. 명세의 묶음 상한을 충족했다고 승인하지 않는다. 전체 행 상한이 있는 완료 RPC·입력 fingerprint에 포함할 과거 후보 범위·중단/재개 정책을 다음 명세에서 확정해야 한다. 이번에 설치된 migration을 재실행/수정하거나 receipt/과거 상태를 임의 복원하지 않았다.
+2. **Q-002 해결/제한**: 전용 정기3/30과 과거 정리 위험 이미지 제외는 실제 예약 경로에서 검증했다. 제외한 이미지는 bounded RPC가 준비되기 전까지 자동 저장하지 않는다. 다음 예약의 실제 결과는 별도 검토 대상이다.
+3. **Q-004 / 자료 보완**: 시간초과1개를 포함한 현재 active DETAIL OCR공백9개와 근거 부족/미등록 표기는 원인을 나눠 후속 조사한다. 이번5개 OCR·10개 대표 사례 한도와 현재 누적 후보 예산은 종료했다. 미등록곡을 유사 제목으로 연결하거나 상위 작품에서 악장을 만들어내지 않는다.
 
 ## 웹 GPT → Codex
 
@@ -244,3 +318,4 @@ CA-AUTO-20261022-001은 명세 2 READY다. Codex는 결과 SHA `2c4411bd8d79b663
 - 저장 예정: 5묶음, 각 이미지3개, 후보수8/13/0/26/15 = 누적15이미지/62후보. 예상 신규 unique연결2: PF295588/chopin-fantaisie-impromptu-op66, PF301161/chopin-ballade-op52-no4. PF295548 제외. 신규OCR4개와 대표10개, 기존 양성1개만 포함한다. 모든 묶음 live dry-run 확인 후 저장→동일scope즉시POST0→공개검색/기존receipt 보존 확인을 순차 진행한다.
 - 기능/SQL/UI 기존 회귀와 신규6개를 합쳐371/371 PASS, production build PASS. 기존 chunk>500kB 경고 유지. 실제 웹 UI 시각 검사는 별도 미실행이다.
 - 현재 상태 IN_PROGRESS: 위 값은 예상이며 운영 자동 확정 성과가 아니다. [전체 queue dry-run](docs/PROGRAM_AUTOMATION_EXPANSION_DRY_RUN_2026-10-22.json)에 모든 후보의 track/work/outcome/reason을 기록했다.
+
