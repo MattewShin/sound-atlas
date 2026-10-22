@@ -318,11 +318,13 @@ test('evidence offsets use Unicode code points, exact quotation retained', () =>
   const e = a.candidates[0].evidence[0]
   assert.equal([...f.ocr.raw_text].slice(e.start,e.end).join(''), e.quote)
 })
-test('latest failure or replacement never falls back to an old successful artifact', () => {
+test('failed source check without changed bytes preserves evidence; known replacement does not', () => {
   const f = fixture('')
   const attempts = [{ id: 'a', status: 'SUCCEEDED', result_id: f.ocr.id, finished_at: '2026-10-15T01:00:00Z', created_at: '2026-10-15T01:00:00Z' }]
   assert.equal(evidenceIssue({ ...f, attempts, results: [f.ocr] }), null)
   attempts.push({ id: 'b', status: 'FAILED', result_id: null, finished_at: '2026-10-15T02:00:00Z', created_at: '2026-10-15T02:00:00Z' })
+  assert.equal(evidenceIssue({ ...f, attempts, results: [f.ocr] }), null)
+  attempts[0].content_sha256='old';attempts[1].content_sha256='changed'
   assert.equal(evidenceIssue({ ...f, attempts, results: [f.ocr] }), 'LATEST_OCR_NOT_SUCCESSFUL')
   assert.equal(evidenceIssue({ ...f, image: { ...f.image, is_active: false }, attempts, results: [] }), 'IMAGE_INACTIVE_OR_NOT_DETAIL')
 })
@@ -345,12 +347,12 @@ test('CLI requires a single UUID, prior analysis ID and note; refuses unresolved
   await assert.rejects(runProgramCli(['confirm',id,'--analysis-id',analysisId,'--note','checked'],{ store, print:()=>{} }), /CANNOT_CONFIRM/)
   assert.equal(writes, 0)
 })
-test('REST dry-run works before the new migration, uses only GET, and skips images whose newest ingestion failed', async () => {
+test('REST dry-run works before the new migration, uses only GET, and skips failed OCR of known changed bytes', async () => {
   const f=fixture('PROGRAM\nChopin Ballade No.1 Op.23')
   const failedImage={...f.image,id:randomUUID()}
   const requests=[]
-  const goodAttempt={id:randomUUID(),status:'SUCCEEDED',result_id:f.ocr.id,created_at:'2026-10-15T02:00:00Z',finished_at:'2026-10-15T02:00:00Z'}
-  const failedAttempt={...goodAttempt,id:randomUUID(),status:'FAILED',result_id:null,created_at:'2026-10-15T03:00:00Z',finished_at:'2026-10-14T00:00:00Z'}
+  const goodAttempt={id:randomUUID(),status:'SUCCEEDED',content_sha256:'a'.repeat(64),result_id:f.ocr.id,created_at:'2026-10-15T02:00:00Z',finished_at:'2026-10-15T02:00:00Z'}
+  const failedAttempt={...goodAttempt,id:randomUUID(),status:'FAILED',content_sha256:'b'.repeat(64),result_id:null,created_at:'2026-10-15T03:00:00Z',finished_at:'2026-10-14T00:00:00Z'}
   const store=createProgramAnalysisStore({env:{SUPABASE_URL:'https://unit.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'unit-fixture-key'},
     fetchImpl:async(url,init)=>{
       requests.push({path:url.pathname,method:init.method})

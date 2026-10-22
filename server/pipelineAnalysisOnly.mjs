@@ -10,26 +10,29 @@ import { commitPriority, priorityPreview } from './pipelinePriority.mjs'
 import { getProgramRollout } from './programRollout.mjs'
 import { koreanTime, pipelineError, safeCode } from './pipelineConfig.mjs'
 import { CollectionError } from './collectionHttp.mjs'
+import {runAutomaticPrograms,automaticSummary} from './programAutomation.mjs'
 
 // No KOPIS client, downloader or Python worker is constructed on this path.
 export const createAnalysisOnlyRuntime = ({ env=process.env, signal, manifest, fetchImpl=fetch }={}) => {
   const origin=new URL(env.SUPABASE_URL).origin
-  const activity={db_reads:0,analysis_save_calls:0,kopis_calls:0,image_downloads:0,ocr_calls:0,python_processes:0,cleanup_deletions:0}
+  const activity={db_reads:0,analysis_save_calls:0,automatic_save_calls:0,kopis_calls:0,image_downloads:0,ocr_calls:0,python_processes:0,cleanup_deletions:0}
   const tables=new Set(['','concerts','concert_program_images','concert_image_ocr_results','concert_image_ocr_attempts',
     'concert_program_analyses','concert_program_candidates','concert_program_candidate_status','concert_program_version_policy'])
   const guardedFetch=(url,init)=>{
     const u=new URL(url),path=u.pathname.replace(/^\/rest\/v1\//,'')
     if(u.origin!==origin||!u.pathname.startsWith('/rest/v1/'))throw new CollectionError('ANALYSIS_ONLY_UPSTREAM_FORBIDDEN','Analysis-only upstream rejected')
     if(init.method==='GET'&&tables.has(path))activity.db_reads++
+    else if(init.method==='GET'&&['rpc/queue_automatic_programs','rpc/program_auto_input_hash'].includes(path))activity.db_reads++
     else if(init.method==='POST'&&path==='rpc/save_concert_program_analysis_v3')activity.analysis_save_calls++
+    else if(init.method==='POST'&&['rpc/decide_automatic_program_candidate','rpc/finish_automatic_program','rpc/defer_automatic_program'].includes(path))activity.automatic_save_calls++
     else throw new CollectionError('ANALYSIS_ONLY_OPERATION_FORBIDDEN','Analysis-only operation rejected')
     return fetchImpl(url,init)
   }
   const source=createPipelineRepository({env,signal,fetchImpl:guardedFetch})
   return {analysisOnly:true,manifest,activity,rollout:getProgramRollout(env),
     namespace:createHash('sha256').update(origin).digest('hex').slice(0,16),imageValidationKey:imageValidationKey(getOcrImageConfig(env)),
-    preflight:()=>source.analysis.preflightSave(),
-    repository:{snapshot:source.snapshot,analysis:source.analysis,candidates:source.candidates,reviewSummary:source.reviewSummary}}
+    preflight:async()=>{const result=await source.analysis.preflightSave();await source.automation.preflight();return result},
+    repository:{snapshot:source.snapshot,analysis:source.analysis,automation:source.automation,candidates:source.candidates,reviewSummary:source.reviewSummary}}
 }
 
 const stage=status=>({status,succeeded:0,failed:0,reused:0,skipped:0,limit_reached:false,duration_ms:0})
@@ -40,7 +43,7 @@ export const runStoredAnalysisOnly = async ({runtime,local,state,options,plan,si
     status:'RUNNING',exit_code:null,duration_ms:0,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH,
     rollout:runtime.rollout,activity:runtime.activity,stages:{preflight:stage('NOT_RUN'),
       cleanup:stage('SKIPPED_ANALYSIS_ONLY'),collection:stage('SKIPPED_ANALYSIS_ONLY'),ocr:stage('SKIPPED_ANALYSIS_ONLY'),analysis:stage('NOT_RUN')},
-    errors:[],review:{new_candidates:0,new_linked_candidates:0,priority:[]},priority_selection:{collection:[],ocr:[],analysis:[]},time_limit_reached:false}
+    errors:[],review:{new_candidates:0,new_linked_candidates:0,priority:[],operational_queue:false},automation:automaticSummary(),priority_selection:{collection:[],ocr:[],analysis:[]},time_limit_reached:false}
   let active,stageStarted,snapshot,selection
   const finish=()=>{if(active){const s=report.stages[active];s.finished_at=koreanTime(now());s.duration_ms=now()-stageStarted;if(['SUCCEEDED','PARTIAL'].includes(s.status))report.last_completed_stage=active;active=null}}
   const start=name=>{finish();active=name;stageStarted=now();report.stages[name].started_at=koreanTime(stageStarted);report.stages[name].status='RUNNING'}
@@ -81,7 +84,6 @@ export const runStoredAnalysisOnly = async ({runtime,local,state,options,plan,si
         else{
           report.review.new_candidates+=candidates.length
           report.review.new_linked_candidates+=candidates.filter(c=>c.track_id).length
-          report.review.priority.push(...candidates.filter(c=>c.track_id).map(c=>({candidate_id:c.id,analysis_id:id,kopis_id:target.concert.kopis_id,track_id:c.track_id,work_id:c.work_id})))
         }
         a.succeeded++;completedItem(state,target.key,now());commitPriority(state,'analysis',target)
       }catch(error){
@@ -91,14 +93,18 @@ export const runStoredAnalysisOnly = async ({runtime,local,state,options,plan,si
       }
       await persist();onProgress({event:'checkpoint',stages:report.stages})
     }
-    a.status=a.failed?'PARTIAL':'SUCCEEDED';finish()
-    report.status=a.failed?'PARTIAL':'SUCCESS';report.exit_code=a.failed?1:0
+    if(runtime.repository.automation){
+      report.automation=await runAutomaticPrograms({store:runtime.repository.automation,limit:options.analysisLimit,imageIds:manifest.targets.map(t=>t.image_id),check,
+        onCheckpoint:async progress=>{report.automation=progress;await persist()}})
+      a.failed+=report.automation.failed
+    }
+    a.status=a.failed||report.automation.retry_pending?'PARTIAL':'SUCCEEDED';finish()
+    report.status=a.failed||report.automation.retry_pending?'PARTIAL':'SUCCESS';report.exit_code=report.status==='PARTIAL'?1:0
     snapshot=await runtime.repository.snapshot(conditions,options.dbPages);check()
     const after=analysisSelection(snapshot,state,now(),runtime.imageValidationKey)
     a.remaining={known_ready_not_attempted:after.ready.length,blocked:after.blocked.length,cooldown:after.cooldown.length}
-    const reviews=await runtime.repository.reviewSummary(options.dbPages)
-    report.review.total_review_required=reviews.filter(c=>c.matcher_version===MATCHER_VERSION&&(c.matching_catalog_hash||c.catalog_hash)===CATALOG_HASH&&!c.stale_reason).length
   }catch(error){
+    if(error.automationReport)report.automation=error.automationReport
     const code=safeCode(error);report.errors.push({stage:active||'preflight',code})
     report.status=code==='BATCH_INTERRUPTED'||report.stages.analysis.attempted?'PARTIAL':'FATAL';report.exit_code=report.status==='FATAL'?2:1
     if(code==='BATCH_INTERRUPTED')report.termination_reason=report.time_limit_reached?'TIME_LIMIT':String(signal?.reason||'CANCELLED')

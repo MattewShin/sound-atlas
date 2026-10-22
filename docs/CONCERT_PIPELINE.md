@@ -13,9 +13,9 @@
 | 저장 OCR 분석·검토 | `npm run program:analyze` / `scripts/runProgramAnalysis.mjs` | `supabaseProgramAnalysis.mjs` → `programAnalysis.mjs`, 저장·검토는 전용 RPC |
 | 로컬 통합 배치 | `npm run pipeline -- plan/run/latest` / `scripts/Invoke-ConcertPipeline.ps1` | `concertPipeline.mjs` → 기존 수집/OCR/분석 모듈, 로컬 커서·재시도·실행 잠금 |
 
-수집·OCR 배치가 웹 요청이나 브라우저에서 자동 실행되지는 않습니다. 기본 웹 검색은 기존 KOPIS/Tesseract 경로입니다. [DB 검색 미리보기](SUPABASE_CONCERT_PREVIEW.md)는 유효한 수동 확정 EXACT 결과만 반환하며 OCR·재분석·DB 쓰기나 다른 경로로의 우회를 수행하지 않습니다.
+수집·OCR 배치가 웹 요청이나 브라우저에서 자동 실행되지는 않습니다. 기본 웹 검색은 기존 KOPIS/Tesseract 경로입니다. [DB 검색 미리보기](SUPABASE_CONCERT_PREVIEW.md)는 유효한 확정 EXACT 결과만 반환하며 OCR·재분석·DB 쓰기나 다른 경로로의 우회를 수행하지 않습니다. 확정 근거는 수동 또는 `program-auto-1` 자동 receipt이며 같은 작품 식별·원본 유효성 검사를 통과해야 합니다.
 
-[통합 배치와 Windows 예약 안내](LOCAL_PIPELINE.md)는 plan → 수동 실행 → 결과 확인 → 예약 등록 순서입니다. `.cache/concert-pipeline/`의 진행/결과는 Git에서 제외됩니다. [지난 공연 정리](EXPIRED_CONCERT_CLEANUP.md)는 `pipelineCleanup.mjs`와 서버 전용 정리 RPC를 사용하며 신규 마이그레이션 `202610160001`이 필요합니다. 기존 예약은 재등록 없이 기본 cleanup 상한 100개를 적용합니다. 통합 배치도 후보를 자동 확정하지 않습니다.
+[통합 배치와 Windows 예약 안내](LOCAL_PIPELINE.md)는 plan → 수동 실행 → 결과 확인 → 예약 등록 순서입니다. `.cache/concert-pipeline/`의 진행/결과는 Git에서 제외됩니다. [지난 공연 정리](EXPIRED_CONCERT_CLEANUP.md)는 `pipelineCleanup.mjs`와 서버 전용 정리 RPC를 사용하며 신규 마이그레이션 `202610160001`이 필요합니다. 기존 예약은 재등록 없이 기본 cleanup 상한 100개를 적용합니다. 현재 daily/analysis-only는 분석 뒤 자동 결정을 실행하며 `202610210001` identity와 `202610220001` automation RPC를 사전 검사합니다. 후보의 확정·미연결·재시도와 입력 변경 재평가는 [자동 처리 안내](PROGRAM_AUTOMATION.md)를 참조하세요. 코드 게시와 운영 SQL 적용은 별개입니다.
 
 ## 모듈별 책임
 

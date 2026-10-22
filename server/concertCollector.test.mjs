@@ -4,6 +4,7 @@ import { collectConcerts, collectionConditions, createCollectionKopisClient, nor
 import { createSupabaseCollector } from './supabaseCollector.mjs'
 import { CollectionError, requestWithRetry } from './collectionHttp.mjs'
 import { parseKopisXml } from './kopisData.mjs'
+import {getKopisDiagnostic} from './kopisDiagnostics.mjs'
 
 const now = () => Date.parse('2026-10-13T15:00:00Z')
 const conditions = collectionConditions(now())
@@ -25,6 +26,64 @@ test('KST midnight, year boundaries and CLI limits are deterministic', () => {
   assert.deepEqual(parseCollectionArgs([]), { dryRun: false, limit: 10, help: false })
   assert.equal(parseCollectionArgs(['--dry-run', '--limit=25']).limit, 25)
   for (const args of [['--limit'], ['--limit', '0'], ['--limit=-1'], ['--limit=1.5'], ['--bad']]) assert.throws(() => parseCollectionArgs(args))
+})
+
+test('400 diagnostics identify the request and redact structured error labels without retrying or retaining bodies', async () => {
+  const key='fixture+secret/key',other='other-private-token',env={KOPIS_SERVICE_KEY:key,SUPABASE_SERVICE_ROLE_KEY:other}
+  let calls=0
+  const client=createCollectionKopisClient({env,delay:instant,fetchImpl:async()=>{
+    calls++
+    return new Response(`<html><head><title>Bad Request ${encodeURIComponent(encodeURIComponent(key))} ${other} https://kopis.or.kr/?service=${key}</title></head><body>private response body</body></html>`,{status:400,headers:{'Content-Type':'text/html; charset=utf-8'}})
+  }})
+  await assert.rejects(client.list({conditions,state:'01',page:2}),error=>{
+    assert.equal(error.code,'KOPIS_HTTP_400');assert.equal(error.retryable,false)
+    const diagnostic=getKopisDiagnostic(error),serialized=JSON.stringify(diagnostic)
+    assert.deepEqual(diagnostic.request,{origin:'https://kopis.or.kr',method:'GET',endpoint:'/openApi/restful/pblprfr',query:{stdate:'20261014',eddate:'20261113',signgucode:'11',shcate:'CCCA',prfstate:'01',cpage:'2',rows:'100'}})
+    assert.equal(diagnostic.response.http_status,400);assert.equal(diagnostic.response.body_kind,'HTML')
+    assert.ok(diagnostic.response.upstream_message.includes('Bad Request'))
+    for(const secret of [key,other,encodeURIComponent(key),encodeURIComponent(encodeURIComponent(key)),'private response body','?service='])assert.ok(!serialized.includes(secret),secret)
+    return true
+  })
+  assert.equal(calls,1)
+})
+
+test('HTTP 200 API errors and unexpected HTML remain failures while an empty dbs is valid',async()=>{
+  for(const [body,code]of [
+    ['<dbs><db><returncode>02</returncode><errmsg>SERVICE KEY IS NOT REGISTERED ERROR</errmsg></db></dbs>','KOPIS_AUTH_ERROR'],
+    ['<html><title>Bad Gateway</title></html>','KOPIS_RESPONSE_INVALID'],
+    ['<dbs><error>API failure</error></dbs>','KOPIS_RESPONSE_INVALID'],
+  ]){
+    let calls=0
+    const client=createCollectionKopisClient({env:{KOPIS_SERVICE_KEY:'fixture-secret'},delay:instant,fetchImpl:async()=>{calls++;return new Response(body,{headers:{'Content-Type':'application/xml'}})}})
+    await assert.rejects(client.list({conditions,state:'01',page:1}),error=>{
+      assert.equal(error.code,code);assert.equal(getKopisDiagnostic(error).response.http_status,200)
+      if(code==='KOPIS_AUTH_ERROR')assert.equal(getKopisDiagnostic(error).response.upstream_code,'02')
+      return true
+    })
+    assert.equal(calls,1)
+  }
+  const client=createCollectionKopisClient({env:{KOPIS_SERVICE_KEY:'fixture-secret'},delay:instant,fetchImpl:async()=>xml('')})
+  assert.deepEqual(await client.list({conditions,state:'01',page:1}),[])
+  await assert.rejects(client.detail('PF900001'),{code:'DETAIL_MISSING'})
+})
+
+test('unreadable or oversized HTTP error bodies preserve the HTTP failure and bounded diagnostics',async()=>{
+  for(const unreadable of [false,true]){
+    let calls=0
+    const client=createCollectionKopisClient({env:{KOPIS_SERVICE_KEY:'fixture-secret'},delay:instant,fetchImpl:async()=>{
+      calls++
+      const body=unreadable?new ReadableStream({start(controller){controller.error(new Error('private stream failure'))}}):'<title>'+('a'.repeat(17000))+'fixture-secret</title>'
+      return new Response(body,{status:400,headers:{'Content-Type':'text/html'}})
+    }})
+    await assert.rejects(client.detail('PF900001'),error=>{
+      assert.equal(error.code,'KOPIS_HTTP_400')
+      const diagnostic=getKopisDiagnostic(error)
+      assert.equal(diagnostic.response[unreadable?'body_unavailable':'body_truncated'],true)
+      assert.ok(!JSON.stringify(diagnostic).includes('fixture-secret'))
+      return true
+    })
+    assert.equal(calls,1)
+  }
 })
 
 test('normalize overlapping performances, original URLs, image order and nullable source timestamp', () => {

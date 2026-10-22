@@ -9,7 +9,7 @@ import { getTrackTarget } from '../data/workCatalog.js'
 
 function MatchBasis({ concert }) {
   const match = concert.targetMatch
-  if (concert.searchBackend === 'supabase') return <div className="concert-match-basis"><strong>선택한 곡과의 연결 확인</strong><p>원본 프로그램과 곡의 연결을 수동 검토한 결과예요.</p>{concert.dateFrom !== concert.dateTo && <p>기간형 공연 안내예요. 이 곡이 연주되는 정확한 회차는 공식 안내에서 확인해주세요.</p>}{match?.evidenceSourceUrl && <a href={match.evidenceSourceUrl} target="_blank" rel="noopener noreferrer">프로그램 근거 이미지 보기 ↗</a>}</div>
+  if (concert.searchBackend === 'supabase') return <div className="concert-match-basis"><strong>선택한 곡과의 연결 확인</strong><p>원본 프로그램과 작품 식별 정보를 검증한 연결이에요.</p>{concert.dateFrom !== concert.dateTo && <p>기간형 공연 안내예요. 이 곡이 연주되는 정확한 회차는 공식 안내에서 확인해주세요.</p>}{match?.evidenceSourceUrl && <a href={match.evidenceSourceUrl} target="_blank" rel="noopener noreferrer">프로그램 근거 이미지 보기 ↗</a>}</div>
   return match ? <div className="concert-match-basis"><strong>{matchLabels[getMatchStatus(match)]}</strong><p>{match.reason}</p>{match.scope?.kind === 'work' && <p>해당 작품 포함 · 전곡·개별 악장 연주 범위는 별도 확인</p>}{match.scope?.kind === 'complete-work' && <p>전곡 안내</p>}{match.scope?.kind === 'movement-excerpt' && <p>악장 발췌 안내 · {match.scope.movementNumbers.join('·')}악장</p>}{match.evidence && !/^https?:/.test(match.evidence) && <blockquote>{match.evidence.slice(0, 320)}</blockquote>}{match.status === 'matched' && <p>근거 유형 · {match.evidenceKind === 'ocr' ? 'KOPIS 소개 이미지 OCR' : 'KOPIS 프로그램 텍스트'}</p>}{match.evidenceSourceUrl && <a href={match.evidenceSourceUrl} target="_blank" rel="noopener noreferrer">프로그램 근거 이미지 보기 ↗</a>}</div> : null
 }
 

@@ -102,6 +102,23 @@ test('list page cap advances the saved cursor and reports incomplete discovery',
   assert.ok(h.calls.includes('list:02:2'))
 })
 
+test('daily pipeline finalizes program links automatically and reuses completed decisions without a manual queue',async()=>{
+ const h=harness(),data=h.data,repo=h.runtime.repository
+ let decisions=0
+ repo.automation={
+  queue:async limit=>data.analyses.filter(a=>a.is_current&&!a.auto_done).slice(0,limit),
+  target:async a=>({concert:data.concerts.find(c=>c.id===a.concert_id),image:data.images.find(i=>i.id===a.image_id),ocr:data.results.find(o=>o.id===a.ocr_result_id),attempt:data.attempts.find(t=>t.id===a.source_attempt_id)}),
+  saveAnalysis:a=>repo.analysis.save(a),scope:async()=> 'unchanged',candidates:id=>repo.candidates(id),
+  decide:async({candidate,decision})=>{decisions++;Object.assign(data.candidates.find(c=>c.id===candidate.id),{review_status:decision.status,auto_input_hash:'unchanged'});return {outcome:decision.status==='CONFIRMED'?'AUTO_CONFIRMED':'AUTO_UNLINKED',reasons:decision.reasons}},
+  finish:async id=>{data.analyses.find(a=>a.id===id).auto_done=true}}
+ const first=await h.run({collectLimit:3})
+ assert.equal(first.automation.confirmed,3);assert.equal(first.review.operational_queue,false);assert.deepEqual(first.review.priority,[])
+ assert(data.candidates.every(c=>c.review_status==='CONFIRMED'))
+ h.state.collection.pending=[];h.runtime.client.list=async()=>[]
+ const second=await h.run()
+ assert.equal(second.automation.confirmed,0);assert.equal(decisions,3)
+})
+
 test('cleanup respects its cap, prunes expired retries and cannot reingest expired list entries',async()=>{
   const h=harness();await h.run({collectLimit:3,ocrLimit:1})
   for(const concert of h.data.concerts){concert.start_date='2026-10-01';concert.end_date='2026-10-14'}
@@ -194,6 +211,9 @@ test('HTTP 400 diagnostics preserve previous data and reviews, continue other co
   assert.equal(report.stages.collection.failed,1);assert.equal(report.stages.collection.succeeded,2)
   const error=report.errors.find(e=>e.id===oldConcert.kopis_id)
   assert.deepEqual(error.http,{http_status:400,content_type:'text/html',endpoint:`/openApi/restful/pblprfr/${oldConcert.kopis_id}`,query_parameter_names:['service']})
+  assert.deepEqual(error.kopis.request,{origin:'https://kopis.or.kr',method:'GET',endpoint:`/openApi/restful/pblprfr/${oldConcert.kopis_id}`,query:{}})
+  assert.equal(error.kopis.response.http_status,400)
+  assert.ok(error.kopis.response.body_fingerprint)
   assert.ok(error.retry_at);assert.equal(h.state.retries['collect:'+oldConcert.kopis_id].failures,1)
   assert.deepEqual(h.data.concerts.find(c=>c.id===oldConcert.id),oldConcert)
   assert.deepEqual(h.data.images.filter(i=>i.concert_id===oldConcert.id),oldImages)
@@ -255,7 +275,7 @@ test('image limit baseline preserves history, waits 24 hours, reports holds in r
   assert.equal(plan.plan.ocr_held,1);assert.equal(plan.ocr_holds.count,1)
   assert.equal(plan.ocr_holds.items[0].status,'WAITING_SOURCE_RECHECK')
   assert.equal(Date.parse(plan.ocr_holds.items[0].next_check_at),base+24*3600000)
-  assert.deepEqual(h.calls,['preflight','snapshot','cleanupPlan','reviews','close'])
+  assert.deepEqual(h.calls,['preflight','snapshot','cleanupPlan','close'])
   assert.equal(JSON.stringify(h.state),before);assert.deepEqual(h.data,original)
   h.calls.length=0
   const waiting=await h.run({collectLimit:1,ocrLimit:3})
@@ -371,7 +391,7 @@ test('plan does not call collection, downloads, OCR, writes, checkpoints or muta
   const before=JSON.stringify(h.state),data=JSON.stringify(h.data);h.calls.length=0
   const report=await h.run({},true)
   assert.equal(report.status,'PLAN_READY');assert.equal(report.plan.collection_api_candidates,'UNKNOWN_UNTIL_KOPIS_LIST')
-  assert.deepEqual(h.calls,['preflight','snapshot','cleanupPlan','reviews','close'])
+  assert.deepEqual(h.calls,['preflight','snapshot','cleanupPlan','close'])
   assert.equal(JSON.stringify(h.state),before);assert.equal(JSON.stringify(h.data),data)
 })
 

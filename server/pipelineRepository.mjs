@@ -5,6 +5,7 @@ import { createProgramAnalysisStore } from './supabaseProgramAnalysis.mjs'
 import { pipelineError } from './pipelineConfig.mjs'
 import { CLEANUP_TABLES, CLEANUP_SCHEMA_VERSION, fallbackCleanupPlan } from './pipelineCleanup.mjs'
 import { MATCHER_VERSION } from './programAnalysis.mjs'
+import {createProgramAutomationStore} from './supabaseProgramAutomation.mjs'
 
 const fields={
   concerts:'id,kopis_id,title,venue,region,start_date,end_date,performance_status,synced_at,program_context_revision',
@@ -15,7 +16,7 @@ const fields={
 }
 export const createPipelineRepository = options => {
   const request=createSupabaseRest(options)
-  let cleanupSchemaReady=false,cleanupFunctionsPresent=false
+  let cleanupSchemaReady=false,cleanupFunctionsPresent=false,automationSchemaReady=false
   const all=async(table,params={},pageLimit=20,select=fields[table]||'id')=>{
     const rows=[];let last
     for(let page=0;page<pageLimit;page++){
@@ -32,7 +33,7 @@ export const createPipelineRepository = options => {
     return rows
   }
   return {
-    collector:createSupabaseCollector(options), ocr:createSupabaseOcr(options), analysis:createProgramAnalysisStore(options),
+    collector:createSupabaseCollector(options), ocr:createSupabaseOcr(options), analysis:createProgramAnalysisStore(options),automation:createProgramAutomationStore(options),
     async preflight({plan=false}={}){
       for(const table of [...Object.keys(fields),'concert_program_candidates','concert_program_reviews','concert_program_candidate_status','concert_program_catalogs']){
         await request(table,{params:{select:table==='concert_program_catalogs'?'catalog_hash':'id',limit:'0'}})
@@ -47,11 +48,13 @@ export const createPipelineRepository = options => {
       if(!analysisSchemaReady&&!plan)throw pipelineError('PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED')
       const identitySchemaReady=Boolean(schema.paths?.['/rpc/review_concert_program_candidate_identity']&&schema.paths?.['/rpc/save_concert_program_rematch'])
       if(!identitySchemaReady&&!plan)throw pipelineError('PROGRAM_WORK_IDENTITY_MIGRATION_REQUIRED')
+      automationSchemaReady=Boolean(schema.paths?.['/rpc/decide_automatic_program_candidate'])
+      if(!automationSchemaReady&&!plan)throw pipelineError('PROGRAM_AUTOMATION_MIGRATION_REQUIRED')
       const policy=analysisSchemaReady?await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:`eq.${MATCHER_VERSION}`,limit:'1'}}):null
       const analysisVersionEnabled=policy?policy[0]?.enabled!==false:'UNKNOWN'
       if(analysisVersionEnabled===false&&!plan)throw pipelineError('PROGRAM_ANALYSIS_VERSION_DISABLED')
       if(cleanupSchemaReady)await request('concert_cleanup_events',{params:{select:'operation_id',limit:'0'}})
-      return {cleanup_schema_ready:cleanupSchemaReady,analysis_schema_ready:analysisSchemaReady,work_identity_schema_ready:identitySchemaReady,analysis_version_enabled:analysisVersionEnabled,matcher_version:MATCHER_VERSION}
+      return {cleanup_schema_ready:cleanupSchemaReady,analysis_schema_ready:analysisSchemaReady,work_identity_schema_ready:identitySchemaReady,automation_schema_ready:automationSchemaReady,analysis_version_enabled:analysisVersionEnabled,matcher_version:MATCHER_VERSION}
     },
     async cleanupPlan(limit,today,pages){
       if(cleanupFunctionsPresent){
@@ -72,7 +75,8 @@ export const createPipelineRepository = options => {
     },
     async snapshot(conditions,pages){
       const concerts=await all('concerts',{region:`eq.${conditions.region}`,start_date:`lte.${conditions.to}`,end_date:`gte.${conditions.from}`,performance_status:'in.(공연예정,공연중)'},pages)
-      const images=(await related('concert_program_images','concert_id',concerts.map(c=>c.id),pages)).filter(i=>i.image_type==='DETAIL'&&i.is_active)
+      const images=(await related('concert_program_images','concert_id',concerts.map(c=>c.id),pages,
+        fields.concert_program_images+(automationSchemaReady?',evidence_changed_at':''))).filter(i=>i.image_type==='DETAIL'&&i.is_active)
       const ids=images.map(i=>i.id)
       const results=await related('concert_image_ocr_results','image_id',ids,pages)
       const attempts=await related('concert_image_ocr_attempts','image_id',ids,pages)

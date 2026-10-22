@@ -4,7 +4,7 @@
 
 - 작업 ID: CA-SEARCH-20261022-001
 - 명세 버전: 1
-- 현재 상태: READY
+- 현재 상태: IN_PROGRESS
 - 마지막 작성자: 웹 GPT
 - 작성일: 2026-10-22 (Asia/Seoul)
 - 명세·결과 브랜치: `codex/ca-search-20261022-001`

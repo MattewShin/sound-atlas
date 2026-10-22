@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto'
 import { collectionConditions, normalizeCollectionDetail } from './concertCollector.mjs'
 import { normalizeKopisConcert } from './kopisData.mjs'
 import { analyzeStoredProgram, CATALOG_HASH, MATCHER_VERSION, hashJson } from './programAnalysis.mjs'
-import { getTrackTarget } from '../src/data/workCatalog.js'
 import { runEasyOcrBatch } from './easyOcrBatch.mjs'
 import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
 import { safeCode, fatalCode, koreanTime, pipelineError } from './pipelineConfig.mjs'
@@ -12,6 +11,8 @@ import { commitPriority, priorityPreview, bucketCounts } from './pipelinePriorit
 import {getProgramRollout} from './programRollout.mjs'
 import { runStoredAnalysisOnly } from './pipelineAnalysisOnly.mjs'
 import { createMonotonicDeadline, monotonicNow, ocrTimeWindow, PIPELINE_TIME_POLICY } from './pipelineDeadline.mjs'
+import {getKopisDiagnostic} from './kopisDiagnostics.mjs'
+import {runAutomaticPrograms,automaticSummary} from './programAutomation.mjs'
 
 const stage = () => ({status:'NOT_RUN',succeeded:0,failed:0,reused:0,skipped:0,limit_reached:false,remaining:null,duration_ms:0})
 export const runConcertPipeline = async ({runtime,local,state,options,plan=false,signal,now=Date.now,onProgress=()=>{},runId=randomUUID(),execution,budget,monotonicClock,deadlineFactory=createMonotonicDeadline}) => {
@@ -22,7 +23,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
   const started=now();let conditions=collectionConditions(started)
   const report={run_id:runId,execution,mode:plan?'PLAN':'RUN',started_at:koreanTime(started),finished_at:null,duration_ms:0,
     status:'RUNNING',exit_code:null,last_progress_at:koreanTime(started),last_completed_stage:null,conditions,limits:options,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH,
-    stages:{preflight:stage(),cleanup:stage(),collection:stage(),ocr:stage(),analysis:stage()},errors:[],review:{new_candidates:0,new_linked_candidates:0,priority:[]},
+    stages:{preflight:stage(),cleanup:stage(),collection:stage(),ocr:stage(),analysis:stage()},errors:[],review:{new_candidates:0,new_linked_candidates:0,priority:[]},automation:automaticSummary(),
     coverage:'LIMITED_SAMPLE',time_limit_reached:false,priority_selection:{collection:[],ocr:[],analysis:[]},
     retry:'Rerun the same run command after retry_at; use plan and latest to inspect.'}
   report.time_budget={clock:'MONOTONIC',max_seconds:options.maxSeconds,analysis_and_finalize_reserve_seconds:PIPELINE_TIME_POLICY.analysisAndFinalizeReserveSeconds,
@@ -49,14 +50,14 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
   const problem=(where,error,id,retryKey)=>{
     const key=retryKey||(where==='collection'?'collect:':where+':')+id
     const code=safeCode(error)
-    // Reconstruct the fixed KOPIS route; do not copy URLs, headers or response
-    // bodies into local reports. Query values (including service) stay private.
+    // Keep legacy HTTP fields and add only client-owned, redacted diagnostics.
     const kopisHttp=where==='collection' && /^KOPIS_HTTP_\d{3}$/.test(code) && error.http_status===Number(code.slice(-3))
       ? {http_status:error.http_status,
         content_type:['application/xml','text/xml','text/html','application/json','text/plain'].includes(error.content_type)?error.content_type:null,
         endpoint:id&&/^PF\d{1,12}$/.test(id)?`/openApi/restful/pblprfr/${id}`:'/openApi/restful/pblprfr',
         query_parameter_names:id?['service']:['service','stdate','eddate','signgucode','shcate','prfstate','cpage','rows']} : undefined
-    report.errors.push({stage:where,code,...(id?{id}:{}),...(kopisHttp?{http:kopisHttp}:{}),...(state.retries[key]?{retry_at:koreanTime(state.retries[key].until)}:{})})
+    const kopis=where==='collection'?getKopisDiagnostic(error):undefined
+    report.errors.push({stage:where,code,...(id?{id}:{}),...(kopisHttp?{http:kopisHttp}:{}),...(kopis?{kopis}:{}),...(state.retries[key]?{retry_at:koreanTime(state.retries[key].until)}:{})})
     if(fatalCode(code))throw error
   }
   let snapshot,preflightDone=false
@@ -221,7 +222,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
             // Cache hits ordinarily do NOT create attempts or invalidate reviews.
             // Recovery from an intervening failed/changed attempt requires a new
             // successful hash-verification record; the immutable artifact is reused.
-            if(latest?.status==='SUCCEEDED'&&latest.result_id===cached.id)return
+            if(latest?.status==='SUCCEEDED'&&latest.result_id===cached.id&&(!image.evidence_changed_at||Date.parse(latest.created_at)>=Date.parse(image.evidence_changed_at)))return
             const artifact=await scoped.ocrResult(cached.id)
             await repository.saveAttempt({id:randomUUID(),image_id:image.id,source_url:image.source_url,
               pipeline_version:EASYOCR_PIPELINE_VERSION,content_sha256:downloaded.contentHash,status:'SUCCEEDED',error_code:null,
@@ -294,10 +295,6 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
           if(!snapshot.analyses.some(x=>x.id===analysisId)){
             report.review.new_candidates+=candidates.length
             report.review.new_linked_candidates+=candidates.filter(x=>x.track_id).length
-            report.review.priority.push(...candidates.filter(x=>x.track_id&&x.review_status==='REVIEW_REQUIRED').map(x=>({candidate_id:x.id,kopis_id:target.concert.kopis_id,
-              concert:target.concert.title,date_from:target.concert.start_date,date_to:target.concert.end_date,
-              track_id:x.track_id,track:getTrackTarget(x.track_id)?.title||'Registered track',
-              show:`npm run program:analyze -- show ${x.id}`})))
           }else a.reused++
           a.succeeded++;completedAnalyses.add(target.key);completedItem(state,target.key,now())
         }catch(e){if(safeCode(e)==='BATCH_INTERRUPTED')throw e;a.failed++;failedItem(state,target.key,now());problem('analysis',e,target.ocr.id,target.key)}
@@ -307,24 +304,24 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       a.limit_reached=analyses.ready.length>=options.analysisLimit
       a.remaining={known_ready_not_attempted:Math.max(0,analyses.ready.length-options.analysisLimit),blocked:analyses.blocked.length,cooldown:analyses.cooldown.length}
       a.status=a.failed?'PARTIAL':'SUCCEEDED'
+      if(runtime.repository.automation){
+        report.automation=await runAutomaticPrograms({store:runtime.repository.automation,limit:options.analysisLimit,check,
+          onCheckpoint:async progress=>{report.automation=progress;await checkpoint()}})
+        if(report.automation.failed||report.automation.retry_pending){a.status='PARTIAL';a.failed+=report.automation.failed}
+        a.limit_reached ||= report.automation.limit_reached
+      }
       report.status=Object.values(report.stages).some(x=>x.failed)||o.time_budget_reached?'PARTIAL':'SUCCESS'
+      if(report.automation.retry_pending)report.status='PARTIAL'
       finishStage()
     }
-    const reviews=await runtime.repository.reviewSummary(options.dbPages)
-    const pendingReviews=reviews.filter(x=>x.matcher_version===rollout.reviewVersion&&(x.matching_catalog_hash||x.catalog_hash)===CATALOG_HASH&&!x.stale_reason)
-    report.review.total_review_required=pendingReviews.length
-    for(const x of pendingReviews.filter(x=>x.track_id)){
-      const concert=snapshot.concerts.find(c=>c.kopis_id===x.kopis_id)
-      if(concert&&!report.review.priority.some(y=>y.candidate_id===x.id))report.review.priority.push({candidate_id:x.id,kopis_id:x.kopis_id,concert:x.concert_title,
-        date_from:concert.start_date,date_to:concert.end_date,track_id:x.track_id,track:getTrackTarget(x.track_id)?.title||'Registered track',show:`npm run program:analyze -- show ${x.id}`})
-    }
-    report.review.priority=report.review.priority.slice(0,20)
+    report.review.operational_queue=false
     report.coverage={cleanup_remaining:report.stages.cleanup.remaining,kopis_listing_cycle_completed:report.stages.collection.listing_cycle_completed||false,
       limited_by_caps:Object.values(report.stages).some(s=>s.limit_reached||s.page_limit_reached),
       unseen_kopis_or_changed_remote_images:'UNKNOWN',known_ocr_remaining:report.stages.ocr.remaining,known_analysis_remaining:report.stages.analysis.remaining}
     report.retry_targets=Object.entries(state.retries).map(([key,value])=>({key,failures:value.failures,retry_at:koreanTime(value.until)}))
     report.exit_code=report.status==='PARTIAL'?1:0
   }catch(error){
+    if(error.automationReport)report.automation=error.automationReport
     const code=safeCode(error)
     report.errors.push({stage:preflightDone?'execution':'preflight',code})
     report.status=code==='BATCH_INTERRUPTED'?'PARTIAL':!preflightDone||fatalCode(code)?'FATAL':'PARTIAL';report.exit_code=report.status==='FATAL'?2:1

@@ -1,0 +1,161 @@
+{
+  "date": "2026-10-22",
+  "rule": "program-auto-1",
+  "remote_applied": false,
+  "representative": {
+    "candidate_id": "af6e1086-9f3f-4e61-9bdf-4e10e428b5a6",
+    "track_id": "brahms-intermezzo-op118-no2",
+    "kopis_id": "PF295548",
+    "preview_outcome": "AUTO_CONFIRMED",
+    "remote_status_changed": false
+  },
+  "readonly_preview": {
+    "mode": "READ_ONLY_PREVIEW",
+    "rule": "program-auto-1",
+    "migration_ready": false,
+    "remote_writes": 0,
+    "scope": {
+      "kopis_id": null,
+      "limit": 20
+    },
+    "confirmed": 1,
+    "duplicate_maintained": 2,
+    "unlinked": 75,
+    "retry_pending": 0,
+    "failed": 0,
+    "unchanged": 0,
+    "reasons": {
+      "PROGRAM_EVIDENCE_MISSING": 29,
+      "CATALOG_TARGET_MISSING": 42,
+      "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 65,
+      "ARRANGEMENT_IDENTITY_UNRESOLVED": 4,
+      "INCOMPLETE_CATALOGUE_VARIANT": 1,
+      "COMPOSER_OUTSIDE_CATALOG": 10,
+      "UNCERTAIN_ROMAN_LABEL": 4,
+      "SCOPE_LABEL_REQUIRES_REVIEW": 3,
+      "OCR_NUMBER_UNCERTAIN": 4,
+      "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED": 3,
+      "UNRESOLVED_NUMBER_BOUNDARY": 4,
+      "UNCERTAIN_NUMERIC_TOKEN": 1,
+      "MULTIPLE_ITEM_NUMBERS": 3,
+      "INCOMPLETE_NUMBER_VARIANT": 1,
+      "CHECK_MULTIPLE_WORK_NUMBERS": 2,
+      "IDENTITY_CONFLICT_OR_INCOMPLETE": 1,
+      "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 8,
+      "COLLECTION_LABEL_REQUIRES_REVIEW": 1,
+      "MOVEMENT_NOT_IN_CATALOG": 1,
+      "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW": 1,
+      "COMPOSER_MISSING": 7,
+      "PROGRAM_DATE_SCOPE_AMBIGUOUS": 29,
+      "PARENT_WORK_TITLE_UNCONFIRMED": 5,
+      "UNCERTAIN_NUMBERED_ITEM_RELATION": 5,
+      "CONTEXT_DATE": 7,
+      "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT": 3
+    },
+    "limit_reached": true
+  },
+  "isolated_sql": {
+    "kopis_id": "PF295548",
+    "remote_reads": 9,
+    "remote_writes": 0,
+    "local_migration_applied": true,
+    "remaining_v3_manual_candidates": 0,
+    "source_counts": {
+      "concerts": 1,
+      "concert_program_images": 2,
+      "concert_image_ocr_results": 1,
+      "concert_image_ocr_attempts": 1,
+      "concert_program_analyses": 3,
+      "concert_program_candidates": 30,
+      "concert_program_reviews": 2
+    },
+    "first": {
+      "confirmed": 1,
+      "duplicate_maintained": 2,
+      "unlinked": 12,
+      "retry_pending": 0,
+      "failed": 0,
+      "unchanged": 0,
+      "reasons": {
+        "COMPOSER_OUTSIDE_CATALOG": 2,
+        "UNCERTAIN_ROMAN_LABEL": 3,
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 12,
+        "SCOPE_LABEL_REQUIRES_REVIEW": 2,
+        "OCR_NUMBER_UNCERTAIN": 1,
+        "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED": 3,
+        "UNRESOLVED_NUMBER_BOUNDARY": 1,
+        "UNCERTAIN_NUMERIC_TOKEN": 1,
+        "MULTIPLE_ITEM_NUMBERS": 1,
+        "ARRANGEMENT_IDENTITY_UNRESOLVED": 4,
+        "INCOMPLETE_NUMBER_VARIANT": 1,
+        "CHECK_MULTIPLE_WORK_NUMBERS": 1,
+        "IDENTITY_CONFLICT_OR_INCOMPLETE": 1,
+        "CATALOG_TARGET_MISSING": 6,
+        "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW": 1,
+        "INCOMPLETE_CATALOGUE_VARIANT": 1,
+        "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 2,
+        "COLLECTION_LABEL_REQUIRES_REVIEW": 1,
+        "MOVEMENT_NOT_IN_CATALOG": 1
+      },
+      "limit_reached": false
+    },
+    "second": {
+      "confirmed": 0,
+      "duplicate_maintained": 0,
+      "unlinked": 0,
+      "retry_pending": 0,
+      "failed": 0,
+      "unchanged": 0,
+      "reasons": {},
+      "limit_reached": false
+    },
+    "unchanged_second_run_writes": 0,
+    "searches": {
+      "brahms-intermezzo-op118-no2": [
+        "PF295548"
+      ],
+      "chopin-ballade-op52-no4": [
+        "PF295548"
+      ],
+      "liszt-liebestraum-s541-no3": [
+        "PF295548"
+      ]
+    },
+    "existing_receipts_preserved": true
+  },
+  "production": {
+    "remote_writes": 0,
+    "searches": [
+      {
+        "track_id": "brahms-intermezzo-op118-no2",
+        "http": 200,
+        "analysis_version": "stored-program-3",
+        "kopis_ids": []
+      },
+      {
+        "track_id": "chopin-ballade-op52-no4",
+        "http": 200,
+        "analysis_version": "stored-program-3",
+        "kopis_ids": [
+          "PF295548"
+        ]
+      },
+      {
+        "track_id": "liszt-liebestraum-s541-no3",
+        "http": 200,
+        "analysis_version": "stored-program-3",
+        "kopis_ids": [
+          "PF295548"
+        ]
+      }
+    ],
+    "status_http": 200,
+    "status": {
+      "backend": "supabase",
+      "configured": true,
+      "analysisVersion": "stored-program-3",
+      "cacheTtlMs": 0,
+      "maxSearchDays": 31
+    }
+  }
+}

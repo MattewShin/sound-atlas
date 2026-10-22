@@ -2,6 +2,7 @@ import { collectionConditions } from './concertCollectionConfig.mjs'
 export { COLLECTION_GENRE, COLLECTION_STATES, collectionConditions } from './concertCollectionConfig.mjs'
 import { apiDate, asArray, ConcertApiError, normalizeKopisConcert, parseKopisXml, safeUrl, text } from './kopisData.mjs'
 import { CollectionError, pause, requestWithRetry } from './collectionHttp.mjs'
+import {attachKopisDiagnostic,describeKopisResponse,getKopisDiagnostic,readKopisHttpFailure} from './kopisDiagnostics.mjs'
 
 const states = new Set(['공연예정', '공연중'])
 const validId = (value) => /^PF\d{1,12}$/.test(text(value))
@@ -74,16 +75,26 @@ export const createCollectionKopisClient = ({ env = process.env, fetchImpl = fet
   const request = async (path, params = {}) => {
     const url = new URL(`https://kopis.or.kr/openApi/restful/${path}`)
     url.search = new URLSearchParams({ service: key, ...params }).toString()
+    let responseDiagnostic
     try {
-      return await requestWithRetry(url, { fetchImpl, delay, signal, label: 'KOPIS', decode: async (response) => {
+      return await requestWithRetry(url, { fetchImpl:async (url,init) => {
+        responseDiagnostic=undefined
+        const response=await fetchImpl(url,init)
+        if(!response.ok)responseDiagnostic=await readKopisHttpFailure(response,env)
+        return response
+      }, delay, signal, label: 'KOPIS', decode: async (response) => {
         const xml = await response.text()
         if (xml.length > 3_000_000) fail('KOPIS_RESPONSE_TOO_LARGE', 'KOPIS response exceeds size limit')
         try { return parseKopisXml(xml, { validateRows: false }) }
         catch (error) {
+          responseDiagnostic=describeKopisResponse(response,xml,env)
           if (error instanceof ConcertApiError) throw new CollectionError(error.code, error.message, error.code === 'KOPIS_UPSTREAM_ERROR')
           throw error
         }
       } })
+    } catch (error) {
+      if(error instanceof CollectionError)attachKopisDiagnostic(error,url,responseDiagnostic)
+      throw error
     } finally { await delay(150) }
   }
   return {
@@ -157,5 +168,5 @@ export const collectConcerts = async ({ client, repository, limit = 10, dryRun =
 }
 
 const safeFailure = (error) => error instanceof CollectionError || error instanceof ConcertApiError
-  ? { code: error.code, reason: error.message }
+  ? { code: error.code, reason: error.message, ...(getKopisDiagnostic(error)?{kopis:getKopisDiagnostic(error)}:{}) }
   : { code: 'COLLECTION_FAILED', reason: 'Unexpected collection failure (raw error suppressed)' }

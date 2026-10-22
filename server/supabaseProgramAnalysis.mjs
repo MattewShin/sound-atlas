@@ -8,15 +8,24 @@ const currentCatalog={...JSON.parse(CATALOG_JSON),catalog_hash:CATALOG_HASH}
 
 export const evidenceIssue = ({ image, ocr, attempts, results }) => {
   if (!image.is_active || image.image_type !== 'DETAIL') return 'IMAGE_INACTIVE_OR_NOT_DETAIL'
-  const latest = [...attempts].sort(latestAttemptFirst)[0]
+  const latest = effectiveEvidenceAttempt(attempts)
   if (!latest || latest.status !== 'SUCCEEDED') return 'LATEST_OCR_NOT_SUCCESSFUL'
   if (latest.result_id !== ocr.id) return 'OCR_REPLACED'
+  if (image.evidence_changed_at && Date.parse(latest.created_at)<Date.parse(image.evidence_changed_at)) return 'SOURCE_RECHECK_REQUIRED'
   if (results.some((r) => r.created_at > latest.created_at)) return 'NEWER_OCR_RESULT'
   if (attempts.some((a) => a.id !== latest.id && a.created_at === latest.created_at && a.finished_at === latest.finished_at && a.result_id !== latest.result_id)) return 'OCR_ORDER_AMBIGUOUS'
   return null
 }
 // Prefer DB ingestion time to a local PC's potentially skewed finished_at clock.
 const latestAttemptFirst = (a,b) => b.created_at.localeCompare(a.created_at) || b.finished_at.localeCompare(a.finished_at) || b.id.localeCompare(a.id)
+// A failed download supplies no changed bytes. A known different hash does.
+export const effectiveEvidenceAttempt = attempts => {
+  const ordered=[...attempts].sort(latestAttemptFirst)
+  const success=ordered.find(a=>a.status==='SUCCEEDED')
+  if(!success)return ordered[0]
+  const newer=ordered.slice(0,ordered.indexOf(success))
+  return newer.some(a=>a.content_sha256&&a.content_sha256!==success.content_sha256 || a.pipeline_version!==success.pipeline_version)?ordered[0]:success
+}
 
 export const createProgramAnalysisStore = (options = {}) => {
   const request = createSupabaseRest(options)
@@ -55,10 +64,11 @@ export const createProgramAnalysisStore = (options = {}) => {
           coverage.results += results.length
           const attempts = await all('concert_image_ocr_attempts', { image_id: `eq.${image.id}` })
           const ordered = [...attempts].sort(latestAttemptFirst)
-          const ocr = results.find((r) => r.id === ordered[0]?.result_id)
+          const currentAttempt=effectiveEvidenceAttempt(ordered)
+          const ocr = results.find((r) => r.id === currentAttempt?.result_id)
           const issue = ocr ? evidenceIssue({ image, ocr, attempts, results }) : image.is_active ? 'NO_CURRENT_SUCCESSFUL_OCR' : 'IMAGE_INACTIVE_OR_NOT_DETAIL'
           if (issue) skipped.push({ kopis_id: concert.kopis_id, image_id: image.id, reason: issue })
-          else targets.push({ concert, image, ocr, attempt: ordered[0] })
+          else targets.push({ concert, image, ocr, attempt: currentAttempt })
         }
       }
       return { targets, skipped, coverage }
@@ -74,7 +84,7 @@ export const createProgramAnalysisStore = (options = {}) => {
       const targets=[],skipped=[]
       for(const item of manifest.targets){
         const ocr=ocrs.find(o=>o.id===item.ocr_result_id),image=images.find(i=>i.id===ocr?.image_id),concert=concerts.find(c=>c.id===image?.concert_id)
-        const ownAttempts=attempts.filter(a=>a.image_id===image?.id),attempt=[...ownAttempts].sort(latestAttemptFirst)[0]
+      const ownAttempts=attempts.filter(a=>a.image_id===image?.id),attempt=effectiveEvidenceAttempt(ownAttempts)
         const source=sourceAnalyses.find(a=>a.id===item.source_analysis_id)
         const pinned=manifest.schema_version==='program-ocr-manifest-2'
         const reason=!pinned&&(!source||source.ocr_result_id!==item.ocr_result_id||source.matcher_version!=='stored-program-2')?'MANIFEST_SOURCE_ANALYSIS_MISMATCH':

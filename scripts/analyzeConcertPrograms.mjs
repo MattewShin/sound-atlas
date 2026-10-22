@@ -63,8 +63,9 @@ npm run program:analyze -- list [--kopis-id PF296289] [--version stored-program-
 npm run program:analyze -- show <candidate-uuid>
 npm run program:analyze -- confirm <candidate-uuid> --analysis-id <analysis-uuid-from-show> --note "Checked original source"
 npm run program:analyze -- reject <candidate-uuid> --analysis-id <analysis-uuid-from-show> --note "Reason"
-All automatic candidates are REVIEW_REQUIRED. Inspect show and original image before review.
-Reviewer is an unauthenticated local service-role operator, not a logged-in app user.
+Analysis saving creates intermediate candidates. The daily pipeline automatically confirms or completes them unlinked.
+Use npm run program:auto -- --dry-run for observation; no operator approval is required.
+confirm/reject remain legacy diagnostic commands, not the normal operating procedure.
 Current extraction/grouping/matcher version: ${MATCHER_VERSION}. v3 saving requires the reviewed v3 SQL draft; dry-run uses GET only.`
 
 export const runProgramCli = async (args, { store, print = console.log,env=process.env } = {}) => {

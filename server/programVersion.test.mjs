@@ -92,6 +92,9 @@ test('scheduled repository rejects an absent v3 RPC before writes while read-onl
   paths['/rpc/save_concert_program_analysis_v3']={}
   await assert.rejects(repo.preflight(),{code:'PROGRAM_WORK_IDENTITY_MIGRATION_REQUIRED'})
   paths['/rpc/review_concert_program_candidate_identity']={};paths['/rpc/save_concert_program_rematch']={}
+  await assert.rejects(repo.preflight(),{code:'PROGRAM_AUTOMATION_MIGRATION_REQUIRED'})
+  assert.equal((await repo.preflight({plan:true})).automation_schema_ready,false)
+  paths['/rpc/decide_automatic_program_candidate']={}
   const disabled=createPipelineRepository({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture'},fetchImpl:async(url,init)=>{
     assert.equal(init.method,'GET')
     return new Response(JSON.stringify(url.pathname==='/rest/v1/'?{paths}:url.pathname.endsWith('/plan_expired_concert_cleanup')?{schema_version:CLEANUP_SCHEMA_VERSION}:url.pathname.endsWith('/concert_program_version_policy')?[{enabled:false}]:[]))
