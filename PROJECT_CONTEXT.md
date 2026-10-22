@@ -1,6 +1,6 @@
 # Classic Atlas 프로젝트 맥락
 
-- 문서 버전: 3
+- 문서 버전: 4
 - 작성일: 2026-10-22 (Asia/Seoul)
 - 저장소: https://github.com/MattewShin/sound-atlas
 - 구현 확인 기준: main / 1607ca201c3a559bc7f28aabe998ef062db02ef9
@@ -98,3 +98,9 @@ README에는 서로 다른 시기의 운영 설명이 함께 있을 수 있다. 
 - 사용자 승인 범위: 관리자 읽기 전용 확인, 실제 미적용 시 지정 automation migration 적용, PF295548 한 공연의 제한 dry-run/save canary.
 - 전체 과거 backfill, 무제한 자동 확정, main 병합, Vercel 배포, 예약 시간 변경은 포함하지 않는다.
 - 명확한 EXACT 후보만 자동 CONFIRMED하며 악장·편곡·번호·날짜 범위가 모호한 후보는 확정하지 않는다.
+
+## CA-AUTO 운영 한정 canary 결과 — 2026-10-22 14:45 KST
+
+관리자 READ ONLY SQL로 실제 미적용과 선행조건을 확인한 뒤 지정 automation migration을1회 적용했다. 운영의5 RPC/7컬럼 및 service-role 권한을 재확인했고, PF295548에 한정해 브람스 Op.118 No.2 자동 CONFIRMED1건을 추가했다. 기존 쇼팽·리스트 수동 receipt2건의 전체 행 hash는 보존됐으며, 세 곡 모두 운영 검색에서 PF295548 각1건을 반환한다. 같은 입력 즉시 재실행은 POST0이었다.
+
+이전 CA-SEARCH/최초 CA-AUTO의 RPC 비노출·관리자 연결 부재는 당시 기록이다. 현재 DB/Python/모델 preflight는 PASS이나, daily의 자동화 이미지20/후보100은 초기 상한1을 보장하지 않아 정기 확대는 여전히 BLOCKED다. 기존 예약은 Enabled이며 변경하지 않았다. 공개 UI·배포 SHA는 별도 미검증이다. 자세한 결과와 정확한 요청·row 집계는 [HANDOFF](HANDOFF.md) 및 [실행 JSON](docs/PROGRAM_AUTOMATION_CANARY_2026-10-22.json)을 참조한다. 관리자 연결 값은 게시하지 않았다.

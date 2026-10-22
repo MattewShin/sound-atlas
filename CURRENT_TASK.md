@@ -113,13 +113,13 @@ canary 성공 후 현재 `ClassicAtlas-LocalPipeline`의 daily 08:40 KST 경로�
 ## 완료 기준
 
 - [x] 기존 로컬 변경과 사용자 index가 보존됨.
-- [ ] 관리자 읽기 전용 SQL로 운영 DB 실상과 API 노출 차이를 확인함.
-- [ ] 필요한 경우 지정 migration만 원자적으로 적용하고 재검증함.
+- [x] 관리자 읽기 전용 SQL로 운영 DB 실상과 API 노출 차이를 확인함.
+- [x] 필요한 경우 지정 migration만 원자적으로 적용하고 재검증함.
 - [x] 기존 수동 확정 2건을 변경하지 않음.
-- [ ] PF295548 dry-run과 제한 save canary의 모든 후보 결과를 기록함.
-- [ ] 명확한 브람스 후보만 새 자동 확정되고 모호한 후보의 자동 확정은 0임.
-- [ ] 같은 입력 재실행의 새 쓰기가 0임.
-- [ ] 운영 검색에서 브람스와 기존 쇼팽·리스트를 대조함.
+- [x] PF295548 dry-run과 제한 save canary의 모든 후보 결과를 기록함.
+- [x] 명확한 브람스 후보만 새 자동 확정되고 모호한 후보의 자동 확정은 0임.
+- [x] 같은 입력 재실행의 새 쓰기가 0임.
+- [x] 운영 검색에서 브람스와 기존 쇼팽·리스트를 대조함.
 - [ ] 예약 경로·실행 코드·초기 batch size 1 조건을 확인함.
 - [x] 테스트/build 및 운영 미검증 범위를 구분해 보고함.
 - [x] HANDOFF와 CURRENT_TASK를 같은 작업 ID·명세 버전·상태로 게시함.
@@ -130,10 +130,24 @@ canary 성공 후 현재 `ClassicAtlas-LocalPipeline`의 daily 08:40 KST 경로�
 | --- | --- | --- |
 | 2026-10-22 | 웹 GPT | READY: 사용자 요청에 따라 명확한 후보의 운영 자동 확정을 단계적으로 활성화. 관리자 사전 확인, 필요 시 지정 migration 적용, PF295548 제한 canary까지 승인. 전체 backfill·무제한 쓰기·main 병합은 제외. |
 | 2026-10-22 14:21 KST | Codex | BLOCKED: 관리자 SQL 연결/도구 부재로 실제 미적용·선행조건 확인 불가. 원본33개 파일/index 보존, 핵심15파일 고정 코드 대조, 회귀365/365·build 및 격리 migration/preflight SQL 검증 완료. 운영 SQL·dry-run/save·API 조회·DB 쓰기 미실행. 정기 자동화의 batch size1도 별도 미충족. |
+| 2026-10-22 14:45 KST | Codex | 재개: 사용자 .env 관리자 연결 존재/성공 확인. READ ONLY SQL로 실제 미적용과 선행조건 확인 후 지정 migration1회, PF295548 한정 canary 성공. 기존2receipt 전체row digest 보존, 즉시 재실행POST0, 운영3곡 검색/DTO 확인. |
+| 2026-10-22 14:45 KST | Codex | BLOCKED 사유 갱신: 관리자 연결 차단은 해소. DB/Python/모델 preflight PASS지만 daily 자동 이미지20/후보100으로 정기 상한1 조건 미충족. 운영 한정 canary PASS와 정기 확대 BLOCKED를 분리. |
 
-## 현재 차단 지점과 재개 조건
+## 이전 차단 기록 — 14:21 KST (관리자 연결 부재는 현재 해소됨)
 
 - 관리자 SQL 읽기 연결이 필요하다. 로컬 프로세스/프로젝트 설정에는 REST용 Supabase 연결만 있고 관리자 DB URL·PG 설정·관리 토큰은 없다. psql/supabase/docker 및 연결된 SQL 도구도 확인되지 않았다. 실제 운영 SQL은 실행하지 못했으며 REST 비노출을 실제 미적용으로 대체하지 않았다.
 - 사용자에게 비밀값을 채팅에 보내지 않고 `CLASSIC_ATLAS_DATABASE_URL`을 로컬 환경에 설정해 알려 달라고 요청했다. 답변 대기이며 migration/save 승인을 다시 요청하는 것이 아니다.
 - 관리자 읽기 확인 → absent/complete/partial 구분 → 지정 migration 필요 시 1회 → 권한/receipt 재확인 → PF295548 dry-run → 일치할 때만 scoped save 순서를 유지한다. 이 지점까지 새 운영 쓰기0이다.
 - `PROGRAM_BATCH_SIZE` 명시 설정은 없고 웹 프로그램 확인의 유효값1만 확인했다. daily 자동화는 analysisLimit20·candidateLimit100을 사용하므로 자동 쓰기 상한1을 보장하지 않는다. 정기 자동 확장은 허용하지 않았고 예약을 변경하지 않았다.
+
+## 최신 재개 결과 — 2026-10-22 14:45 KST
+
+- 관리자 연결은 존재/연결 성공 여부만 기록했다. 실제 연결 문자열·비밀번호·대상 hostname/user는 출력·로그·문서·Git에 넣지 않았다.
+- 관리자 READ ONLY 사전 SQL: 선행8함수의 signature/반환형/권한 및 view 일치, 자동화5함수/7컬럼 실제0, 기존 수동 CONFIRMED2건 확인.
+- 고정 코드와 같은 `202610220001_program_automation.sql` 전체를 운영에1트랜잭션으로1회 적용했다. 사후5함수/7컬럼·타입·service_role 권한 및 anon/authenticated 실행 권한 부재를 확인했다.
+- PF295548, 이미지 상한1·후보상한20으로 dry-run(GET8/POST0) → save(GET9/POST17) → 같은입력 즉시재실행(GET3/POST0)을 수행했다. 새 브람스 자동 확정1, 기존 확정 유지2, 미연결12, 실패/재시도0.
+- analysis/candidate/review 수: 3/30/2 → 4/45/17. 새 review는 CONFIRMED1 + REJECTED14(중복 후보2 포함). 기존2receipt의 ID·note·identity를 포함한 전체 row digest는 같고, 중복 새 CONFIRMED는0이다.
+- 브람스·쇼팽·리스트 운영 검색 HTTP200/PF295548 각1, 웹 DTO의 track/work/EXACT/CONFIRMED 확인. 실제 UI/브라우저는 미확인.
+- 실제 예약 디렉터리의 DB schema 및 Python/모델 사전 검사 PASS, GET13/POST0, 실제 통합 배치·KOPIS·OCR·정리·배포·예약 변경0.
+- 남은 조건은 정기 자동 처리 상한1이다. 현재 daily는 이미지20·후보100이며 웹 config1로 대신 증명할 수 없다. **기존 예약은 Enabled 그대로이므로 다음 실행은20/100 상한으로 동작할 수 있다.** 이번 작업은 정기 확장을 준비 완료/승인으로 표시하지 않는다.
+- 다음 단계 제안: 전용 자동화 상한1을 검증한 고정 버전을 별도 release 디렉터리에 준비 → 원본 .env를 안전하게 참조하는 launcher/preflight 검증 → 기존 action 백업과 rollback 경로를 준비한 뒤 action 전환 검토. 08:40/daily/IgnoreNew/PT32M 및 원본33개 작업은 유지한다. 이번에는 전환하지 않았다.
