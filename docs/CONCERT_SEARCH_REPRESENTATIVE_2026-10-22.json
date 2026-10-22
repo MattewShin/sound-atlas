@@ -1,0 +1,167 @@
+{
+  "kopis_id": "PF295548",
+  "remote_reads": 0,
+  "remote_writes": 0,
+  "local_migration_applied": true,
+  "remaining_v3_manual_candidates": 0,
+  "source_counts": {
+    "concerts": 1,
+    "concert_program_images": 2,
+    "concert_image_ocr_results": 1,
+    "concert_image_ocr_attempts": 1,
+    "concert_program_analyses": 3,
+    "concert_program_candidates": 30,
+    "concert_program_reviews": 2
+  },
+  "first": {
+    "confirmed": 1,
+    "duplicate_maintained": 2,
+    "unlinked": 12,
+    "retry_pending": 0,
+    "failed": 0,
+    "unchanged": 0,
+    "reasons": {
+      "UNCERTAIN_ROMAN_LABEL": 3,
+      "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 12,
+      "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 2,
+      "COLLECTION_LABEL_REQUIRES_REVIEW": 1,
+      "CATALOG_TARGET_MISSING": 6,
+      "IDENTITY_CONFLICT_OR_INCOMPLETE": 1,
+      "UNRESOLVED_NUMBER_BOUNDARY": 1,
+      "UNCERTAIN_NUMERIC_TOKEN": 1,
+      "MULTIPLE_ITEM_NUMBERS": 1,
+      "ARRANGEMENT_IDENTITY_UNRESOLVED": 4,
+      "INCOMPLETE_NUMBER_VARIANT": 1,
+      "CHECK_MULTIPLE_WORK_NUMBERS": 1,
+      "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED": 3,
+      "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW": 1,
+      "COMPOSER_OUTSIDE_CATALOG": 2,
+      "SCOPE_LABEL_REQUIRES_REVIEW": 2,
+      "OCR_NUMBER_UNCERTAIN": 1,
+      "INCOMPLETE_CATALOGUE_VARIANT": 1,
+      "MOVEMENT_NOT_IN_CATALOG": 1
+    },
+    "images_selected": 1,
+    "images_completed": 1,
+    "deferred_images": 0,
+    "limit_reached": false
+  },
+  "second": {
+    "confirmed": 0,
+    "duplicate_maintained": 0,
+    "unlinked": 0,
+    "retry_pending": 0,
+    "failed": 0,
+    "unchanged": 0,
+    "reasons": {},
+    "images_selected": 0,
+    "images_completed": 0,
+    "deferred_images": 0,
+    "limit_reached": false
+  },
+  "unchanged_second_run_writes": 0,
+  "verificationScope": "REAL_STORED_SNAPSHOT_LOCAL_PGLITE",
+  "sourceSnapshotAt": "2026-10-22T01:58:31.439Z",
+  "positive": {
+    "trackId": "brahms-intermezzo-op118-no2",
+    "workId": "brahms-intermezzo-op118-no2",
+    "kopisId": "PF295548",
+    "query": {
+      "region": "서울",
+      "from": "2026-10-22",
+      "to": "2026-10-27",
+      "targetTrackId": "brahms-intermezzo-op118-no2"
+    },
+    "version": "stored-program-3",
+    "httpStatus": 200,
+    "apiKopisIds": [
+      "PF295548"
+    ],
+    "dom": {
+      "environment": "JSDOM actual React ConcertCard from local HTTP DTO",
+      "cardCount": 1,
+      "titleVisible": true,
+      "trackComposerVisible": true,
+      "visualBrowser": false
+    }
+  },
+  "negative": {
+    "expiredLocalTransaction": 0,
+    "inactiveEvidenceLocalTransaction": 0,
+    "syntheticIdentityAndScope": [
+      {
+        "source": "SYNTHETIC_FIXTURE",
+        "input": "PROGRAM\nJ Brahms\nIntermezzo Op.119 No.2",
+        "decisions": [
+          {
+            "status": "REJECTED",
+            "reasons": [
+              "CATALOG_TARGET_MISSING",
+              "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+            ],
+            "verification": {
+              "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6",
+              "rule": "program-auto-1",
+              "source_reparse": true,
+              "independent_observations": 1
+            }
+          }
+        ]
+      },
+      {
+        "source": "SYNTHETIC_FIXTURE",
+        "input": "PROGRAM\nL Beethoven\nPiano Sonata No.8 Op.13",
+        "decisions": [
+          {
+            "status": "REJECTED",
+            "reasons": [
+              "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT"
+            ],
+            "verification": {
+              "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6",
+              "rule": "program-auto-1",
+              "source_reparse": true,
+              "independent_observations": 1
+            }
+          }
+        ]
+      },
+      {
+        "source": "SYNTHETIC_FIXTURE",
+        "input": "PROGRAM\nJ Brahms\nIntermezzo Op.118 No.2 (arranged for four hands)",
+        "decisions": [
+          {
+            "status": "REJECTED",
+            "reasons": [
+              "IDENTITY_CONFLICT_OR_INCOMPLETE",
+              "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+              "ARRANGEMENT_IDENTITY_UNRESOLVED"
+            ],
+            "verification": {
+              "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6",
+              "rule": "program-auto-1",
+              "source_reparse": true,
+              "independent_observations": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "searches": {
+    "brahms-intermezzo-op118-no2": [
+      "PF295548"
+    ],
+    "chopin-ballade-op52-no4": [
+      "PF295548"
+    ],
+    "liszt-liebestraum-s541-no3": [
+      "PF295548"
+    ]
+  },
+  "existing_receipts_preserved": true,
+  "taskId": "CA-SEARCH-20261022-001",
+  "codeRef": "ad5ab3cf5984146c4b2dc94428a146944af23fab",
+  "generatedAt": "2026-10-22T04:30:42.393Z",
+  "timeZone": "Asia/Seoul"
+}
