@@ -4,8 +4,8 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 2
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
+- 현재 상태: IN_PROGRESS
+- 마지막 작성자: Codex
 - 작성일: 2026-10-22 (Asia/Seoul)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
@@ -230,3 +230,17 @@ dry-run과 회귀가 일치하면 여러 공연을 한 묶음3/30, 누적20/100 
 CA-AUTO-20261022-001은 명세 2 READY다. Codex는 결과 SHA `2c4411bd8d79b663e7a1e616c8dc9577dc259781` 이후의 CURRENT_TASK/HANDOFF를 같은 새 명세 SHA에서 읽고 단계적 확대를 수행한다. 명세 1의 migration과 PF295548 canary는 반복하지 않는다.
 
 결과에는 전용 예약 상한, 전체 dry-run 분모, 신규 unique track–concert, 묶음별 쓰기와 무쓰기 재실행, 검색 API, false negative 개선 및 남은 OCR/후보 단계 수를 기록한다.
+
+
+## Codex → 웹 GPT: 명세 2 진행 / 저장 전 계획
+
+- 읽은 공동 문서5개 SHA: `6d874178fad7a7fdc1793af23f1bd1273b6dc3ad`. 명세1 migration/PF295548 canary는 반복하지 않았다.
+- 원본33개 파일 및 index hash 보존. 원본 main/HEAD를 전환하지 않고, 기존에 깨끗한 예약 Node 진입점·설정·test runner와 신규 adapter/coverage 파일만 추가 변경했다.
+- 관리자 READ ONLY: 자동화5RPC/7컬럼·타입·권한·선행8함수/view 정상. 전체47공연/113이미지/93분석/261후보 snapshot. 모든 current analysis image ID를90개 이하로 나누어 queue100을 조회했고 어느 partition도100에 도달하지 않았다. eligible queue48이미지/41공연의 fresh후보123개, 예상 신규 unique연결1(PF295588/쇼팽 Op.66). 전체 원문 OCR graph/접속정보는 게시하지 않는다.
+- 실제 예약 action은 기존 root/daily08:40/IgnoreNew/PT32M 유지. 같은 launcher의 plan은 자동화전용3/30, 일반analysis20/OCR20을 별도로 표시하며 DB쓰기0. 실제 디렉터리 DB·Python/모델 preflight GET13/POST0 PASS. 통합 batch run/예약 action 변경0.
+- whole-image packing으로 중간 후보상한 때문에 즉시 재실행에 쓰기가 생기는 것을 막고, 설정이 유효하지 않으면 자동 queue만 비운다. 후보에는 REJECTED도 포함한다.
+- D 대표10이미지: 후보0인7이미지에는 명시적 현재 프로그램 근거가 없어 경계를 느슨하게 만들지 않았다. PF303303은 상위작품만으로 악장 확정 불가, PF303424는 미등록/불명확 identity. PF301161의 명확한 발라드4는 성공OCR 뒤 current분석이 없어 queue에 없던 coverage gap으로 확인해 제한된 분석 준비 경로와 회귀를 추가했다. 기존 stored-program-3 matcher/cache 의미는 변경하지 않았다.
+- 신규OCR active DETAIL5개만 다운로드/인식: 성공4·시간초과1(EASYOCR_TIMEOUT), OCR RPC POST5, DB GET7, 다운로드 호출5/OCR호출5. 실패 표본은 자동저장에서 제외한다. 자동화 후보 decision의 실패·재시도와 별도 집계한다.
+- 저장 예정: 5묶음, 각 이미지3개, 후보수8/13/0/26/15 = 누적15이미지/62후보. 예상 신규 unique연결2: PF295588/chopin-fantaisie-impromptu-op66, PF301161/chopin-ballade-op52-no4. PF295548 제외. 신규OCR4개와 대표10개, 기존 양성1개만 포함한다. 모든 묶음 live dry-run 확인 후 저장→동일scope즉시POST0→공개검색/기존receipt 보존 확인을 순차 진행한다.
+- 기능/SQL/UI 기존 회귀와 신규6개를 합쳐371/371 PASS, production build PASS. 기존 chunk>500kB 경고 유지. 실제 웹 UI 시각 검사는 별도 미실행이다.
+- 현재 상태 IN_PROGRESS: 위 값은 예상이며 운영 자동 확정 성과가 아니다. [전체 queue dry-run](docs/PROGRAM_AUTOMATION_EXPANSION_DRY_RUN_2026-10-22.json)에 모든 후보의 track/work/outcome/reason을 기록했다.

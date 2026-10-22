@@ -1,4 +1,4 @@
-export const PIPELINE_DEFAULTS = Object.freeze({ cleanupLimit: 100, collectLimit: 10, ocrLimit: 3, analysisLimit: 10,
+export const PIPELINE_DEFAULTS = Object.freeze({ cleanupLimit: 100, collectLimit: 10, ocrLimit: 3, analysisLimit: 10, automaticImageLimit:3, automaticCandidateLimit:30,
   listPages: 4, dbPages: 20, imageChecks: 10, maxSeconds: 900, recheckHours: 24 })
 export const PIPELINE_PROFILES = Object.freeze({
   initial:{collectLimit:20,ocrLimit:20,analysisLimit:20,imageChecks:40,maxSeconds:1800},
@@ -14,6 +14,7 @@ export const parsePipelineArgs = args => {
   if(profile!=='custom'&&!PIPELINE_PROFILES[profile])throw pipelineError('INVALID_PROFILE')
   const options = { ...PIPELINE_DEFAULTS,...PIPELINE_PROFILES[profile] }
   const names = { 'cleanup-limit':'cleanupLimit','collect-limit':'collectLimit', 'ocr-limit':'ocrLimit', 'analysis-limit':'analysisLimit',
+    'automatic-image-limit':'automaticImageLimit','automatic-candidate-limit':'automaticCandidateLimit',
     'list-pages':'listPages', 'db-pages':'dbPages', 'image-checks':'imageChecks', 'max-seconds':'maxSeconds', 'recheck-hours':'recheckHours' }
   for (let i=1;i<args.length;i++) {
     if(args[i]==='--profile'){i++;continue}

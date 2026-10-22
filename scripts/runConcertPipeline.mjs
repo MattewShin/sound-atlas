@@ -12,6 +12,7 @@ import {getProgramRollout} from '../server/programRollout.mjs'
 import {createAnalysisOnlyRuntime} from '../server/pipelineAnalysisOnly.mjs'
 import {validateProgramManifest} from '../server/programCanary.mjs'
 import {createMonotonicDeadline} from '../server/pipelineDeadline.mjs'
+import {boundAutomaticStore} from '../server/automaticProgramLimits.mjs'
 
 const root=fileURLToPath(new URL('../',import.meta.url))
 process.chdir(root)
@@ -48,11 +49,14 @@ try {
       // Do not initialize credentials, KOPIS clients or Python for a gated run.
       const gated=command==='run'&&!rollout.scheduleEnabled
       const runtime=gated?{rollout}:options.analysisOnly?createAnalysisOnlyRuntime({signal:deadline.signal,manifest}):createPipelineRuntime({signal:deadline.signal})
+      const automatic=runtime.repository?.automation?boundAutomaticStore(runtime.repository.automation,{images:options.automaticImageLimit,candidates:options.automaticCandidateLimit}):null
+      if(automatic){runtime.repository.automation=automatic.store;console.log(JSON.stringify({event:'automatic_program_limits',...automatic.state}))}
       local=createPipelineLocal(directory,runtime.namespace||'',process.env)
       if(lock)await local.recoverPrevious(lock.owner,lock.previousOwner)
       const state=gated?undefined:await local.readState()
       report=await runConcertPipeline({runtime,local,state,options,plan:command==='plan',signal:deadline.signal,budget:deadline,runId,execution:lock?.owner,
         onProgress:({stages})=>console.log(JSON.stringify({event:'progress',matcher_version:MATCHER_VERSION,...Object.fromEntries(['cleanup','collection','ocr','analysis'].map(k=>[k,{succeeded:stages[k].succeeded,failed:stages[k].failed,reused:stages[k].reused}]))}))})
+      if(automatic)report.automatic_program_limits=automatic.state
       console.log(serializePipelineReport(report));process.exitCode=report.exit_code
       console.log(JSON.stringify({event:'pipeline_result',status:report.status,run_id:report.run_id,time_budget:report.time_budget,
         ocr_time_budget_reached:report.stages.ocr.time_budget_reached||false}))
