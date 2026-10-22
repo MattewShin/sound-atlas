@@ -3,9 +3,9 @@
 ## 공통 기준
 
 - 작업 ID: CA-AUTO-20261022-001
-- 명세 버전: 1
-- 현재 상태: BLOCKED
-- 마지막 작성자: Codex
+- 명세 버전: 2
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
 - 작성일: 2026-10-22 (Asia/Seoul)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
@@ -209,15 +209,24 @@ Theo는 “근거가 명확한 후보를 자동 규칙으로 `CONFIRMED` 처리�
 
 ## 웹 GPT → Codex: 검토
 
-아직 검토하지 않음.
+- 검토한 작업 ID / 명세 버전: CA-AUTO-20261022-001 / 명세 1 결과
+- 검토한 결과 SHA: `2c4411bd8d79b663e7a1e616c8dc9577dc259781`
+- 운영 SQL·canary 증거: 지정 migration 1트랜잭션 적용, PF295548 dry-run GET8/POST0, save GET9/POST17, 즉시 재실행 GET3/POST0을 결과 JSON과 대조했다.
+- 기존 receipt 및 오매칭 방지: 기존 수동 CONFIRMED 2건의 row digest 보존, 브람스 자동 CONFIRMED 1건, 중복 새 CONFIRMED 0, 나머지 14건 REJECTED와 사유 기록을 확인했다.
+- 검색 결과: 브람스·쇼팽·리스트가 운영 API에서 PF295548 / EXACT / CONFIRMED로 확인됐다. 실제 브라우저 UI는 미검증이다.
+- 판단: **명세 1의 migration과 제한 canary는 PASS**. 그러나 활성 예약 경로가 이미지20·후보100으로 실행될 수 있어 작업 전체는 ACCEPTED하지 않는다.
+- 후속 범위: 사용자 추가 지시에 따라 명세 2로 올린다. 특정 육안 사례가 아니라 현재 저장 공연 전체 dry-run → 전용 정기 상한3/30 → 묶음당3/30·누적20/100의 단계적 저장 → 명확한 false negative의 추출·matcher 개선 순서로 진행한다.
 
-- 검토한 작업 ID / 명세 버전:
-- 검토한 결과 SHA:
-- 운영 SQL·canary 증거:
-- 기존 receipt 및 오매칭 방지:
-- 판단:
-- 후속 범위:
+## 웹 GPT → Codex: 명세 2 실행 지시
+
+CURRENT_TASK 명세 2를 같은 작업 ID로 진행한다. 먼저 다음 예약 전에 자동 확정 전용 상한을 3이미지/30후보로 분리하고 실제 예약 경로의 plan/preflight에서 확인한다. 이어 전체 eligible queue를 쓰기 없이 조사한 뒤 예상 AUTO_CONFIRMED 목록과 거절 이유를 게시한다.
+
+dry-run과 회귀가 일치하면 여러 공연을 한 묶음3/30, 누적20/100 이하로 저장한다. 각 묶음에서 즉시 재실행 쓰기0과 새 track의 운영 검색을 확인한다. 특정 작곡가나 기존 PF295548에 한정하지 않는다. 결과가 적거나 명확한 후보를 놓치면 CURRENT_TASK D의 제한된 추출·matcher 개선까지 계속한다.
+
+예상 밖 자동 확정, 기존 검색 소실, 실패/재시도 또는 상한 미적용이 있으면 다음 쓰기를 중단하고 BLOCKED로 인계한다.
 
 ## 다음 인계
 
-웹 GPT는 최신 결과 커밋의 관리자 SQL/지정 migration/실제 PF295548 canary/기존 receipt 보호/무쓰기/API 증거를 검토한다. 원 명세1을 유지하며 정기 확대의 실제 상한1 및 안전한 경로 전환을 후속 범위로 정한다. 데이터 쓰기 canary를 반복하거나 전체 backfill로 확장하지 않는다. 다음 작업으로 바꾸기 전 CURRENT_TASK/HANDOFF를 함께 보관한다.
+CA-AUTO-20261022-001은 명세 2 READY다. Codex는 결과 SHA `2c4411bd8d79b663e7a1e616c8dc9577dc259781` 이후의 CURRENT_TASK/HANDOFF를 같은 새 명세 SHA에서 읽고 단계적 확대를 수행한다. 명세 1의 migration과 PF295548 canary는 반복하지 않는다.
+
+결과에는 전용 예약 상한, 전체 dry-run 분모, 신규 unique track–concert, 묶음별 쓰기와 무쓰기 재실행, 검색 API, false negative 개선 및 남은 OCR/후보 단계 수를 기록한다.

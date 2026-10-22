@@ -104,3 +104,12 @@ README에는 서로 다른 시기의 운영 설명이 함께 있을 수 있다. 
 관리자 READ ONLY SQL로 실제 미적용과 선행조건을 확인한 뒤 지정 automation migration을1회 적용했다. 운영의5 RPC/7컬럼 및 service-role 권한을 재확인했고, PF295548에 한정해 브람스 Op.118 No.2 자동 CONFIRMED1건을 추가했다. 기존 쇼팽·리스트 수동 receipt2건의 전체 행 hash는 보존됐으며, 세 곡 모두 운영 검색에서 PF295548 각1건을 반환한다. 같은 입력 즉시 재실행은 POST0이었다.
 
 이전 CA-SEARCH/최초 CA-AUTO의 RPC 비노출·관리자 연결 부재는 당시 기록이다. 현재 DB/Python/모델 preflight는 PASS이나, daily의 자동화 이미지20/후보100은 초기 상한1을 보장하지 않아 정기 확대는 여전히 BLOCKED다. 기존 예약은 Enabled이며 변경하지 않았다. 공개 UI·배포 SHA는 별도 미검증이다. 자세한 결과와 정확한 요청·row 집계는 [HANDOFF](HANDOFF.md) 및 [실행 JSON](docs/PROGRAM_AUTOMATION_CANARY_2026-10-22.json)을 참조한다. 관리자 연결 값은 게시하지 않았다.
+
+## CA-AUTO 명세 2 — 단계적 검색 연결 확대
+
+- 사용자 지시: 특정 육안 확인 사례만 대조하지 않고 현재 저장된 공연 전체에서 더 많은 등록곡을 공연과 연결한다.
+- 명세 브랜치: `codex/ca-auto-20261022-001`, 작업 ID CA-AUTO-20261022-001 / 명세 2.
+- 명세1의 지정 migration과 PF295548 canary는 통과했다. 반복 적용/반복 canary하지 않는다.
+- 다음 단계는 전체 eligible queue 쓰기0 조사, 자동 확정 전용 정기 상한3/30, 묶음당3/30·누적20/100 이하의 단계적 저장이다.
+- 결과가 적거나 명확한 후보를 놓치면 OCR성공·candidate없음, identity/matcher불일치, OCR없음 순으로 제한 표본을 개선한다.
+- 모호한 악장·편곡·번호·프로그램 범위는 연결 수를 늘리기 위해 자동 확정하지 않는다.
