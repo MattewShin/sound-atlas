@@ -3,24 +3,8 @@ import {readFileSync} from 'node:fs'
 import {pathToFileURL} from 'node:url'
 import {analyzeStoredProgram} from '../server/programAnalysis.mjs'
 
-const heading = /^\s*(?:\[|【|\()?\s*(?:program(?:me)?|프로그램|곡목)\s*(?:\]|】|\))?\s*[:：]?\s*$/i
-const boundary = /^\s*(?:\[[^\]]+\]|【[^】]+】|(?:profile|biography|program\s+notes?|프로필|출연진|연주자\s*소개|작품\s*해설|공연소개|관람\s*안내|예매|후원|문의)\s*[:：]?|\*\s*프로그램\s*(?:및|은|이).*(?:변경|예정).*)\s*$/i
-
-export function extractOfficialProgramText(sty) {
-  if(typeof sty!=='string'||!sty.trim())return {status:'NO_PROGRAM_TEXT',sections:[]}
-  // Markup is left unresolved; this check neither crawls nor guesses HTML layout.
-  if(/<\/?[a-z][^>]*>/i.test(sty))return {status:'SOURCE_UNRESOLVED',reason:'MARKUP_NOT_SUPPORTED',sections:[]}
-  const lines=sty.replace(/\r\n?/g,'\n').split('\n'),sections=[]
-  let active=null
-  const close=()=>{if(active){sections.push({...active,text:lines.slice(active.startLine,active.endLine+1).join('\n')});active=null}}
-  for(let i=0;i<lines.length;i++) {
-    if(heading.test(lines[i])){close();active={startLine:i,endLine:i};continue}
-    if(active&&boundary.test(lines[i])){close();continue}
-    if(active)active.endLine=i
-  }
-  close()
-  return {status:sections.length?'PROGRAM_TEXT_FOUND':'NO_EXPLICIT_PROGRAM_HEADING',sections}
-}
+import {extractOfficialProgramText} from '../server/officialProgramText.mjs'
+export {extractOfficialProgramText} from '../server/officialProgramText.mjs'
 
 export function inspectOfficialProgram(row) {
   const source=extractOfficialProgramText(row.sty)
@@ -93,4 +77,5 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href) {
       sourceUnresolved:results.reduce((n,r)=>n+r.sourceUnresolved,0),results},null,2))
   } else throw Error('Use --self-test or --input <local parsed detail rows JSON>')
 }
+
 
