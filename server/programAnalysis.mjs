@@ -99,22 +99,23 @@ export const matchIdentity = (identity, composer) => {
   return [{...decision,matching}]
 }
 
-export const analyzeStoredProgram = ({ concert, image, ocr, attempt }) => {
-  const lines = sourceLines(ocr)
+// Source-neutral pure core. Supplied line coordinates and quotations are never rewritten.
+export const analyzeProgramText = ({concert,lines,rawText,width,sourceId}) => {
+  const lineByIndex = new Map(lines.map(line => [line.line_index,line]))
   const geometry = composerWorkGeometry(lines,{normalize:normalized,knownComposers,isComposerHeading,typeIn,isHeader:isProgramHeading,isStop:s=>stop.test(s)||biography.test(s),tempo})
   const sections = [], entries = []
   let mode = 'UNCERTAIN', reason = 'NO_PROGRAM_HEADING', section, composers = {}, currents = {}
-  const context = checkProgramContext({ ...concert, dateFrom: concert.start_date, dateTo: concert.end_date }, ocr.raw_text)
-  const partialDates = [...ocr.raw_text.matchAll(/(?:^|\s)(\d{1,2})\s*[.월/]\s*(\d{1,2})\s*(?:일|[.\s]|$)/g)].map((m) => `${m[1]}-${m[2]}`)
-  const multiDate = new Set(partialDates).size > 1 || /series\s+overview|시리즈\s*전체|매월|총\s*\d+회|Session\s*[12]/i.test(ocr.raw_text)
+  const context = checkProgramContext({ ...concert, dateFrom: concert.start_date, dateTo: concert.end_date }, rawText)
+  const partialDates = [...rawText.matchAll(/(?:^|\s)(\d{1,2})\s*[.월/]\s*(\d{1,2})\s*(?:일|[.\s]|$)/g)].map((m) => `${m[1]}-${m[2]}`)
+  const multiDate = new Set(partialDates).size > 1 || /series\s+overview|시리즈\s*전체|매월|총\s*\d+회|Session\s*[12]/i.test(rawText)
   for (const line of lines) {
-    const s = normalized(line.text).trim(), col = column(line, ocr.width)
+    const s = normalized(line.text).trim(), col = column(line, width)
     if (isProgramHeading(s)) { mode = 'PROGRAM'; reason = 'EXPLICIT_PROGRAM_HEADING'; composers = {}; currents = {}; section = null }
     else if (stop.test(s) || biography.test(s)) { mode = 'NON_PROGRAM'; reason = 'PROFILE_HISTORY_OR_ADMIN'; composers = {}; currents = {} }
     const found = knownComposers(s)
     // A Roman-looking single initial can still introduce a composer. Use the following
     // structured work/birth-date context instead of carrying the previous composer across it.
-    const nextText = normalized(lines[line.line_index+1]?.text || '')
+    const nextText = normalized(lineByIndex.get(line.line_index+1)?.text || '')
     const composerBoundary = !typeIn(s) && !tempo.test(s) && /^[IVX]\.\s*[A-Z][a-zA-Z-]+(?:\s*\([^)]*\))?\s*$/.test(s)
       && (/\(\d{4}/.test(s) || typeIn(nextText) || numberToken.test(nextText))
     if (mode === 'UNCERTAIN' && (isComposerHeading(s) || (found.length && workLine(s, true)))) reason = 'HEADINGLESS_WORK_LIST_REQUIRES_REVIEW'
@@ -132,7 +133,7 @@ export const analyzeStoredProgram = ({ concert, image, ocr, attempt }) => {
     }
     if (geometry.events.has(line.line_index)) {
       for(const entry of geometry.events.get(line.line_index)) {
-        const workColumn=column(entry.workLine,ocr.width)
+        const workColumn=column(entry.workLine,width)
         entries.push({...entry,section_index:section.index,col:workColumn})
         // A physically paired name replaces the inherited relationship even if
         // its identity is unresolved; it never falls back to the previous author.
@@ -149,7 +150,7 @@ export const analyzeStoredProgram = ({ concert, image, ocr, attempt }) => {
     )) { currents[col].lines.push(line); continue }
     const parent = composers[col] || (col === 'full' ? null : composers.full)
     const detachedTitle = (parent || mode==='PROGRAM') && !found.length && !/^(?:[A-Z]\.\s*|[A-Z]\s+)+[A-Z]|\(\d{4}/.test(s)
-      && nearbyNumberLabel(line,lines,l=>column(l,ocr.width))
+      && nearbyNumberLabel(line,lines,l=>column(l,width))
     if ((isComposerHeading(s) || composerBoundary) && !detachedTitle) {
       // A bare unknown name resets inheritance, but is insufficient to treat arbitrary following prose as a work list.
       composers[col] = { name: found[0] || s.split('(')[0].trim(), line,
@@ -177,7 +178,7 @@ export const analyzeStoredProgram = ({ concert, image, ocr, attempt }) => {
     section.context_reasons = [...(!context.verified ? [`CONTEXT_${context.conflict.toUpperCase()}`] : []), ...(scopeUncertain ? ['MULTIPLE_DATES_OR_SERIES_SCOPE'] : [])]
   }
   const boundedEntries = entries.flatMap(entry=>splitUnparentedItems(entry,lines,{
-    columnFor: line=>column(line,ocr.width),
+    columnFor: line=>column(line,width),
     explicitParent: text=>Boolean(typeIn(text)||numberToken.test(text)||/\b(?:suite|sonata|concerto|variations)\b|모음곡|소나타|협주곡|변주곡/i.test(text)),
   }))
   const physicalEntries = boundedEntries.map((entry) => {
@@ -198,7 +199,7 @@ export const analyzeStoredProgram = ({ concert, image, ocr, attempt }) => {
     const evidenceItems = entry.lines.map((l) => evidence(l, l === entry.workLine ? 'WORK' : l===entry.boundary?.number_line ? 'NUMBER' : entry.composer_lines?.includes(l) || l===entry.composer_line ? 'COMPOSER' : 'SCOPE'))
     return {entry,identity,evidence:evidenceItems}
   })
-  const logicalGroups=groupLogicalWorks(physicalEntries,{lines,hash:hashJson,source_id:ocr.id})
+  const logicalGroups=groupLogicalWorks(physicalEntries,{lines,hash:hashJson,source_id:sourceId})
   const logicalWorks=[]
   const candidates = logicalGroups.flatMap((group) => {
     const {identity,evidence:evidenceItems}=group
@@ -227,18 +228,24 @@ export const analyzeStoredProgram = ({ concert, image, ocr, attempt }) => {
   if (!entries.length) for (const section of sections) {
     if (section.classification === 'UNCERTAIN') { section.classification = 'NON_PROGRAM'; section.reason = 'NO_IDENTIFIABLE_WORK_LIST'; }
   }
-  const result = { ocr_result_id: ocr.id, image_id: image.id, concert_id: concert.id, image_revision: image.evidence_revision || 0,
-    concert_revision: concert.program_context_revision || 0,
-    source_attempt_id: attempt?.id,
-    concert_context: concertContext(concert), matcher_version: MATCHER_VERSION, catalog_hash: CATALOG_HASH,
-    sections, candidates, logical_works:logicalWorks,
+  return {sections,candidates,logical_works:logicalWorks,
     grouping:{physical_work_rows:physicalEntries.length,logical_work_count:logicalWorks.length,
       bilingual_merges:logicalGroups.reduce((n,g)=>n+g.bilingual_merges,0),
       parent_child_merges:logicalGroups.reduce((n,g)=>n+g.parent_child_merges,0),
       parent_scope_works:logicalWorks.filter(w=>w.work.parent_title!==null).length,
       catalog_linked_work_count:logicalWorks.filter(w=>w.catalog_matches.some(m=>m.catalog_id)).length,
       catalog_link_rows:candidates.filter(c=>c.catalog_id).length,unique_catalog_ids:new Set(candidates.map(c=>c.catalog_id).filter(Boolean)).size},
+    limitations: scopeUncertain ? ['Multiple sessions/dates: work-to-session association requires manual review.'] : []}
+}
+
+export const analyzeStoredProgram = ({ concert, image, ocr, attempt }) => {
+  const {sections,candidates,logical_works,grouping,limitations}=analyzeProgramText({concert,lines:sourceLines(ocr),rawText:ocr.raw_text,width:ocr.width,sourceId:ocr.id})
+  const result = { ocr_result_id: ocr.id, image_id: image.id, concert_id: concert.id, image_revision: image.evidence_revision || 0,
+    concert_revision: concert.program_context_revision || 0,
+    source_attempt_id: attempt?.id,
+    concert_context: concertContext(concert), matcher_version: MATCHER_VERSION, catalog_hash: CATALOG_HASH,
+    sections, candidates, logical_works, grouping,
     limitations: ['Stored OCR snapshot only; current URL bytes have not been checked.',
-      ...(scopeUncertain ? ['Multiple sessions/dates: work-to-session association requires manual review.'] : [])] }
+      ...limitations] }
   return { ...result, payload_hash: hashJson(result) }
 }
