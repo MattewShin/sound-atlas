@@ -6,7 +6,8 @@ import { tmpdir } from 'node:os'
 import { join, resolve, sep, basename } from 'node:path'
 import { runConcertPipeline } from './concertPipeline.mjs'
 import { initialPipelineState, acquirePipelineLock, atomicJson, createPipelineLocal } from './pipelineLocal.mjs'
-import { PIPELINE_DEFAULTS, parsePipelineArgs, pipelineError, serializePipelineReport } from './pipelineConfig.mjs'
+import { PIPELINE_DEFAULTS, parsePipelineArgs, pipelineError, serializePipelineReport, getPipelineStageSettings, pipelineStageSettings } from './pipelineConfig.mjs'
+import { createPipelineRuntime } from './pipelineRuntime.mjs'
 import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
 import { analysisSelection } from './pipelineSelection.mjs'
 import { createCollectionKopisClient } from './concertCollector.mjs'
@@ -67,6 +68,112 @@ const harness=()=>{
   const run=(options={},plan=false,signal,clockOptions={})=>runConcertPipeline({runtime,local,state,options:{...PIPELINE_DEFAULTS,...options},plan,now:()=>time,signal,...clockOptions})
   return {runtime,local,state,data,calls,reports,run,advance:ms=>{time+=ms}}
 }
+
+test('stage booleans default ON and reject malformed OFF settings without changing profile limits',()=>{
+  assert.deepEqual(getPipelineStageSettings({}),{cleanup:true,collection:true,ocr:true,analysis:true})
+  const env={PIPELINE_CLEANUP_ENABLED:'false',PIPELINE_COLLECTION_ENABLED:'true',PIPELINE_OCR_ENABLED:'false',PIPELINE_ANALYSIS_ENABLED:'false'}
+  const {options}=parsePipelineArgs(['plan','--profile','daily'],env)
+  assert.deepEqual(options.stageSettings,{cleanup:false,collection:true,ocr:false,analysis:false})
+  assert.equal(options.ocrLimit,20);assert.equal(options.analysisLimit,20)
+  for(const name of Object.keys(env))for(const value of ['','0','1','yes','FALSE'])assert.throws(()=>getPipelineStageSettings({...env,[name]:value}),{code:name+'_INVALID'})
+  assert.throws(()=>pipelineStageSettings({ocr:'false'}),{code:'PIPELINE_STAGE_SETTING_INVALID'})
+  assert.throws(()=>pipelineStageSettings({unknown:false}),{code:'PIPELINE_STAGE_SETTING_INVALID'})
+  assert.throws(()=>parsePipelineArgs(['plan','--analysis-only','--ocr-manifest','fixture.json'],env),{code:'PIPELINE_ANALYSIS_DISABLED'})
+})
+
+test('collection-only simulation and plan never select or invoke disabled cleanup/OCR/analysis/automatic work',async()=>{
+  const h=harness();await h.run({collectLimit:1,ocrLimit:1})
+  h.advance(25*3600000);h.calls.length=0
+  const disabled=()=>assert.fail('Disabled stage capability accessed')
+  h.runtime.download=disabled;h.runtime.prepareOcr=disabled;h.runtime.ocrStageRepository=disabled
+  h.runtime.worker={recognize:disabled,close:disabled}
+  const repo=h.runtime.repository,snapshot=repo.snapshot
+  for(const name of ['cleanupPlan','cleanupDelete','ocrResult','candidates','reviewSummary'])repo[name]=disabled
+  repo.analysis={save:disabled};repo.ocr={saveAttempt:disabled}
+  repo.automation=new Proxy({},{get:disabled})
+  repo.snapshot=async()=>{
+    const data=await snapshot()
+    for(const name of ['images','results','attempts','analyses'])Object.defineProperty(data,name,{get:disabled})
+    return data
+  }
+  const stageSettings={cleanup:false,collection:true,ocr:false,analysis:false}
+  const a=await h.run({stageSettings,collectLimit:1})
+  assert.equal(a.status,'SUCCESS');assert.equal(a.stages.collection.succeeded,1)
+  assert.ok(h.calls.includes('saveConcert'))
+  assert.deepEqual(a.stage_settings,stageSettings)
+  for(const name of ['cleanup','ocr','analysis'])assert.equal(a.stages[name].status,'SKIPPED_DISABLED')
+  assert.deepEqual(a.priority_selection.ocr,[]);assert.deepEqual(a.priority_selection.analysis,[])
+  const before=structuredClone(h.state);h.calls.length=0
+  const p=await h.run({stageSettings},true)
+  assert.equal(p.status,'PLAN_READY');assert.equal(p.plan.automatic_decisions_enabled,false)
+  assert.deepEqual(p.plan.stage_settings,stageSettings);assert.deepEqual(p.environment.stage_settings,stageSettings)
+  assert.equal(p.plan.ocr_calls,0);assert.equal(p.plan.db_writes,0)
+  assert.equal(p.plan.active_detail_images,'NOT_SCANNED_DISABLED');assert.deepEqual(h.state,before)
+  assert.deepEqual(h.calls,['preflight','snapshot'])
+})
+
+test('all stages OFF preserves collection cursor and performs no work beyond mock preflight/snapshot/checkpoint',async()=>{
+  const h=harness(),before=structuredClone(h.state)
+  h.runtime.worker={close:()=>assert.fail('OFF worker closed')}
+  const a=await h.run({stageSettings:{cleanup:false,collection:false,ocr:false,analysis:false}})
+  assert.equal(a.status,'SUCCESS');assert.deepEqual(h.state,before)
+  assert.ok(!h.calls.some(c=>/^list:|^detail:|^save|download|recognize|cleanup/.test(c)))
+  assert.deepEqual(a.priority_selection,{collection:[],ocr:[],analysis:[]})
+})
+
+test('OCR OFF can analyze existing OCR without downloading or starting a worker',async()=>{
+  const h=harness();await h.run({collectLimit:1,ocrLimit:1});h.data.analyses=[];h.calls.length=0
+  const fail=()=>assert.fail('OCR disabled')
+  h.runtime.download=fail;h.runtime.prepareOcr=fail;h.runtime.worker={recognize:fail,close:fail}
+  const a=await h.run({stageSettings:{cleanup:false,collection:false,ocr:false,analysis:true}})
+  assert.equal(a.status,'SUCCESS');assert.equal(a.stages.analysis.succeeded,1)
+  assert.ok(h.calls.includes('saveAnalysis'));assert.ok(!h.calls.some(c=>c.startsWith('list:')))
+})
+
+test('analysis OFF blocks automatic queue and decisions while OCR simulation remains ON',async()=>{
+  const h=harness();await h.run({collectLimit:1,ocrLimit:1});h.data.results=[];h.data.attempts=[];h.advance(25*3600000);h.calls.length=0
+  h.runtime.repository.automation=new Proxy({},{get:()=>assert.fail('Automatic queue accessed while analysis OFF')})
+  h.runtime.repository.analysis={save:()=>assert.fail('Analysis saved while OFF')}
+  const a=await h.run({stageSettings:{cleanup:false,collection:false,ocr:true,analysis:false},ocrLimit:1})
+  assert.equal(a.status,'SUCCESS');assert.equal(a.stages.ocr.attempted,1)
+  assert.ok(h.calls.includes('saveOcr'));assert.ok(!h.calls.includes('saveAnalysis'))
+  assert.deepEqual(a.priority_selection.analysis,[])
+})
+
+test('collection-only real runtime preflight skips unavailable Python and disabled schemas; mocked transport permits only collector POST',async()=>{
+  const calls=[],env={SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'local-secret',KOPIS_SERVICE_KEY:'fixture-key',
+    PIPELINE_CLEANUP_ENABLED:'false',PIPELINE_COLLECTION_ENABLED:'true',PIPELINE_OCR_ENABLED:'false',PIPELINE_ANALYSIS_ENABLED:'false',
+    EASYOCR_TIMEOUT_MS:'invalid-disabled-config',EASYOCR_PYTHON:'missing-fixture-python'}
+  const runtime=createPipelineRuntime({env,fetchImpl:async(url,init)=>{
+    calls.push({path:url.pathname,method:init.method})
+    assert.equal(url.origin,env.SUPABASE_URL)
+    assert.ok(['/rest/v1/','/rest/v1/concerts','/rest/v1/concert_program_images','/rest/v1/rpc/sync_kopis_concert'].includes(url.pathname))
+    if(init.method==='POST')assert.equal(url.pathname,'/rest/v1/rpc/sync_kopis_concert')
+    return new Response(JSON.stringify(url.pathname==='/rest/v1/'?{paths:{'/rpc/sync_kopis_concert':{}}}:url.pathname.endsWith('/sync_kopis_concert')?'00000000-0000-4000-8000-000000000001':[]))
+  }})
+  const p=await runtime.preflight({plan:true}),runPreflight=await runtime.preflight({plan:false})
+  assert.equal(p.python_file_checked,false);assert.equal(p.model_files_checked,false);assert.equal(p.python_dependencies_checked,false)
+  assert.equal(runPreflight.analysis_version_enabled,'SKIPPED_DISABLED')
+  assert.equal(runtime.worker,undefined);assert.equal(runtime.download,undefined);assert.equal(runtime.prepareOcr,undefined)
+  assert.equal(runtime.repository.ocr,undefined);assert.equal(runtime.repository.analysis,undefined);assert.equal(runtime.repository.automation,undefined)
+  await runtime.repository.snapshot({region:'서울',from:'2026-10-23',to:'2026-11-22'},1)
+  const options=parsePipelineArgs(['plan','--profile','daily'],env).options
+  const plan=await runConcertPipeline({runtime,options,plan:true,state:initialPipelineState(),
+    local:{saveState:()=>assert.fail('Plan checkpoint write'),saveReport:()=>assert.fail('Plan report write')}})
+  assert.equal(plan.status,'PLAN_READY');assert.deepEqual(plan.plan.stage_settings,options.stageSettings)
+  assert.equal(plan.plan.automatic_decisions_enabled,false);assert.equal(plan.plan.ocr_calls,0);assert.equal(plan.plan.db_writes,0)
+  assert.deepEqual(plan.priority_selection.ocr,[]);assert.deepEqual(plan.priority_selection.analysis,[])
+  assert.ok(calls.every(c=>c.method==='GET'))
+  await runtime.repository.collector.save({concert:{kopis_id:'PF000001'},images:[]})
+  assert.deepEqual(calls.filter(c=>c.method==='POST'),[{path:'/rest/v1/rpc/sync_kopis_concert',method:'POST'}])
+})
+
+test('collection OFF needs no KOPIS key and preflight rejects a settings mismatch before any transport',async()=>{
+  const runtime=createPipelineRuntime({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'local-secret',
+    PIPELINE_COLLECTION_ENABLED:'false',PIPELINE_OCR_ENABLED:'false',PIPELINE_ANALYSIS_ENABLED:'false'},fetchImpl:()=>assert.fail('No transport expected')})
+  assert.equal(runtime.client,undefined)
+  await assert.rejects(runtime.preflight({plan:true,stageSettings:{cleanup:false,collection:true,ocr:false,analysis:false}}),{code:'PIPELINE_STAGE_SETTINGS_MISMATCH'})
+})
 
 test('pipeline uses collect -> OCR -> analysis, caps attempts and resumes past the first ten',async()=>{
   const h=harness(),a=await h.run()

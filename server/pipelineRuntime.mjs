@@ -7,7 +7,8 @@ import { createCollectionKopisClient } from './concertCollector.mjs'
 import { getEasyOcrConfig, EASYOCR_ENGINE_VERSION } from './easyOcrConfig.mjs'
 import { createEasyOcrWorker } from './easyOcrWorker.mjs'
 import { downloadKopisImage, imageValidationKey } from './kopisImageDownload.mjs'
-import { pipelineError } from './pipelineConfig.mjs'
+import { pipelineError, getPipelineStageSettings } from './pipelineConfig.mjs'
+import { getOcrImageConfig } from './ocrImageConfig.mjs'
 import { terminateOwnedProcess } from './pipelineProcess.mjs'
 import {getProgramRollout} from './programRollout.mjs'
 
@@ -27,25 +28,31 @@ const probePython = (config,signal) => new Promise((resolve,reject)=>{
   child.once('exit',async code=>{clearTimeout(timer);signal?.removeEventListener('abort',stop);try{await shutdown}catch(e){reject(e);return}signal?.aborted?reject(pipelineError('BATCH_INTERRUPTED')):timedOut?reject(pipelineError('EASYOCR_PREFLIGHT_TIMEOUT')):code===0?resolve():reject(pipelineError('EASYOCR_DEPENDENCY_OR_MODEL_FAILED'))})
 })
 export const createPipelineRuntime = ({env=process.env,signal,fetchImpl=fetch}={})=>{
-  const config=getEasyOcrConfig(env)
-  const options={env,signal,fetchImpl}
+  const stageSettings=getPipelineStageSettings(env)
+  const config=stageSettings.ocr?getEasyOcrConfig(env):stageSettings.analysis?getOcrImageConfig(env):null
+  const options={env,signal,fetchImpl,stageSettings}
   const repository=createPipelineRepository(options)
-  const client=createCollectionKopisClient(options)
-  const worker=createEasyOcrWorker({config,terminateImpl:terminateOwnedProcess})
+  const client=stageSettings.collection?createCollectionKopisClient(options):undefined
+  const worker=stageSettings.ocr?createEasyOcrWorker({config,terminateImpl:terminateOwnedProcess}):undefined
   return {
     rollout:getProgramRollout(env),
-    repository,client,worker,imageValidationKey:imageValidationKey(config),
+    stageSettings,repository,client,worker,imageValidationKey:config?imageValidationKey(config):undefined,
     namespace:createHash('sha256').update(new URL(env.SUPABASE_URL).origin).digest('hex').slice(0,16),
-    async preflight({plan,deferPython=false}){
+    async preflight({plan,deferPython=false,stageSettings:requested=stageSettings}){
+      if(Object.keys(stageSettings).some(key=>requested[key]!==stageSettings[key]))throw pipelineError('PIPELINE_STAGE_SETTINGS_MISMATCH')
       if(Number(process.versions.node.split('.')[0])!==22)throw pipelineError('NODE_22_REQUIRED')
+      if(stageSettings.ocr){
       try{await access(config.python);await access(join(config.cacheDirectory,'models','craft_mlt_25k.pth'));await access(join(config.cacheDirectory,'models','korean_g2.pth'))}
       catch{throw pipelineError('EASYOCR_PYTHON_OR_MODELS_MISSING')}
+      }
       const schema=await repository.preflight({plan})
-      if(!plan&&!deferPython)await probePython(config,signal)
-      return {...schema,node:process.versions.node,python_file_checked:true,model_files_checked:true,python_dependencies_checked:!plan&&!deferPython,kopis_authentication:plan?'NOT_CHECKED_IN_PLAN':'CHECKED_ON_FIRST_LIST_REQUEST'}
+      if(stageSettings.ocr&&!plan&&!deferPython)await probePython(config,signal)
+      return {...schema,stage_settings:stageSettings,node:process.versions.node,python_file_checked:stageSettings.ocr,model_files_checked:stageSettings.ocr,python_dependencies_checked:stageSettings.ocr&&!plan&&!deferPython,kopis_authentication:!stageSettings.collection?'SKIPPED_DISABLED':plan?'NOT_CHECKED_IN_PLAN':'CHECKED_ON_FIRST_LIST_REQUEST'}
     },
-    prepareOcr:({signal:stageSignal})=>probePython(config,stageSignal),
-    ocrStageRepository:stageSignal=>{const scoped=createPipelineRepository({...options,signal:stageSignal});return {ocr:scoped.ocr,ocrResult:scoped.ocrResult}},
-    download:(url,options={})=>downloadKopisImage(url,{config,signal:options.signal||signal,fetchImpl,knownLimit:options.knownLimit}),
+    ...(stageSettings.ocr?{
+      prepareOcr:({signal:stageSignal})=>probePython(config,stageSignal),
+      ocrStageRepository:stageSignal=>{const scoped=createPipelineRepository({...options,signal:stageSignal});return {ocr:scoped.ocr,ocrResult:scoped.ocrResult}},
+      download:(url,options={})=>downloadKopisImage(url,{config,signal:options.signal||signal,fetchImpl,knownLimit:options.knownLimit}),
+    }:{}),
   }
 }
