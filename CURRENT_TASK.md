@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,9 +13,15 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 1 — 배치 단계별 OFF 스위치 / READY
+## 명세 4 작업 1 — 배치 단계별 OFF 스위치 / IMPLEMENTED
 
 목표는 예약을 재활성화하기 전에 **공연 목록·상세 수집만 ON, 이미지 OCR와 자동 판정 쓰기는 OFF**로 실행할 수 있게 만드는 것이다. 이번 작업에서는 스위치 구현과 격리 검증까지만 한다.
+
+### 작업 1 구현 결과
+
+- 환경 boolean4개: PIPELINE_COLLECTION_ENABLED / PIPELINE_OCR_ENABLED / PIPELINE_ANALYSIS_ENABLED / PIPELINE_CLEANUP_ENABLED. 기본 true 유지.
+- 격리 collection-only 조합은 collection=true, cleanup/ocr/analysis=false. OFF queue·호출·저장0, plan/preflight 표시와 관련46/46 PASS. 상세 설정·변경5파일·검증 한계는 HANDOFF 참조.
+- 원본40개 변경/index/.env 및 예약 Disabled 보존. 실제 예약 root에는 미적용, 운영 batch/쓰기/OCR/다운로드0. 작업1 결과 게시 후 중단하며 후속 범위는 미실행이다.
 
 ### 허용 범위
 

@@ -4,13 +4,33 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
+- 현재 상태: IMPLEMENTED
+- 마지막 작성자: Codex
 - 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업1 단계 스위치)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 1 — IMPLEMENTED
+
+- 기준 공동 문서5개: `2c31aae4f0a2a97f0881061ba507d5367a238ba5`. 코드 기준: `2284077c7ec6bbf4860889a49971b353ab1871dc`. 이번 범위는 OFF 스위치와 격리 검증뿐이다.
+- 명시적 환경 boolean은 아래4개이며 미설정 기본값은 모두 true다. 빈 값·0/1·임의 문자열은 거부한다. 기존 profile의 숫자 상한과 전역 schedule rollout gate는 유지한다.
+
+| 설정명 | collection-only 검증값 | 제어 범위 |
+| --- | --- | --- |
+| PIPELINE_COLLECTION_ENABLED | true | 공연 목록·상세 조회/수집 저장 |
+| PIPELINE_OCR_ENABLED | false | 이미지 queue·다운로드·Python/OCR·OCR 저장 |
+| PIPELINE_ANALYSIS_ENABLED | false | 후보 분석·분석 저장·자동 queue·CONFIRMED/REJECTED |
+| PIPELINE_CLEANUP_ENABLED | false | 만료 자료 정리/삭제 |
+
+- 위 값은 **격리 테스트의 설정 조합**이다. 사용자 .env나 실제 예약 설정에 적용하지 않았다. 기존 launcher의 .env 전달과 runner의 config/runtime 진입점을 그대로 사용하므로 launcher·예약 action 변경은 필요 없었다.
+- plan/preflight는 `stage_settings={cleanup:false,collection:true,ocr:false,analysis:false}`, `automatic_decisions_enabled=false`, OFF 단계 `SKIPPED_DISABLED`, OCR/analysis 선택 배열[]를 표시한다. 비활성 이미지 분모는0건 관측으로 오인하지 않도록 NOT_SCANNED_DISABLED다. OCR OFF면 Python/모델/의존성 검사를 하지 않고, 분석 OFF면 관련 schema/policy 의존 검사·자동화 store 생성도 건너뛴다.
+- 검증은 모두 fake KOPIS/DB·인메모리 runner다. OFF 기능/이미지 snapshot 접근 시 실패하도록 둔 상태에서 수집 저장만 수행됨을 확인했다. 실제 runtime을 mock transport로 조립한 preflight와 plan은 GET만 사용했고 이미지 다운로드/OCR/분석·자동 판정 POST0, plan DB 쓰기0이다. 별도 수집 저장 mock에서는 sync_kopis_concert POST만 허용했다. 실제 운영 HTTP 결과로 표현하지 않는다.
+- 관련 **46/46 PASS**(신규7 포함): `node --test server/concertPipeline.test.mjs server/pipelineCleanup.test.mjs server/pipelineAnalysisOnly.test.mjs`. 기본 동작, 독립 OFF 조합, all-OFF cursor 보존, 기존 OCR 분석, 분석 OFF의 자동 queue 차단, 잘못된 boolean/analysis-only 우회 차단, config→runtime→plan 일치를 검증했다. 전체 회귀/build는 실행하지 않았다.
+- 변경은 구현·테스트5파일: `server/pipelineConfig.mjs`, `server/concertPipeline.mjs`, `server/pipelineRuntime.mjs`, `server/pipelineRepository.mjs`, `server/concertPipeline.test.mjs`와 필수 공동 문서2개다. sty 저장·Program 연결·matcher·SQL은 변경하지 않았다.
+- 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의40개 변경·index·.env hash를 보존했다. 격리 경로는 `.cache/ca-auto-20261022-001/spec4-task1/source`다. 실제 예약 root에는 새 코드/설정을 미적용했으며 예약은 **Disabled 유지**다. 실제 batch·운영 DB/API 쓰기·OCR·이미지 다운로드·migration·배포·예약 변경0.
+- 작업1 구현 보고 **IMPLEMENTED**. 검토 수락은 별도이며 결과 게시 후 중단한다. 후속 sty/source router/matcher/canary/예약 재개는 진행하지 않는다.
 
 ## 웹 GPT → Codex: 명세 4 작업 1 실행 지시
 
