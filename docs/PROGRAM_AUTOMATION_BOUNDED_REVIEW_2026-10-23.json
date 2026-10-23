@@ -1,0 +1,364 @@
+{
+  "taskId": "CA-AUTO-20261022-001",
+  "specification": 2,
+  "status": "BLOCKED",
+  "phase": "CHANGES_REQUESTED_DESIGN_AND_ISOLATED_TESTS",
+  "clientDate": "2026-10-23",
+  "timeZone": "Asia/Seoul",
+  "recordedAt": "2026-10-23T00:00:13.088Z",
+  "reviewedCommit": "1bfd7ba6367731c40637e64e038f78d4cb871737",
+  "draftCodeCommit": "e2414f96a1c3a8a57acc7ce5e8ddb3ee61a263bd",
+  "boundaries": {
+    "operationalMigrationApplications": 0,
+    "manualCandidateBatches": 0,
+    "reprocessingOfSkippedImages": 0,
+    "forcedScheduledRuns": 0,
+    "schedulerChanges": 0,
+    "productionDbConnections": 0,
+    "productionApiCalls": 0,
+    "originalRuntimeFilesModified": 0,
+    "rootEnvModified": false,
+    "mainMerged": false,
+    "deployed": false
+  },
+  "schedulerReadOnly": {
+    "clientDate": "2026-10-23",
+    "observedAt": "2026-10-22T23:56:37.035Z",
+    "access": "READ_ONLY_LOCAL_SCHEDULER_AND_FILES",
+    "registered": {
+      "state": "Running",
+      "lastRunTime": "2026-10-23T08:40:01.0000000+09:00",
+      "lastTaskResult": 267009,
+      "nextRunTime": "2026-10-24T08:40:00.0000000+09:00",
+      "multipleInstances": "IgnoreNew",
+      "executionTimeLimit": "PT32M",
+      "configurationVerified": true
+    },
+    "october23": {
+      "observation": "LOCAL_RECORD_OBSERVED",
+      "completed": false,
+      "runId": "3e74c5d9-38d4-452e-8c5b-0d0474aeaff3",
+      "startedAt": "2026-10-23T08:40:10.735+09:00",
+      "finishedAt": null,
+      "status": "RUNNING",
+      "exitCode": null,
+      "automationSelected": "UNKNOWN",
+      "automationSkipped": "UNKNOWN",
+      "automationDecisionCalls": "UNKNOWN",
+      "automationPostCalls": "UNKNOWN",
+      "postCountReason": "The daily store does not record an exact HTTP POST ledger; decision counts are not substituted for total POSTs.",
+      "automationSummary": null,
+      "guard": null,
+      "errors": [
+        {
+          "stage": "ocr",
+          "code": "EASYOCR_TIMEOUT",
+          "id": "c4911b9c-50ed-48e0-8382-c557e2096cc4",
+          "httpStatus": null
+        },
+        {
+          "stage": "ocr",
+          "code": "OCR_IMAGE_LIMIT_EXCEEDED",
+          "id": "2896d808-7398-4a8a-a538-de3dd69f9988",
+          "httpStatus": null
+        }
+      ],
+      "launchStatus": "RUNNING",
+      "launchExitCode": null
+    },
+    "initialObservation": {
+      "clientDate": "2026-10-23",
+      "mode": "LOCAL_READ_ONLY_INSPECTION",
+      "registered": {
+        "state": "Ready",
+        "lastRunTime": "2026-10-22T08:40:00.0000000+09:00",
+        "nextRunTime": "2026-10-23T08:40:00.0000000+09:00",
+        "lastTaskResult": 1,
+        "actualAction": [
+          {
+            "Execute": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "Arguments": "-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -File \"C:\\Users\\CNXK\\dev\\sound-atlas\\scripts\\Invoke-ConcertPipeline.ps1\" -Mode run -Profile daily -NodePath \"C:\\Program Files\\nodejs\\node.exe\" -CollectLimit 10 -OcrLimit 20 -AnalysisLimit 20 -ListPages 4 -DbPages 20 -ImageChecks 40 -MaxSeconds 1800 -RecheckHours 24 -CleanupLimit 100",
+            "WorkingDirectory": "C:\\Users\\CNXK\\dev\\sound-atlas"
+          }
+        ],
+        "multipleInstances": "IgnoreNew",
+        "executionTimeLimit": "PT32M",
+        "configurationVerified": true
+      },
+      "october23": {
+        "status": "NOT_OBSERVED",
+        "records": [],
+        "automationSelected": "UNKNOWN",
+        "automationSkipped": "UNKNOWN",
+        "automationPostCalls": "UNKNOWN",
+        "errors": "UNKNOWN"
+      },
+      "scannedLocalReports": 23,
+      "latestObserved": [
+        {
+          "kind": "runs",
+          "id": "2fd1ea6f-d2c4-4dab-8153-aee931acffd9",
+          "startedAt": "2026-10-22T08:40:03.356+09:00",
+          "status": "PARTIAL",
+          "exitCode": 1,
+          "automation": null
+        },
+        {
+          "kind": "launches",
+          "id": "0abeb95a-a081-4396-8df8-c450a3f9dfee",
+          "startedAt": "2026-10-21T23:40:02.0189985Z",
+          "status": "PARTIAL",
+          "exitCode": 1,
+          "automation": null
+        }
+      ],
+      "forcedRuns": 0,
+      "schedulerMutations": 0,
+      "productionDbConnections": 0,
+      "productionHttpRequests": 0
+    },
+    "preservation": {
+      "files": 40,
+      "allFilesUnchanged": true,
+      "indexUnchanged": true,
+      "envUnchanged": true
+    },
+    "forcedRuns": 0,
+    "schedulerMutations": 0,
+    "productionConnectionsByThisTask": 0,
+    "manualCandidateProcessingByThisTask": 0,
+    "operationalMigrationsAppliedByThisTask": 0,
+    "localTestServerStopped": true
+  },
+  "priorIncident": {
+    "batch": 4,
+    "directDecisions": 26,
+    "implicitHistoricalCloseout": 38,
+    "totalCandidateRows": 64,
+    "perBatchLimit": 30,
+    "historyRetained": true,
+    "rollbackRequested": false,
+    "reviewAcceptedPairs": 2,
+    "reviewAcceptedPriorPairs": 3,
+    "liveReceiptReverificationThisPhase": false
+  },
+  "proposedContract": {
+    "batchImages": 3,
+    "batchCandidateRows": 30,
+    "impactSet": "Current uncheckpointed decisions UNION obsolete REVIEW_REQUIRED candidates, including current analysis that a fresh save will supersede",
+    "atomicBoundary": "Analysis saves, direct decisions, explicit history closeout, checkpoints, durable budget debit and request receipt in one transaction",
+    "planning": "READ ONLY STABLE planner; source/membership/entire candidate inventory and run budget fingerprint",
+    "databaseEnforcement": "VOLATILE READ COMMITTED completion; EXCLUSIVE NOWAIT on all source/impact/budget tables; recount under locks before first DML; exception rolls back whole operation",
+    "legacyUnboundedFinishInvoked": false,
+    "oversizeProgressProposal": {
+      "mode": "HISTORY_ONLY",
+      "enabledByDefault": false,
+      "requiresSeparatelyApprovedRun": true,
+      "requiresExistingFreshCurrentAnalysis": true,
+      "maxRows": 30,
+      "currentCandidateDecisions": false,
+      "marksCurrentAnalysisComplete": false,
+      "syntheticExample": [
+        {
+          "history": 30,
+          "direct": 0,
+          "total": 30
+        },
+        {
+          "history": 8,
+          "direct": 0,
+          "total": 8
+        },
+        {
+          "history": 0,
+          "direct": 26,
+          "total": 26
+        }
+      ]
+    },
+    "durableBudget": {
+      "distinctImages": 20,
+      "candidateRowTransitionsAcrossAllPhases": 100,
+      "adminApprovedRunRequired": true,
+      "apiRoleCanCreateOrIncreaseBudget": false
+    },
+    "security": {
+      "planSecurity": "INVOKER",
+      "completionSecurity": "DEFINER; pinned migration owner; empty search_path",
+      "anonOrAuthenticatedExecute": false,
+      "legacyAutomaticRpcServiceExecuteAfterProposedCutover": false
+    },
+    "limits": [
+      "Only the bounded RPC contract is protected; privileged administrator SQL is outside that contract.",
+      "Table-wide EXCLUSIVE locks serialize unrelated writers; operational contention and latency remain a deployment review item.",
+      "Distinct-image accounting, HISTORY_ONLY policy and daily run provisioning require next-spec approval.",
+      "New grants revoke legacy automatic RPC execution; client/preflight/schema cutover must be coordinated.",
+      "No production PostgREST/schema cache/deployment/version compatibility validation occurred."
+    ]
+  },
+  "validation": {
+    "fullIsolatedRegression": {
+      "tests": 385,
+      "passed": 385,
+      "failed": 0
+    },
+    "newPGliteAndClientTests": 12,
+    "migrationRollback": "Late injected fixture exception rolls back new tables/functions and legacy privilege revocations, then clean migration applies with zero seeded runs",
+    "readOnlyDiagnostic": "Executed successfully in isolated PGlite and PostgreSQL; state digest unchanged",
+    "clientRepeatPostCount": "Mock completion transport calls 0 for same completed input; not a production HTTP assertion",
+    "postgres": {
+      "engine": "Local PostgreSQL",
+      "version": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35226, 64-bit",
+      "loopbackOnly": true,
+      "productionEnvironmentLoaded": false,
+      "productionConnections": 0,
+      "tests": 12,
+      "passed": 12,
+      "results": [
+        {
+          "name": "read-only plan/diagnostics and rejected isolation level leave every row unchanged",
+          "status": "PASS",
+          "durationMs": 2372
+        },
+        {
+          "name": "combined <=30 commits atomically, preserves manual receipt, repeat client POST0",
+          "status": "PASS",
+          "durationMs": 2923
+        },
+        {
+          "name": "26 direct plus 38 history =64 is rejected by DB before writes",
+          "status": "PASS",
+          "durationMs": 4206
+        },
+        {
+          "name": "approved history-only30/8 then complete26 progresses without partial checkpoints",
+          "status": "PASS",
+          "durationMs": 19536
+        },
+        {
+          "name": "history growth committed after preflight rejects manifest with zero writes",
+          "status": "PASS",
+          "durationMs": 3053
+        },
+        {
+          "name": "second-image late failure rolls back first image, receipts, history and budget",
+          "status": "PASS",
+          "durationMs": 3405
+        },
+        {
+          "name": "durable run budgets reject later individually valid batches",
+          "status": "PASS",
+          "durationMs": 4216
+        },
+        {
+          "name": "unapproved history-only has zero writes and is not automatic fallback",
+          "status": "PASS",
+          "durationMs": 2382
+        },
+        {
+          "name": "bounded-only grants deny legacy writes and API run-budget tampering",
+          "status": "PASS",
+          "durationMs": 2977
+        },
+        {
+          "name": "real concurrent uncommitted historical INSERT makes bounded RPC fail NOWAIT with zero writes",
+          "status": "PASS",
+          "durationMs": 2763
+        },
+        {
+          "name": "real commit between plan and lock invalidates whole batch without partial result",
+          "status": "PASS",
+          "durationMs": 2578
+        },
+        {
+          "name": "held bounded transaction prevents phantom INSERT and competing batch until commit",
+          "status": "PASS",
+          "durationMs": 3314
+        }
+      ]
+    },
+    "build": {
+      "status": "PASS",
+      "warning": "Existing chunk >500kB"
+    },
+    "actualMultiSessionCases": [
+      {
+        "name": "real concurrent uncommitted historical INSERT makes bounded RPC fail NOWAIT with zero writes",
+        "status": "PASS",
+        "durationMs": 2763
+      },
+      {
+        "name": "real commit between plan and lock invalidates whole batch without partial result",
+        "status": "PASS",
+        "durationMs": 2578
+      },
+      {
+        "name": "held bounded transaction prevents phantom INSERT and competing batch until commit",
+        "status": "PASS",
+        "durationMs": 3314
+      }
+    ],
+    "testServerStopped": true
+  },
+  "preservation": {
+    "originalBranch": "main",
+    "originalHead": "1607ca201c3a559bc7f28aabe998ef062db02ef9",
+    "files": 40,
+    "allFilesUnchanged": true,
+    "indexUnchanged": true,
+    "envUnchanged": true
+  },
+  "files": [
+    {
+      "path": "supabase/drafts/202610230001_program_automation_bounded.sql",
+      "sha256": "ad4778b2b1116bf9e2b658412519bb32e32821753d994537b39d15bd5412faed"
+    },
+    {
+      "path": "supabase/diagnostics/20261023_program_automation_bounded.sql",
+      "sha256": "80b02c5d00838f6a6842f1def5cb9b1798fde942401a2b8e1bbadce311a4576c"
+    },
+    {
+      "path": "server/boundedProgramBatch.mjs",
+      "sha256": "0a03b1f767c59099e5850c8e7f4d25d89249fa1b3c18fe19870678f6246117de"
+    },
+    {
+      "path": "server/boundedProgramBatch.test.mjs",
+      "sha256": "4cc75428e058d019c48f11d9b20aed815253746611120cc68078a5b68b707172"
+    },
+    {
+      "path": "server/boundedProgramBatchSql.test.mjs",
+      "sha256": "9c33ce293c0fbe9f67e20e00768c78fade994eb1068c903d6f672613d12147ed"
+    },
+    {
+      "path": "server/testSupport/boundedProgramFixture.mjs",
+      "sha256": "7de2cea7a70a88121b983c22efb0b218628b53b3fe0707c1c4a68e50b7cad289"
+    },
+    {
+      "path": "server/testSupport/boundedProgramCases.mjs",
+      "sha256": "d5a97333acb03b675c6b18aaf9bd884ff5d6126bad7aa581f44696682339544b"
+    },
+    {
+      "path": "scripts/test.mjs",
+      "sha256": "85cd923e0073b0ae085c28a8d14af818f22fe279e21349458e9b48ee8ccac159"
+    },
+    {
+      "path": "scripts/testProgramAutomationBoundedPostgres.mjs",
+      "sha256": "d8404242107892d44ab5ab5a08ea929636d4633c124970ce07daaed08a766d58"
+    },
+    {
+      "path": "docs/PROGRAM_AUTOMATION_BOUNDED_DESIGN_2026-10-23.md",
+      "sha256": "a30f0c1ec268f01e5a2fe038131665b35944ac4b425b4da5555306d6a41c2f13"
+    }
+  ],
+  "nextReview": {
+    "overallState": "BLOCKED",
+    "designAndIsolatedValidationDelivered": true,
+    "productionApprovalReceived": false,
+    "questions": [
+      "Review coarse locking and owner/grant cutover.",
+      "Approve or reject HISTORY_ONLY and its existing-current-analysis prerequisite.",
+      "Specify approved run creation and distinct-image accounting.",
+      "Define next-spec migration/canary/observability scope; no production application in this change."
+    ]
+  }
+}
