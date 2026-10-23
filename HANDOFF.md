@@ -3,14 +3,27 @@
 ## 공통 기준
 
 - 작업 ID: CA-AUTO-20261022-001
-- 명세 버전: 3
-- 현재 상태: ACCEPTED
+- 명세 버전: 4
+- 현재 상태: READY
 - 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-23 (Asia/Seoul; 작업2 공식 텍스트 dry-run)
+- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업1 단계 스위치)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 4 작업 1 실행 지시
+
+한 번에 전체 source-first 구조를 구현하지 않는다. 먼저 collection-only 실행을 가능하게 하는 단계별 OFF 스위치만 구현한다.
+
+- 목표 상태: 공연 목록·상세 수집 ON / 이미지 다운로드·OCR OFF / 자동 후보 분석·CONFIRMED·REJECTED 쓰기 OFF.
+- 기존 runner/config/launcher의 직접 관련 파일만 보고, 기존 명명 규칙에 맞는 명시적 boolean 설정을 추가한다.
+- OFF 단계는 호출, queue 선택, OCR, DB POST를 만들지 않아야 한다. 관련 설정·runner 테스트로만 확인한다.
+- 기존 기본 동작은 보존하고 collection-only 조합이 plan/preflight에 명확히 표시되게 한다.
+- 변경 파일 가능하면5개 이하, 관련 테스트만 실행한다.
+- 예약은 Disabled로 유지한다. 실제 batch·운영 DB/API 쓰기·OCR·이미지 다운로드·migration·배포·기존 데이터 변경·전체 회귀/build는 금지한다.
+- `sty` 저장, Program 추출 운영 연결, matcher 수정, 자동 확정, 예약 재활성화는 후속 작업이며 이번에 진행하지 않는다.
+- 설정명·ON/OFF plan·변경 파일·관련 테스트 결과만 짧게 게시하고 중단한다.
 
 ## 웹 GPT → Codex: 명세 3 최종 검토 — ACCEPTED
 
