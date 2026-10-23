@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,35 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3C — v4 분석 저장 RPC migration·격리 검증 / READY
+
+작업 3B 결과 SHA `c6a46ba70b287afd52448a6f317a172f1eeb61a5`를 **ACCEPTED**한다. Scherzo 최소 수정, `stored-program-4` 분리, v2/v3 기본 선택 보존과 v4 저장 fail-closed가 관련52/52 테스트로 확인됐다.
+
+이번 작업은 v4 분석 결과를 저장할 수 있는 DB 계약을 작성하고 격리 PostgreSQL에서 검증하는 것까지만 한다. migration은 운영에 적용하지 않으며 v4 정책은 기본 disabled다.
+
+### 허용 범위
+
+1. additive migration으로 `save_concert_program_analysis_v4(jsonb,text)`를 추가한다.
+2. RPC는 다음을 모두 강제한다.
+   - `matcher_version=stored-program-4`
+   - 모든 candidate의 `generation_version=stored-program-4`
+   - 기존 v3와 같은 logical snapshot·candidate 1:1·catalog/evidence 검증
+   - `concert_program_version_policy`의 v4 행이 정확히 존재하고 `enabled=true`
+3. migration은 v4 policy 행을 `enabled=false`로 생성한다. 운영자가 별도로 활성화하기 전에는 저장할 수 없어야 한다.
+4. 기존 공통 저장 함수·버전별 current 분리 구조를 재사용하고 v2/v3 analysis·candidate·review·receipt를 변경하거나 재해석하지 않는다.
+5. 동일 입력 재시도는 같은 analysis ID를 반환하고, 같은 version key의 다른 payload는 거부한다.
+6. RPC 권한은 service_role만 유지하며 anon/authenticated/public 실행을 허용하지 않는다.
+7. 격리 PostgreSQL에서 migration rollback, 기본 disabled 차단, 임시 enabled 후 Scherzo v4 저장, 재시도 무증가, payload 변경 거부, v3 보존, ACL/RLS를 검증한다.
+
+### 제한
+
+- migration 작성·격리 검증만 하며 운영 DB에는 적용하지 않는다.
+- `save_concert_program_rematch_v4`와 v4 자동 판정 RPC/queue는 이번 작업에서 만들지 않는다.
+- source router·공식 텍스트를 DB analysis 저장 경로에 연결하지 않는다.
+- 운영 KOPIS/DB 호출, OCR, 후보·receipt·CONFIRMED/REJECTED 쓰기, 예약·환경·배포 변경은 하지 않는다.
+- 전체 회귀/build 없이 신규 migration SQL 테스트와 직접 관련 preflight 테스트만 실행한다.
+- 결과는 migration, 기본 policy 상태, 격리 저장 결과, 변경 파일·테스트만 게시하고 중단한다.
 
 ## 명세 4 작업 3B — Scherzo false negative 수정·matcher v4 격리 / IMPLEMENTED
 
