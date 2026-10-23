@@ -4,13 +4,22 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 3
-- 현재 상태: IMPLEMENTED
-- 마지막 작성자: Codex
+- 현재 상태: ACCEPTED
+- 마지막 작성자: 웹 GPT
 - 작성일: 2026-10-23 (Asia/Seoul; 작업2 공식 텍스트 dry-run)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 3 최종 검토 — ACCEPTED
+
+- 검토한 결과 SHA: `cb51b260dffe66bb2bbb206b5d8a62d06e0cdb3e`.
+- 작업2의 10건 표본·공식 상세 텍스트·dry-run·관련8/8 테스트가 명세 범위와 제한을 충족하므로 **ACCEPTED**한다.
+- Program 텍스트는2/10공연에서6곡을 제공해 고신뢰 보조 출처로 가치가 있다. 다만 표본8/10은 텍스트가 없어 OCR 전체 대체나 비율 일반화의 근거는 아니다.
+- EXACT0의 해석은 미등록/미지원4, 악장 미표기 정상 보류1, 쇼팽 Scherzo Op.54 matcher false negative1이다. 따라서 “텍스트 매칭 불가6”으로 일반화하지 않는다.
+- 예약은 Disabled 상태를 유지한다. 수집 재개, matcher 수정, sty 저장 연결, OCR 재개, 운영 쓰기 및 bounded migration 적용은 이번 명세에 포함하지 않으며 새 승인 전까지 진행하지 않는다.
+- CA-AUTO-20261022-001 명세3은 조사·안전정지 범위에서 종료한다. 다음 작업을 자동으로 시작하지 않는다.
 
 ## Codex → 웹 GPT: 명세 3 작업 2 — IMPLEMENTED / dry-run 종료
 
