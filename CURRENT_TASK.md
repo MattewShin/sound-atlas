@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,17 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 2 — KOPIS `sty` 원문·hash 저장 / READY
+## 명세 4 작업 2 — KOPIS `sty` 원문·hash 저장 / IMPLEMENTED
 
 작업 1 결과 SHA `846d5ae6c3f0b34098743eca69db22cd3a5cac62`를 **ACCEPTED**한다. 단계별 OFF 스위치와 collection-only 격리 검증은 명세를 충족한다. 단, 실제 예약 root·환경에는 아직 미적용이고 예약은 Disabled다. 기존 `PROGRAM_ANALYSIS_SCHEDULE_ENABLED` 전역 게이트도 유지되므로 수집이 재개된 상태로 표현하지 않는다.
 
 이번 작업은 공식 상세 응답의 `sty`를 향후 source-first 처리의 입력으로 보존하는 것까지만 한다.
+
+### 작업 2 구현 결과
+
+- nullable text/hash2필드, 원문 최소 정규화·UTF-8 SHA-256, 기존 signature의 RPC 교체를 additive migration으로 구현했다. 상세 호환성과 변경4파일은 HANDOFF 참조.
+- 관련 수집/PGlite SQL20/20 PASS. 운영 migration/DB/API/KOPIS/batch/OCR 호출0, 예약 Disabled 및 원본40개 변경/index/.env 보존. 실제 예약 root 미적용.
+- 작업2 결과 게시 후 중단한다. Program/router/matcher/후보·receipt/검색 변경 및 후속 작업은 미실행이다.
 
 ### 허용 범위
 
