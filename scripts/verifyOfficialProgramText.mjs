@@ -57,9 +57,9 @@ async function selfTest() {
     const a=inspectOfficialProgram(row('[Program]\nL. v. Beethoven\nPiano Sonata No.17 in d minor, Op.31 No.2'))
     assert.equal(a.exactMatches,0);assert.equal(a.sourceUnresolved,1);assert.equal(a.works[0].relation,'WHOLE_WORK_REFERENCE')
   })
-  await test('existing standalone Scherzo matcher limitation remains visible',()=>{
+  await test('v4 standalone Scherzo title matches without duplicate movement scope',()=>{
     const a=inspectOfficialProgram(row('[Program]\nF. Chopin\nScherzo No.4 in E Major, Op.54'))
-    assert.equal(a.exactMatches,0);assert.equal(a.works[0].workId,'chopin-scherzo-op54-no4');assert.ok(a.works[0].reasons.includes('EXCERPT_SCOPE_REQUIRES_REVIEW'))
+    assert.equal(a.exactMatches,1);assert.equal(a.works[0].trackId,'chopin-scherzo-op54-no4');assert.equal(a.works[0].matcherOutcome,'MATCHED');assert.equal(a.works[0].relation,'EXACT')
   })
   await test('explicit arrangement and date conflicts cannot count as exact',()=>{
     for(const text of ['[Program]\nF. Chopin\nBallade No.4 Op.52 (arranged for 4 hands)','[Program]\n2026.12.24\nF. Chopin\nBallade No.4 Op.52'])assert.equal(inspectOfficialProgram(row(text)).exactMatches,0)

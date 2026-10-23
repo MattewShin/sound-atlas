@@ -5,6 +5,7 @@ import { createProgramAnalysisStore } from './supabaseProgramAnalysis.mjs'
 import { pipelineError, pipelineStageSettings, getPipelineStageSettings } from './pipelineConfig.mjs'
 import { CLEANUP_TABLES, CLEANUP_SCHEMA_VERSION, fallbackCleanupPlan } from './pipelineCleanup.mjs'
 import { MATCHER_VERSION } from './programAnalysis.mjs'
+import {getProgramWriteVersion,PROGRAM_ANALYSIS_SAVE_RPC,PROGRAM_ANALYSIS_MIGRATION_REQUIRED} from './programRollout.mjs'
 import {createProgramAutomationStore} from './supabaseProgramAutomation.mjs'
 
 const fields={
@@ -37,6 +38,7 @@ export const createPipelineRepository = options => {
     collector:stages.collection?createSupabaseCollector(options):undefined, ocr:stages.ocr?createSupabaseOcr(options):undefined,
     analysis:stages.analysis?createProgramAnalysisStore(options):undefined,automation:stages.analysis?createProgramAutomationStore(options):undefined,
     async preflight({plan=false}={}){
+      if(stages.analysis)getProgramWriteVersion(options?.env||process.env)
       const tables=['concerts',...((stages.collection||stages.ocr||stages.analysis)?['concert_program_images']:[]),
         ...((stages.ocr||stages.analysis)?['concert_image_ocr_results','concert_image_ocr_attempts']:[]),
         ...(stages.analysis?['concert_program_analyses','concert_program_candidates','concert_program_reviews','concert_program_candidate_status','concert_program_catalogs']:[])]
@@ -49,15 +51,15 @@ export const createPipelineRepository = options => {
       cleanupFunctionsPresent=stages.cleanup&&['plan_expired_concert_cleanup','delete_expired_concert'].every(name=>schema.paths?.[`/rpc/${name}`])
       cleanupSchemaReady=cleanupFunctionsPresent && (await request('rpc/plan_expired_concert_cleanup',{params:{p_limit:'1'}})).schema_version===CLEANUP_SCHEMA_VERSION
       if(stages.cleanup&&!cleanupSchemaReady&&!plan)throw pipelineError('CLEANUP_MIGRATION_REQUIRED')
-      const analysisSchemaReady=Boolean(schema.paths?.['/rpc/save_concert_program_analysis_v3'])
-      if(stages.analysis&&!analysisSchemaReady&&!plan)throw pipelineError('PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED')
+      const analysisSchemaReady=Boolean(schema.paths?.[`/rpc/${PROGRAM_ANALYSIS_SAVE_RPC}`])
+      if(stages.analysis&&!analysisSchemaReady&&!plan)throw pipelineError(PROGRAM_ANALYSIS_MIGRATION_REQUIRED)
       const identitySchemaReady=Boolean(schema.paths?.['/rpc/review_concert_program_candidate_identity']&&schema.paths?.['/rpc/save_concert_program_rematch'])
       if(stages.analysis&&!identitySchemaReady&&!plan)throw pipelineError('PROGRAM_WORK_IDENTITY_MIGRATION_REQUIRED')
       automationSchemaReady=stages.analysis&&Boolean(schema.paths?.['/rpc/decide_automatic_program_candidate'])
       if(stages.analysis&&!automationSchemaReady&&!plan)throw pipelineError('PROGRAM_AUTOMATION_MIGRATION_REQUIRED')
-      const policy=stages.analysis&&analysisSchemaReady?await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:`eq.${MATCHER_VERSION}`,limit:'1'}}):null
-      const analysisVersionEnabled=!stages.analysis?'SKIPPED_DISABLED':policy?policy[0]?.enabled!==false:'UNKNOWN'
-      if(analysisVersionEnabled===false&&!plan)throw pipelineError('PROGRAM_ANALYSIS_VERSION_DISABLED')
+      const policy=stages.analysis&&analysisSchemaReady?await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:`eq.${MATCHER_VERSION}`,limit:'2'}}):null
+      const analysisVersionEnabled=!stages.analysis?'SKIPPED_DISABLED':policy===null?'UNKNOWN':Array.isArray(policy)&&policy.length===1&&policy[0]?.enabled===true
+      if(stages.analysis&&analysisVersionEnabled!==true&&!plan)throw pipelineError(Array.isArray(policy)&&policy[0]?.enabled===false?'PROGRAM_ANALYSIS_VERSION_DISABLED':'PROGRAM_ANALYSIS_VERSION_POLICY_REQUIRED')
       if(cleanupSchemaReady)await request('concert_cleanup_events',{params:{select:'operation_id',limit:'0'}})
       return {cleanup_schema_ready:cleanupSchemaReady,analysis_schema_ready:analysisSchemaReady,work_identity_schema_ready:identitySchemaReady,automation_schema_ready:automationSchemaReady,analysis_version_enabled:analysisVersionEnabled,matcher_version:MATCHER_VERSION}
     },

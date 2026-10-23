@@ -67,6 +67,8 @@ const evidence = (line, role) => ({ role, quote: line.text, start: line.start, e
 
 export const extractIdentity = (raw) => {
   const text = normalized(raw)
+  const identityLines = text.split('\n')
+  const titleLineIndex = identityLines.findIndex(s => typeIn(s) || numberToken.test(s))
   const catalogues = [...text.matchAll(/\b(Op|BWV|KV|K|D|S|B|Hob)[.:]?\s*(\d+)([a-z]?)(?:\s*[-/]\s*(\d+))?/gi)]
     .map((m) => ({ system: m[1].toUpperCase().replace('KV', 'K'), number: Number(m[2]), suffix: m[3].toLowerCase(), part: m[4] ? Number(m[4]) : null, raw: m[0] }))
   const opus = catalogues.find((c) => c.system === 'OP')
@@ -82,10 +84,13 @@ export const extractIdentity = (raw) => {
   if (new Set(catalogues.filter((c) => c.system === 'OP').map((c) => `${c.number}${c.suffix}/${c.part}`)).size > 1) reasons.push('CONFLICTING_CATALOGUE_NUMBERS')
   if ((new Set(workNumbers).size>1||new Set(afterOp).size>1) && !opus?.part && typeIn(text) !== 'sonata') reasons.push('CHECK_MULTIPLE_WORK_NUMBERS')
   return { original: raw, normalized: text, composers: knownComposers(text), type: typeIn(text),
-    title: text.split('\n').find((s) => typeIn(s) || numberToken.test(s)) || text.split('\n').at(-1),
+    title: identityLines[titleLineIndex] || identityLines.at(-1),
     catalogues, work_numbers: [...new Set(workNumbers)], opus_part: opus?.part || null,
     opus_following_numbers: [...new Set(afterOp)], keys: musicalKeysIn(text.replace(/\b([A-G])\s*[-–]\s*(flat|sharp)\b/gi,'$1 $2')),
-    movement_numbers: [...new Set(movements)], movement_names: text.split('\n').filter((s) => tempo.test(s)),
+    // Only the identified Scherzo work-title line is exempt. A following
+    // Scherzo/III. Scherzo line remains independent movement/scope evidence.
+    movement_numbers: [...new Set(movements)], movement_names: identityLines.filter((s,index) => tempo.test(s)
+      && !(index === titleLineIndex && typeIn(s) === 'scherzo')),
     arrangement_or_excerpt: /편곡|발췌|\barr\.|arranged|arrangement|transcription|\btrans\.|excerpt|(?:four|4)[\s-]+hands|two\s+pianos|네\s*손|두\s*대/i.test(text), reasons }
 }
 

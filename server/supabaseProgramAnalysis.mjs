@@ -1,7 +1,7 @@
 import { createSupabaseRest } from './supabaseRest.mjs'
 import { analyzeStoredProgram, CATALOG_HASH, CATALOG_JSON, MATCHER_VERSION } from './programAnalysis.mjs'
 import { validateProgramManifest, programAnalysisCounts } from './programCanary.mjs'
-import {getProgramWriteVersion,getProgramReviewVersion} from './programRollout.mjs'
+import {getProgramWriteVersion,getProgramReviewVersion,PROGRAM_ANALYSIS_SAVE_RPC,PROGRAM_ANALYSIS_MIGRATION_REQUIRED} from './programRollout.mjs'
 import {workIdentity,confirmationValidity,canonicalIdentityJson} from './programWorkIdentity.mjs'
 import {koreaDate} from '../src/data/concertSearchConfig.js'
 const currentCatalog={...JSON.parse(CATALOG_JSON),catalog_hash:CATALOG_HASH}
@@ -42,17 +42,22 @@ export const createProgramAnalysisStore = (options = {}) => {
       lastId = nextId
     }
   }
-  return {
-    async preflightSave(){
-      getProgramWriteVersion(options.env||process.env)
+  // Every public v4 save entry point checks GET-only readiness before POST.
+  // Do not cache this result: policy can be disabled between individual saves.
+  const preflightSave=async({rematch=false}={})=>{
+      const version=getProgramWriteVersion(options.env||process.env)
       const schema=await request('')
-      if(!schema.paths?.['/rpc/save_concert_program_analysis_v3'])throw new Error('PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED')
+      if(!schema.paths?.[`/rpc/${PROGRAM_ANALYSIS_SAVE_RPC}`])throw new Error(PROGRAM_ANALYSIS_MIGRATION_REQUIRED)
       if(!schema.paths?.['/rpc/review_concert_program_candidate_identity']||!schema.paths?.['/rpc/save_concert_program_rematch'])throw new Error('PROGRAM_WORK_IDENTITY_MIGRATION_REQUIRED')
-      const policy=await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:'eq.stored-program-3',limit:'1'}})
+      if(rematch&&!schema.paths?.['/rpc/save_concert_program_rematch_v4'])throw new Error('PROGRAM_REMATCH_V4_MIGRATION_REQUIRED')
+      const policy=await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:`eq.${version}`,limit:'2'}})
       if(!Array.isArray(policy))throw new Error('DB_ROWS_INVALID')
       if(policy[0]?.enabled===false)throw new Error('PROGRAM_ANALYSIS_VERSION_DISABLED')
-      return {rpc_ready:true,matcher_version:'stored-program-3'}
-    },
+      if(policy.length!==1||policy[0]?.enabled!==true)throw new Error('PROGRAM_ANALYSIS_VERSION_POLICY_REQUIRED')
+      return {rpc_ready:true,matcher_version:version}
+  }
+  return {
+    preflightSave,
     async targets(kopisId) {
       const concerts = await all('concerts', kopisId ? { kopis_id: `eq.${kopisId}` } : {})
       const targets = [], skipped = [], coverage = { concerts: concerts.length, detail_images: 0, results: 0 }
@@ -113,8 +118,9 @@ export const createProgramAnalysisStore = (options = {}) => {
     },
     async save(analysis) {
       if(analysis.matcher_version!==getProgramWriteVersion(options.env||process.env))throw new Error('SAVE_VERSION_MISMATCH')
-      // No fallback: the legacy RPC drops logical/normalization data and changes v2 current flags.
-      return request('rpc/save_concert_program_analysis_v3', { body: { p_analysis: analysis, p_catalog_json: CATALOG_JSON } })
+      await preflightSave()
+      // No v3/legacy fallback: v4 requires its own future transaction contract.
+      return request(`rpc/${PROGRAM_ANALYSIS_SAVE_RPC}`, { body: { p_analysis: analysis, p_catalog_json: CATALOG_JSON } })
     },
     async candidates(kopisId,{version=getProgramReviewVersion(options.env||process.env),includeInactive=false}={}) {
       version=getProgramReviewVersion({PROGRAM_REVIEW_VERSION:version})
@@ -158,7 +164,11 @@ export const createProgramAnalysisStore = (options = {}) => {
           protected_equivalent_review:candidates.some(n=>n.id!==c.id&&analyses.find(a=>a.id===n.analysis_id)?.ocr_result_id===analysis.ocr_result_id&&canonicalIdentityJson(n.evidence)===canonicalIdentityJson(c.evidence)&&reviews.some(r=>r.candidate_id===n.id))}
       })
     },
-    async saveRematch(id,candidate){return request('rpc/save_concert_program_rematch',{body:{p_source_candidate_id:id,p_catalog_json:CATALOG_JSON,p_candidate:candidate}})},
+    async saveRematch(id,candidate){
+      if(candidate.generation_version!==getProgramWriteVersion(options.env||process.env))throw new Error('SAVE_VERSION_MISMATCH')
+      await preflightSave({rematch:true})
+      return request('rpc/save_concert_program_rematch_v4',{body:{p_source_candidate_id:id,p_catalog_json:CATALOG_JSON,p_candidate:candidate}})
+    },
     async backfillScope(kopisId){
       const candidates=await all('concert_program_candidate_status',{review_status:'eq.CONFIRMED',...(kopisId?{kopis_id:`eq.${kopisId}`}:{})})
       const analyses=await all('concert_program_analyses'),reviews=await all('concert_program_reviews'),concerts=await all('concerts')
@@ -175,9 +185,9 @@ export const analyzeProgramTargets = async (store, { kopisId, save = false,manif
   const writeVersion=getProgramWriteVersion(env)
   if(version&&version!==writeVersion)throw new Error('WRITE_VERSION_NOT_IMPLEMENTED')
   if(save){
-    if(!manifest)throw new Error('V3_SAVE_REQUIRES_OCR_MANIFEST')
+    if(!manifest)throw new Error('V4_SAVE_REQUIRES_OCR_MANIFEST')
     manifest=validateProgramManifest(manifest)
-    if(version!==writeVersion)throw new Error('V3_SAVE_REQUIRES_EXPLICIT_VERSION')
+    if(version!==writeVersion)throw new Error('V4_SAVE_REQUIRES_EXPLICIT_VERSION')
     await store.preflightSave()
   }
   const scope = manifest?await store.manifestTargets(manifest):await store.targets(kopisId)

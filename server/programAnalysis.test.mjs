@@ -343,7 +343,7 @@ test('CLI requires a single UUID, prior analysis ID and note; refuses unresolved
   assert.throws(() => parseProgramArgs(['confirm',randomUUID(),'--note','checked']), /ANALYSIS/)
   let writes = 0
   const id = randomUUID(), analysisId = randomUUID()
-  const store = { detail: async () => ({ local_version_current: true,matcher_version:MATCHER_VERSION, analysis_id: analysisId, track_id: null }), review: async () => { writes++ } }
+  const store = { detail: async () => ({ local_version_current: true,matcher_version:'stored-program-3', analysis_id: analysisId, track_id: null }), review: async () => { writes++ } }
   await assert.rejects(runProgramCli(['confirm',id,'--analysis-id',analysisId,'--note','checked'],{ store, print:()=>{} }), /CANNOT_CONFIRM/)
   assert.equal(writes, 0)
 })

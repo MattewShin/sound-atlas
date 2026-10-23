@@ -25,10 +25,10 @@ const row=(t,version,status='CONFIRMED')=>({id:randomUUID(),concert_id:t.concert
   relation:'EXACT',outcome:'MATCHED',matcher_version:version,catalog_hash:CATALOG_HASH,review_status:status,effective_status:status,is_effectively_confirmed:status==='CONFIRMED',analysis_is_current:true,stale_reason:null,source_url:t.image.source_url,
   confirmed_work_identity_hash:workIdentity(JSON.parse(CATALOG_JSON),query.targetTrackId).hash,confirmation_matcher_version:version,confirmation_pipeline_version:EASYOCR_PIPELINE_VERSION})
 
-test('rollout defaults split v3 writes/review from v2 public search and disabled integrated runs',async()=>{
+test('rollout defaults split v4 writes, v3 review, v2 public search and disabled integrated runs',async()=>{
   const settings=getProgramRollout({})
-  assert.deepEqual(settings,{writeVersion:'stored-program-3',reviewVersion:'stored-program-3',searchVersion:'stored-program-2',scheduleEnabled:false})
-  assert.deepEqual(await runProgramCli(['config'],{env:{},print:()=>{}}),{implementation_version:'stored-program-3',...settings})
+  assert.deepEqual(settings,{writeVersion:'stored-program-4',reviewVersion:'stored-program-3',searchVersion:'stored-program-2',scheduleEnabled:false})
+  assert.deepEqual(await runProgramCli(['config'],{env:{},print:()=>{}}),{implementation_version:'stored-program-4',...settings})
   assert.throws(()=>getProgramRollout({PROGRAM_ANALYSIS_WRITE_VERSION:'stored-program-2'}),/INVALID/)
   assert.throws(()=>getProgramRollout({PROGRAM_ANALYSIS_SCHEDULE_ENABLED:''}),/INVALID/)
 })
@@ -44,13 +44,15 @@ test('v3 pending canary and even v3 confirmed rows cannot displace explicitly se
   assert.equal(calls[0].searchParams.get('matcher_version'),'eq.stored-program-2')
 })
 
-test('only an explicit v3 search setting selects v3; no automatic union or latest fallback',async()=>{
+test('only explicit v3/v4 search settings select those versions; no automatic union or latest fallback',async()=>{
+  for(const version of ['stored-program-3','stored-program-4']){
   const t=f(),calls=[]
-  const service=createSupabaseConcertSearch({env:{...env,PROGRAM_SEARCH_VERSION:'stored-program-3'},now:()=>Date.parse('2026-10-20T00:00:00Z'),fetchImpl:async(url)=>{
-    calls.push(url);return new Response(JSON.stringify([row(t,'stored-program-2'),row(t,'stored-program-3')].sort((a,b)=>a.id.localeCompare(b.id))))
+  const service=createSupabaseConcertSearch({env:{...env,PROGRAM_SEARCH_VERSION:version},now:()=>Date.parse('2026-10-20T00:00:00Z'),fetchImpl:async(url)=>{
+    calls.push(url);return new Response(JSON.stringify(['stored-program-2','stored-program-3','stored-program-4'].map(v=>row(t,v)).sort((a,b)=>a.id.localeCompare(b.id))))
   }})
-  const result=await service.search(query);assert.equal(result.analysisVersion,'stored-program-3');assert.equal(result.concerts.length,1)
-  assert.equal(calls[0].searchParams.get('matcher_version'),'eq.stored-program-3')
+  const result=await service.search(query);assert.equal(result.analysisVersion,version);assert.equal(result.concerts.length,1)
+  assert.equal(calls[0].searchParams.get('matcher_version'),`eq.${version}`)
+  }
 })
 
 test('empty and unsupported search/review configuration fails before any DB request',async()=>{
@@ -82,6 +84,26 @@ test('review lists use explicit v3 and a normal empty state while old UUID detai
   assert.equal(detail.matcher_version,'stored-program-2');assert.equal(detail.review_version,'stored-program-3');assert.equal(detail.local_version_current,false)
 })
 
+test('v2/v3 row details and receipt history remain readable; v4 review selection requires explicit configuration',async()=>{
+  for(const version of ['stored-program-2','stored-program-3','stored-program-4']){
+    const t=f(),candidate={id:randomUUID(),analysis_id:randomUUID(),matcher_version:version,catalog_hash:CATALOG_HASH,track_id:query.targetTrackId,work_id:query.targetTrackId,review_status:'REVIEW_REQUIRED'}
+    const receipt={id:randomUUID(),candidate_id:candidate.id,status:'CONFIRMED',note:'Local historical receipt',matcher_version:version}
+    const before=structuredClone({candidate,receipt}),calls=[]
+    const selectedEnv=version==='stored-program-4'?{...env,PROGRAM_REVIEW_VERSION:version}:env
+    const store=createProgramAnalysisStore({env:selectedEnv,fetchImpl:async(url,init)=>{
+      calls.push(url);assert.equal(init.method,'GET')
+      const rows={concert_program_candidate_status:[candidate],concert_program_analyses:[{id:candidate.analysis_id,ocr_result_id:t.ocr.id,catalog_hash:CATALOG_HASH}],concert_image_ocr_results:[t.ocr],concert_program_reviews:[receipt],concert_program_catalogs:[{catalog:JSON.parse(CATALOG_JSON)}]}
+      return new Response(JSON.stringify(rows[url.pathname.split('/').at(-1)]))
+    }})
+    const detail=await store.detail(candidate.id)
+    assert.equal(detail.matcher_version,version);assert.deepEqual(detail.reviews,[receipt])
+    assert.equal(detail.review_version,version==='stored-program-4'?version:'stored-program-3')
+    assert.deepEqual({candidate,receipt},before)
+    await store.candidates()
+    assert.equal(calls.at(-1).searchParams.get('matcher_version'),`eq.${detail.review_version}`)
+  }
+})
+
 test('disabled rollout skips the entire pipeline before credentials, preflight, DB, OCR or state writes',async()=>{
   const state=initialPipelineState(),before=structuredClone(state),reports=[]
   const fail=()=>{throw new Error('GATE_BYPASSED')}
@@ -92,24 +114,25 @@ test('disabled rollout skips the entire pipeline before credentials, preflight, 
   assert.deepEqual(state,before);assert.equal(reports.length,1);assert.equal(reports[0].status,'SKIPPED_ROLLOUT_GATE')
 })
 
-test('manual manifest save is independent of the disabled schedule but requires an explicit v3 and preflight',async()=>{
+test('manual manifest save orchestration requires explicit v4 and calls readiness before scope/save',async()=>{
   const t=f(),manifest={schema_version:'program-ocr-canary-1',source_run_id:randomUUID(),expected_count:1,targets:[{kopis_id:t.concert.kopis_id,ocr_result_id:t.ocr.id,source_analysis_id:randomUUID()}]},calls=[]
   const store={preflightSave:async()=>calls.push('preflight'),manifestTargets:async()=>{calls.push('targets');return {targets:[t],skipped:[],coverage:{}}},save:async()=>{calls.push('save');return randomUUID()}}
-  const result=await analyzeProgramTargets(store,{save:true,version:'stored-program-3',manifest,env:{}})
+  const result=await analyzeProgramTargets(store,{save:true,version:'stored-program-4',manifest,env:{}})
   assert.equal(result.saved,1);assert.deepEqual(calls,['preflight','targets','save'])
-  assert.equal(parseProgramArgs(['analyze','--save','--version','stored-program-3','--ocr-manifest','exact.json']).save,true)
+  assert.equal(parseProgramArgs(['analyze','--save','--version','stored-program-4','--ocr-manifest','exact.json']).save,true)
+  assert.throws(()=>parseProgramArgs(['analyze','--dry-run','--version','stored-program-3']),/WRITE_VERSION_NOT_IMPLEMENTED/)
 })
 
 test('unscoped saves and implicit/old versions are blocked before preflight even when schedule is enabled',async()=>{
   const fail=()=>{throw new Error('MUST_NOT_RUN')},store={preflightSave:fail,targets:fail,save:fail}
-  for(const args of [['analyze','--save'],['analyze','--save','--version','stored-program-3'],['analyze','--save','--ocr-manifest','exact.json']])assert.throws(()=>parseProgramArgs(args),/REQUIRES/)
+  for(const args of [['analyze','--save'],['analyze','--save','--version','stored-program-4'],['analyze','--save','--ocr-manifest','exact.json']])assert.throws(()=>parseProgramArgs(args),/REQUIRES/)
   await assert.rejects(analyzeProgramTargets(store,{save:true,env:{PROGRAM_ANALYSIS_SCHEDULE_ENABLED:'true'}}),/REQUIRES_OCR_MANIFEST/)
 })
 
 test('SQL/RPC preflight blocks canary before POST when schema is absent or version policy disables writes',async()=>{
   for(const ready of [false,true]){
     const calls=[],store=createProgramAnalysisStore({env,fetchImpl:async(url,init)=>{
-      calls.push(init.method);return new Response(JSON.stringify(url.pathname==='/rest/v1/'?{paths:ready?{'/rpc/save_concert_program_analysis_v3':{},'/rpc/review_concert_program_candidate_identity':{},'/rpc/save_concert_program_rematch':{}}:{}}:[{enabled:false}]))
+      calls.push(init.method);return new Response(JSON.stringify(url.pathname==='/rest/v1/'?{paths:ready?{'/rpc/save_concert_program_analysis_v4':{},'/rpc/review_concert_program_candidate_identity':{},'/rpc/save_concert_program_rematch':{}}:{}}:[{enabled:false}]))
     }})
     await assert.rejects(store.preflightSave(),ready?/DISABLED/:/MIGRATION_REQUIRED/)
     assert.ok(calls.every(method=>method==='GET'))
