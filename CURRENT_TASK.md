@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,18 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3D — source router와 matcher의 읽기 전용 연결 / READY
+## 명세 4 작업 3D — source router와 matcher의 읽기 전용 연결 / IMPLEMENTED
 
 작업 3C 결과 SHA `2cc00f47c3368d1a424ca11dbb3f6cca3ecb5ced`와 구현 SHA `f31655183ce02526978206028387e50d0171e9de`를 **ACCEPTED**한다. v4 저장 RPC의 기본 disabled, 정책 잠금, 버전·snapshot·evidence 검증, service_role 전용 권한과 격리 6/6 테스트가 명세를 충족한다. 운영 migration은 아직 적용하지 않았고 예약은 Disabled다.
 
 이번 작업은 3A의 source router가 선택한 공식 Program 텍스트 또는 current OCR을 3B의 v4 matcher에 전달하는 **순수 읽기 전용 분석 경로**까지만 구현한다. 공식 텍스트 결과를 기존 이미지/OCR 저장 RPC에 억지로 넣지 않는다.
+
+### 작업 3D 구현 결과
+
+- 순수 분석 core와 route 결과용 읽기 전용 진입점을 연결했다. 공식 section별 독립 분석·전체 원문 UTF-16 evidence 좌표를 보존하며, OCR은 원래 snapshot과 Unicode code-point 좌표를 유지한다. NONE은 후보0이다.
+- 출처/hash/선택·fallback reason/v4를 명시하고, 공식 결과는 기존 이미지/OCR 저장 계약과 비호환임을 표시한다. 저장 호출·가짜 image/OCR ID는 추가하지 않았다.
+- 직접 관련58/58 PASS; 지정 SHA의 리팩터링 전 OCR8표본 snapshot/payload/cache가 그대로 일치한다. 변경 구현·테스트/fixture4파일과 세부 계약은 HANDOFF 참조.
+- 작업3C 재실행·운영 DB/KOPIS/OCR 호출·migration/운영 쓰기0, 예약 Disabled·원본40개 변경/index/.env 보존. 작업3D IMPLEMENTED로 게시 후 중단한다.
 
 ### 허용 범위
 

@@ -4,13 +4,35 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업3C v4 save RPC)
+- 현재 상태: IMPLEMENTED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업3D 읽기 전용 분석)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3D — IMPLEMENTED
+
+- 공동 문서5개 기준: `29f95f5593c4fc1d03958416985f8836a31b0343`. 구현 코드: `bac81a063d86a8bfa687d6358372a00c1cff6613`. CA-AUTO-20261022-001 / 명세4 작업3D만 수행했다. 작업3C SQL/preflight suite·migration은 재실행하지 않았다.
+- `analyzeStoredProgram`에서 순수 `analyzeProgramText({concert,lines,rawText,width,sourceId})`를 분리했다. OCR wrapper의 필드 순서·candidate·payload hash·cache 계약은 유지한다. 공식 분석에는 image/OCR/attempt ID를 만들거나 wrapper에 가짜 입력을 넣지 않는다.
+- 새 진입점: `analyzeSelectedProgramSource({concert,source,current_ocr_target?})`. source는 `routeProgramSource` 반환값이다. OCR target은 호출자가 성공·현재성·출처를 검증한 `{is_current:true,image,ocr,attempt}`이며, 선택 text/hash와 target OCR 원문이 같아야 한다. 이 함수가 DB에서 freshness를 조회하는 것은 아니다.
+
+| 선택 출처 | 읽기 전용 처리·출력 |
+| --- | --- |
+| KOPIS_DETAIL_TEXT | hash·router section 경계를 재검증하고 각 section을 독립 분석; source_sections/sections/candidates/logical_works 반환, ocr_analysis=null |
+| OCR | 검증 표명이 있는 실제 OCR target으로 기존 wrapper 호출; 원래 snapshot을 ocr_analysis에 그대로 보존 |
+| NONE | NO_USABLE_SOURCE, candidates/logical_works=[]; OCR target 미접근·네트워크/POST0 |
+
+- 공통 출력은 mode=READ_ONLY, source_kind, text_hash, reason_code/official_reason_code/ocr_reason_code, analysis_reason_code, matcher_version=stored-program-4를 명시한다. 모든 envelope는 storage_compatible=false다. 공식 결과는 OFFICIAL_TEXT_REQUIRES_SOURCE_STORAGE_CONTRACT이며 image_id/ocr_result_id/source_attempt_id/payload_hash가 없어 기존 v4 저장 payload로 표시하지 않는다. OCR의 기존 저장 형태는 별도의 ocr_analysis 안에만 유지한다. 이 경로에는 저장 호출이 없다.
+- 공식 evidence의 start/end는 **저장된 전체 원문의 JS UTF-16 [start,end)**, line_index는 전체 원문0기준이다. `raw_text.slice(start,end)===quote`이며 CRLF/CR/LF·결합 문자·emoji를 재작성하지 않는다. bbox/confidence는 null이다. router의 LF 진단용 section.text를 좌표 원문으로 쓰지 않는다. OCR은 기존 **Unicode code-point** 좌표·bbox/confidence를 그대로 유지하고 출력 offset_unit으로 구분한다.
+- 공식 section마다 core를 새로 호출하고 source kind/hash/section index로 논리 식별을 분리했다. 작곡가·Op.·번호를 다른 section에서 빌리거나 동일/한영 작품을 section 사이에서 합치지 않는다. 공식 성공 시 OCR target getter도 읽지 않으며 소개문·biography·notice는 후보 근거로 들어가지 않는다.
+- 변경 구현·테스트/fixture **4파일**: `server/programAnalysis.mjs`, `server/selectedProgramAnalysis.mjs`, `server/selectedProgramAnalysis.test.mjs`, `server/fixtures/programSourceOcrV4.json`. router·공식 추출기·SQL·저장 adapter·pipeline·catalog/version은 변경하지 않았다.
+- 직접 관련 **58/58 PASS**, 실패/skip0: `node --input-type=module -e "await import('./server/programSourceRouter.test.mjs'); await import('./server/programAnalysis.test.mjs'); await import('./server/programScherzo.test.mjs'); await import('./server/selectedProgramAnalysis.test.mjs')"`. Windows Node22.18.0에서 router11 + 기존 matcher26 + Scherzo4 + 신규17을 같은 프로세스로 실행했다. 공식 Scherzo MATCHED+EXACT, 원문 좌표·다중 section/곡 합성 방지, 소개/공지 제외, 잘못된 작곡가/Op./No.·편곡/발췌 보류, OCR fallback·NONE·변조 입력 거부를 확인했다.
+- OCR 회귀 fixture8개는 **리팩터링 전 지정 SHA 구현으로 먼저 기록**했다. 이후 전체 ordered snapshot JSON hash·payload_hash·cache key가 모두 일치하고 새 OCR fallback의 ocr_analysis도 원래 결과와 deep-equal이다. fixture는 일반곡/Scherzo/Unicode·CRLF/다중 구간·소개문/악장/날짜·편곡/빈 목록/bbox를 포함한다. 전체 회귀/build·작업3C SQL은 미실행이다.
+- 운영 DB/KOPIS/OCR 호출·이미지 다운로드·batch·migration 적용·운영 후보/receipt/CONFIRMED·REJECTED 쓰기0. source-text 저장 계약·runner/repository 저장 연결·정책 활성화·환경/배포/예약 변경0. 실제 예약 읽기 확인은 **2026-10-23 16:24:16 KST, Disabled / Enabled=false**다.
+- 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의40개 변경·index·.env hash를 보존했다. 격리 경로는 `.cache/ca-auto-20261022-001/spec4-task3d/source`이며 기존 저장·pipeline·SQL 파일과 실제 예약 root는 유지했다.
+- 구현자 의견: 출처별 offset 단위는 envelope에서 명시적으로 구분해야 하며, 공식 결과를 저장하려면 향후 별도 source-text 계약 검토가 필요하다. 이번에는 순수 읽기 전용 연결까지만 **IMPLEMENTED**로 게시 후 중단한다. 검토 수락은 별도다.
 
 ## 웹 GPT → Codex: 명세 4 작업 3C ACCEPTED / 작업 3D READY
 
