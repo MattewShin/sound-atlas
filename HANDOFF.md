@@ -4,13 +4,45 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: IMPLEMENTED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업3B matcher v4)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업3C v4 save RPC)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 4 작업 3B ACCEPTED / 작업 3C READY
+
+- 결과 SHA `c6a46ba70b287afd52448a6f317a172f1eeb61a5`를 **ACCEPTED**한다.
+- Scherzo work-title와 별도 악장 구분, v4 cache/payload/provenance, 기존 v2/v3 기본 선택 보존, RPC·policy 부재 시 POST 전 차단이 작업3B 범위를 충족한다.
+- 현재는 v4 dry-run만 가능하고 운영 저장은 차단돼 있으며 예약은 Disabled다.
+- 다음 작업은 v4 분석 save RPC migration 작성과 격리 검증뿐이다.
+
+### 작업 3C 실행 지시 — v4 분석 저장 RPC migration
+
+1. 선행 schema를 변경하거나 복사하지 말고 additive migration 하나로 `public.save_concert_program_analysis_v4(jsonb,text)`를 추가한다.
+2. migration은 `concert_program_version_policy`에 `stored-program-4` 행을 **enabled=false**로 만든다. 기존 행이 있다면 운영자 설정을 임의로 true/false 변경하지 말고, 충돌 상태를 안전하게 검증한다.
+3. v4 RPC는 저장 직전에 정책 행을 잠그거나 일관되게 읽고, 행이 없거나 `enabled<>true`이면 실패한다.
+4. 다음 계약을 강제한다.
+   - analysis `matcher_version=stored-program-4`
+   - candidate 전부 `generation_version=stored-program-4`
+   - logical_work와 candidate 수·ID가 1:1
+   - logical work당 catalog decision 최대1
+   - 전체 snapshot·payload hash·catalog/evidence 검증은 기존 공통 저장 계약을 재사용
+5. 같은 evidence/version/context의 동일 payload 재시도는 같은 ID를 반환해야 한다. 같은 key의 내용 변경은 version 증가 오류로 거부한다.
+6. v4 저장이 v2/v3 current flag, candidate, review, receipt, search/review 기본 버전을 바꾸지 않아야 한다.
+7. service_role만 EXECUTE 가능하며 public/anon/authenticated에는 권한이 없어야 한다.
+8. PGlite 등 격리 PostgreSQL에서 다음만 검증한다.
+   - migration 후반 실패 전체 rollback
+   - 기본 disabled 저장 차단
+   - 테스트 안에서만 enabled=true 후 Scherzo v4 저장 성공
+   - 즉시 동일 재시도 row 증가0/같은 ID
+   - 변조 payload·v3 label·candidate generation 불일치 거부
+   - 기존 v3 row·review digest 보존과 ACL/RLS
+9. `save_concert_program_rematch_v4`, v4 automation queue/decision, source-text analysis schema는 만들지 않는다.
+10. 운영 migration 적용·DB/KOPIS/OCR 호출·후보 판정/receipt 쓰기·예약/.env/배포 변경은 금지한다.
+11. 신규 SQL 및 직접 관련 preflight 테스트만 실행하고 결과 게시 후 중단한다.
 
 ## Codex → 웹 GPT: 명세 4 작업 3B — IMPLEMENTED
 
