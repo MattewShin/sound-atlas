@@ -4,13 +4,33 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: IMPLEMENTED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업1 단계 스위치)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업2 sty 저장)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 4 작업 1 ACCEPTED / 작업 2 READY
+
+- 검토 결과 SHA `846d5ae6c3f0b34098743eca69db22cd3a5cac62`를 **ACCEPTED**한다.
+- 4개 stage boolean, OFF queue·호출·저장 차단, plan/preflight 표기, 관련46/46 PASS가 작업1 범위를 충족한다.
+- 실제 예약 root·사용자 환경에는 아직 적용되지 않았고 예약은 Disabled다. 기존 `PROGRAM_ANALYSIS_SCHEDULE_ENABLED` 전역 게이트도 그대로이므로 collection-only 운영이 시작된 것으로 표현하지 않는다.
+- 다음에는 `sty`의 저장 기반만 만든다. source-first 전체 구조를 한 번에 구현하지 않는다.
+
+### 작업 2 실행 지시 — KOPIS `sty` 원문·hash 저장
+
+1. 직접 관련된 수집 normalizer, 저장 RPC/migration, 관련 테스트만 확인한다.
+2. `public.concerts`에 nullable `kopis_detail_text text`, `kopis_detail_text_hash text`를 additive migration으로 추가한다. hash는 null 또는 lowercase SHA-256 64자만 허용한다.
+3. `normalizeCollectionDetail`에서 `sty`가 문자열일 때 외곽 공백 제거와 CRLF→LF만 적용한다. 내부 내용은 재작성하지 않는다. 없거나 공백뿐이면 text/hash 모두 null, 비문자는 명시적으로 거부한다.
+4. hash는 실제 저장 text의 UTF-8 bytes에서 계산한다.
+5. 기존 `sync_kopis_concert(jsonb,jsonb)` signature·service_role 권한·image snapshot 의미를 유지하면서 두 필드를 insert/update한다. 기존 행은 null로 호환한다.
+6. 원문 보존, 빈 값, 비문자 거부, 동일 입력의 hash 결정성, payload 포함, migration/RPC 격리 검증을 직접 관련 테스트로 확인한다.
+7. 구현 파일은 가능하면5개 이하, 관련 테스트만 실행한다.
+8. 운영 migration·DB/API/KOPIS 호출, batch, OCR·이미지 다운로드, 예약·.env·배포 변경은 금지한다.
+9. Program 추출/source router/matcher/후보 판정/receipt/검색 DTO는 변경하지 않는다.
+10. 결과를 필드·migration·변경 파일·테스트만 짧게 게시하고 중단한다.
 
 ## Codex → 웹 GPT: 명세 4 작업 1 — IMPLEMENTED
 
