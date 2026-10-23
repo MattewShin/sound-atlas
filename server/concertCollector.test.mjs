@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { collectConcerts, collectionConditions, createCollectionKopisClient, normalizeCollectionDetail, parseCollectionArgs } from './concertCollector.mjs'
 import { createSupabaseCollector } from './supabaseCollector.mjs'
 import { CollectionError, requestWithRetry } from './collectionHttp.mjs'
@@ -17,6 +18,45 @@ const normalize = (r = row()) => normalizeCollectionDetail(r, r.mt20id, conditio
 const instant = async () => {}
 const xml = (content) => new Response(`<dbs>${content}</dbs>`)
 const xmlRow = (id) => `<db><mt20id>${id}</mt20id><prfnm>검증</prfnm></db>`
+
+test('sty preserves internal wording, Unicode and bare CR; normalizes only outer whitespace and CRLF',()=>{
+  const original=' \r\n[Program]\r\n  F. Chopin — e\u0301 🎹\r\n\r\nScherzo No.4, Op.54\r단독 CR\r\n\t'
+  const expected='[Program]\n  F. Chopin — e\u0301 🎹\n\nScherzo No.4, Op.54\r단독 CR'
+  const input=row('PF900001',{sty:original}),before=structuredClone(input)
+  const a=normalize(input).concert,b=normalize(row('PF900001',{sty:expected})).concert
+  assert.equal(a.kopis_detail_text,expected);assert.deepEqual(input,before)
+  assert.equal(a.kopis_detail_text_hash,createHash('sha256').update(Buffer.from(expected,'utf8')).digest('hex'))
+  assert.match(a.kopis_detail_text_hash,/^[0-9a-f]{64}$/)
+  assert.equal(a.kopis_detail_text_hash,b.kopis_detail_text_hash)
+  assert.notEqual(a.kopis_detail_text_hash,normalize(row('PF900001',{sty:expected.replace('Op.54','Op.53')})).concert.kopis_detail_text_hash)
+})
+
+test('absent or whitespace-only sty becomes a null text/hash pair, never a fabricated string',()=>{
+  for(const value of [undefined,null,'',' \r\n\t\u00a0 ']){
+    const c=normalize(row('PF900001',{sty:value})).concert
+    assert.equal(c.kopis_detail_text,null);assert.equal(c.kopis_detail_text_hash,null)
+  }
+  assert.equal(normalize().concert.kopis_detail_text,null)
+})
+
+test('non-string, NUL and incomplete Unicode sty are rejected before any collection save',async()=>{
+  for(const sty of [false,true,0,123,[],{},new String('text'),'bad\0text','bad\ud800','\udc00'])
+    assert.throws(()=>normalize(row('PF900001',{sty})),{code:'INVALID_DETAIL_TEXT'})
+  let writes=0
+  const report=await collectConcerts({now,limit:1,repository:{save:async()=>{writes++}},client:{
+    list:async({state})=>state==='02'?[row()]:[],detail:async()=>row('PF900001',{sty:{incomplete:'text'}})}})
+  assert.equal(writes,0);assert.equal(report.failed,1)
+})
+
+test('normalized sty and UTF-8 hash reach the existing collector RPC payload without source changes',async()=>{
+  const calls=[],snapshot=normalize(row('PF900001',{sty:' \r\n[프로그램]\r\n원문  문구\r\n '}))
+  const store=createSupabaseCollector({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'local-secret'},
+    fetchImpl:async(url,init)=>{calls.push({path:url.pathname,method:init.method,body:JSON.parse(init.body)});return new Response(JSON.stringify('00000000-0000-4000-8000-000000000001'))}})
+  await store.save(snapshot)
+  assert.equal(calls.length,1);assert.equal(calls[0].path,'/rest/v1/rpc/sync_kopis_concert');assert.equal(calls[0].method,'POST')
+  assert.deepEqual(calls[0].body,{p_concert:snapshot.concert,p_images:snapshot.images})
+  assert.equal(calls[0].body.p_concert.kopis_detail_text,'[프로그램]\n원문  문구')
+})
 
 test('KST midnight, year boundaries and CLI limits are deterministic', () => {
   assert.equal(collectionConditions(Date.parse('2026-10-13T14:59:59Z')).from, '2026-10-13')
