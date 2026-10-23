@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,40 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3D — source router와 matcher의 읽기 전용 연결 / READY
+
+작업 3C 결과 SHA `2cc00f47c3368d1a424ca11dbb3f6cca3ecb5ced`와 구현 SHA `f31655183ce02526978206028387e50d0171e9de`를 **ACCEPTED**한다. v4 저장 RPC의 기본 disabled, 정책 잠금, 버전·snapshot·evidence 검증, service_role 전용 권한과 격리 6/6 테스트가 명세를 충족한다. 운영 migration은 아직 적용하지 않았고 예약은 Disabled다.
+
+이번 작업은 3A의 source router가 선택한 공식 Program 텍스트 또는 current OCR을 3B의 v4 matcher에 전달하는 **순수 읽기 전용 분석 경로**까지만 구현한다. 공식 텍스트 결과를 기존 이미지/OCR 저장 RPC에 억지로 넣지 않는다.
+
+### 허용 범위
+
+1. 기존 `analyzeStoredProgram`의 텍스트 분석 핵심을 재사용 가능한 순수 함수로 분리한다. 기존 OCR 입력의 payload·candidate·cache 의미와 테스트 결과는 바꾸지 않는다.
+2. `routeProgramSource` 결과를 받는 읽기 전용 진입점을 추가한다.
+   - `KOPIS_DETAIL_TEXT`: 선택된 Program section만 분석한다.
+   - `OCR`: 이미 검증된 current OCR만 기존 의미대로 분석한다.
+   - `NONE`: 후보를 만들지 않고 `NO_USABLE_SOURCE`로 종료한다.
+3. 공식 텍스트 evidence의 quote와 start/end는 저장된 전체 `kopis_detail_text` 원문의 정확한 범위를 가리켜야 한다. CRLF·Unicode를 임의 정규화한 좌표를 저장하지 않는다. bbox/confidence는 null로 둔다.
+4. 서로 다른 공식 section을 하나의 곡으로 합치거나 공식 텍스트와 OCR을 혼합하지 않는다.
+5. 읽기 전용 결과에 source kind, text hash, 선택·fallback reason과 matcher version v4를 명시한다. 현 이미지 중심 DB 계약으로 저장할 수 없는 공식 텍스트 결과는 저장 가능하다고 표시하거나 기존 v4 RPC에 전달하지 않는다.
+6. 직접 관련 테스트로 다음을 확인한다.
+   - 공식 Scherzo No.4 Op.54가 `MATCHED + EXACT`
+   - 다중 Program section 순서와 원문 offset 보존
+   - biography·notice 제외 및 section 간 곡 합성 방지
+   - 공식 텍스트 부재/불일치 시 current OCR fallback
+   - 양쪽 모두 없으면 후보·POST 요청 0
+   - 작곡가·Op./No. 충돌, 편곡·발췌는 EXACT가 아님
+   - 기존 OCR 분석 snapshot/hash의 회귀 없음
+
+### 제한
+
+- 변경 구현·테스트 파일은 가능하면 5개 이하로 한다.
+- DB schema·migration·RPC를 추가하거나 수정하지 않는다.
+- pipeline runner·repository·batch 저장 경로에 연결하지 않는다.
+- 운영 DB/KOPIS/OCR 호출, 이미지 다운로드, 후보·receipt·CONFIRMED/REJECTED 쓰기, 정책 활성화, 예약·환경·배포 변경은 하지 않는다.
+- 전체 회귀/build 없이 source router·matcher 직접 관련 테스트만 실행한다.
+- 결과는 source별 입력·출력, offset 기준, 변경 파일과 관련 테스트만 게시하고 중단한다.
 
 ## 명세 4 작업 3C — v4 분석 저장 RPC migration·격리 검증 / IMPLEMENTED
 
