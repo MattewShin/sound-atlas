@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,35 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3B — Scherzo false negative 수정·matcher v4 격리 / READY
+
+작업 3A 결과 SHA `beb7b2c5ec01b3acd2153c24b7df616a214a7609`를 **ACCEPTED**한다. 공식 텍스트 우선/OCR fallback/NONE 계약, 출처 비혼합, hash·경계 검증과 관련19/19 테스트가 명세를 충족한다.
+
+이번 작업은 쇼팽 Scherzo false negative를 수정하되 기존 `stored-program-3`의 저장 의미를 바꾸지 않도록 새 구현 버전으로 격리한다. 운영 저장·자동 확정은 하지 않는다.
+
+### 허용 범위
+
+1. `Scherzo No.4 in E Major, Op.54`처럼 Scherzo가 **작품 종류이자 제목인 같은 줄**을 악장명으로 중복 해석하지 않도록 최소 수정한다.
+2. 작품명 다음 별도 줄의 `Scherzo` tempo/악장 표시는 기존처럼 악장 근거로 유지한다.
+3. 구현 identity를 `stored-program-4`로 올린다. 기본 write version은 v4, review 기본은 v3, public search 기본은 v2, schedule 기본은 false를 유지한다.
+4. v4 저장 RPC가 아직 없으면 preflight에서 POST 전에 fail-closed한다. v3 RPC로 v4 payload를 보내거나 v3 결과를 덮어쓰지 않는다.
+5. v2/v3 기존 row·receipt·검색·review 선택은 그대로 읽을 수 있어야 한다.
+6. 다음을 관련 테스트로 검증한다.
+   - 공식 표본의 쇼팽 Scherzo No.4 Op.54가 `MATCHED + EXACT`
+   - 잘못된 Op./No., 작곡가 누락·충돌, 편곡·발췌는 EXACT가 아님
+   - 소나타 등의 별도 Scherzo 악장 표기는 작품 제목으로 승격되지 않음
+   - v4 cache/payload/provenance가 v3와 분리됨
+   - v4 RPC 부재·정책 미확인은 저장 전 차단
+
+### 제한
+
+- 이번 작업에서는 v4 저장 migration/RPC를 만들거나 적용하지 않는다.
+- source router를 pipeline/repository에 연결하지 않는다.
+- 운영 DB/KOPIS 호출, OCR, 후보·receipt·CONFIRMED/REJECTED 쓰기, 예약·환경·배포 변경은 하지 않는다.
+- public search/review 기본 버전을 v4로 전환하지 않는다.
+- 전체 회귀/build 없이 matcher·version·preflight 직접 관련 테스트만 실행한다.
+- 결과는 수정 규칙, 버전 상태, 저장 차단 상태, 변경 파일, 관련 테스트만 게시하고 중단한다.
 
 ## 명세 4 작업 3A — 공식 Program 텍스트 우선 source router / IMPLEMENTED
 
