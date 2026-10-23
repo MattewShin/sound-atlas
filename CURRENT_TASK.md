@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,29 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 2 — KOPIS `sty` 원문·hash 저장 / READY
+
+작업 1 결과 SHA `846d5ae6c3f0b34098743eca69db22cd3a5cac62`를 **ACCEPTED**한다. 단계별 OFF 스위치와 collection-only 격리 검증은 명세를 충족한다. 단, 실제 예약 root·환경에는 아직 미적용이고 예약은 Disabled다. 기존 `PROGRAM_ANALYSIS_SCHEDULE_ENABLED` 전역 게이트도 유지되므로 수집이 재개된 상태로 표현하지 않는다.
+
+이번 작업은 공식 상세 응답의 `sty`를 향후 source-first 처리의 입력으로 보존하는 것까지만 한다.
+
+### 허용 범위
+
+1. 수집 normalizer와 `sync_kopis_concert` 저장 경로에 아래 nullable 필드를 추가한다.
+   - `kopis_detail_text`: `sty`의 외곽 공백과 줄바꿈(CRLF→LF)만 정규화한 현재 원문. 내부 문구·순서·구두점은 바꾸지 않는다.
+   - `kopis_detail_text_hash`: 저장된 UTF-8 텍스트의 lowercase SHA-256 hex.
+2. `sty`가 없거나 공백뿐이면 두 값 모두 null로 저장한다. 비문자·불완전 입력을 임의 문자열로 변환하지 않는다.
+3. 기존 행을 보존하는 additive migration과 같은 RPC signature의 교체 함수를 작성한다. 기존 image snapshot·권한·RLS 동작은 바꾸지 않는다.
+4. 원문/빈 값/해시 결정성/RPC payload/기존 행 호환성을 관련 단위·격리 SQL 테스트로 확인한다.
+
+### 제한
+
+- 변경 구현 파일은 가능하면 5개 이하로 한다.
+- Program 구간 추출, source router, matcher·catalog 수정, OCR fallback, 후보·receipt·CONFIRMED/REJECTED 쓰기, 공개 DTO 변경은 하지 않는다.
+- migration 운영 적용, 실제 KOPIS/운영 DB 호출, batch·OCR·이미지 다운로드, 예약·환경·배포 변경은 하지 않는다.
+- 전체 회귀/build는 실행하지 말고 직접 관련 테스트만 실행한다.
+- 결과는 필드·migration·변경 파일·관련 테스트만 짧게 게시하고 중단한다.
 
 ## 명세 4 작업 1 — 배치 단계별 OFF 스위치 / IMPLEMENTED
 
