@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 3
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: ACCEPTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,13 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 3 최종 검토 — ACCEPTED
+
+- 결과 SHA `cb51b260dffe66bb2bbb206b5d8a62d06e0cdb3e`를 수락한다.
+- 공식 Program 텍스트는10건 중2건/6곡으로 보조 출처 가치가 있으나 OCR 전면 대체 근거는 아니다.
+- EXACT0은 미등록·미지원4, 악장 미표기1, matcher false negative1로 구분한다.
+- 예약은 Disabled로 유지하며 추가 구현·운영 쓰기는 새 승인 전까지 진행하지 않는다.
 
 ## 명세 3 작업 1 검토 — ACCEPTED / 작업 2 READY
 
@@ -23,7 +30,7 @@
 ## 명세 3 진행 — 작업 1 ACCEPTED / 작업 2 IMPLEMENTED
 
 - 작업1: **ACCEPTED**. 단계 분리 옵션 부재로 예약 전체를 Disabled로 전환했다. 수집도 OFF이며 코드 수정은 없다. 상세 상태·종료 결과·복구 명령은 HANDOFF의 명세3 작업1 결과를 참조한다.
-- 작업2: **IMPLEMENTED**. 공식10건에서 Program2건/추출6곡/현 matcher EXACT0/SOURCE_UNRESOLVED6, 관련8/8 PASS. 세부 사유·확대 가치·한계는 HANDOFF의 작업2 결과에 기록했다. 예약 Disabled 유지, 운영 쓰기0. 게시 후 추가 작업 없이 중단한다. 명세3 검토 수락은 별도다.
+- 작업2: **ACCEPTED**. 공식10건에서 Program2건/추출6곡/현 matcher EXACT0/SOURCE_UNRESOLVED6, 관련8/8 PASS. 세부 사유·확대 가치·한계는 HANDOFF의 작업2 결과에 기록했다. 예약 Disabled 유지, 운영 쓰기0. 게시 후 추가 작업 없이 중단한다. 명세3 검토 수락은 별도다.
 
 ## 명세 3 — 경량 전환 작업
 
