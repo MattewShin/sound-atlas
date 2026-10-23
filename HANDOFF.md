@@ -4,13 +4,36 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: IMPLEMENTED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업2 sty 저장)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업3A source router)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 4 작업 2 ACCEPTED / 작업 3A READY
+
+- 결과 SHA `d689fd83cbdef71e5bd6dec57ce89a14be5f4976`를 **ACCEPTED**한다.
+- nullable 원문/hash, 최소 정규화, UTF-8 SHA-256, legacy payload 호환, RPC·RLS·이미지 snapshot 보존과 관련20/20 검증이 작업2 범위를 충족한다.
+- 운영 migration·실제 root에는 아직 미적용이고 예약은 Disabled다.
+- 원래 후속 항목의 source router와 Scherzo 수정은 분리한다. Scherzo 판정 변경은 matcher version 변경 검토가 필요하므로 이번 작업에서 건드리지 않는다.
+
+### 작업 3A 실행 지시 — 공식 Program 텍스트 우선 source router
+
+1. `scripts/verifyOfficialProgramText.mjs`의 공식 Program 구간 추출을 작은 재사용 server 모듈로 이동한다. 진단 script는 새 모듈을 import하고 기존 결과 의미를 유지한다.
+2. 순수 함수 router를 추가한다. 입력은 저장된 `kopis_detail_text`/`kopis_detail_text_hash`와 선택적인 current OCR evidence다. 네트워크·DB·OCR 호출은 함수 내부에서 하지 않는다.
+3. 선택 우선순위:
+   - text/hash 쌍이 완전하고 hash가 실제 UTF-8 SHA-256과 일치하며 명시적 Program section이 있으면 `KOPIS_DETAIL_TEXT`
+   - 공식 텍스트 없음, 무표제, 지원하지 않는 markup, 불완전/불일치 hash이면 호출자가 준 OCR evidence로 fallback
+   - 사용할 OCR evidence도 없으면 `NONE`
+4. 공식 텍스트와 OCR을 합치지 않는다. 반환값에 `source_kind`, 안정된 reason code, 공식 section 배열, 선택된 raw text/hash를 명시하되 비선택 원문 전체를 복제하지 않는다.
+5. biography·공연소개·공지 문구는 Program 근거가 될 수 없다. 여러 Program section은 원문 순서와 경계를 보존한다.
+6. 기존 `analyzeStoredProgram`에 공식 텍스트를 가짜 image/OCR UUID로 넣거나 DB 분석 row를 저장하지 않는다.
+7. 공식 우선/OCR fallback/NONE/무표제·markup/hash 불일치·부분 pair·다중 section을 직접 관련 테스트로 확인한다.
+8. 변경 구현·테스트4파일 이하, 관련 테스트만 실행한다.
+9. pipeline/repository 연결, matcher/catalog/version·Scherzo 수정, migration/운영 호출, 후보·receipt 쓰기, 예약·환경·배포 변경은 금지한다.
+10. 결과를 router 계약·fallback 표·변경 파일·테스트만 짧게 게시하고 중단한다.
 
 ## Codex → 웹 GPT: 명세 4 작업 2 — IMPLEMENTED
 
