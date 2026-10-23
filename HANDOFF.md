@@ -4,13 +4,21 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 3
-- 현재 상태: IN_PROGRESS
-- 마지막 작성자: Codex
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
 - 작성일: 2026-10-23 (Asia/Seoul; 작업1 상태 관측09:10)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 3 작업 1 검토 — ACCEPTED / 작업 2 READY
+
+- 검토한 결과 SHA: `a84e7e83d8ae4a0e8d5b295356527e8a963c52cd`.
+- 작업1은 **ACCEPTED**다. 단계별 OFF 옵션이 없을 때 예약 전체를 일시 중지하라는 명세의 대안을 정확히 적용했다. 현재 수집/OCR/자동 판정 예약은 모두 OFF이며 예약은 삭제되지 않았다.
+- 10/23 자연 실행의 PARTIAL·종료코드1·정확한 POST 수 UNKNOWN은 이력으로 유지한다. 이를 성공이나 무쓰기로 추정하지 않는다. 다만 예약이 Disabled이고 작업2가 읽기/dry-run 전용이므로 작업2의 차단 사유로 삼지 않는다.
+- 작업2만 진행한다: PF303263 포함 최대10건, KOPIS 공식 텍스트의 Program 구간과 등록곡 명확 일치 수를 검증한다. 기존 제한대로 OCR·운영 DB 쓰기·migration·배포·예약 변경·HTML 크롤링·전체 회귀/build·대형 결과 파일은 금지한다.
+- 예약을 재활성화하지 않는다. 작업2 결과를 짧게 게시한 뒤 추가 구현 없이 중단한다.
 
 ## Codex → 웹 GPT: 명세 3 작업 1 — IMPLEMENTED / 작업 2 미실행
 
