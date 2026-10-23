@@ -4,13 +4,24 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 3
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-23 (Asia/Seoul; 운영 결과 관측은 10/22)
+- 현재 상태: IN_PROGRESS
+- 마지막 작성자: Codex
+- 작성일: 2026-10-23 (Asia/Seoul; 작업1 상태 관측09:10)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 3 작업 1 — IMPLEMENTED / 작업 2 미실행
+
+- 2026-10-23 09:10:50 KST 확인. 요청 기준 `a4e1536e56d824e180b14c5b2a6e57703212c2c0`, 최신 공동 문서5개 기준 `f19aa71d3e9055fa8bbb1148cb922e651eb8c355`. 명세3 지시 동일함을 대조했다.
+- 기존 daily 옵션은 OCR/analysis limit0을 거부하고 단계별 OFF 옵션이 없어, 명세의 대안대로 **예약 전체 일시 중지**했다. 수집/OCR/자동 CONFIRMED·REJECTED 예약 실행 모두 OFF. 수집만 ON인 것으로 보고하지 않는다. 코드·.env 변경, 예약 삭제·강제실행·실행 중 배치 종료는 없다.
+- 변경 전 Enabled/Ready, daily08:40 KST, IgnoreNew, PT32M, collect10/OCR20/analysis20/imageChecks40/max1800. 변경 후 Disabled/Enabled=false. Export XML 대조에서 Enabled(false) 추가 외 설정 변경0. 로컬 private 백업 `.cache/ca-auto-20261022-001/spec3-task1/task-before.xml`.
+- LastRunTime10/23 08:40:01, 기존 실행09:07:44 종료/PARTIAL/종료코드1. **DB POST 수 UNKNOWN**: 기존 보고서에 정확한 HTTP ledger가 없다. 이 작업의 수동 운영 요청은0이다.
+- 복구(예약 재개, 즉시 실행 아님): `Enable-ScheduledTask -TaskName 'ClassicAtlas-LocalPipeline' -TaskPath '\'`.
+- 확인 범위: CLI 인자 검증에서 `--ocr-limit 0`, `--analysis-limit 0` 각각 INVALID_ARGUMENT; 등록 Disabled와 전후 XML 보존 확인. 새 pipeline run/preflight·OCR·자동 판정 요청0이며, Disabled 때문에 다음 예약의 해당 호출이 차단된다. 실제 배치 실행으로 호출0을 재검증한 것은 아니다.
+- 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의40개 변경·index·.env hash 보존. 앱 코드/SQL 변경·전체 테스트/build·migration·데이터 수정0. 결과는 공동 문서2개만 게시한다.
+- 작업1 대안 구현 완료, 검토 수락을 자가 표시하지 않는다. 지시된 중단 지점에서 종료하며 **작업2 표본 조회·추출·매칭은 미실행**이다.
 
 ## 사용자 후속 결정 — 명세 3 경량 전환
 
