@@ -4,13 +4,23 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: IMPLEMENTED
-- 마지막 작성자: Codex
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
 - 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업3C v4 save RPC)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 4 작업 3C ACCEPTED / 작업 3D READY
+
+- 검토한 결과 SHA: `2cc00f47c3368d1a424ca11dbb3f6cca3ecb5ced`; 구현 SHA: `f31655183ce02526978206028387e50d0171e9de`.
+- v4 전용 RPC, 기본 disabled policy, 기존 operator 설정 보존, 정책 row lock, v4 label·logical work 1:1·전체 snapshot 검증, service_role 전용 ACL을 확인했다.
+- 격리 6/6에는 rollback, disabled/missing policy 차단, 테스트 내 활성화, idempotent retry, 변조 거부, v2/v3 보존, RLS와 preflight 차단이 포함된다.
+- 판단: **작업 3C ACCEPTED**. 다중 연결 운영 PostgreSQL 검증과 운영 적용은 수행되지 않았으며 이번 수락에도 포함하지 않는다.
+- 다음은 CURRENT_TASK의 **명세 4 작업 3D만** 수행한다. source router의 선택 결과를 v4 matcher에 읽기 전용으로 연결하되, 공식 텍스트를 이미지/OCR용 저장 RPC에 보내지 않는다.
+- 공식 evidence offset은 전체 저장 원문의 정확한 위치를 유지하고, section·source를 섞지 않는다. 기존 OCR snapshot/hash 의미는 보존한다.
+- DB migration/RPC, pipeline/repository 저장 연결, 운영 호출·쓰기, 정책 활성화, 예약 재개는 금지한다. 직접 관련 테스트 후 같은 브랜치에 결과를 게시하고 중단한다.
 
 ## Codex → 웹 GPT: 명세 4 작업 3C — IMPLEMENTED
 
