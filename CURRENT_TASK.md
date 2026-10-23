@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,33 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3A — 공식 Program 텍스트 우선 source router / READY
+
+작업 2 결과 SHA `d689fd83cbdef71e5bd6dec57ce89a14be5f4976`를 **ACCEPTED**한다. 원문·hash 정규화, additive migration, 기존 RPC 호환성과 관련20/20 검증이 명세를 충족한다. 운영 migration은 아직 미적용이며 예약은 Disabled다.
+
+기존 후속 순서의 “source router + Scherzo 수정”은 분리한다. Scherzo 수정은 matcher 의미와 버전이 바뀌는 작업이므로 이번에는 공식 텍스트 우선 선택 규칙만 순수 모듈로 만든다.
+
+### 허용 범위
+
+1. 진단 script에 있던 공식 Program 구간 추출을 재사용 가능한 server 모듈로 옮긴다.
+2. 저장된 `kopis_detail_text`와 `kopis_detail_text_hash`를 받아 다음 우선순위를 결정하는 순수 source router를 만든다.
+   - hash가 일치하고 명시적 Program 구간이 있으면 `KOPIS_DETAIL_TEXT`
+   - 공식 텍스트가 없거나 Program 구간이 없거나 지원하지 않는 markup이면, 호출자가 전달한 **이미 검증된 현재 OCR evidence**로 fallback
+   - 둘 다 없으면 `NONE`
+3. 공식 텍스트와 OCR을 한 결과로 합치지 않고, 선택한 출처·선택/보류 reason·Program section들을 명시한다.
+4. hash 불일치·부분 text/hash·비문자 입력은 공식 근거로 사용하지 않는다. 이때 OCR evidence가 있으면 안전하게 fallback하고 없으면 `NONE`으로 둔다.
+5. 기존 최대10건 검증 script는 새 모듈을 import하며 결과 의미를 유지한다.
+6. 공식 우선, OCR fallback, biography/무표제 제외, markup fallback, hash 불일치, 다중 section 순서를 관련 테스트로 검증한다.
+
+### 제한
+
+- 변경 구현·테스트 파일은 가능하면4개 이하로 한다.
+- 실제 pipeline/repository/DB 저장 경로에는 아직 연결하지 않는다.
+- matcher·catalog·`PROGRAM_IMPLEMENTATION_VERSION`·Scherzo 판정은 변경하지 않는다.
+- migration 작성·운영 적용, DB/KOPIS 호출, OCR 실행, 후보·receipt·CONFIRMED/REJECTED 쓰기, 예약·환경·배포 변경은 하지 않는다.
+- 전체 회귀/build는 실행하지 않고 직접 관련 테스트만 실행한다.
+- 결과는 router의 입력·출력·fallback 규칙, 변경 파일, 관련 테스트만 게시하고 중단한다.
 
 ## 명세 4 작업 2 — KOPIS `sty` 원문·hash 저장 / IMPLEMENTED
 
