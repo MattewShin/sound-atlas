@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,39 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3E — 공식 Program 텍스트 저장 계약·격리 검증 / READY
+
+작업 3D 결과 SHA `ba78881f9c7e0fd5ba45b4208b21fd62851bfd31`와 구현 SHA `bac81a063d86a8bfa687d6358372a00c1cff6613`를 **ACCEPTED**한다. 공식 section 독립 분석, 전체 원문 좌표, 출처 비혼합, 기존 OCR 8표본 snapshot·payload·cache 보존과 직접 관련 58/58 테스트가 명세를 충족한다.
+
+이번 작업은 공식 Program 텍스트 분석 결과를 이미지/OCR row로 위장하지 않고 저장할 수 있는 **전용 DB 계약과 adapter를 작성해 격리 PostgreSQL에서 검증하는 것까지만** 한다. 운영 migration 적용과 pipeline 연결은 하지 않는다.
+
+### 허용 범위
+
+1. additive migration과 전용 RPC `save_concert_program_text_analysis_v4(jsonb,text)` 또는 의미가 동등한 명확한 이름을 추가한다.
+2. 공식 텍스트 분석은 `source_kind=KOPIS_DETAIL_TEXT`로 식별하고, image/OCR/attempt ID를 요구하거나 생성하지 않는다. 기존 OCR 분석 row는 계속 OCR 근거로 구분돼야 한다.
+3. 저장 시 concert row를 잠그고 아래를 모두 검증한다.
+   - 현재 `concerts.kopis_detail_text`와 `kopis_detail_text_hash`가 존재하며 payload의 source hash와 일치
+   - 저장 원문 자체의 UTF-8 SHA-256이 hash와 일치
+   - concert context/revision이 현재 값과 일치
+   - 모든 evidence quote가 현재 전체 원문 안의 선언된 위치와 정확히 일치
+4. DB가 직접 검증하는 공식 evidence 좌표는 PostgreSQL substring과 일치하는 **Unicode code-point [start,end)**로 저장한다. 3D의 UTF-16 좌표가 필요하면 adapter에서 code-point 좌표로 결정적으로 변환하고, 원래 UTF-16 좌표는 진단 metadata로만 보존한다. 신뢰 판정에는 DB 검증 좌표를 사용한다.
+5. 공식 텍스트의 current/idempotency 범위는 최소한 concert + source kind + matcher version + source hash + catalog hash + concert revision/context를 포함한다. 공식 텍스트 저장이 같은 concert의 OCR v2/v3/v4 current row를 supersede하거나 삭제하면 안 된다.
+6. v4 policy가 없거나 `enabled=true`가 아니면 저장 전에 차단한다. migration은 기존 v4 policy를 생성·활성화·변경하지 않는다.
+7. candidate는 v4 generation label, logical work 1:1, catalog membership, REVIEW_REQUIRED 초기 상태와 전체 snapshot 일치를 강제한다. 동일 payload 재시도는 같은 analysis ID·행 증가 0, 같은 key의 변경 payload는 거부한다.
+8. RPC는 service_role만 실행할 수 있고 public/anon/authenticated 접근과 RLS 우회를 허용하지 않는다.
+9. 격리 PostgreSQL 테스트로 migration rollback, 기본 disabled 차단, 테스트 내 임시 enabled 저장, Unicode/CRLF/emoji evidence 검증, 변조·stale hash/context 거부, idempotent retry, OCR/v2/v3/review 보존, ACL/RLS를 확인한다.
+
+### 제한
+
+- 변경 구현·테스트 파일은 가능하면 5개 이하로 한다.
+- 운영 migration을 적용하지 않고 운영 DB/KOPIS/OCR/API를 호출하지 않는다.
+- source router·matcher 의미를 다시 수정하지 않는다. 필요한 것은 저장 adapter와 신규 계약뿐이다.
+- 기존 OCR용 `save_concert_program_analysis_v4`를 공식 텍스트용으로 우회 사용하지 않는다.
+- candidate status view, review/자동 판정 RPC, public search, runner/repository/batch 연결은 이번 작업에 포함하지 않는다.
+- 후보·receipt·CONFIRMED/REJECTED 운영 쓰기, 정책 활성화, 예약·환경·배포 변경을 하지 않는다.
+- 전체 회귀/build 없이 신규 adapter·migration의 직접 관련 테스트만 실행한다.
+- 결과는 schema/RPC, offset 변환·검증, 격리 테스트와 변경 파일만 게시하고 중단한다.
 
 ## 명세 4 작업 3D — source router와 matcher의 읽기 전용 연결 / IMPLEMENTED
 
