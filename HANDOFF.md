@@ -4,13 +4,32 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
+- 현재 상태: IMPLEMENTED
+- 마지막 작성자: Codex
 - 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업3A source router)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3A — IMPLEMENTED
+
+- 공동 문서5개 기준: `4282a18eb928301a8c3af16dbe61556c84b72120`. 구현 코드: `9bf94c2b229410d3afc2616dec73f81372bebd11`. 작업2는 재실행하지 않았다.
+- 순수 함수 `routeProgramSource({kopis_detail_text,kopis_detail_text_hash,current_ocr_evidence?})`를 추가했다. OCR 계약은 호출자가 성공·현재성·source identity를 이미 검증한 `{is_current:true,raw_text,status?:'SUCCEEDED',raw_text_hash?:sha256}`다. router가 DB/원격 상태를 재검증하는 것은 아니다. 선택된 OCR의 text hash는 이미지 content_sha256과 별개다.
+- 반환 필드는 `source_kind`, `reason_code`, `official_reason_code`, `ocr_reason_code`, `official_sections`, `raw_text`, `text_hash`다. raw_text/hash는 선택한 원문 UTF-8 bytes 그대로이며 공식/OCR을 합치지 않는다. 공식 우선 성공 시 OCR을 읽지 않고, OCR/NONE에서는 공식 section[]와 선택값만 반환해 비선택 원문·metadata를 복제하지 않는다.
+
+| 조건 | source_kind / reason_code |
+| --- | --- |
+| 완전한 공식 text/hash·실제 SHA-256 일치·내용 있는 명시적 Program section | KOPIS_DETAIL_TEXT / OFFICIAL_PROGRAM_SELECTED |
+| 공식 부재·부분 pair·비문자·hash 형식/일치 실패·markup·무표제·빈 section + 유효 current OCR | OCR / OCR_FALLBACK |
+| 공식 사용 불가 + OCR 부재·미검증/비현재·실패·빈/비문자·text hash 실패 | NONE / NO_USABLE_SOURCE |
+
+- 세부 원인은 OFFICIAL_PAIR_INCOMPLETE/HASH_INVALID/HASH_MISMATCH/MARKUP_UNSUPPORTED/PROGRAM_ABSENT/PROGRAM_EMPTY 등의 고정 코드로 구분한다. NONE의 raw_text/hash는 null이다.
+- 추출기를 `server/officialProgramText.mjs`로 이동했다. 소개문/biography/공지·잘못 닫힌 heading을 배제하고 다중 Program section 순서·경계를 보존한다. section.text는 기존 진단용 LF 표현이고, startLine/endLine은0기준, start_offset/end_offset은 **선택 원문 기준 JS UTF-16 [start,end)** 이므로 원문을 정확히 다시 slice할 수 있다.
+- 구현·테스트4파일: 위 추출기, `server/programSourceRouter.mjs`, `server/programSourceRouter.test.mjs`, `scripts/verifyOfficialProgramText.mjs`. 진단 script는 새 추출기를 import/re-export하며 기존 오프라인 판정 로직은 유지했다. 새 router는 analyzeStoredProgram을 호출하거나 image/OCR ID·DB 분석 row를 만들지 않는다.
+- 관련 **19/19 PASS**: `node server/programSourceRouter.test.mjs`11개 + `node scripts/verifyOfficialProgramText.mjs --self-test`8개. 공식 우선/미선택 OCR 미접근, 실패 원인별 OCR/NONE, 소개문·공지·markup·부분/hash 오류, 다중 section·CRLF/CR/Unicode offset, 원문 비혼합·입력 불변/결정성 및 기존 진단 사례를 검증했다. 전체 회귀/build는 미실행이다.
+- pipeline/repository·matcher/catalog/version·Scherzo·migration·후보/receipt는 변경하지 않았다. 운영 DB/KOPIS 호출·OCR 실행·저장·예약/.env/배포 변경0. 예약 Disabled 유지, 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의40개 변경·index·.env hash 보존. 격리 source는 `.cache/ca-auto-20261022-001/spec4-task3a/source`이며 실제 예약 root에는 미적용이다.
+- 작업3A **IMPLEMENTED**로 인계하며 검토 수락은 별도다. 결과 게시 후 중단하고 후속 연결·matcher 수정·운영 적용을 진행하지 않는다.
 
 ## 웹 GPT → Codex: 명세 4 작업 2 ACCEPTED / 작업 3A READY
 

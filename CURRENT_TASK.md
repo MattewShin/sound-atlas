@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,17 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3A — 공식 Program 텍스트 우선 source router / READY
+## 명세 4 작업 3A — 공식 Program 텍스트 우선 source router / IMPLEMENTED
 
 작업 2 결과 SHA `d689fd83cbdef71e5bd6dec57ce89a14be5f4976`를 **ACCEPTED**한다. 원문·hash 정규화, additive migration, 기존 RPC 호환성과 관련20/20 검증이 명세를 충족한다. 운영 migration은 아직 미적용이며 예약은 Disabled다.
 
 기존 후속 순서의 “source router + Scherzo 수정”은 분리한다. Scherzo 수정은 matcher 의미와 버전이 바뀌는 작업이므로 이번에는 공식 텍스트 우선 선택 규칙만 순수 모듈로 만든다.
+
+### 작업 3A 구현 결과
+
+- 순수 routeProgramSource: 검증된 공식 Program → 호출자 검증 current OCR → NONE. 출처/reason/공식 section/선택 raw text·hash를 반환하며 비선택 원문은 복제하지 않는다.
+- 추출기 이동·router·관련 테스트·진단 import4파일, 직접 관련19/19 PASS. 계약·fallback 표와 검증 한계는 HANDOFF 참조.
+- 운영 연결·matcher/version·Scherzo·migration·운영 호출0, 예약 Disabled와 원본40개 변경/index/.env 보존. 작업2 재실행·후속 작업 없이 게시 후 중단한다.
 
 ### 허용 범위
 
