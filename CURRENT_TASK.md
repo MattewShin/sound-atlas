@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,18 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3B — Scherzo false negative 수정·matcher v4 격리 / READY
+## 명세 4 작업 3B — Scherzo false negative 수정·matcher v4 격리 / IMPLEMENTED
 
 작업 3A 결과 SHA `beb7b2c5ec01b3acd2153c24b7df616a214a7609`를 **ACCEPTED**한다. 공식 텍스트 우선/OCR fallback/NONE 계약, 출처 비혼합, hash·경계 검증과 관련19/19 테스트가 명세를 충족한다.
 
 이번 작업은 쇼팽 Scherzo false negative를 수정하되 기존 `stored-program-3`의 저장 의미를 바꾸지 않도록 새 구현 버전으로 격리한다. 운영 저장·자동 확정은 하지 않는다.
+
+### 작업 3B 구현 결과
+
+- 공식 Scherzo Op.54/No.4 표본을 MATCHED + EXACT로 수정하고 별도 Scherzo 악장·잘못된 identity·편곡/발췌의 보수적 판정을 유지했다.
+- implementation/write=v4, review=v3, public search=v2, schedule=false. v4 cache/payload/provenance를 분리하고 전용 RPC·명시적 enabled policy 없이는 POST 전에 차단한다. v4 migration/RPC는 미작성으로 save는 대기한다.
+- matcher/version/rollout/preflight 직접 관련52/52 PASS. 변경10파일·저장 blocker·검증 한계는 HANDOFF 참조. 작업3A 재실행·운영 호출/쓰기0, 예약 Disabled와 원본40개 변경/index/.env 보존.
+- 작업3B IMPLEMENTED로 게시 후 중단한다. 후속 migration·router 운영 연결·canary·예약 재개는 진행하지 않는다.
 
 ### 허용 범위
 
