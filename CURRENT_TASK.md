@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,17 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3C — v4 분석 저장 RPC migration·격리 검증 / READY
+## 명세 4 작업 3C — v4 분석 저장 RPC migration·격리 검증 / IMPLEMENTED
 
 작업 3B 결과 SHA `c6a46ba70b287afd52448a6f317a172f1eeb61a5`를 **ACCEPTED**한다. Scherzo 최소 수정, `stored-program-4` 분리, v2/v3 기본 선택 보존과 v4 저장 fail-closed가 관련52/52 테스트로 확인됐다.
 
 이번 작업은 v4 분석 결과를 저장할 수 있는 DB 계약을 작성하고 격리 PostgreSQL에서 검증하는 것까지만 한다. migration은 운영에 적용하지 않으며 v4 정책은 기본 disabled다.
+
+### 작업 3C 구현 결과
+
+- additive `202610230003_program_analysis_v4.sql`에 v4 분석 저장 RPC를 추가했다. 새 policy는 enabled=false, 기존 operator 설정은 보존한다. v4 label/후보 세대/logical 1:1·기존 공통 catalog/evidence 저장 계약과 전체 snapshot 비교를 강제한다.
+- 신규 SQL·직접 관련 preflight **6/6 PASS**. 테스트 안에서만 활성화해 Scherzo v4 저장·동일 ID 재시도/행 증가0·변조 거부·v2/v3 current/receipt digest·migration rollback·ACL/RLS를 확인했다.
+- 변경2파일과 필수 공동 문서2개. 운영 migration/호출/쓰기0, 예약 Disabled 및 원본40개 변경/index/.env 보존. 작업3B suite 재실행·운영 활성화·후속 rematch/자동화/router 연결 없이 IMPLEMENTED로 게시 후 중단한다. 세부 결과는 HANDOFF 참조.
 
 ### 허용 범위
 
