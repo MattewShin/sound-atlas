@@ -1,9 +1,9 @@
 # 현재 작업
 
 - 작업 ID: CA-AUTO-20261022-001
-- 명세 버전: 3
+- 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: ACCEPTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,38 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 1 — 배치 단계별 OFF 스위치 / READY
+
+목표는 예약을 재활성화하기 전에 **공연 목록·상세 수집만 ON, 이미지 OCR와 자동 판정 쓰기는 OFF**로 실행할 수 있게 만드는 것이다. 이번 작업에서는 스위치 구현과 격리 검증까지만 한다.
+
+### 허용 범위
+
+1. 현재 runner/config/launcher의 직접 관련 파일만 확인한다.
+2. 기존 명명 규칙에 맞는 명시적 boolean 설정을 추가한다.
+   - 공연 목록·상세 수집: ON
+   - 이미지 다운로드·OCR: OFF
+   - 자동 후보 분석 및 CONFIRMED/REJECTED 쓰기: OFF
+3. OFF 단계가 호출·queue 선택·DB POST를 발생시키지 않는 관련 단위 테스트를 추가한다.
+4. 기존 기본 동작은 유지하고, collection-only 조합을 plan/preflight에서 확인한다.
+
+### 제한
+
+- 변경 파일은 가능하면5개 이하로 한다.
+- 예약은 계속 Disabled로 유지한다.
+- 실제 batch 실행, 운영 DB/API 쓰기, OCR, 이미지 다운로드, migration, 배포, 기존 데이터 변경은 하지 않는다.
+- 전체 회귀/build를 실행하지 말고 변경된 설정·runner 관련 테스트만 실행한다.
+- `sty` 저장, Program 추출 연결, matcher 수정, 자동 CONFIRMED 연결은 이번 작업에 포함하지 않는다.
+- 결과는 설정명, ON/OFF plan, 변경 파일, 관련 테스트만 짧게 게시하고 중단한다.
+
+### 후속 순서 — 아직 미승인
+
+작업1 검토 후에만 다음을 각각 별도 작업으로 진행한다.
+
+1. KOPIS `sty` 원문·hash 저장
+2. Program 텍스트 우선 source router와 쇼팽 Scherzo false negative 수정
+3. 제한 canary
+4. collection-only 예약 재활성화 검토
 
 ## 명세 3 최종 검토 — ACCEPTED
 
