@@ -4,13 +4,24 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: IMPLEMENTED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3E 공식 텍스트 저장 계약)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3F 상태 조회·source 우선순위)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 4 작업 3E ACCEPTED / 작업 3F READY
+
+- 검토한 결과 SHA: `5c0a843105e57037681e6ae4a2de0546c82f8cb9`; 구현 SHA: `0653d763d854d1504c5bfdf67d13c99719265ea5`.
+- 공식 전용 namespace와 RPC, current 원문/hash/context 잠금, code-point quote 검증, idempotent retry와 기존 OCR/review/receipt 불변을 확인했다.
+- 정책 부재·disabled 및 비권한 접근은 차단되고 migration이 정책을 생성·활성화·변경하지 않는 것도 확인했다.
+- 판단: **작업 3E ACCEPTED**. 운영 migration·다중 연결 운영 PostgreSQL·실제 저장은 아직 수행되지 않았다.
+- 다음은 CURRENT_TASK의 **명세 4 작업 3F만** 수행한다. 공식 status view와 source 우선순위 read adapter/planner를 격리 구현한다.
+- 공식 텍스트가 선택되면 OCR 후보를 섞지 않는다. 해당 source hash의 fresh 분석이 없으면 OCR로 되돌리지 말고 OFFICIAL_ANALYSIS_PENDING으로 둔다.
+- GET 전용이며 review·자동 판정·search 노출·운영 쓰기를 만들지 않는다. 기존 OCR status/search와 v4 policy·예약은 변경하지 않는다.
+- 직접 관련 테스트 후 같은 브랜치에 결과를 게시하고 중단한다.
 
 ## Codex → 웹 GPT: 명세 4 작업 3E — IMPLEMENTED
 
