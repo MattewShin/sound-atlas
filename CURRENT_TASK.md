@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,41 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3F — 공식 텍스트 상태 조회·source 우선순위 계획 / READY
+
+작업 3E 결과 SHA `5c0a843105e57037681e6ae4a2de0546c82f8cb9`와 구현 SHA `0653d763d854d1504c5bfdf67d13c99719265ea5`를 **ACCEPTED**한다. 공식 텍스트 전용 table/RPC, 현재 원문·hash·context 잠금 검증, Unicode code-point evidence 검증, idempotency, 기존 OCR/review/receipt 보존과 격리 8/8 테스트가 명세를 충족한다.
+
+이번 작업은 저장된 공식 텍스트 후보의 현재성·유효성을 읽고, 3A의 source 우선순위에 따라 **어느 후보 집합을 후속 판단 대상으로 사용할지만 읽기 전용으로 계획**한다. review·자동 확정·검색 노출·운영 적용은 하지 않는다.
+
+### 허용 범위
+
+1. additive migration으로 공식 텍스트 후보 전용 status view를 추가한다. 기존 `concert_program_candidate_status`와 public search view는 교체하거나 수정하지 않는다.
+2. status view는 각 공식 후보에 대해 다음을 계산한다.
+   - analysis가 텍스트 namespace의 current인지
+   - 현재 concert의 `kopis_detail_text_hash`와 source hash가 일치하고 실제 원문 SHA-256도 일치하는지
+   - concert context/revision과 matcher/catalog가 저장 snapshot과 일치하는지
+   - v4 policy가 명시적으로 enabled인지
+   - 위 조건을 반영한 stale reason과 effective current 여부
+3. view는 candidate snapshot의 track/work, outcome, relation, review reasons를 읽기 필드로 제공하되 상태를 CONFIRMED/REJECTED로 바꾸지 않는다. 자동 판정 준비 여부는 최소한 current·fresh·policy enabled·`MATCHED + EXACT`·track/work 존재·충돌/편곡/발췌 사유 없음일 때만 true다.
+4. service_role 전용 read adapter/planner를 추가해 `routeProgramSource`의 선택을 그대로 따른다.
+   - `KOPIS_DETAIL_TEXT`: 현재 source hash와 일치하는 공식 텍스트 status만 선택하고 OCR 후보를 섞지 않는다.
+   - `OCR`: 기존 OCR v4 status만 선택하고 공식 텍스트 후보를 섞지 않는다.
+   - `NONE`: 빈 후보와 `NO_USABLE_SOURCE`를 반환한다.
+5. 공식 텍스트가 선택됐지만 아직 해당 hash의 fresh analysis가 없으면 OCR로 임의 fallback하지 않고 `OFFICIAL_ANALYSIS_PENDING`으로 반환한다.
+6. 같은 source에서 중복 track/work 후보가 나오면 자동 준비 대상으로 합치지 않고 중복/충돌 reason으로 제외한다.
+7. adapter는 GET만 사용하며 POST/RPC write를 호출하지 않는다. 출력에는 selected source, source hash, matcher version, 전체 후보 수, 준비 가능 수, 제외 reason을 포함한다.
+8. 격리 PostgreSQL·mock adapter 테스트로 current/stale 원문·context, policy disabled, 공식 우선/OCR fallback/NONE, 공식 분석 pending, 중복 후보 제외, ACL/RLS와 기존 OCR status 보존을 확인한다.
+
+### 제한
+
+- 변경 구현·테스트 파일은 가능하면 5개 이하로 한다.
+- 운영 migration 적용, 운영 DB/KOPIS/OCR/API 호출과 이미지 다운로드를 하지 않는다.
+- source router·matcher·3E 저장 RPC와 기존 OCR 저장/review/status 계약을 수정하지 않는다.
+- review·receipt·자동 판정 RPC, CONFIRMED/REJECTED 쓰기, public search·UI·runner/batch 연결은 하지 않는다.
+- v4 policy 활성화, 예약·환경·배포 변경을 하지 않는다.
+- 전체 회귀/build 없이 신규 status view·read adapter의 직접 관련 테스트만 실행한다.
+- 결과는 view freshness 규칙, source별 선택 결과, 변경 파일·테스트만 게시하고 중단한다.
 
 ## 명세 4 작업 3E — 공식 Program 텍스트 저장 계약·격리 검증 / IMPLEMENTED
 
