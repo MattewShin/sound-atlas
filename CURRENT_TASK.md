@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,18 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3E — 공식 Program 텍스트 저장 계약·격리 검증 / READY
+## 명세 4 작업 3E — 공식 Program 텍스트 저장 계약·격리 검증 / IMPLEMENTED
 
 작업 3D 결과 SHA `ba78881f9c7e0fd5ba45b4208b21fd62851bfd31`와 구현 SHA `bac81a063d86a8bfa687d6358372a00c1cff6613`를 **ACCEPTED**한다. 공식 section 독립 분석, 전체 원문 좌표, 출처 비혼합, 기존 OCR 8표본 snapshot·payload·cache 보존과 직접 관련 58/58 테스트가 명세를 충족한다.
 
 이번 작업은 공식 Program 텍스트 분석 결과를 이미지/OCR row로 위장하지 않고 저장할 수 있는 **전용 DB 계약과 adapter를 작성해 격리 PostgreSQL에서 검증하는 것까지만** 한다. 운영 migration 적용과 pipeline 연결은 하지 않는다.
+
+### 작업 3E 구현 결과
+
+- 공식 텍스트 전용 분석/후보 table과 `save_concert_program_text_analysis_v4`를 additive migration으로 추가했다. image/OCR/attempt ID 없이 현재 concert 원문/hash/context를 잠금·검증하며 기존 OCR row·current·review·receipt를 보존한다.
+- 전용 adapter가 UTF-16을 Unicode code-point로 변환하고 SQL이 모든 quote를 직접 대조한다. v4 policy는 생성·활성화·변경하지 않고, 부재/비활성은 저장 전에 차단한다.
+- adapter·격리 SQL **8/8 PASS**, 변경4파일. rollback·Unicode/변조·stale·재시도/원문 복귀·기존 OCR 보존·ACL/RLS를 확인했다. 상세 계약과 검증 한계는 HANDOFF 참조.
+- 2026-10-26 KST 작업3E IMPLEMENTED. 작업3D suite 재실행·운영 적용/호출/쓰기0, 예약 Disabled·로컬40개 변경/index/.env 보존. 같은 브랜치 게시 후 중단하며 후속 연결·활성화는 진행하지 않는다.
 
 ### 허용 범위
 

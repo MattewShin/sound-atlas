@@ -4,13 +4,41 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-23 (Asia/Seoul; 명세4 작업3E 공식 텍스트 저장 계약)
+- 현재 상태: IMPLEMENTED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3E 공식 텍스트 저장 계약)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3E — IMPLEMENTED
+
+- 공동 문서5개 기준: `5a7d338f30083db84beaa9f6317f7db44bb54ad7`. 구현 코드: `0653d763d854d1504c5bfdf67d13c99719265ea5`. 2026-10-26 KST, CA-AUTO-20261022-001 / 명세4 작업3E만 완료했다. 중단 당시 작업3E 파일·실행 흔적은 없었고 원본40개 변경을 보존한 격리 source에서 진행했다. 작업3D 구현·58개 suite를 재실행하거나 변경하지 않았다.
+- 신규 migration `supabase/migrations/202610260001_program_text_analysis_v4.sql`은 `concert_program_text_analyses`, `concert_program_text_candidates`와 `save_concert_program_text_analysis_v4(jsonb,text) → uuid`를 추가한다. 공식 row는 source_kind=KOPIS_DETAIL_TEXT이며 image/OCR/attempt 컬럼·ID가 없다. 기존 이미지/OCR 분석 테이블과 전용 namespace로 분리했고 기존 OCR v2/v3/v4·review·receipt·status view는 수정하지 않는다.
+- 분석 key는 concert + source kind + matcher version + source hash + catalog hash + concert revision/context다. current 표시는 이 전용 텍스트 테이블의 concert/source/version 안에서만 바뀐다. 같은 payload 재시도는 같은 ID·행 증가0이며 같은 key의 다른 JSON/hash는 거부한다. 이전 원문 hash가 실제 현재 원문으로 복귀하면 재검증 후 기존 ID/current를 복구하며 OCR current·timestamp는 바꾸지 않는다. is_current는 마지막 저장 표시이며 실시간 검색/근거 유효성 판정 view는 이번에 추가하지 않았다.
+- RPC는 기존 v4 policy를 FOR SHARE로 읽고 enabled=true인 행이 없으면 차단한다. concert를 FOR UPDATE로 잠가 현재 원문/hash 쌍·원문 UTF-8 SHA-256·context/revision을 대조한다. **migration은 policy를 생성·활성화·변경하지 않는다.** 기존 false와 부재 상태는 저장 차단으로 유지된다.
+- adapter `buildProgramTextAnalysisPayload({concert,analysis})`는 3D 공식 결과와 현재 concert 원문/hash·section 경계를 확인하고 UTF-16 scalar 경계를 code-point로 결정적으로 변환한다. 신뢰 좌표는 offset_unit=UNICODE_CODE_POINT와 start/end이고, 원래 값은 diagnostic_utf16 metadata로 남긴다. CRLF·결합 문자·emoji·원문을 정규화하지 않으며 surrogate 중간 경계·잘못된 quote를 거부한다.
+- SQL은 중첩 matching/variant까지 모든 quote의 code-point [start,end)를 PostgreSQL substring으로 직접 검증하고, 후보 evidence가 자기 section 안에 있는지도 확인한다. UTF-16 진단값은 신뢰 좌표로 사용하지 않는다. v4 generation·logical 1:1·work당 catalog decision 최대1·catalog membership·REVIEW_REQUIRED·전체 snapshot을 검증한다. payload hash는 기존 canonical JSON 직렬화 helper를 재사용해 SQL에서도 재계산하며 catalog hash는 원래 JSON UTF-8 bytes를 대조한다.
+- `createProgramTextAnalysisStore`는 전용 RPC와 명시적 enabled policy를 GET preflight한 뒤 전용 RPC에만 보낸다. 부재/비활성/불명확 정책은 POST 전 차단하고, 전용 RPC의404도 기존 OCR용 v4/v3 RPC로 fallback하지 않는다. 기존 3D envelope의 저장 호환 표시는 바꾸지 않았으며 별도 adapter만 추가했다.
+
+| 직접 관련 격리 검증 | 결과 |
+| --- | --- |
+| migration 후반 실패·중복 적용 | 신규 table/RPC 전체 rollback; 기존 함수 OID/정의/ACL·OCR/review digest 보존 |
+| policy 미존재·기본 false | migration이 상태를 보존; SQL 및 adapter에서 저장 차단 |
+| 테스트 안에서만 활성화 | 공식 Scherzo EXACT·브람스 등 총2후보를 전용 table에 REVIEW_REQUIRED로 저장; 신규 review/receipt0 |
+| Unicode/CRLF/emoji·중첩 evidence | adapter 변환 후 SQL substring과 일치; 잘못된 CP/quote·위장 OCR ID·세대/논리/candidate/catalog·stale source/context 거부 |
+| 재시도·변경 snapshot·원문 교체/복귀 | 같은 ID/행 증가0, 변경 payload/hash 거부, 텍스트 current만 전환/재사용 |
+| 중복 후보 키의 저장 중 실패 | analysis/일부 candidate까지 포함해 statement 전체 rollback |
+| OCR v2/v3/v4·기존 review/receipt | 텍스트 저장 전후 모든 행/current·status 결과 digest 동일 |
+| service_role / public·anon·authenticated | SECURITY INVOKER·빈 search_path, service_role만 EXECUTE; 비권한 RPC/조회 거부, 임시 SELECT 권한에도 RLS 행0 |
+| adapter transport | mock GET preflight 및 전용 POST만; 운영 HTTP/DB 호출 아님 |
+
+- **8/8 PASS**, 실패/skip0: `node --input-type=module -e "await import('./server/supabaseProgramTextAnalysis.test.mjs'); await import('./server/programTextAnalysisSql.test.mjs')"`. Windows Node22.18.0 / PGlite 인메모리 PostgreSQL, adapter4 + 신규 SQL4다. 선행 SQL은 테스트 DB 구성용으로만 로딩했고 3D suite·전체 회귀/build는 미실행이다. 다중 연결 운영 PostgreSQL 검증은 하지 않았다.
+- 변경 구현·테스트 **4파일**: 위 migration, `server/supabaseProgramTextAnalysis.mjs`, `server/supabaseProgramTextAnalysis.test.mjs`, `server/programTextAnalysisSql.test.mjs`. 기존 source router/matcher·OCR RPC·status/review/자동 판정·검색·runner/repository 파일은 그대로다.
+- 운영 migration 적용·DB/KOPIS/OCR/API 호출·이미지 다운로드·batch·운영 후보/receipt/CONFIRMED·REJECTED 쓰기0. 정책 활성화는 테스트 DB 안에서만 했다. 운영 정책·예약·환경·배포 변경0, 예약은 **2026-10-26 08:38:03 KST Disabled / Enabled=false**를 읽기 확인했다.
+- 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의40개 변경·index·.env hash와 기존 격리 source를 보존했다. 새 경로는 `.cache/ca-auto-20261022-001/spec4-task3e/source`이며 실제 예약 root에는 미적용이다. 게시 내용에서 비밀값을 제외했다.
+- 구현자 의견: 기존 v4 status view도 공유 policy 활성화에 반응하므로, 테스트의 보존 비교는 임시 활성화 이후를 기준으로 분리했다. migration과 텍스트 저장 자체는 기존 정책/row를 바꾸지 않는다. 공식 텍스트의 review·검색·자동 판정 연결은 별도 범위이며 이번에 만들지 않았다. **IMPLEMENTED**로 게시 후 중단하며 검토 수락은 별도다.
 
 ## 웹 GPT → Codex: 명세 4 작업 3D ACCEPTED / 작업 3E READY
 
