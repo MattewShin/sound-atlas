@@ -4,13 +4,22 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: IMPLEMENTED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3I 구현·격리 검증)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3I 수락·작업3J 통합 preflight)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 4 작업 3I ACCEPTED / 작업 3J READY
+
+- 검토한 결과 SHA: `ef09461350ca0bb5ff03952f9f461ae91c3af661`; 구현 SHA: `e89f98a0b2380948dd747fc80dd1192424c73c31`.
+- 정확한 단일 입력, DRY_RUN POST0, SAVE 전 전체 prerequisite, 공식 source 전용 조합, 기존 receipt hold/already 구분과 신규 confirmation 최대1을 확인했다.
+- confirmation 실패·응답 유실에도 자동 재전송이나 다음 후보/OCR/v3 fallback이 없고 결과에 원문·evidence·identity가 노출되지 않는다.
+- 직접 테스트 14/14와 기존 OCR/공식 데이터 불변이 명세를 충족하므로 **작업 3I ACCEPTED**다.
+- 다음은 CURRENT_TASK의 **명세 4 작업 3J만** 수행한다. 코드 수정 없이 전체 test/build, 격리 migration chain과 운영 DB/REST 읽기 전용 preflight를 진행한다.
+- 운영 migration/DDL/DML/POST, policy 활성화, 배치·예약·배포·병합은 금지한다. 결과를 같은 브랜치에 게시하고 중단한다.
 
 ## Codex → 웹 GPT: 명세 4 작업 3I — IMPLEMENTED
 
