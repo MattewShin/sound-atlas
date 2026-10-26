@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,38 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3H — 공식 텍스트 확정의 유효 상태·공연 검색 연결 / READY
+
+작업 3G 결과 SHA `b72eeb80e56bbce6fd6be5c1258d79fce498f8b7`와 구현 SHA `905021d2f7698e732a25f3bf1ac25bf16d39dfb7`를 **ACCEPTED**한다. 단건 RPC가 policy → concert → analysis → candidates 순서로 잠그고 현재 원문·context·snapshot·catalog·eligibility를 재검증하며, 적격 후보에만 append-only CONFIRMED receipt를 만들고 부적격 후보에는 REJECTED도 만들지 않는 계약과 격리 12/12 검증을 확인했다.
+
+이번 작업은 공식 텍스트 receipt 자체를 영구적인 검색 권한으로 신뢰하지 않고, **현재도 유효한 공식 확정만 기존 공연 검색 결과에 읽기 전용으로 합치는 단계**다. 외부 검색 응답 형식과 기존 OCR 확정 데이터는 유지하며 공식 Program이 선택되는 공연에서는 OCR 결과가 대신 노출되지 않게 한다.
+
+### 허용 범위
+
+1. additive migration으로 공식 텍스트 receipt 전용 유효 상태 view를 추가한다. 이름은 `concert_program_text_confirmation_status` 또는 의미가 동등하게 명확해야 하며 `security_invoker=true`, service_role SELECT 전용으로 둔다.
+2. view는 receipt만 믿지 않고 현재 concert·analysis·candidate·catalog·v4 policy와 다시 대조한다. 최소한 다음이 모두 일치할 때만 `is_effectively_confirmed=true`다.
+   - receipt가 CONFIRMED이고 matcher/decision/source kind가 정확함
+   - 현재 공식 원문/hash의 실제 UTF-8 SHA-256, context/revision과 saved-current analysis가 일치함
+   - analysis payload·candidate snapshot·evidence·catalog·work identity·receipt verification hash가 일치함
+   - 후보가 여전히 MATCHED+EXACT, 등록 track/work, 안전한 scope/reason, 중복 없음
+   - v4 policy가 명시적으로 enabled=true
+3. 불일치는 row를 수정하거나 REJECTED로 바꾸지 않고 `is_effectively_confirmed=false`와 안정적인 stale reason으로만 표현한다. 원문·quote·identity 전체를 검색 view에 노출하지 않는다.
+4. `server/supabaseConcertSearch.mjs`가 기존 OCR status와 신규 공식 status를 각각 읽고 같은 검색 DTO로 합치게 한다. 공식 결과도 정확한 track/work, 날짜·지역·공연 상태와 현재 identity hash를 서버에서 재검증한다.
+5. source 우선순위는 기존 `routeProgramSource`와 동일해야 한다. 현재 공연에서 공식 Program이 선택되면 그 공연의 OCR 확정은 공식 receipt가 없거나 stale이어도 검색 결과로 fallback하지 않는다. 필요한 원문 읽기는 서버 내부 판정에만 쓰고 응답·로그에 포함하지 않는다.
+6. 같은 KOPIS 공연·곡이 양쪽에 있으면 공식 텍스트 결과를 우선해 한 건만 반환한다. 정렬, pagination 한도, 날짜/지역 경계와 기존 외부 응답 필드는 유지한다.
+7. 신규 view 부재·잘못된 응답·부분 pagination·상태 변경은 fail closed로 처리하고 OCR/v3 또는 다른 review 경로로 조용히 fallback하지 않는다.
+8. 격리 SQL·mock 검색 테스트로 공식 유효/원문·context·snapshot·identity·policy stale, 공식 우선과 OCR fallback, 중복 제거, 기존 OCR-only 검색, ACL/RLS, 원문 비노출을 확인한다.
+
+### 제한
+
+- 변경 구현·테스트 파일은 가능하면 5개 이하로 한다.
+- 운영 migration 적용, 운영 DB/KOPIS/OCR/API 호출과 이미지 다운로드를 하지 않는다.
+- 3G confirmation RPC/table, 3F planner/view, source router·matcher·저장 RPC와 기존 OCR review/receipt/status를 수정하지 않는다.
+- 새 쓰기, batch/queue/runner, 자동 REJECTED, UI·라우트·외부 DTO 변경을 하지 않는다.
+- v4 policy 활성화, 예약·환경·배포 변경을 하지 않는다.
+- 전체 회귀/build 없이 신규 status/search 직접 관련 테스트만 실행한다.
+- 결과는 유효성 판정, source 우선순위, 검색 합치기, 변경 파일·테스트만 같은 브랜치에 게시하고 중단한다.
 
 ## 명세 4 작업 3G — 공식 텍스트 단건 자동 CONFIRMED 계약·격리 검증 / IMPLEMENTED
 
