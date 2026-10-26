@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,19 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3F — 공식 텍스트 상태 조회·source 우선순위 계획 / READY
+## 명세 4 작업 3F — 공식 텍스트 상태 조회·source 우선순위 계획 / IMPLEMENTED
 
 작업 3E 결과 SHA `5c0a843105e57037681e6ae4a2de0546c82f8cb9`와 구현 SHA `0653d763d854d1504c5bfdf67d13c99719265ea5`를 **ACCEPTED**한다. 공식 텍스트 전용 table/RPC, 현재 원문·hash·context 잠금 검증, Unicode code-point evidence 검증, idempotency, 기존 OCR/review/receipt 보존과 격리 8/8 테스트가 명세를 충족한다.
 
 이번 작업은 저장된 공식 텍스트 후보의 현재성·유효성을 읽고, 3A의 source 우선순위에 따라 **어느 후보 집합을 후속 판단 대상으로 사용할지만 읽기 전용으로 계획**한다. review·자동 확정·검색 노출·운영 적용은 하지 않는다.
+
+### 작업 3F 구현 결과
+
+- 공동 문서 기준 `1a9494dd6cfe52455a958a8b8f71811e65f536dd`, 구현 코드 `27ceba06b5b622887e086f5f6300805c408b9622`. 공식 전용 analysis/candidate status view 2개와 GET 전용 source-priority read adapter/planner를 additive 4파일로 추가했다. analysis 단위 view는 후보0인 fresh 분석과 미분석을 구별하기 위한 읽기 helper다.
+- saved-current와 실제 원문 UTF-8 SHA-256·현재 hash/context/revision·matcher/catalog 및 전체 snapshot 일치를 구분하고, 명시적 enabled policy까지 충족할 때만 effective current다. MATCHED+EXACT·등록 track/work·안전한 review/scope 조건과 중복 제외를 통과한 경우에만 planning readiness를 제공하며 상태를 확정하지 않는다.
+- 공식 선택 시 같은 hash의 공식 후보만 읽고 OCR을 조회·혼합하지 않는다. fresh current 분석 부재는 `OFFICIAL_ANALYSIS_PENDING`; fresh 분석의 후보0은 정상 빈 결과다. OCR fallback은 실제 OCR ID/text와 기존 v4 status만 확인하며 NONE은 후보0이다.
+- mock adapter6 + 격리 SQL4, **10/10 PASS**, 실패/skip0. GET pagination·상태 변경 보류·policy missing/disabled·stale 원문/context/snapshot·중복·ACL/RLS와 기존 OCR/review/search 정의·행 보존을 확인했다. 세부 선택 결과·검증 한계는 HANDOFF 참조.
+- 작업3E suite 재실행·운영 migration/DB/KOPIS/OCR/API 호출·운영 쓰기0. 기존 source/router/matcher/저장 RPC·OCR status/review/search·runner·정책/예약/환경/배포를 변경하지 않았으며 원본40개 변경/index/.env를 보존했다. 2026-10-26 KST **작업3F IMPLEMENTED**로 같은 브랜치 게시 후 중단한다.
 
 ### 허용 범위
 
@@ -626,4 +634,3 @@ canary 성공 후 현재 `ClassicAtlas-LocalPipeline`의 daily 08:40 KST 경로�
 | --- | --- | --- |
 | 2026-10-22 | Codex | 명세2 BLOCKED: 15이미지/62결정/새연결2, 과거정리38행을 포함하면 누적100·묶음4는64로 초과. 모든 재실행POST0/기존receipt·검색보존. 발견후쓰기중단, 과거정리위험이미지 제외 guard·373회귀/build·예약읽기검증 완료. 상세 HANDOFF/JSON 참조. |
 | 2026-10-23 | 웹 GPT | 결과 SHA `dab08428e4b134a81c9b58ab9ab0dd5f70241299` 검토. 새 연결2건·기존 확정 보존은 유효하며 롤백하지 않음. 묶음4의 전체 상태 변경64>30으로 전체는 CHANGES_REQUESTED. 예약 실제 결과 읽기 확인과 bounded 완료RPC/migration 설계·격리 검증을 요청하고 추가 운영 쓰기는 승인하지 않음. |
-

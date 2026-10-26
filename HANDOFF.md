@@ -4,13 +4,44 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3F 상태 조회·source 우선순위)
+- 현재 상태: IMPLEMENTED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3F 구현·격리 검증)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3F — IMPLEMENTED
+
+- 수신한 공동 문서5개와 원격 HEAD: `1a9494dd6cfe52455a958a8b8f71811e65f536dd`. 작업 CA-AUTO-20261022-001 / 명세4 작업3F만 진행했다. 구현 코드: [`27ceba06b5b622887e086f5f6300805c408b9622`](https://github.com/MattewShin/sound-atlas/commit/27ceba06b5b622887e086f5f6300805c408b9622). 2026-10-26 KST. 작업3E 결과는 ACCEPTED 선행 계약으로 사용했으며 해당 suite나 운영 저장을 재실행하지 않았다.
+- additive migration `supabase/migrations/202610260002_program_text_status.sql`은 공식 전용 `concert_program_text_analysis_status`, `concert_program_text_candidate_status`를 추가한다. 첫 view는 후보0인 분석도 나타내므로, 유효한 빈 분석을 미분석으로 잘못 보류하지 않는다. 기존 OCR `concert_program_candidate_status`·public search view·함수·table·정책은 교체하거나 수정하지 않는다.
+- analysis view의 `analysis_is_current`는 텍스트 namespace의 saved-current다. `is_fresh`는 현재 concert의 원문/hash 쌍·실제 UTF-8 SHA-256·context/revision·저장 matcher/source/catalog hash·snapshot 필드와 canonical payload hash가 일치하는지 계산한다. `freshness_reasons`와 `stale_reasons/stale_reason`을 제공한다. saved-current + fresh + v4 policy의 명시적 enabled=true일 때만 `is_effective_current`다. 정책 부재/disabled는 fresh bytes와 구분하며 effective current와 readiness를 차단한다.
+- catalog는 DB에 저장된 catalog와 analysis snapshot의 hash 일치를 확인하고, candidate view가 track/work의 실제 catalog membership을 대조한다. planner는 현재 코드의 `CATALOG_HASH`와 matcher v4를 추가 대조한다. DB view만으로 이후 배포의 임의 catalog 버전을 추측하거나 matcher를 다시 실행하지 않는다.
+- candidate view는 track/work, outcome/relation, review reasons, 원 snapshot과 exclusion reasons를 노출한다. snapshot/column 일치·effective current·MATCHED+EXACT·등록 track/work·안전한 scope·편곡/발췌/충돌 사유 없음이 필요하다. 알려진 identity 보강 reason만 허용하고 미지의 review reason도 보류한다. 같은 분석에서 track **또는** work가 중복되면 모두 `DUPLICATE_TRACK_OR_WORK`로 제외하며 합치지 않는다. 기존 REVIEW_REQUIRED를 변경하거나 CONFIRMED/REJECTED·receipt를 만들지 않는다.
+- `server/programSourcePlan.mjs`의 순수 `planProgramSource`와 service-role용 `createProgramSourceReader`를 추가했다. adapter의 `plan({concert_id,current_ocr_evidence})`는 현재 concert를 GET한 뒤 기존 `routeProgramSource` 선택을 그대로 사용한다. 선택 source/hash/v4, 선택 집합의 전체 후보 수·준비 가능 수·후보별/집계 제외 reason을 반환한다. 이 readiness는 후속 판단의 입력 계획이며 자동 확정 결과나 쓰기 권한이 아니다.
+- 공식 경로는 같은 concert/hash/v4의 fresh current 분석 1개에 속하는 공식 후보만 읽으며 OCR endpoint를 호출하지 않는다. 해당 분석 부재/비현재/원문·context·snapshot 불일치/코드 catalog 불일치는 `OFFICIAL_ANALYSIS_PENDING`이며 OCR fallback하지 않는다. policy만 disabled이면 공식 선택은 유지하되 readiness0이다.
+- OCR 경로는 caller가 이미 current로 검증한 evidence 계약에 실제 `ocr_result_id`를 추가로 요구한다. 저장 OCR text의 SHA-256과 선택 hash를 대조한 뒤 기존 OCR v4 status의 같은 result ID만 사용한다. 명시적 v4 policy도 확인하며 기존 review 상태·모호한 reason은 보수적으로 제외한다. 공식 후보를 섞지 않고 NONE은 후보0/`NO_USABLE_SOURCE`다.
+- 모든 adapter 요청은 GET/params뿐이다. RPC endpoint·POST/body·write 메서드가 없고 runtime runner/repository/batch에는 연결하지 않았다. 페이지당 반환 상한이 요청보다 작아도 빈 페이지까지 읽고 중복 ID/읽기 한도/잘못된 응답은 실패시킨다. 공식 후보 조회 전후 analysis metadata가 바뀌면 `SOURCE_STATUS_CHANGED_RETRY`와 준비0으로 보류한다.
+
+| 직접 관련 검증 | 실제 결과 |
+| --- | --- |
+| 공식 우선·OCR fallback·NONE | 공식1준비후보/OCR미조회; 선택 OCR result/v4만 사용; NONE 후보0 |
+| 공식 pending / 정상 빈 분석 | fresh current 분석 없으면 pending/OCR fallback0; fresh 분석 후보0은 정상 공식 선택 |
+| source hash·실제 bytes·Unicode/CRLF | 원문/hash/부분 쌍 변경 시 stale; emoji·결합 문자·CRLF 원문 SHA-256 일치 |
+| context/revision·matcher/catalog·snapshot | context 변경/analysis revision 차이/저장 snapshot 변조 시 effective current=false·준비0 |
+| policy false/부재 | 명시적 true가 아니면 준비0; migration 전후 policy 행 동일 |
+| 중복/충돌/편곡/발췌/미지 reason | 중복2행 유지·준비0; valid saved negative snapshot도 준비0; 변조 candidate도 차단 |
+| GET pagination·선택 비혼합·동시 상태 변경 | 서버 cap1에서도 전체 집합 조회; 공식/OCR endpoint 비혼합; metadata 변경은 retry/준비0 |
+| migration 후반 실패 | 신규 view 전체 rollback; 재적용 성공 |
+| ACL/RLS | 두 view SECURITY INVOKER, service_role SELECT만; public/anon/authenticated 접근 거부; 임시 SELECT grant에도 underlying RLS 행0; view DML 불가 |
+| 기존 OCR/review/검색 | v2/v3/v4 분석·후보/current·review/receipt·OCR status digest 및 기존 view 정의 동일 |
+
+- **10/10 PASS**, 실패/skip0: `node --input-type=module -e "await import('./server/programSourcePlan.test.mjs');await import('./server/programSourcePlanSql.test.mjs')"`. Node22.18.0 / Windows, mock adapter6 + PGlite 인메모리 PostgreSQL4다. 선행 SQL·저장 RPC는 새 격리 DB의 schema/fixture 구성에만 사용했고 운영 호출이 아니다. 최초 fixture 날짜 표현과 revision trigger 가정을 수정한 뒤 최종 전체 신규 테스트10개가 통과했다. 기존 작업3E/전체 회귀/build suite는 실행하지 않았다.
+- 변경 구현·테스트 **4파일**: 위 migration, `server/programSourcePlan.mjs`, `server/programSourcePlan.test.mjs`, `server/programSourcePlanSql.test.mjs`. 공동 문서2개를 함께 게시한다. source router·matcher·3E 저장 adapter/RPC 등 기존 격리 source는 byte 단위로 보존했다.
+- 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의40개 변경·index·.env hash를 보존했다. `.cache/ca-auto-20261022-001/spec4-task3f/source`에서 격리 작업했으며 게시 payload의 비밀값 검사를 통과했다. 새 구현 파일은 원격 기준으로 모두 추가 파일이며 관계없는 원격 변경을 덮어쓰지 않는다.
+- 운영 migration 적용·DB/KOPIS/OCR/API 호출·이미지 다운로드·운영 후보/receipt/CONFIRMED·REJECTED 쓰기0. v4 정책·예약·환경·배포 변경0이다. 예약의 직전3E 읽기 기록은 2026-10-26 08:38:03 KST Disabled/Enabled=false이며 이번 작업에서 예약 조작·강제 실행·재조회는 하지 않았다.
+- 기술 의견/한계: PostgreSQL 검증은 PGlite 단일 연결이며 운영 PostgREST/다중 연결 실검증은 하지 않았다. 여러 GET은 원자적 transaction snapshot이 아니므로 metadata 재확인으로 관측된 변경만 보류한다. 향후 쓰기 계약을 검토할 경우 원문/context/policy/중복을 잠금 안에서 다시 확인해야 하며 이번 plan을 그대로 확정 권한으로 사용하면 안 된다. 추가 실행 승인이 필요한 질문은 없으며 **IMPLEMENTED**로 검토를 요청하고 게시 후 중단한다.
 
 ## 웹 GPT → Codex: 명세 4 작업 3E ACCEPTED / 작업 3F READY
 
@@ -773,4 +804,3 @@ CA-AUTO-20261022-001은 명세 2 READY다. Codex는 결과 SHA `2c4411bd8d79b663
 - 저장 예정: 5묶음, 각 이미지3개, 후보수8/13/0/26/15 = 누적15이미지/62후보. 예상 신규 unique연결2: PF295588/chopin-fantaisie-impromptu-op66, PF301161/chopin-ballade-op52-no4. PF295548 제외. 신규OCR4개와 대표10개, 기존 양성1개만 포함한다. 모든 묶음 live dry-run 확인 후 저장→동일scope즉시POST0→공개검색/기존receipt 보존 확인을 순차 진행한다.
 - 기능/SQL/UI 기존 회귀와 신규6개를 합쳐371/371 PASS, production build PASS. 기존 chunk>500kB 경고 유지. 실제 웹 UI 시각 검사는 별도 미실행이다.
 - 현재 상태 IN_PROGRESS: 위 값은 예상이며 운영 자동 확정 성과가 아니다. [전체 queue dry-run](docs/PROGRAM_AUTOMATION_EXPANSION_DRY_RUN_2026-10-22.json)에 모든 후보의 track/work/outcome/reason을 기록했다.
-
