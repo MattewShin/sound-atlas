@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,36 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3I — 공식 Program 단일 공연 제한 실행기 / READY
+
+작업 3H 결과 SHA `48b9667d0f90223b0bccf5723ddfb80c92dc9590`와 구현 SHA `6964e88ec0dac047dc60f605c03316d2576308da`를 **ACCEPTED**한다. 공식 receipt의 live 유효성 재검증, 공식 Program 선택 공연의 OCR 대체 노출 차단, 기존 검색 DTO 유지와 격리 14/14 검증을 확인했다.
+
+이번 작업은 이미 구현된 공식 텍스트 source 선택·분석·저장·계획·단건 확정을 새 판정 규칙 없이 조합해, **공연 ID 한 건과 회당 신규 확정 최대 1건만 처리하는 제한 실행기**를 만든다. 아직 운영 배치나 예약에는 연결하지 않는다.
+
+### 허용 범위
+
+1. 서버 내부용 coordinator를 새 파일로 추가한다. 입력은 정확한 `concert_id`, 실행 모드 `DRY_RUN | SAVE`이며 한 호출에서 공연 한 건만 허용한다.
+2. SAVE의 첫 POST 전에 기존 3E 저장 RPC, 3F status view, 3G 확인 RPC, 3H confirmation status view와 v4 policy enabled=true를 모두 preflight한다. 하나라도 부재·비활성이면 분석·receipt·REJECTED 쓰기 0으로 중단한다.
+3. concert를 GET해 기존 `routeProgramSource`를 그대로 사용한다. `KOPIS_DETAIL_TEXT`만 처리하며 OCR 또는 NONE이면 명확한 SKIPPED 결과로 끝내고 OCR endpoint·matcher·review 경로를 호출하지 않는다.
+4. 공식 source는 기존 `analyzeSelectedProgramSource`와 `buildProgramTextAnalysisPayload`만 사용한다. 새 정규화·matcher·eligibility 규칙을 만들지 않는다.
+5. DRY_RUN은 분석 결과의 source hash·payload hash·후보 수와 outcome/reason 집계만 반환하고 POST를 한 번도 하지 않는다. 원문·quote·snapshot·비밀값은 반환·로그하지 않는다.
+6. SAVE는 기존 3E adapter로 분석을 저장한 뒤 3F reader로 동일 source/hash의 현재 plan을 다시 읽는다. 공식이 아니거나 pending/stale/policy disabled이면 confirmation을 호출하지 않는다.
+7. 기존 3H confirmation status를 읽어 이미 receipt가 있는 후보를 구분한다. effective receipt는 `ALREADY_CONFIRMED`, stale/invalid receipt는 `HOLD_EXISTING_RECEIPT`로 두며 재확정하거나 새 receipt를 만들지 않는다.
+8. 새 `planning_ready=true` 후보만 candidate UUID 오름차순으로 처리하고, 한 호출에서 기존 3G 단건 RPC 호출은 **최대 1회**다. 나머지는 pending 수로 보고한다. 이 상한은 환경값이나 입력으로 확대할 수 없게 고정한다.
+9. confirmation 실패 시 즉시 중단하며 다른 후보, OCR/v3, review RPC로 fallback하지 않는다. 어떤 경로에서도 REJECTED를 생성하지 않는다.
+10. 결과는 mode/source/reason, 분석 ID·hash, 전체/ready/already/hold/pending 수, 새 receipt ID 최대 1개만 포함한다. 원문·evidence·identity snapshot은 포함하지 않는다.
+11. mock/격리 테스트로 DRY_RUN POST0, migration/policy preflight 실패 POST0, official-only, SAVE 순서, 신규 확정 최대1, 재실행 무증가, stale receipt hold, 실패 즉시 중단, 원문 비노출을 확인한다.
+
+### 제한
+
+- 구현·테스트 파일은 가능하면 3개 이하로 하고 새 migration은 만들지 않는다.
+- 3A~3H 기존 구현과 검색·OCR 계약을 수정하지 않는다.
+- 운영 migration 적용, 운영 DB/KOPIS/OCR/API 호출, 실제 분석·receipt·CONFIRMED/REJECTED 쓰기를 하지 않는다.
+- batch/queue/예약/기존 pipeline·UI·API route에 연결하지 않는다.
+- policy 활성화, 환경·배포·브랜치 병합을 하지 않는다.
+- 전체 회귀/build 없이 coordinator 직접 관련 테스트만 실행한다.
+- 결과를 같은 브랜치의 공동 문서에 게시하고 후속 운영 적용 없이 중단한다.
 
 ## 명세 4 작업 3H — 공식 텍스트 확정의 유효 상태·공연 검색 연결 / IMPLEMENTED
 
