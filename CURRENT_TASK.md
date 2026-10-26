@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,20 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3I — 공식 Program 단일 공연 제한 실행기 / READY
+## 명세 4 작업 3I — 공식 Program 단일 공연 제한 실행기 / IMPLEMENTED
 
 작업 3H 결과 SHA `48b9667d0f90223b0bccf5723ddfb80c92dc9590`와 구현 SHA `6964e88ec0dac047dc60f605c03316d2576308da`를 **ACCEPTED**한다. 공식 receipt의 live 유효성 재검증, 공식 Program 선택 공연의 OCR 대체 노출 차단, 기존 검색 DTO 유지와 격리 14/14 검증을 확인했다.
 
 이번 작업은 이미 구현된 공식 텍스트 source 선택·분석·저장·계획·단건 확정을 새 판정 규칙 없이 조합해, **공연 ID 한 건과 회당 신규 확정 최대 1건만 처리하는 제한 실행기**를 만든다. 아직 운영 배치나 예약에는 연결하지 않는다.
+
+### 작업 3I 구현 결과
+
+- 공동 문서 기준 `44c960966db397187e457784dd679c10f2100eea`, 구현 코드 `e89f98a0b2380948dd747fc80dd1192424c73c31`. `createProgramTextCoordinator(...).run({concert_id,mode})`를 서버 내부용으로 추가했다. 정확한 UUID 한 건과 DRY_RUN/SAVE 두 필드만 허용하며 기존 부품을 그대로 조합한다.
+- 공식 source만 기존 분석/payload builder로 처리한다. DRY_RUN은 source/payload hash·후보 수·outcome/reason 집계만 반환하고 POST0이다. OCR/NONE은 SKIPPED이며 OCR endpoint/matcher/review 호출0이다.
+- SAVE는 기존3E/3G preflight와3F/3H view 존재·GET probe 및 명시적 v4 policy를 첫 POST 전에 모두 확인한다. 기존3E 저장 후3F plan을 동일 분석/source/hash에 묶고3H receipt를 읽어 ALREADY_CONFIRMED/HOLD_EXISTING_RECEIPT를 구분한다.
+- 새 planning-ready 후보만 UUID 순으로 고르며 confirmation은 한 호출당 최대1 POST다. 환경/입력으로 확대할 수 없고 confirmation HTTP/네트워크/응답 실패도 재전송·다른 후보·OCR/v3 fallback 없이 즉시 중단한다. 남은 후보는 pending이며 REJECTED는 만들지 않는다.
+- mock9 + PGlite coordinator SQL5, **14/14 PASS**, 실패/skip0. DRY_RUN·preflight 무쓰기, SAVE 순서/상한, 단일 후보 재실행 무증가, stale receipt hold, 응답 유실 후 기존 receipt 재발견, 원문 비노출을 확인했다.
+- 신규 구현·테스트3파일, migration0. 기존3A~3H source 및 로컬40개 변경/index/.env를 보존했다. 운영 적용/호출/쓰기·batch/queue/예약/pipeline/UI/API 연결·policy/환경/배포/병합 변경0, 선행 suite·전체 회귀/build 재실행0이다. 2026-10-26 KST **작업3I IMPLEMENTED**로 같은 브랜치에 게시하고 중단한다.
 
 ### 허용 범위
 

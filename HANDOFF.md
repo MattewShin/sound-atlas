@@ -4,13 +4,47 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3H 수락·작업3I 제한 실행기)
+- 현재 상태: IMPLEMENTED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3I 구현·격리 검증)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3I — IMPLEMENTED
+
+- 공동 문서5개/원격 HEAD 기준: `44c960966db397187e457784dd679c10f2100eea`. CA-AUTO-20261022-001 / 명세4 작업3I만 진행했다. 구현 코드: [`e89f98a0b2380948dd747fc80dd1192424c73c31`](https://github.com/MattewShin/sound-atlas/commit/e89f98a0b2380948dd747fc80dd1192424c73c31). 2026-10-26 KST. 작업3H는 ACCEPTED 선행 계약으로 읽었고 선행 작업 suite를 재실행하거나 기존 구현을 변경하지 않았다.
+- 신규 `server/programTextCoordinator.mjs`는 `createProgramTextCoordinator({env,fetchImpl,delay,signal}).run({concert_id,mode})`만 제공한다. CLI/API/runner/queue/예약 진입점은 없다. 입력은 정확한 두 필드와 UUID 한 건·DRY_RUN/SAVE만 허용한다. 배열·다건 ID·암묵적 mode·limit/override 등 추가 필드는 읽기 전 거부하며 상한을 바꾸는 환경값도 읽지 않는다.
+- concert GET 후 기존 `routeProgramSource` 선택을 사용한다. KOPIS_DETAIL_TEXT만 기존 `analyzeSelectedProgramSource`와 `buildProgramTextAnalysisPayload`에 넘긴다. 공식 부재/biography/markup/hash mismatch 또는 OCR/NONE 선택은 SKIPPED다. OCR endpoint·OCR matcher·review 경로는 호출하지 않는다. 새 정규화/matcher/eligibility 규칙은 없다.
+- DRY_RUN은 concert GET와 순수 분석/payload 구성만 수행한다. migration/view/policy가 준비되지 않아도 읽은 공식 원문을 분석할 수 있으며 POST0이다. source/payload hash, 후보 수, outcome/review-reason 집계만 반환하고 원문·quote·evidence·snapshot·비밀값을 반환/로그하지 않는다.
+- SAVE의 첫 POST 전 기존3E `preflightSave`와3G `preflightConfirm`을 호출하고 OpenAPI에서 두 RPC와3F analysis/candidate status·3H confirmation status path를 모두 확인한다. 세 view를 해당 concert 범위로 GET probe하고 명시적 enabled=true인 v4 policy 1행을 다시 확인한다. 부재/권한 오류/잘못된 probe/정책 비활성은 PREFLIGHT_FAILED와 분석/receipt POST0으로 종료한다.
+- 이후 기존3E adapter로 분석을 저장하고 반환 analysis UUID를 확인한 뒤 기존3F reader로 현재 plan을 다시 읽는다. plan의 공식 source/hash/version과 전체 후보 수·키/ID를 저장 payload/analysis/concert에 묶고 current/fresh/effective/policy를 확인한다. 공식이 아니거나 pending/stale/source 변경/잘못된 plan이면 HELD/PLAN_NOT_CURRENT로 끝내고 confirmation은 호출하지 않는다. planning_ready의 판정 자체는 기존3F 결과를 그대로 사용한다.
+- 기존3H confirmation status를 concert 범위로 읽는다. exact Content-Range/count·UUID keyset 순서/페이지100·상한50을 확인해 부분 조회나 잘못된 receipt 범위는 confirmation 전에 실패시킨다. 해당 candidate의 단일 effective receipt가 분석/source/payload/catalog/version과 일치하면 ALREADY_CONFIRMED, stale/invalid/중복 receipt이면 HOLD_EXISTING_RECEIPT로 구분하며 어떤 경우에도 재확정하지 않는다.
+- 기존 receipt가 없고 planning_ready=true인 후보만 UUID 오름차순으로 고른다. **한 run당 기존3G adapter 호출과 실제 confirmation POST 모두 최대1회**다. 나머지 후보는 pending으로 보고하고 내부적으로 다음 후보를 계속 실행하지 않는다. confirmation 호출 전3G adapter의 자체 RPC/policy preflight도 다시 수행한다.
+- confirmation transport는 이 coordinator의 wrapper 안에서만 비재시도 실패로 처리한다. HTTP429/5xx·네트워크 실패·잘못된 JSON/receipt ID에도 실제 confirmation POST를 반복하지 않고 즉시 FAILED/CONFIRMATION_FAILED로 끝낸다. 다른 후보·OCR/v3/review RPC로 fallback하지 않는다. 기존 공용 transport와3G adapter는 수정하지 않았다. 분석 저장은 기존3E adapter의 멱등성/전송 계약을 유지한다.
+- 결과는 mode/concert ID/status/source/reason, analysis ID·source/payload hash, total/ready/already/hold/pending 수, outcome/reason 집계와 단일 receipt_id뿐이다. ready는 기존 receipt가 없는 새 planning-ready 후보의 시도 전 수다. pending은 전체에서 이미 확정/보류된 receipt와 이번 성공1건을 뺀 미처리 수이며, DRY_RUN은 plan을 평가하지 않아 ready0/pending=total이다. 개별 후보 snapshot/track identity/evidence는 결과에 없다.
+
+| 직접 관련 검증 | 실제 결과 |
+| --- | --- |
+| 단일 입력 계약 | 다건/배열/추가 limit/암묵 mode 거부, HTTP0; 환경의 상한99도 무시 |
+| DRY_RUN | 공식2후보 MATCHED 집계·hash만, 정책 false/없는 schema에서도 concert GET1·POST0 |
+| official-only | absent/biography/unsupported markup/hash mismatch·router OCR 선택 모두 SKIPPED; OCR endpoint/분석 저장0 |
+| prerequisite matrix | 두 RPC·3F 두 view·3H view 각각 부재/GET404, policy false/부재/문자true/다른 버전/중복 행 모두 첫 POST 전 차단 |
+| SAVE 순서/상한 | preflight 전체 →3E 저장 →3F plan →3H receipt →3G 단건; 복수 후보 중 UUID 최솟값1건, pending1 |
+| 재실행 | 단일 후보 동일 snapshot은 analysis ID/payload 유지, ALREADY_CONFIRMED1·추가 confirmation POST0·receipt 행 증가0 |
+| stale/invalid receipt | 3F가 ready여도3H identity stale/invalid hash/잘못된 effective 필드는 HOLD_EXISTING_RECEIPT; 재확정0 |
+| plan/source/policy 변경 | 저장 뒤 공식 source가 사라짐, pending/stale/disabled이면 confirmation0; no-ready도 새 판정 없이 보류 |
+| 실패 즉시 중단 | confirmation HTTP503·네트워크·잘못된 JSON 각각 실제 POST1·자동 재시도/대체 후보/다른 RPC0 |
+| 부분 receipt pagination | 작은 cap에서도 끝까지 조회; range 누락/부분/다른 concert 오류는 confirmation0 |
+| 커밋 후 응답 유실 | 격리 RPC receipt1 커밋 뒤 응답 유실을 FAILED로 반환·재전송0; 다음 단일 후보 실행은 ALREADY_CONFIRMED·총 receipt1 |
+| 격리 데이터/원문 비노출 | 단일 후보 성공/재실행은 기존 공식/OCR 전체 digest 동일; 복수 후보의 기존 OCR/review도 동일; 결과에 원문/quote/snapshot/secret 없음 |
+
+- **14/14 PASS**, 실패/skip0: `node server/programTextCoordinator.test.mjs` 9/9와 `node server/programTextCoordinatorSql.test.mjs` 5/5. Windows Node22.18.0, mock 및 PGlite 인메모리 PostgreSQL에서 기존3E/3F/3G/3H 부품을 실제로 조합했다. 원문/receipt/schema는 새 격리 DB fixture이며 .env/운영 연결을 사용하지 않았다. 기존 suite·전체 회귀/build·실제 운영 API/PostgREST는 실행하지 않았다.
+- 신규 구현·테스트 **3파일**: `server/programTextCoordinator.mjs`, `server/programTextCoordinator.test.mjs`, `server/programTextCoordinatorSql.test.mjs`. 새 migration0이며3A~3H 기존 모든 파일을 byte 단위 보존했다. 테스트는 기존 fixture helper만 재사용하고 선행 test 파일을 import하지 않는다.
+- 작업 경로는 `.cache/ca-auto-20261022-001/spec4-task3i/source`다. 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의40개 변경·index·.env hash를 보존했다. 게시할3파일·공동 문서2개에서 실제 secret과 인코딩 변형 부재를 검사했다. 원격의 관계없는 코드/검토 이력도 보존한다.
+- 운영 migration 적용·DB/KOPIS/OCR/API 호출·실제 운영 분석/receipt/CONFIRMED·REJECTED 쓰기0. batch/queue/예약/pipeline/UI/API route 연결0, policy 활성화·환경/배포/브랜치 병합 변경0이며 운영 환경/예약을 재조회하지 않았다.
+- 기술 의견/한계: 여러 REST 단계 전체가 하나의 DB transaction은 아니다. 분석 저장 후 후속 단계가 실패하면 해당 분석은 남을 수 있고, confirmation 응답 유실은 이미 커밋된 receipt가 존재할 수도 있다. 이를 원자적 rollback/무쓰기 성공으로 주장하지 않으며 자동 재전송 대신 다음 실행에서 기존3H receipt를 확인한다. 상한은 명세대로 **한 호출당**1건이며 미처리 후보를 자동 이어 실행하지 않는다. 동시 호출의 실제 신규/멱등 재사용 여부는 UUID만 반환하는 기존3G 계약으로 구별하지 않는다. 운영 end-to-end 검증은 하지 않았다. 추가 실행 질문 없이 **IMPLEMENTED**로 검토를 요청하고 같은 브랜치 게시 후 중단한다.
 
 ## 웹 GPT → Codex: 명세 4 작업 3H ACCEPTED / 작업 3I READY
 
