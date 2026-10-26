@@ -1,0 +1,2212 @@
+{
+  "snapshot": "8c32de828c458d4fc288103f5ee3cea848a0231a",
+  "complete": true,
+  "fileCount": 308,
+  "stages": [
+    {
+      "stage": "3A",
+      "sha": "9bf94c2b229410d3afc2616dec73f81372bebd11",
+      "ancestor": true,
+      "aheadBy": 35,
+      "files": [
+        {
+          "path": "scripts/verifyOfficialProgramText.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/officialProgramText.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/programSourceRouter.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/programSourceRouter.test.mjs",
+          "status": "added",
+          "previous_path": null
+        }
+      ]
+    },
+    {
+      "stage": "3B",
+      "sha": "a1986b26a3f8b1e727d545762eecf38134a7bae3",
+      "ancestor": true,
+      "aheadBy": 31,
+      "files": [
+        {
+          "path": "scripts/analyzeConcertPrograms.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "scripts/verifyOfficialProgramText.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/pipelineRepository.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/programAnalysis.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/programAnalysis.test.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/programRollout.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/programRollout.test.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/programScherzo.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/programVersion.test.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/supabaseProgramAnalysis.mjs",
+          "status": "modified",
+          "previous_path": null
+        }
+      ]
+    },
+    {
+      "stage": "3C",
+      "sha": "f31655183ce02526978206028387e50d0171e9de",
+      "ancestor": true,
+      "aheadBy": 27,
+      "files": [
+        {
+          "path": "server/programV4Sql.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "supabase/migrations/202610230003_program_analysis_v4.sql",
+          "status": "added",
+          "previous_path": null
+        }
+      ]
+    },
+    {
+      "stage": "3D",
+      "sha": "bac81a063d86a8bfa687d6358372a00c1cff6613",
+      "ancestor": true,
+      "aheadBy": 23,
+      "files": [
+        {
+          "path": "server/fixtures/programSourceOcrV4.json",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/programAnalysis.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/selectedProgramAnalysis.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/selectedProgramAnalysis.test.mjs",
+          "status": "added",
+          "previous_path": null
+        }
+      ]
+    },
+    {
+      "stage": "3E",
+      "sha": "0653d763d854d1504c5bfdf67d13c99719265ea5",
+      "ancestor": true,
+      "aheadBy": 19,
+      "files": [
+        {
+          "path": "server/programTextAnalysisSql.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/supabaseProgramTextAnalysis.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/supabaseProgramTextAnalysis.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "supabase/migrations/202610260001_program_text_analysis_v4.sql",
+          "status": "added",
+          "previous_path": null
+        }
+      ]
+    },
+    {
+      "stage": "3F",
+      "sha": "27ceba06b5b622887e086f5f6300805c408b9622",
+      "ancestor": true,
+      "aheadBy": 15,
+      "files": [
+        {
+          "path": "server/programSourcePlan.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/programSourcePlan.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/programSourcePlanSql.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "supabase/migrations/202610260002_program_text_status.sql",
+          "status": "added",
+          "previous_path": null
+        }
+      ]
+    },
+    {
+      "stage": "3G",
+      "sha": "905021d2f7698e732a25f3bf1ac25bf16d39dfb7",
+      "ancestor": true,
+      "aheadBy": 11,
+      "files": [
+        {
+          "path": "server/programTextConfirmationSql.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/supabaseProgramTextConfirmation.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/supabaseProgramTextConfirmation.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/testSupport/programTextConfirmationFixture.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "supabase/migrations/202610260003_program_text_confirmation.sql",
+          "status": "added",
+          "previous_path": null
+        }
+      ]
+    },
+    {
+      "stage": "3H",
+      "sha": "6964e88ec0dac047dc60f605c03316d2576308da",
+      "ancestor": true,
+      "aheadBy": 7,
+      "files": [
+        {
+          "path": "server/programTextConfirmationStatusSql.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/supabaseConcertSearch.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "server/supabaseConcertSearch.test.mjs",
+          "status": "modified",
+          "previous_path": null
+        },
+        {
+          "path": "supabase/migrations/202610260004_program_text_confirmation_status.sql",
+          "status": "added",
+          "previous_path": null
+        }
+      ]
+    },
+    {
+      "stage": "3I",
+      "sha": "e89f98a0b2380948dd747fc80dd1192424c73c31",
+      "ancestor": true,
+      "aheadBy": 3,
+      "files": [
+        {
+          "path": "server/programTextCoordinator.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/programTextCoordinator.test.mjs",
+          "status": "added",
+          "previous_path": null
+        },
+        {
+          "path": "server/programTextCoordinatorSql.test.mjs",
+          "status": "added",
+          "previous_path": null
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": ".env.example",
+      "git_blob": "2399f7dd834ae528f7478d92a9a92be8c0d86206",
+      "sha256": "2e8c545cd0fa48e8b2f248cb5db819fe2bdfbd7636d8f9e2c00925ef7afc6937",
+      "bytes": 2062
+    },
+    {
+      "path": ".gitignore",
+      "git_blob": "e4c92d9d2d4019bcd7160e24d1f1ce3fd6922d1a",
+      "sha256": "5a693884d03f30e0378c4aa438a000188771603f06e2a0a8ca6d13c60b898111",
+      "bytes": 170
+    },
+    {
+      "path": ".vercelignore",
+      "git_blob": "dd9a68e49b7454819e45d3d2fbea3a42405c78e3",
+      "sha256": "b4e508821b484168905d11ff226eed4ff90b799ba3435cfda9d9705fd5732c80",
+      "bytes": 202
+    },
+    {
+      "path": "AGENTS.md",
+      "git_blob": "d859b8f1989113bab116fdf4a90698384b013b73",
+      "sha256": "8edc63bdada139335c4eb08075c53259576ac0626a7b9e99889ac2afbdbf3d18",
+      "bytes": 3812
+    },
+    {
+      "path": "CURRENT_TASK.md",
+      "git_blob": "23acb1afc61606d14f7f8359cfc8caa1aad5dd1e",
+      "sha256": "9e989b48fc301806365123102cf34b0e9debac29cad6f51022692112f56653ed",
+      "bytes": 81600
+    },
+    {
+      "path": "HANDOFF.md",
+      "git_blob": "8491d6d6c13626c0840d736481694d293c9d55d2",
+      "sha256": "af5aeffe7eef8dafdef04fe712ede515105cc763784cf6ef55aec53979e4cff6",
+      "bytes": 147739
+    },
+    {
+      "path": "PROJECT_CONTEXT.md",
+      "git_blob": "809a3ea746bed212a9d3c859239a2b183b52fa5f",
+      "sha256": "b7612ff4e5101732312ff2a554d83afb4047a01e427c46a5ff96ba39935e02f1",
+      "bytes": 10359
+    },
+    {
+      "path": "README.md",
+      "git_blob": "eecb86d5a18be05c4165209cf87c7213e4e89ecc",
+      "sha256": "0060fe4dc928d813aff877ee316650f82466e446101ea52db2231fdf310a2f3f",
+      "bytes": 19801
+    },
+    {
+      "path": "api/index.js",
+      "git_blob": "c9fd79ba7be9c77aab99981df7660998a4203217",
+      "sha256": "b5f6d83e5b377ea59d6421b44a48a7525685e22d6b3f600bb1dc1df17fa76996",
+      "bytes": 280
+    },
+    {
+      "path": "data/emma/README.md",
+      "git_blob": "fb496a44ea2cf9cf80fb195380066af959652375",
+      "sha256": "efa808c826c0591ee4aeb738b753b3e6f8235fdbeb1789824ea942d2879459ef",
+      "bytes": 1465
+    },
+    {
+      "path": "data/emma/archive/README.md",
+      "git_blob": "2ca2a45beca1b80bab105d8e198fee4b8042d033",
+      "sha256": "62b6d9bc2aab594e323430a2464778353720ee7e92161d63cb27f6f2b399a7fa",
+      "bytes": 450
+    },
+    {
+      "path": "data/emma/archive/emmaReference.json",
+      "git_blob": "00f485d2c5684224d29d62576d071b97d95ad3f3",
+      "sha256": "76b9d67f192b37ecacd7108b81c811eaad8106802aeec2ff19254fe0664613a9",
+      "bytes": 261321
+    },
+    {
+      "path": "data/emma/archive/humanReviews.json",
+      "git_blob": "0967ef424bce6791893e9a57bb952f80fd536e93",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "bytes": 3
+    },
+    {
+      "path": "data/emma/archive/review.md",
+      "git_blob": "0f618046ce742a3ead4616a4f3bdfb21c3d528cb",
+      "sha256": "a27a7b615a2fcb601373913f47c51b5eb492b279a3c82a0a909da451a9ac2ff6",
+      "bytes": 6467
+    },
+    {
+      "path": "data/emma/emmaReference.json",
+      "git_blob": "c8b00b1468131cc882b40b60367841f10e63b1aa",
+      "sha256": "d687255e7dfcc17a9859b8e31be514232dce899d32c465ae9574e235892554b5",
+      "bytes": 155682
+    },
+    {
+      "path": "data/emma/importErrors.json",
+      "git_blob": "f318137e4be630cebca2c734a938b7abf8e32ff0",
+      "sha256": "de243a1779ec5657bee1da5cb26ed330fb6624cf2c68aa227a9ec4741c3b6edd",
+      "bytes": 1067
+    },
+    {
+      "path": "data/manual/catalog-additions-2026-10-19.json",
+      "git_blob": "f229e8da34cad857994a42655a70a6d531ac5f8c",
+      "sha256": "20d4d34ab58376fdfe5203ec58a38294807e25918a28a5f52d52b3554506e4df",
+      "bytes": 32440
+    },
+    {
+      "path": "data/manual/catalog-additions-2026-10-20.json",
+      "git_blob": "fafce891f2792222fd2a39fe3ea1255f46f6dce3",
+      "sha256": "0415161a949a8f4f918afe595de1113fc5bc301e685f1ce23b32f9c826c7e4ce",
+      "bytes": 65551
+    },
+    {
+      "path": "data/manual/catalog-additions-2026-10-21.json",
+      "git_blob": "56cf43d8024a59f97ae5b39aa3818039f60d9007",
+      "sha256": "f30343ddfe4d1b8d0c39ad26275d7b9d1850f9fad019d2e257c564faca2bdaa8",
+      "bytes": 104767
+    },
+    {
+      "path": "data/manual/catalog-update-2026-10-13.json",
+      "git_blob": "3fdcbe4addd7783f05568d8d2a273375d7115667",
+      "sha256": "8e0deee99af997d739167a93b1ea83e5cc8e997cd307724002d56cda7f72141e",
+      "bytes": 58778
+    },
+    {
+      "path": "data/manual/legacy-media.json",
+      "git_blob": "03a75d152093966b4cde3ac1e5a1e0e1c949f400",
+      "sha256": "e7e9ba8800afef3d5c4d063b86a25c36ad93be379305241fa14fea3d5f4d9f13",
+      "bytes": 483
+    },
+    {
+      "path": "data/manual/manual-emotions-v1.csv",
+      "git_blob": "a251f30927f032125661709046976f945cb3a58b",
+      "sha256": "478a646a889d98e7bab44d3b898162a1c0def0d2a23657cab185de33ad10dd01",
+      "bytes": 21606
+    },
+    {
+      "path": "data/manual/rating-guide.md",
+      "git_blob": "c49f8728b7fb9c3107d9b8149734c54dd761d2ea",
+      "sha256": "cbdb7d7c0600b2d4aad159e29822139fe6ae62a0c20144df6e920ff9363c32d1",
+      "bytes": 9407
+    },
+    {
+      "path": "data/manual/reset-report.md",
+      "git_blob": "8c7c783b5ec19fd597a801c49549fc89c2b5e13f",
+      "sha256": "b0dac47fedebf07701c5696eb0ee5e99688dadc5cd7a5417f83c24b4e05f6717",
+      "bytes": 9147
+    },
+    {
+      "path": "docs/AI_COLLABORATION.md",
+      "git_blob": "8eb59f574431afd115ba5c2d9959a8ae843fed5d",
+      "sha256": "55aa2b5dc10f14e043c3e6670a96a0be6699ae50c82c0b0548d0304a2a56a795",
+      "bytes": 7325
+    },
+    {
+      "path": "docs/CATALOG_ADDITION_2026-10-21.md",
+      "git_blob": "8b2ec43a0406ab99d08a082b3d9d59ade3487d74",
+      "sha256": "cee1eb349c518eadfa65c2abcdfd1e6396c62e178ac8038e235ba148bcfeaf31",
+      "bytes": 10302
+    },
+    {
+      "path": "docs/CATALOG_ADDITION_2026-10-22.md",
+      "git_blob": "38acac2d766b6b9104d99e904d1b07ed036061cd",
+      "sha256": "fb5137db95015bd79baeb4644830fc12dc5577cf81418849253f3efe329d88d0",
+      "bytes": 5474
+    },
+    {
+      "path": "docs/COMPLETION_REPORT_2026-10-15.md",
+      "git_blob": "2505e9ced0e8d9ebb9bfc64d2e4b0f92610ef3c5",
+      "sha256": "d8155b435d489f194ffd5124ee7ea3cac085630e0fee0a2448ff0698bc81fe5f",
+      "bytes": 11197
+    },
+    {
+      "path": "docs/CONCERT_COLLECTION.md",
+      "git_blob": "4ae8fa71456f691a1deccc6e04fe5a907f94ffdd",
+      "sha256": "5f555c8bb85a78863657acd236750f5eff927e7ac0ed1dce2cfc0578e883fd00",
+      "bytes": 14794
+    },
+    {
+      "path": "docs/CONCERT_PIPELINE.md",
+      "git_blob": "9afa0b1ce18d6613c1b87df2f4069d45304c833d",
+      "sha256": "a869f2cd9263460251ada764ea24f2cfac06dedd70565ebbe816ca00a74b6e07",
+      "bytes": 7469
+    },
+    {
+      "path": "docs/CONCERT_SEARCH_COVERAGE_2026-10-22.json",
+      "git_blob": "9af6190be4ced704d1f5c9ebd9c2d3a0b57ea87d",
+      "sha256": "7f719ac3beacacbca9cad0ade80b794e5b9a3683ceb19459f717d56cefb377b3",
+      "bytes": 538240
+    },
+    {
+      "path": "docs/CONCERT_SEARCH_COVERAGE_2026-10-22.md",
+      "git_blob": "abc82b3f10ab19f9d4837b694e4f74cc90608cb3",
+      "sha256": "50e28e5b3a324c00377f963532dfc26ca17168a9ffc3abdf52ec84df06f12c2a",
+      "bytes": 14263
+    },
+    {
+      "path": "docs/CONCERT_SEARCH_OPERATIONS_2026-10-22.md",
+      "git_blob": "5a417efab46e9f95e5bc7bd1ad87fb4c783a2458",
+      "sha256": "a47edadb8f758be992793f2e52cf145cf2e13f35a5266bd0f94165db80879f2d",
+      "bytes": 4978
+    },
+    {
+      "path": "docs/CONCERT_SEARCH_REPRESENTATIVE_2026-10-22.json",
+      "git_blob": "84cd404c018a15f263ac83bb898d3fff53fbf79b",
+      "sha256": "d3e78fb61006924158adff9dd90e6ca0b4c69b7c4c587a3350d5d195c97a59d7",
+      "bytes": 4889
+    },
+    {
+      "path": "docs/EASYOCR_BATCH.md",
+      "git_blob": "ba7e210a5d1a0cf03ef02a6d60fa2be6981c02f2",
+      "sha256": "905ccfe3ad8464269de1bc2f1b7c6a36d1844849f8d2cf372b3fb130a836e586",
+      "bytes": 15558
+    },
+    {
+      "path": "docs/EXPIRED_CONCERT_CLEANUP.md",
+      "git_blob": "b1472e6de94537aaa674b027067a6c75b4289813",
+      "sha256": "a432c16ae22c970b1b1d3708357a151af86512d9c8d7ec6365ff798249ce24d4",
+      "bytes": 13963
+    },
+    {
+      "path": "docs/HOME_DISCOVERY.md",
+      "git_blob": "cabbda0cf113ef46aa6e4cebc8c3e8c6eba10162",
+      "sha256": "12effbcf60a4734553c95f0745452d1acf2337ff1b7ed0d4d62c0511fa948991",
+      "bytes": 3493
+    },
+    {
+      "path": "docs/KOPIS_HTTP_400_DIAGNOSIS_2026-10-16.md",
+      "git_blob": "306b175d6889ba849b34c2385131d00b300210e1",
+      "sha256": "ff2d95cc30d99178f10e079dd4d9dd8a999e18dcff7dc99e6fed327f94bc7522",
+      "bytes": 7063
+    },
+    {
+      "path": "docs/KOPIS_HTTP_400_DIAGNOSIS_2026-10-22.md",
+      "git_blob": "f27a8cbf86d7b9d9e880b1215791595f98250bda",
+      "sha256": "9a109f470ffbf2c25aea6c315f3180687a850e962b4252ec181f1100c8dafd56",
+      "bytes": 7887
+    },
+    {
+      "path": "docs/KOPIS_SEARCH_V1.md",
+      "git_blob": "48b2d81120a8dbbf5c8524f6da20f5fe10ed0218",
+      "sha256": "3d96f495469d38f4318987a67326439506575061510220dce8fad870c2712524",
+      "bytes": 13862
+    },
+    {
+      "path": "docs/KOPIS_SETUP.md",
+      "git_blob": "6f58b12feecb6563cd01bc5f34e62b073f2634f7",
+      "sha256": "eb1f0b7d9290859c7d05fbd702be356f39844eb3cd0570eca13e85479b9e7bf0",
+      "bytes": 12090
+    },
+    {
+      "path": "docs/LOCAL_PIPELINE.md",
+      "git_blob": "70275efeee0a5ed84115a194e32aa32b4f5e34c7",
+      "sha256": "f1c185a3b5e1065af31cf0afde9fa483ed67ff6e20ee87f430bcf7e96d160893",
+      "bytes": 20232
+    },
+    {
+      "path": "docs/OCR_IMAGE_LIMIT_HOLDS.md",
+      "git_blob": "ad0f6dea4259c06103b7e904194ad12f2cff33dd",
+      "sha256": "7b8e01d3fff62dadc2de155cd22c71b1306e5a1bab1341d13e29370afade0501",
+      "bytes": 9426
+    },
+    {
+      "path": "docs/PIPELINE_ANALYSIS_ONLY.md",
+      "git_blob": "2443843d99074458c96e9c04ba3f07112988c801",
+      "sha256": "71ba615f67f53131605599a606a5f944878948e88509a6e6075fdb594c72c760",
+      "bytes": 3066
+    },
+    {
+      "path": "docs/PIPELINE_INTERRUPTION.md",
+      "git_blob": "0007d9c1a0e81f7f0c41aa859384807d89286ed2",
+      "sha256": "7fe530ae80265bba9930332dd55e53a152c15a37a9cee5de662b743e0d2e4ce9",
+      "bytes": 12721
+    },
+    {
+      "path": "docs/PIPELINE_PRIORITY.md",
+      "git_blob": "d80af72bb88a6a2f0e8e55b759fe50068a177de7",
+      "sha256": "368b738543c7850b494f3c6a3305455c62482517d11391b8068663679e4edd65",
+      "bytes": 11084
+    },
+    {
+      "path": "docs/PIPELINE_SLEEP.md",
+      "git_blob": "323519867fa2c5984f6bdcb04fa9f8a5a5898f52",
+      "sha256": "62f272e6437dcf3bc483ebad47f92454fec9c1c0f6bb8a0cca34b175e68cb747",
+      "bytes": 3005
+    },
+    {
+      "path": "docs/PIPELINE_TIME_BUDGET.md",
+      "git_blob": "b00a6eed13ca00926e8ebf16c4a7666e442c0f43",
+      "sha256": "830e3e20e64f2b65ef4e7a37e5be38282c27d514c5cce4e833a2803c5cf2ea86",
+      "bytes": 3389
+    },
+    {
+      "path": "docs/PROGRAM_ANALYSIS.md",
+      "git_blob": "7f035839b7c9b929f6ab47d74909c5a49e3a11e5",
+      "sha256": "4210faa13e1ebfe69e68146b495c09c958b9288c563062e54f1fe218a539033a",
+      "bytes": 44966
+    },
+    {
+      "path": "docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json",
+      "git_blob": "b6e32d2c2ee84163c0965c8aa3dbaa66f9fc2d4f",
+      "sha256": "1d34b731f616a51bec0931ca10e4a9343bb7104ee3c04989c0a53462866176b8",
+      "bytes": 3090
+    },
+    {
+      "path": "docs/PROGRAM_ANALYSIS_SAMPLE_2026-10-15.json",
+      "git_blob": "6795eaa5147b5ffd5a10d0d38c30b870486d4ead",
+      "sha256": "ed96db0e6a751b06d95b26890bc048cef607fa387bd6ff851596b31c39478271",
+      "bytes": 35348
+    },
+    {
+      "path": "docs/PROGRAM_ANALYSIS_V3.md",
+      "git_blob": "7c4a4c09216b75c5a269e3345f5ab70b709b3890",
+      "sha256": "17247b4ab28270bdfbc7a41f367b036baad9630b67fdb0ed86dc4b9fce91eb6d",
+      "bytes": 12187
+    },
+    {
+      "path": "docs/PROGRAM_ANALYSIS_V3_DRY_RUN_2026-10-19.json",
+      "git_blob": "bf1bf53028cbfbcd1a8946b85a2f7a667cf60a75",
+      "sha256": "63d12f3e9f457d594fe1da335fb5802e4feb787654459dbcb79d1ff741bc8968",
+      "bytes": 6066
+    },
+    {
+      "path": "docs/PROGRAM_AUTOMATION.md",
+      "git_blob": "db65b3209b850e7eb3017ece93a2c8bed83a5fa9",
+      "sha256": "4702e6209755228cd5972a392159f70d5b70804bffc5f114761634eae9231d10",
+      "bytes": 17683
+    },
+    {
+      "path": "docs/PROGRAM_AUTOMATION_BOUNDED_DESIGN_2026-10-23.md",
+      "git_blob": "9b78702710a09f643a25a86fe486771f413a61e0",
+      "sha256": "a30f0c1ec268f01e5a2fe038131665b35944ac4b425b4da5555306d6a41c2f13",
+      "bytes": 10204
+    },
+    {
+      "path": "docs/PROGRAM_AUTOMATION_BOUNDED_REVIEW_2026-10-23.json",
+      "git_blob": "df2a61e68de503696bb834119045e697a831a06f",
+      "sha256": "8d08bcaccffd15e1eed4492123db5cbf00ee88f250d9eff131396d539536e346",
+      "bytes": 13306
+    },
+    {
+      "path": "docs/PROGRAM_AUTOMATION_CANARY_2026-10-22.json",
+      "git_blob": "e9e11cfd3b6c5c47d4fe8a4042bd2feb8c21bec0",
+      "sha256": "2671faae6c8093f77b5974da4a41afaf0421bc6b56a6b1aec83daa08d6c8364e",
+      "bytes": 100774
+    },
+    {
+      "path": "docs/PROGRAM_AUTOMATION_EXPANSION_2026-10-22.json",
+      "git_blob": "dbb79b490c5f17d10db6a3e4ca08c865094ca0d5",
+      "sha256": "edbc40a077ba1dd9ecf00eb7e408d1e3a338c187774b5dd081495b4e3a6e49ee",
+      "bytes": 88712
+    },
+    {
+      "path": "docs/PROGRAM_AUTOMATION_EXPANSION_DRY_RUN_2026-10-22.json",
+      "git_blob": "8380e9a6cf95dfeacd98716907a0e576638ff573",
+      "sha256": "abd2a4881ee6e86ca4bfa41b4dec8877d3b0b2be670e50e65b8e4ecf018b57f4",
+      "bytes": 83198
+    },
+    {
+      "path": "docs/PROGRAM_AUTOMATION_RESULTS_2026-10-22.json",
+      "git_blob": "0ef1eb5a03aa9d491e1276e24df9bb7bd7e57a33",
+      "sha256": "4c1efa1fec399abc8da3d21b4dfd13c9e30796ae324417518c788355e6bcb388",
+      "bytes": 4564
+    },
+    {
+      "path": "docs/PROGRAM_ITEM_BOUNDARIES.md",
+      "git_blob": "b347b17c813af455bfe6dd3b491f6219446b5491",
+      "sha256": "dc20e59c5f80ca9f0ac0b6c8ec1317b4de86a9b2d27d2b9629d8ece813678a84",
+      "bytes": 7434
+    },
+    {
+      "path": "docs/PROGRAM_ITEM_BOUNDARIES_COMPARISON_2026-10-15.json",
+      "git_blob": "ac3ce8a36afebe34fc47e05daeec16c07f7a6f09",
+      "sha256": "55b0262ced4c6c7abdc781543ee5adff6c0d50e84473826734b87749e974ed7b",
+      "bytes": 23947
+    },
+    {
+      "path": "docs/PROGRAM_OCR.md",
+      "git_blob": "83c366dc0663971cfd93d5fc70cdb6ec18baec50",
+      "sha256": "e8290481cd8ef49fbb30c6e55aaeabed1c34a965a144421b9212777274320862",
+      "bytes": 10216
+    },
+    {
+      "path": "docs/PROGRAM_ROLLOUT.md",
+      "git_blob": "a742a1e98f5a20b6f77a0e09487790ad7975929f",
+      "sha256": "eaf018d71668069daf12ce77c0970636b3d044bfa0e3e3359de5956d117d28a3",
+      "bytes": 17498
+    },
+    {
+      "path": "docs/PROGRAM_WORK_IDENTITY.md",
+      "git_blob": "cb3f7dbbd3a618f00250e857a22fce162182768e",
+      "sha256": "925acd2ea67d97c0ec94ceda520a70e91b6a9318ea3baf525a55a6ab6373907f",
+      "bytes": 15777
+    },
+    {
+      "path": "docs/SUPABASE_CONCERT_PREVIEW.md",
+      "git_blob": "8b828f8c4693437c06a2789a31a273a30d02c0ba",
+      "sha256": "8932a14109bbca6499a5d7b927c70ce0ddf8501296cbc57e19f58b46b32970a6",
+      "bytes": 9090
+    },
+    {
+      "path": "docs/WEEKLY_SELECTIONS.md",
+      "git_blob": "c625a6d94c68685680879b5b8ab4b58d46d25300",
+      "sha256": "404432912a543e5704955b60a2eb5d213afaf4e59fb71aba27747d1762a28e1c",
+      "bytes": 4442
+    },
+    {
+      "path": "docs/collaboration/archive/CA-COLLAB-20261022-001/CURRENT_TASK.md",
+      "git_blob": "efc5164aa12bf5554d4ba2a5598848ce1514769e",
+      "sha256": "4dca9c4497587438dd914061168ba1473cfa511e0810b974f71a5c7559ffab2a",
+      "bytes": 3952
+    },
+    {
+      "path": "docs/collaboration/archive/CA-COLLAB-20261022-001/HANDOFF.md",
+      "git_blob": "a60634542d3eb14320a64b5fdf02c17c97af2dbe",
+      "sha256": "dfa25f0b568fefcbc58bbb9290fb5b7e9997fa5cdaff28017d6754bce06a552c",
+      "bytes": 26224
+    },
+    {
+      "path": "docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md",
+      "git_blob": "d598a87c8214d2e67824f863088aca159ce4db7f",
+      "sha256": "205d038bc1edcc2b3df77e4ad2b87f0cd8ff1858a17c4112c09b7f59304cfd3f",
+      "bytes": 12262
+    },
+    {
+      "path": "docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md",
+      "git_blob": "00fa03bda697e11cf1630c7593354e38664a5588",
+      "sha256": "b3415d68e54915567d0238da266046cbcd3aa11b92d1aabe8c5c83851ce627e6",
+      "bytes": 23061
+    },
+    {
+      "path": "index.html",
+      "git_blob": "28160c23e7793ae6f86c8968cb760993bc49541a",
+      "sha256": "e073a5b47483c259557f1fc8b32abcb01a26ef26424cf0081e75739e1a1753c7",
+      "bytes": 350
+    },
+    {
+      "path": "package-lock.json",
+      "git_blob": "f0425cc95807f43ef9c2f395b9803c4189d7fb3b",
+      "sha256": "6c6a4feeaa66338fbe44276127a6e0257bc37b0b917cdf1693fb2dd7ec2b58b5",
+      "bytes": 85881
+    },
+    {
+      "path": "package.json",
+      "git_blob": "9f34b66e03a22d7d0ae614d184fbc1313ecf9f18",
+      "sha256": "e685acad04070b94ae47c0445aabf6406a702433c759125359589d21ee21ab2b",
+      "bytes": 1775
+    },
+    {
+      "path": "public/composers/CREDITS.md",
+      "git_blob": "b11c22308ca54667310ec7e3f3480f0ade211ea5",
+      "sha256": "29058d12b89eeda10272015fb0a3c85c936cf9c0c56cf1c86e86b02fe8f8ae63",
+      "bytes": 864
+    },
+    {
+      "path": "public/composers/bach-card-800x600.jpg",
+      "git_blob": "73a45ef969b3c060923834b24fce9467a54012ec",
+      "sha256": "ef001a154e9e36a0f9f6a02410aee2b438f762c2336d32ac8d65e58bd76e0755",
+      "bytes": 147511
+    },
+    {
+      "path": "public/composers/beethoven-stieler-card-800x600.jpg",
+      "git_blob": "789657c9cacb071d54f6b295addc00720badeb54",
+      "sha256": "d6508ca1a580e0dc233f15f1bca79becc4385b888c7af674eed28b3f732091c7",
+      "bytes": 157443
+    },
+    {
+      "path": "public/composers/brahms-brasch-card-800x600.jpg",
+      "git_blob": "543052605127020c218b4a30e89fdc525de58a0e",
+      "sha256": "cf710160defac36b085900b868951984fb913edcfbceb7467032fe5528b7f3e4",
+      "bytes": 130305
+    },
+    {
+      "path": "public/composers/chopin-wodzinska-card-800x600.jpg",
+      "git_blob": "29a6aec362d9aa71d31431b4e3649512791270b7",
+      "sha256": "a493236aceeacd5352c5a46cf7379e3dc28311e4ef4cd792bca76f7f2a95ac70",
+      "bytes": 108154
+    },
+    {
+      "path": "public/composers/debussy-card-800x600.jpg",
+      "git_blob": "1bce59125220624316fe7d2d8ede793425dd9239",
+      "sha256": "ade1102cbce74076c75b664948c3266f0ecbab59b5c6c3aa1ad2e24aeacab570",
+      "bytes": 80482
+    },
+    {
+      "path": "public/composers/liszt-card-800x600.jpg",
+      "git_blob": "376a83de3630d7364e4621b42646d4c99f39c58b",
+      "sha256": "f3b4656dbaa90692aeb5e0661abc04607ed45a4e5705efbca17b312b7de74156",
+      "bytes": 131605
+    },
+    {
+      "path": "public/composers/mozart-card-800x600.jpg",
+      "git_blob": "213e663e3d6ef661f9cd15234fe0060aff16fcd6",
+      "sha256": "2e7c262bb78581e7c279b081b330e00ff2ab4e7c85d29296dccc250c52615d69",
+      "bytes": 80756
+    },
+    {
+      "path": "public/composers/mozart-krafft-1819.jpg",
+      "git_blob": "d542a695a7c7386262fe2324a8b9a2e9ca94a7b1",
+      "sha256": "bda5e5796ddcd3d8b224311e476cc00dab192c78aa286afd96ffe67a103592ca",
+      "bytes": 184502
+    },
+    {
+      "path": "public/composers/rachmaninoff-card-800x600.jpg",
+      "git_blob": "379e2c4c8c338dad7f847698338fe9211ab76b05",
+      "sha256": "bc0ed5aced3c41744479a6965b5593db3591f9baf1904004bdd4a2bf88868112",
+      "bytes": 100454
+    },
+    {
+      "path": "public/composers/satie-card-800x600.jpg",
+      "git_blob": "c0f1484d65f14175664d8c3e9edadbf86e2ceda1",
+      "sha256": "d06271b39ec1d115604011ba50a82ac1f6f78af46a3a73a11acd0d5244d93caf",
+      "bytes": 80450
+    },
+    {
+      "path": "public/composers/schubert-card-800x600.jpg",
+      "git_blob": "458632ee954dcfc9e2b7489add1174380e323fea",
+      "sha256": "34ea6a2e883a4760a7501032f93c2e6c74be8165a3ab217f47b54dc02948f52f",
+      "bytes": 90083
+    },
+    {
+      "path": "public/composers/schumann-card-800x600.jpg",
+      "git_blob": "ddc942cc81f1cba59068bb5e2100f61161774536",
+      "sha256": "43246c375df359d786b69b51a8e202c29a4b320e3ae75353e243445a6f0c8deb",
+      "bytes": 83828
+    },
+    {
+      "path": "public/composers/schumann-kaiser-1850.jpg",
+      "git_blob": "d5818bb822d44a9f6bed58649539ac6af395a795",
+      "sha256": "1b621fbe575cbb91bf9c335ff0bb4c591fef2534aee7db0acbdd872dd95a88de",
+      "bytes": 208719
+    },
+    {
+      "path": "public/composers/tchaikovsky-portrait-card-800x600.jpg",
+      "git_blob": "2e9aa62f9a9a2b9bc4ecd81212221afc3512e19f",
+      "sha256": "d39cfc1d2412365acf5b6728dd90dae258769b25cc4bc6a152cefee20f856ca7",
+      "bytes": 45568
+    },
+    {
+      "path": "python/easyocr/pipeline.json",
+      "git_blob": "ace1fb15c8e7ec2240df0d0b0c385fb8a137149f",
+      "sha256": "daa6ee5ba89f19501cd58374b7f291f03d6b57ba411abd57057f7e503a6dfc77",
+      "bytes": 333
+    },
+    {
+      "path": "python/easyocr/requirements-windows-cpu.lock.txt",
+      "git_blob": "9675765467fea623c1420be7ceaad6fa866c688f",
+      "sha256": "71cc3e73367a040cf1d68d3b1126b939b9272d6b48e088e19e6a6f5dc6d46c2b",
+      "bytes": 472
+    },
+    {
+      "path": "python/easyocr/requirements.txt",
+      "git_blob": "0734bec7ede04546721cbd303792224c1e9a728e",
+      "sha256": "4ccb43d47a154ead2adb0da054ffbf70caf936b266c605ca2d05f3f98aec8cb7",
+      "bytes": 95
+    },
+    {
+      "path": "python/easyocr/test_worker.py",
+      "git_blob": "13cb5018a57801168e2083300cf1036ceb19c590",
+      "sha256": "922fe2fcf484555de66002ddd713beb076ab2357b613eefc4a8cc4b024f5fd78",
+      "bytes": 1430
+    },
+    {
+      "path": "python/easyocr/worker.py",
+      "git_blob": "983fd5183440fb85964070b4b93e5f4669a48654",
+      "sha256": "2f00056cd0fa409e78903dac1d39ade944b704c04edb7f644e6f3a65e9224689",
+      "bytes": 5916
+    },
+    {
+      "path": "scripts/Invoke-ConcertPipeline.ps1",
+      "git_blob": "c3a2ac6be2eab93e4b38fd0ec52ad97913a14d0c",
+      "sha256": "e01cdcd8d995f052e62f05628b7d326c106ceafaaa77b86dad8556c2f2cdd9d6",
+      "bytes": 11104
+    },
+    {
+      "path": "scripts/Manage-ConcertPipelineTask.ps1",
+      "git_blob": "269d2c3a68b3a87d9df764935aacb37de02fec79",
+      "sha256": "922ddf02b2a2ff39f5a7ab296cd00dcbfa9c62c16f2f2a2ada7072b66e1f81fd",
+      "bytes": 10488
+    },
+    {
+      "path": "scripts/WindowsBatchPower.ps1",
+      "git_blob": "05205a6e084bd516e43e6850ee0ba97aa0c52aa4",
+      "sha256": "bc6e445ddd4af68f59e6bb536962754bdc1bcc22d50a672e221e60362d065a55",
+      "bytes": 2212
+    },
+    {
+      "path": "scripts/analyzeConcertPrograms.mjs",
+      "git_blob": "3b2a86cc6eea2ad73820cd897f4e90d0c38d5fdc",
+      "sha256": "fed87d92dc48f4f631fab90de57208c326ec83cf47da49d6257b34b3c8004338",
+      "bytes": 9004
+    },
+    {
+      "path": "scripts/collectConcerts.mjs",
+      "git_blob": "15a61438407be5dc9922e81e37d4a60cc8e9d068",
+      "sha256": "2df11855e1728888bedef418fd17380af2ee740a8495e2e8c37a1f373ccc3332",
+      "bytes": 1598
+    },
+    {
+      "path": "scripts/composerSelectionDomTest.mjs",
+      "git_blob": "e70e0ac98822777e987578779e853696f6cb3c46",
+      "sha256": "a39989fc1fd5254627c85c652044cbc188aa8fbfa69e5a2c6cdfdaacb89c9c51",
+      "bytes": 12540
+    },
+    {
+      "path": "scripts/concertSearchDomTest.mjs",
+      "git_blob": "6a2f30213ee6e76531aa9b00754c4a2a7fd0acf3",
+      "sha256": "e6745372517cec637968d276f592862f866863bd7d6f15d5e8a6283162c7a216",
+      "bytes": 6706
+    },
+    {
+      "path": "scripts/dbConcertDomTest.mjs",
+      "git_blob": "9c6822f8eb53fb3448896e006f5212557f4f97d1",
+      "sha256": "abb8237fb534ac6f304986efacb00f6438dfdf2f9a41d051601dc3db85764ad1",
+      "bytes": 5413
+    },
+    {
+      "path": "scripts/diagnoseConcertSearchCoverage.mjs",
+      "git_blob": "4f03eb47c37e98372e7a4bb780c0939bb095143e",
+      "sha256": "baa140ecaef288b468c0d7d56b8b486492b619d3282af0661f9f3952898ed503",
+      "bytes": 18716
+    },
+    {
+      "path": "scripts/diagnoseRecommendations.js",
+      "git_blob": "47ea98648879215434600ebf2db4a7b892c312d0",
+      "sha256": "a85bc0d2650a803b307dfd2846657b933ad45f60f52ed877cf4e399c3b018ab1",
+      "bytes": 1294
+    },
+    {
+      "path": "scripts/emma/emma.test.js",
+      "git_blob": "d0cf481f37d2e1ca752ad7c0ad6bc5e2774e223c",
+      "sha256": "a30bc357843f8d45efa23ddaac496958db34174f04e8d5a8a58d5f1ffe9bfcb5",
+      "bytes": 2507
+    },
+    {
+      "path": "scripts/emma/emmaCsv.js",
+      "git_blob": "9cde51152f8d073665a8f160f1aa22f9eced7939",
+      "sha256": "2b6320c3d1870fa00a8b7d6d33b0635ae29e8df6227791cab5816938debb6a22",
+      "bytes": 5989
+    },
+    {
+      "path": "scripts/emma/importEmma.js",
+      "git_blob": "b90a66737c10656a4f7c10ee13e917881a4e399e",
+      "sha256": "415e9a91786bde07dd21ae888fc14286b6967d38308cb917b75062f1696e19bb",
+      "bytes": 1065
+    },
+    {
+      "path": "scripts/homeDiscoveryDomTest.mjs",
+      "git_blob": "a2db7106c98a956e7704bb5ebb00710fa71d9201",
+      "sha256": "3c6e9a67f173e816b2f5139c08ebb2bc334627bb670cea578f3dd2aac5880765",
+      "bytes": 7225
+    },
+    {
+      "path": "scripts/musicSelectionDomTest.mjs",
+      "git_blob": "ac1788ccc8a7286823daecbec350f54d7f00f40c",
+      "sha256": "6f654b36d4fbf556caca4dd4e3f9661b92beb7be484e9591a34fb7405662d067",
+      "bytes": 6820
+    },
+    {
+      "path": "scripts/runConcertPipeline.mjs",
+      "git_blob": "989d12d43fce2a41ece2cabedca621d08cbcab5e",
+      "sha256": "9c37a8902d49e2c3ea4bd84a953d449e28eff4c4fcbbc06018c2a0f2fbc9ad50",
+      "bytes": 6414
+    },
+    {
+      "path": "scripts/runEasyOcrBatch.mjs",
+      "git_blob": "660b227b1d7f83ba795fa2517c223cc9c9bdde92",
+      "sha256": "08868d331ea0076279c11b333bb4d366ef9359deaced9d9bb3b86c800239e5fd",
+      "bytes": 1794
+    },
+    {
+      "path": "scripts/runProgramAnalysis.mjs",
+      "git_blob": "a6ec89321de87c8bd23a447f296d18be80af5f8f",
+      "sha256": "c893832efc11d89c03dee5319e89f679fa772da3f04a44622f8a04b7e9237cb9",
+      "bytes": 498
+    },
+    {
+      "path": "scripts/runProgramAutomation.mjs",
+      "git_blob": "8e9f3156fa26fe2b4e824873c7d7ca1e9d0bf665",
+      "sha256": "fd556ddf76c080ed2980078e6c67e8149e83c921b66db8e0d9fba91ca46dfcc5",
+      "bytes": 3553
+    },
+    {
+      "path": "scripts/targetConcertDomTest.mjs",
+      "git_blob": "17f1c05abd4be11e9bebb9970793b773d5fc2e80",
+      "sha256": "2625d105ebad75600ebcd5b260be0fccda52bfd189c235f351e4911001d79b69",
+      "bytes": 10287
+    },
+    {
+      "path": "scripts/test.mjs",
+      "git_blob": "8d2529902e98e4475a6c18584b9ed737dfcdf346",
+      "sha256": "85cd923e0073b0ae085c28a8d14af818f22fe279e21349458e9b48ee8ccac159",
+      "bytes": 21347
+    },
+    {
+      "path": "scripts/testConcertCollection.mjs",
+      "git_blob": "493dec602a893fe21bdb99055a2646fd497e7d9a",
+      "sha256": "21a71c822599e553005252ced962fdf9b5ecc862319633c9eb2b9f2b2059f4ea",
+      "bytes": 94
+    },
+    {
+      "path": "scripts/testEasyOcr.mjs",
+      "git_blob": "c35623a9601bcd9c0838be96a3742fc862fcbcfe",
+      "sha256": "b71c56a08f31d0a46da0b8af845fa279541d6c9fcd77cb12cadf73b0152c993f",
+      "bytes": 80
+    },
+    {
+      "path": "scripts/testProgramAnalysis.mjs",
+      "git_blob": "a649ee349982c8dc0c0a01d0cacf3fcbf19b3a75",
+      "sha256": "bf25e3d1eb005a883ccc0c4c01662f0ebc8e0950c5b9dbce81aeceaaf9211cd1",
+      "bytes": 572
+    },
+    {
+      "path": "scripts/testProgramAutomationBoundedPostgres.mjs",
+      "git_blob": "1e16dbd06d03fd2fa9e25502537709820b03c7d5",
+      "sha256": "d8404242107892d44ab5ab5a08ea929636d4633c124970ce07daaed08a766d58",
+      "bytes": 5367
+    },
+    {
+      "path": "scripts/verifyConcertSearchV1.mjs",
+      "git_blob": "212305fa6c3d081c85657a0433225f289031f1c5",
+      "sha256": "78d21a15850cf4f5b60445f558cc39a65df8da9fac222ac6d1f72b6dc2b8250e",
+      "bytes": 5373
+    },
+    {
+      "path": "scripts/verifyKopisLive.mjs",
+      "git_blob": "0cf61f82a17ed716718ad40228fef33fb68a36cc",
+      "sha256": "a9fbc2a8577b35b4da306cc4bf5dbaa52b895c94e8c09b85817381c5fb40cab9",
+      "bytes": 5748
+    },
+    {
+      "path": "scripts/verifyOcrCacheRestart.mjs",
+      "git_blob": "af0e80c96b954fa06b61cf017c5c2d1461c35069",
+      "sha256": "8cef4f78cc29676c765ac4763b149a05c93ec768f811103c189db515fb73b158",
+      "bytes": 886
+    },
+    {
+      "path": "scripts/verifyOfficialProgramText.mjs",
+      "git_blob": "d4562c640dd82045532e06f5f256a864b7f29854",
+      "sha256": "dfeea361974342add67106d050b697f76dcd9c882ec2ef1f265ff5a38e0e9299",
+      "bytes": 5816
+    },
+    {
+      "path": "scripts/verifyProgramAutomation.mjs",
+      "git_blob": "7814c6ecc650e5b42a5e106e9c9fab9ba7095e79",
+      "sha256": "9ba1ad74a6e5cccdef876429939ee9a6f1ad2260135deb9f8e544eea0647a8ba",
+      "bytes": 11861
+    },
+    {
+      "path": "scripts/verifyProgramOcrLive.mjs",
+      "git_blob": "8cd775182b83b40597699dc8eac40d8943bec992",
+      "sha256": "7181b7c20aef0cbdcf6b104b9bd552db72d9ed647611b5804853ff35c2977b0b",
+      "bytes": 2725
+    },
+    {
+      "path": "scripts/verifyTrackConcertLive.mjs",
+      "git_blob": "be089b6a7d13489c756baced2d26f6b1d66af6f2",
+      "sha256": "83f558892fe1426a1292370c5b8a2618459d3d1a0abe0014e1798517d09aab3d",
+      "bytes": 3640
+    },
+    {
+      "path": "scripts/weeklySelectionDomTest.mjs",
+      "git_blob": "11494d1f9fb4f7d85c5e55a033624d77b58881ec",
+      "sha256": "42aa4ccb95554c497ca8742b68f3e9a9f6df3e7e3d44a7856f2c153fc7eb69d8",
+      "bytes": 5563
+    },
+    {
+      "path": "server/api.mjs",
+      "git_blob": "4e50607e248dc61057d2f7551a4ddd17ac85055c",
+      "sha256": "09ca5ea25e8ea9c4f51c8401044b0118af3b5420d3195041aaabd8497c17fab1",
+      "bytes": 3509
+    },
+    {
+      "path": "server/automaticProgramCoverage.mjs",
+      "git_blob": "ef67925ea01e8a64318db57ed93b09b08c3f25bb",
+      "sha256": "9ca6ad00cde15ccb75ba7bfa3d52c359cd639acf4a1acb79282d21511c6ffeff",
+      "bytes": 1516
+    },
+    {
+      "path": "server/automaticProgramCoverage.test.mjs",
+      "git_blob": "9d3b663c375ab3a2c72f77e05ae4b1b233a29435",
+      "sha256": "766bd950f25527835bf7ad4cfaf59db81203d25faffeab25c2393fed79caa7c5",
+      "bytes": 1429
+    },
+    {
+      "path": "server/automaticProgramLimits.mjs",
+      "git_blob": "b0e438d9f0b9c6f88d1a76ad574cbb019f4a6d9d",
+      "sha256": "dc5e152b63ed6222c1da6ee46973f8adf700465e3758a1a03f9d36c1ce98ea5f",
+      "bytes": 4864
+    },
+    {
+      "path": "server/automaticProgramLimits.test.mjs",
+      "git_blob": "e5de2a2980f75f6f19d2995bf13e687bdfeabbe9",
+      "sha256": "fea77d05ecdf9d614a456bf0d5b8f75c17856b7bf9ad22d6e95c7c4625f29b2f",
+      "bytes": 4284
+    },
+    {
+      "path": "server/boundedProgramBatch.mjs",
+      "git_blob": "b0f264753808da7d823969320435367aa5c248ad",
+      "sha256": "0a03b1f767c59099e5850c8e7f4d25d89249fa1b3c18fe19870678f6246117de",
+      "bytes": 1741
+    },
+    {
+      "path": "server/boundedProgramBatch.test.mjs",
+      "git_blob": "fb42ce4483ab9ff9ef46c79e8351e2135de56ebd",
+      "sha256": "4cc75428e058d019c48f11d9b20aed815253746611120cc68078a5b68b707172",
+      "bytes": 1300
+    },
+    {
+      "path": "server/boundedProgramBatchSql.test.mjs",
+      "git_blob": "bbfaa5dd1245f112d024f5ffc1d9e9c4eda60c09",
+      "sha256": "9c33ce293c0fbe9f67e20e00768c78fade994eb1068c903d6f672613d12147ed",
+      "bytes": 1422
+    },
+    {
+      "path": "server/collectionHttp.mjs",
+      "git_blob": "19c989cd957a90557b2bdc14e23abf13cf0e247b",
+      "sha256": "c960e0075f52378e8b7fa9650fc0445bb8bf504556502d070e886be99c3a2fa4",
+      "bytes": 1998
+    },
+    {
+      "path": "server/concertCleanupSql.test.mjs",
+      "git_blob": "4011c0088bcbd71ffd2d4a209db43d38dda02a22",
+      "sha256": "24fceb0c5541153f962f4a15a46c93315eaffd54b4e4e751a2b312e37d5eaa88",
+      "bytes": 11206
+    },
+    {
+      "path": "server/concertCollectionConfig.mjs",
+      "git_blob": "c6a033fe5aa25c3bef72ab20cfe596ea60bf23e4",
+      "sha256": "5162aec9cca5910f6070da3e3afec5a06785b647d3093bdf2d2669492c4722b7",
+      "bytes": 532
+    },
+    {
+      "path": "server/concertCollectionSql.test.mjs",
+      "git_blob": "7471952b448787a19beb2ccf820fbd252b8579a0",
+      "sha256": "06812e4949ebaf6c0e74cbee065d14bfb5de7f3d20cf26e3b819fd6b92f4d562",
+      "bytes": 12139
+    },
+    {
+      "path": "server/concertCollector.mjs",
+      "git_blob": "bf925c95d361f8e618da8fdeb031aec344841600",
+      "sha256": "9610efb6ab9c244429d5212b030d6d1269cf0f2f7a817cce71c2be2dec03ffd6",
+      "bytes": 10565
+    },
+    {
+      "path": "server/concertCollector.test.mjs",
+      "git_blob": "4d574d1a680cc1642f80b411b08a896377370276",
+      "sha256": "38ffa24571bada6bbcda90c7c7a778e26652c9097df94da2c306986e0731381b",
+      "bytes": 19436
+    },
+    {
+      "path": "server/concertPipeline.mjs",
+      "git_blob": "14c87e03f9245d8d278bf7d977a772c4af6468f3",
+      "sha256": "8e4948068729b33302b9194abbb6529881c4203311b5f1c347fffea21de08021",
+      "bytes": 30390
+    },
+    {
+      "path": "server/concertPipeline.test.mjs",
+      "git_blob": "a7ba37217f9f04c44b63d53bcebd02f64160c217",
+      "sha256": "afc04f505a515427769e3d8a63fd962f2cacecceab96837704e6eb21e20a795f",
+      "bytes": 49220
+    },
+    {
+      "path": "server/concertSearchService.mjs",
+      "git_blob": "a4747f7253f46dbc29de8911bcbb277a5e8c40e5",
+      "sha256": "e8a99488756d5fd42f9cd7be48d031235072a472442c2fad1cf2cf3d3b2466f5",
+      "bytes": 926
+    },
+    {
+      "path": "server/concertSearchV1.test.mjs",
+      "git_blob": "323b6d6db0168b40663ae7ea4fda23ed0ace9cea",
+      "sha256": "5d5dc23d6bb5b66d6f243c31fa71247761a19fabaf7fcf83719beb7b5457b0a4",
+      "bytes": 6554
+    },
+    {
+      "path": "server/easyOcrBatch.mjs",
+      "git_blob": "491089150e43edc2cda5821a4817937c2388c92c",
+      "sha256": "963a9ae6f87b8c2e208ecbaa66aa7ae8d7a168e229bd4eca718b990953efcf03",
+      "bytes": 6032
+    },
+    {
+      "path": "server/easyOcrBatch.test.mjs",
+      "git_blob": "00002da476eb925869fbf884219a73b13d1ab66a",
+      "sha256": "cffa27bd2f93bd6a33557e42fa716719461178accc7e3f75b5a9e53b4c1f9765",
+      "bytes": 15877
+    },
+    {
+      "path": "server/easyOcrConfig.mjs",
+      "git_blob": "45b2b8f2a502718be7187e916a7350fccde04829",
+      "sha256": "5b3ba8e7b34ebc8effc92090fce41fd17bbf8986d67c9f54460c9beaa025f5ef",
+      "bytes": 2015
+    },
+    {
+      "path": "server/easyOcrSql.test.mjs",
+      "git_blob": "2e46f405b01a57b0c4d326e976fc9db7f2a2765e",
+      "sha256": "9407d9f640ab0db64c503987e1cbb40f26e36eeaa29ae26ec48c3a3ef3cfd72f",
+      "bytes": 6476
+    },
+    {
+      "path": "server/easyOcrWorker.mjs",
+      "git_blob": "9bd6d76d199d21c3af04837f0d99a7ef97b5235c",
+      "sha256": "b9c665d9b98db7c1daec975f53b3136df11acb93aa2edf521752cf9bc33ca793",
+      "bytes": 6668
+    },
+    {
+      "path": "server/fixtures/programSourceOcrV4.json",
+      "git_blob": "740ae5a51d2e76cf5c3e035b0be5c861503cdba2",
+      "sha256": "c11d99e20256bb927f2c191e4792fff15d0989ee26845dfb26f08d39da1ad7a6",
+      "bytes": 9963
+    },
+    {
+      "path": "server/index.mjs",
+      "git_blob": "e9e955f81ed2e25f2201d4e67306136c9a90b664",
+      "sha256": "3f896fab11dbc38cd81d3e22668db1ac277bd8ceab3874bbf19478494030b377",
+      "bytes": 2173
+    },
+    {
+      "path": "server/kopis.mjs",
+      "git_blob": "beb123d089039eaadb7238356119a78eb0035737",
+      "sha256": "3453916cf00d9eb999e13c30cfbb2ddd07a3eff82894d7402db871f6b3011369",
+      "bytes": 14235
+    },
+    {
+      "path": "server/kopis.test.mjs",
+      "git_blob": "50afe8f4aff8a2e6c0c525eb80eaa6faf0b2b55e",
+      "sha256": "c220d7dfbe982338bcc4b68c4b8471dbb00f238569d99bad666674180d967594",
+      "bytes": 7740
+    },
+    {
+      "path": "server/kopisData.mjs",
+      "git_blob": "db6c33a4bcfcee9e8c1ab8246780ebb3e1160c21",
+      "sha256": "60fb0568a77a8c93a269a6588fb77560dbfda57545e9435c9a53cd5c6bb63ae5",
+      "bytes": 3982
+    },
+    {
+      "path": "server/kopisDiagnostics.mjs",
+      "git_blob": "8cbfb99c0f752ac05151b07ab0fc4b46b18d1314",
+      "sha256": "444bd83649f5eb2608ea26776ff53ccdd230152be41bae1380cc24c7c4464ed0",
+      "bytes": 3750
+    },
+    {
+      "path": "server/kopisImageDownload.mjs",
+      "git_blob": "c78c0dd327fd6417b47699760441652149f13168",
+      "sha256": "86b38992c6344e2bc9b4bcb09404e328c5c4b0c27e90a66c7324c2fca2286b30",
+      "bytes": 2985
+    },
+    {
+      "path": "server/kopisImageSource.mjs",
+      "git_blob": "945a750245fbf41989d8d0bf2e34ce6da896de48",
+      "sha256": "ac77a2f3b49c4bfff6ccdcbd312d5e7eb5ee98715e73873b6970393548866bd8",
+      "bytes": 1399
+    },
+    {
+      "path": "server/ocrConfig.mjs",
+      "git_blob": "723bb6efc300f5cec878453423a3b562ef858fb7",
+      "sha256": "81dcdfd804a364afe315c7c6c7a93353308a1867940ced6bd91532636e4cb018",
+      "bytes": 882
+    },
+    {
+      "path": "server/ocrImageConfig.mjs",
+      "git_blob": "57b6434b5e76b10121468b2049a6c2f8b9243400",
+      "sha256": "3bd165600f7fafd8f616e254a63f2d20bf14b2d61eba65ae6359ede5f137c172",
+      "bytes": 696
+    },
+    {
+      "path": "server/ocrProgramEvidence.mjs",
+      "git_blob": "b78a45650227a05a503808e53eac07956bbe3130",
+      "sha256": "d4251ec38e06d31a02e07a0947038b9a1c308b3ad495fb202d7819acbaad189b",
+      "bytes": 8284
+    },
+    {
+      "path": "server/officialProgramText.mjs",
+      "git_blob": "d3aa7e01f1a354d0162acde658aa72fd9022c746",
+      "sha256": "08777bb676118ab1b3642dce33a1dca090cf9cc78c9cee3548ffcffd35516531",
+      "bytes": 2551
+    },
+    {
+      "path": "server/pipelineAnalysisOnly.mjs",
+      "git_blob": "3e4604f514219d023a75051cc5f8038f5890afa7",
+      "sha256": "3c59938fca37aee3a3859b6a1c668bb506465fee3829cb480a13434733d5d7b6",
+      "bytes": 9902
+    },
+    {
+      "path": "server/pipelineAnalysisOnly.test.mjs",
+      "git_blob": "83d375e06739bfc17ad9a744a1a02e9ff167eebc",
+      "sha256": "754117e3ca80aa4e91d9873b5d1a4eb0768e3400f23af8a8cabf16243b98865e",
+      "bytes": 8026
+    },
+    {
+      "path": "server/pipelineCleanup.mjs",
+      "git_blob": "c4f4113ae175c4a70ead00b24b8e942e294ae1d0",
+      "sha256": "8f696c97418a122c224f5e2fec59c3f8f99b903d2c147dcdc947b65c3fb82c94",
+      "bytes": 5083
+    },
+    {
+      "path": "server/pipelineCleanup.test.mjs",
+      "git_blob": "6709dfdb3068f1c3efe4ac102a8adb8c07c8e6a3",
+      "sha256": "3a1b8dfcc78fbc0099e26c6aa680c0fa0de7fe30882c1c16660b4225321f87b1",
+      "bytes": 6703
+    },
+    {
+      "path": "server/pipelineConfig.mjs",
+      "git_blob": "a53d2ebb2a6abe9a87561a1b02941e41bb1509b6",
+      "sha256": "9e95ea1df2a2c1421c2aee403d7bd13bd5777267e4f64b0f718039f2be49ca6e",
+      "bytes": 4651
+    },
+    {
+      "path": "server/pipelineDeadline.mjs",
+      "git_blob": "f2b7826912328cdd921752d2c19cdebf172edfa7",
+      "sha256": "4eca8b8f64c08827173d173304d07ec243fefcd9a342ec28efbf25582fb8d4a0",
+      "bytes": 1814
+    },
+    {
+      "path": "server/pipelineDeadline.test.mjs",
+      "git_blob": "53d805020b11fc7c39c6fab5ecc35c011331034c",
+      "sha256": "be699f84600b3b176af34bbc116176ac76b68e0235295cd6ab75a66d2dc6bc8b",
+      "bytes": 2137
+    },
+    {
+      "path": "server/pipelineIdentity.mjs",
+      "git_blob": "d40f64d820b0455e801e76093f0ab02ea0e63634",
+      "sha256": "27bdcc3e182c66e53260585b0fad4caffc3a6aab741fc6baaaf6f3d3c784e190",
+      "bytes": 2146
+    },
+    {
+      "path": "server/pipelineLocal.mjs",
+      "git_blob": "1e48182ac5f3cd50dbcf785beb2d17640ef178be",
+      "sha256": "bcf1640fc1a44de163e699185abfe2cd29b4472f78ac62e4e5f3cfe72f156977",
+      "bytes": 9583
+    },
+    {
+      "path": "server/pipelinePriority.mjs",
+      "git_blob": "b43d76f01d19d087644c1d3936daad254a5470b4",
+      "sha256": "0aceeee0ceed1babe023fea2d62b39ee81e41d4e1a28bb9c30f4241969ed418a",
+      "bytes": 3711
+    },
+    {
+      "path": "server/pipelinePriority.test.mjs",
+      "git_blob": "a0b9acf960bbd5bee1de49653f4b1e1ed5a84c66",
+      "sha256": "80d1d9cdb0953b6831a235b3ff66c3eadba34116ea049b80f998493b87ec81c4",
+      "bytes": 5968
+    },
+    {
+      "path": "server/pipelineProcess.mjs",
+      "git_blob": "bebc49e3066e89a1c089ebabfd847056c40bf022",
+      "sha256": "0e9cb5dcc067c8813e0605947995e54ac909152dab710cca95bd6129b1cc6dad",
+      "bytes": 1180
+    },
+    {
+      "path": "server/pipelineRecovery.test.mjs",
+      "git_blob": "44ff7649bc5c5c4311edf6b1a69f57a6fc94ab7b",
+      "sha256": "aeb8d4713137dc57c15cebf42d394a7f1721c7371fe25c9084f8438ef567b3b2",
+      "bytes": 10417
+    },
+    {
+      "path": "server/pipelineRepository.mjs",
+      "git_blob": "d89a66d1cfa0b28490f23f0080530e398f1e20a5",
+      "sha256": "06ff6cfd4d3835be9fe3dd36d1a03ae62d0e2d2a34b17889711615d7541469a6",
+      "bytes": 8446
+    },
+    {
+      "path": "server/pipelineRuntime.mjs",
+      "git_blob": "d3af1ef2de0e3ae80abb59676edbe7cd9f0e2e29",
+      "sha256": "9150860cdecc91a7bee5e336dbd1ac36bd9cfb7b88e534f7eee5b6b67468920a",
+      "bytes": 4802
+    },
+    {
+      "path": "server/pipelineSelection.mjs",
+      "git_blob": "daa67dc08ee37bff55058a40aae1096fa402be39",
+      "sha256": "f7f60d39e4c01335835e4b69c953bb2d0cd8e9d3bb89589471f1f9af78c14173",
+      "bytes": 6992
+    },
+    {
+      "path": "server/pipelineWindows.test.mjs",
+      "git_blob": "d93cb5176e36521774e37092fc043866308643c5",
+      "sha256": "b731ff10f8e69d62b3eba3ffae1769caecbc71c32a88de927eb36f15b3fedc95",
+      "bytes": 19648
+    },
+    {
+      "path": "server/programAnalysis.mjs",
+      "git_blob": "9478877cc2d084354d0ffec156eedcb4001b5ba3",
+      "sha256": "0bfb917a2e014669073130ef6df6d5a7d00fb4363cad5d0fd2001335dec1ab62",
+      "bytes": 20706
+    },
+    {
+      "path": "server/programAnalysis.test.mjs",
+      "git_blob": "718073dc7ee16b7b9bc13978be1b317bd11e425a",
+      "sha256": "78bc1d6e21a3ec4a2859dce9cd7e0a288214d992f91c4b823ee62ea4613333b5",
+      "bytes": 24312
+    },
+    {
+      "path": "server/programAnalysisSql.test.mjs",
+      "git_blob": "4aecf76925a8f6b5939c1111fb0b50f4d7edf9b5",
+      "sha256": "22e8115ac1c8a5edb7ff26c110aa74b2cc75a31a90042ac14acdcb571d5722a6",
+      "bytes": 15354
+    },
+    {
+      "path": "server/programAutomation.mjs",
+      "git_blob": "560ca4642e2f52a831882bc5bab58b8a77003583",
+      "sha256": "1dc90699092da02ee4519f03f7517c4586b6ac1c376ccc7075fb6580f8f2f834",
+      "bytes": 8496
+    },
+    {
+      "path": "server/programAutomation.test.mjs",
+      "git_blob": "a1c0e8cc9edc5afc9f08d573afc92e3f2e111983",
+      "sha256": "60d92bb64458473bddaff974470b399e3f78643ac3c25ac353be22e331e2df24",
+      "bytes": 4142
+    },
+    {
+      "path": "server/programAutomationSql.test.mjs",
+      "git_blob": "6e6b0579d023c6e30cddc99727b124e7d3759107",
+      "sha256": "50c2cf513dec68d73c8176d95a2420559032cddc4d53caa8487fe3d79157e487",
+      "bytes": 8648
+    },
+    {
+      "path": "server/programCanary.mjs",
+      "git_blob": "59dbbdbf9c47c73ea724b095aa802825615a0736",
+      "sha256": "abcc5e0cf3a82aa4dfd1ce7ce55f091681278d1e68ff9d9416f52725fc4528d1",
+      "bytes": 1937
+    },
+    {
+      "path": "server/programCatalogueNumber.mjs",
+      "git_blob": "ef6a7e023ce165df5c6dbae7dfea9f89c06d5709",
+      "sha256": "f1002c821a4cf3c8600b5bbee06c96c54a5974cfd7a9add2e8063bf7ce616b9f",
+      "bytes": 361
+    },
+    {
+      "path": "server/programComposerBlocks.mjs",
+      "git_blob": "1ee7aadf738ef68105025418f34f8dfd51656010",
+      "sha256": "71c12423dda5c5b774c59281feddec320a38966de1682b4d00fe272d2ef9f9b5",
+      "bytes": 9437
+    },
+    {
+      "path": "server/programContext.mjs",
+      "git_blob": "a287e3e165b1015fb4c1d3cdcaa47dc56f7b5d4d",
+      "sha256": "3c93b74cde4aa03fdd098575260dc1ae5b07d742cb153282740614301725d749",
+      "bytes": 2297
+    },
+    {
+      "path": "server/programIdentityBackfill.mjs",
+      "git_blob": "efa524ac0c220b1f097828042cd36b4f5dec7516",
+      "sha256": "ad1be875246ab417009ed808ae428ed6b66e250226c3d6c432a9a0c52d96cc28",
+      "bytes": 6516
+    },
+    {
+      "path": "server/programItemBoundaries.mjs",
+      "git_blob": "92b7db183cfe0a52f22274eef332b2344879a3c3",
+      "sha256": "398c972fbd45ce05e37b598da3cb1d40c3606693ee7d22b73b770c6366064546",
+      "bytes": 5986
+    },
+    {
+      "path": "server/programItemBoundaries.test.mjs",
+      "git_blob": "c22c00165e204f816b12aea3b3c38caffc7ce1da",
+      "sha256": "3626aa8fb00b62356875da400b576f87cccb7a4418afd693912e26ba276ab740",
+      "bytes": 7330
+    },
+    {
+      "path": "server/programLogicalWorks.mjs",
+      "git_blob": "b578cad3a5447bfd234922517fb326df576346da",
+      "sha256": "d629ddeae75a99295c0790bc406b704e731a2fc1e60748ecf77701af6c01b6a5",
+      "bytes": 15387
+    },
+    {
+      "path": "server/programLogicalWorks.test.mjs",
+      "git_blob": "6dbe9dcc9c952adfef5927558eea285b7ad10167",
+      "sha256": "2021c33e6d541abd2d58d8cacb0821e1769765c1c8e3fbcb34189733eb47a9cd",
+      "bytes": 10727
+    },
+    {
+      "path": "server/programMatching.mjs",
+      "git_blob": "c1cf175bb52685f7534fe4978855ebb995667c7f",
+      "sha256": "972887995d9665cb08711b1bcbc0f9e5c2ba2b49f8ccd83b47906200655a62e6",
+      "bytes": 19160
+    },
+    {
+      "path": "server/programMatching.test.mjs",
+      "git_blob": "693086576e43a86dffb5b6c4bd92156945246d46",
+      "sha256": "f5737d9b72e07e5fd187c11e01abd6eb252a20785b1a67b6546bfaafed1e416e",
+      "bytes": 11177
+    },
+    {
+      "path": "server/programMatchingNormalization.mjs",
+      "git_blob": "52c2e4a154484b5dbe9f9e515c4038d5ce3ecd65",
+      "sha256": "340cec34ccaf91e26d48f9dc24c9321439ca272fd3bac31a65b8a45ee3d2c2fd",
+      "bytes": 18980
+    },
+    {
+      "path": "server/programMatchingNormalization.test.mjs",
+      "git_blob": "cdddd6bec2a6b27f95a5d0a92bf221e0f26ff0ce",
+      "sha256": "eeba4b4b10cacb79a0e200701ccdbbd28251c4440cef0240c63deb8cd457c277",
+      "bytes": 10945
+    },
+    {
+      "path": "server/programOcr.mjs",
+      "git_blob": "d9e19e8d0a0540501e9e39b697d2f492bdadd2c0",
+      "sha256": "3ecb825f8ac1fcbebc54d39be3c0f64b601872520268caf1d2cf78c2af0feb2b",
+      "bytes": 15006
+    },
+    {
+      "path": "server/programOcr.test.mjs",
+      "git_blob": "4434a9e5c87966a722eb3e34b84c27c9875fa8ee",
+      "sha256": "dc2b9e534ed019294f2b4ec8da374fbf61e21a1221c76c42add9f4c5c219f0f1",
+      "bytes": 19703
+    },
+    {
+      "path": "server/programRematch.mjs",
+      "git_blob": "8af4108c0bbd1d375e09c717d1d1e4d1affd6794",
+      "sha256": "dcebc6805ec6f81609f90a06794eb997260b488ac8d1ffa1787c6688b7695075",
+      "bytes": 3855
+    },
+    {
+      "path": "server/programRollout.mjs",
+      "git_blob": "07cd8f77d74cfaaeac67dd47342f1108464e329b",
+      "sha256": "b4ced41698b3d89e0ab98859cb4799faa3819c4f54e2b4ea4b4cfcd299b6d772",
+      "bytes": 1902
+    },
+    {
+      "path": "server/programRollout.test.mjs",
+      "git_blob": "55f260a819904ef81c041e65d2f5f9fece435e19",
+      "sha256": "128bbb0f915ffd252f1fef998d4e592c6ed51d22cb93a1f028e8fbbb776e1316",
+      "bytes": 12495
+    },
+    {
+      "path": "server/programScherzo.test.mjs",
+      "git_blob": "e04d96bcfcdaca22c3242fd988a1458afc343228",
+      "sha256": "4c3381f5c7cdb0f6c8d77c80fdd90f531460d61743bb2c0860a466d279bad7d9",
+      "bytes": 3151
+    },
+    {
+      "path": "server/programSourcePlan.mjs",
+      "git_blob": "22c46a1c961b9a2d59ce65a83a7b1b2a83b1f55f",
+      "sha256": "5c1de4400887ce8c4c28e1fe422a8dc65b74cc96be23d0fa5a7dc8740316dcf7",
+      "bytes": 8005
+    },
+    {
+      "path": "server/programSourcePlan.test.mjs",
+      "git_blob": "7c647d26d86d278e3989886bafb60ae51e693b0c",
+      "sha256": "832cbf572faac6c2554b51b744c353d669b1349d71506c420e55fb01c3f4c607",
+      "bytes": 8918
+    },
+    {
+      "path": "server/programSourcePlanSql.test.mjs",
+      "git_blob": "5c6e575fb577d40314b0a646ef7243b4f580664a",
+      "sha256": "ff82889e992d57063bf4585776ca99b1465eb45967f6a3a233a6c380e7d4e05e",
+      "bytes": 14642
+    },
+    {
+      "path": "server/programSourceRouter.mjs",
+      "git_blob": "7e80152f0e9f95c50ed315ecf6a06cf0711a9d82",
+      "sha256": "7f4b644abdb46d7343b68a1703986437149ad38a717c6df50c4abd8654e465fb",
+      "bytes": 3457
+    },
+    {
+      "path": "server/programSourceRouter.test.mjs",
+      "git_blob": "c2b74c999fbde7e0d329230d9ac2ca6884551885",
+      "sha256": "494f0f78907cdeba30ef7c93e457f6277f3d1080a0c5bd1aa8258f32e9968ed9",
+      "bytes": 9893
+    },
+    {
+      "path": "server/programTextAnalysisSql.test.mjs",
+      "git_blob": "85fd792dac96ac13c7a82789ff4a16c366628523",
+      "sha256": "135627a1f13d385700af4b02ae837c65b07d205bbbd3fdd879ec813fa095be19",
+      "bytes": 16231
+    },
+    {
+      "path": "server/programTextConfirmationSql.test.mjs",
+      "git_blob": "b364ac2b1520db27230727a0df4cecd657164a28",
+      "sha256": "08122f884e2317d755323c6c4e4cf6faa29e0a3afd98c033684b14109826bea9",
+      "bytes": 17563
+    },
+    {
+      "path": "server/programTextConfirmationStatusSql.test.mjs",
+      "git_blob": "56bdff405ea9af04c4853d49d3627263cd61e1ca",
+      "sha256": "cc710794b63c5fe511839a28a5a8fd0113899cdb2d3b32a7a65474a34f0203da",
+      "bytes": 11770
+    },
+    {
+      "path": "server/programTextCoordinator.mjs",
+      "git_blob": "03518076f9827422fe3a4751c4a5cc064009efef",
+      "sha256": "0838837732466fd9422d85f47d630b9fd51e7e4b5431b9848c799948d0710fb4",
+      "bytes": 10332
+    },
+    {
+      "path": "server/programTextCoordinator.test.mjs",
+      "git_blob": "44cf959a85631fe4568b008e79ff5b80c0df385e",
+      "sha256": "06fb4dedcb374e753a92bb12c70ffebaabd4ee56195f3d9296a208ca0108326b",
+      "bytes": 14016
+    },
+    {
+      "path": "server/programTextCoordinatorSql.test.mjs",
+      "git_blob": "f489f7876387e6018ac43fc8f383a0e8ea2b6cc8",
+      "sha256": "7af18bb38c09151c7e4b8676cf90ff28f72ba09011af014fd3e4524f247dc219",
+      "bytes": 9121
+    },
+    {
+      "path": "server/programV4Sql.test.mjs",
+      "git_blob": "74c7350ce228d0edd30638f9db5f77b61517ba5b",
+      "sha256": "42eb2a9ae2e0ed345ac6b19c3afb1bdf8f9920f18e56e55c52cd0bf8ddf48ce6",
+      "bytes": 18130
+    },
+    {
+      "path": "server/programVersion.test.mjs",
+      "git_blob": "7dbb61ef2fe73ab5be6b0a7f712cdbf0a618f2bc",
+      "sha256": "2c448ec18fcd8869a2beb8179fbb9c4acb3221d62facc3b8f03423b516806004",
+      "bytes": 15500
+    },
+    {
+      "path": "server/programVersionSql.test.mjs",
+      "git_blob": "534c81a6f3b4d360598ca6763ec1f098ecfc7884",
+      "sha256": "316cd4347d9a3105563e6309b310982614618a688ec092ce417befec99a7a0a6",
+      "bytes": 8962
+    },
+    {
+      "path": "server/programWorkIdentity.mjs",
+      "git_blob": "eff25f0a28836bf45aab9c813f9a706fdffa5bc7",
+      "sha256": "4f14a8f8ef3ea97f882798e653250fc7b4ee781b69c223282884f3845e2f29aa",
+      "bytes": 4143
+    },
+    {
+      "path": "server/programWorkIdentity.test.mjs",
+      "git_blob": "9347b44c8d6dd5b674916111cc8504805e99ed02",
+      "sha256": "56306a562f217f682abec84d736b4fcb6870f06c7165c72d4102e0f0ce120167",
+      "bytes": 8902
+    },
+    {
+      "path": "server/programWorkIdentitySql.test.mjs",
+      "git_blob": "ffa852d8024b9b2ce1efef6af75cb5c91d5f5a4b",
+      "sha256": "4a2981b554694a2425168c9ccca250a78ca9640aa464713fba0d4c915d24215b",
+      "bytes": 12955
+    },
+    {
+      "path": "server/selectedProgramAnalysis.mjs",
+      "git_blob": "27ef455616d830aee2c9beaa57907b40b576ed8e",
+      "sha256": "ffbc9983b4209706e7c9930761357c2f31eb182de9e9c98a08dffd3c82e801f4",
+      "bytes": 4537
+    },
+    {
+      "path": "server/selectedProgramAnalysis.test.mjs",
+      "git_blob": "ecd7f97d7a9448381650bf82f5c0cc4c6bd59bf3",
+      "sha256": "0f68e234707e066feca9401e2a81493f9a6bba1de2915e8cc0c1c75f3795a51d",
+      "bytes": 11337
+    },
+    {
+      "path": "server/supabaseCollector.mjs",
+      "git_blob": "8ed265a30084b479315cc60ea87ca68d627c6f42",
+      "sha256": "054e363729a6e70063242bd294c8e849226549ba14f85d400a24bbb418af76a0",
+      "bytes": 878
+    },
+    {
+      "path": "server/supabaseConcertSearch.mjs",
+      "git_blob": "ab2d6c48e67e3e488410a82513fadcd503c45983",
+      "sha256": "8243c23e122a964bc134a3a4d950535000f30477cb4e98e11ca23ce64fe04662",
+      "bytes": 12232
+    },
+    {
+      "path": "server/supabaseConcertSearch.test.mjs",
+      "git_blob": "6f3311ae72b2d3da349acaa1c833efcc0d04e69f",
+      "sha256": "e87d966e2bdd89bee1af353bdb65dce9fc98ba1475723228430d33a4a924c411",
+      "bytes": 17590
+    },
+    {
+      "path": "server/supabaseOcr.mjs",
+      "git_blob": "74944f8e30e10ce77bf72edd80e0c561bf4cd14b",
+      "sha256": "417bf47f5eb77a9716b8b7766e4f44973c8e9953c72e8768de3972701d6b2130",
+      "bytes": 2887
+    },
+    {
+      "path": "server/supabaseProgramAnalysis.mjs",
+      "git_blob": "6a4e59b0f408da4e79640f62c4cc8543857af312",
+      "sha256": "d393ae5845d72a5e52d7f6a1d3a9d81f044b0c9385a9d698ce6327a958275f72",
+      "bytes": 18083
+    },
+    {
+      "path": "server/supabaseProgramAutomation.mjs",
+      "git_blob": "d62afa7717712656edb4498f7382413a91d16bb2",
+      "sha256": "5085b5ad1da290c7da43758c7a2a31dc4f5e851e1f34caaeada8430efccc2f90",
+      "bytes": 2668
+    },
+    {
+      "path": "server/supabaseProgramTextAnalysis.mjs",
+      "git_blob": "31877829ac21a47987e1d4327c5bcccc61f399a1",
+      "sha256": "d41154a3e396bf73f5e64fd68d6ecdb55d7e293e8238de0dbfbc70c54e86892f",
+      "bytes": 5035
+    },
+    {
+      "path": "server/supabaseProgramTextAnalysis.test.mjs",
+      "git_blob": "0b94d444f6cf545330c61e5669da47f7e6847258",
+      "sha256": "4346d288458ee9ab3030b39dab5a1aefebe2421b5653982a4b298f01c59afaaa",
+      "bytes": 5090
+    },
+    {
+      "path": "server/supabaseProgramTextConfirmation.mjs",
+      "git_blob": "e36abe795b1dc366e696372e6de6c0346118a135",
+      "sha256": "2f3d7f8f463736ba05a9337a760bdfef93eacc68fee74bdecf610248abcadb28",
+      "bytes": 2376
+    },
+    {
+      "path": "server/supabaseProgramTextConfirmation.test.mjs",
+      "git_blob": "bf59740f4f87b923fa9830f36ddbfea49eacbae2",
+      "sha256": "60aad73fa7643cd0ae4c0f338ddcd54d7ed9dce5428e4e8a2059beb2cf6167f9",
+      "bytes": 4544
+    },
+    {
+      "path": "server/supabaseRest.mjs",
+      "git_blob": "5300e43772a169d73389ffdc73bac94ab5052518",
+      "sha256": "7e6564d96b748e79054865a15cf2165a2e93967e46e046c7eabe2b3fea72484b",
+      "bytes": 1306
+    },
+    {
+      "path": "server/testSupport/boundedProgramCases.mjs",
+      "git_blob": "5e378d54dedadabcb52adce319b79fd175599f07",
+      "sha256": "d5a97333acb03b675c6b18aaf9bd884ff5d6126bad7aa581f44696682339544b",
+      "bytes": 8169
+    },
+    {
+      "path": "server/testSupport/boundedProgramFixture.mjs",
+      "git_blob": "51b2a07bfeee1c29fd2e42e3f0799cc720d70d06",
+      "sha256": "7de2cea7a70a88121b983c22efb0b218628b53b3fe0707c1c4a68e50b7cad289",
+      "bytes": 5566
+    },
+    {
+      "path": "server/testSupport/programTextConfirmationFixture.mjs",
+      "git_blob": "37259a2375ecd8e91c6c1f4a608ef4e987930afe",
+      "sha256": "11cdf0c8c86d80b0f6a02c278c72982fe739fe77be90a9e95e4bb61c254971c5",
+      "bytes": 6257
+    },
+    {
+      "path": "server/vercel.mjs",
+      "git_blob": "4b7ce3261ce4eb42a0bdafb303f08a612c200808",
+      "sha256": "f89d04755a021f1399d611f269a4a798807f3c80898411a66c44a604b38868ae",
+      "bytes": 1302
+    },
+    {
+      "path": "server/vercel.test.mjs",
+      "git_blob": "5085099aeb2eac3682b3582cc09682e18aa4db79",
+      "sha256": "aba1ae8d641621996a9f96a57df72b51bff51414e1a67f741e05b3dd2fa9ea0c",
+      "bytes": 5054
+    },
+    {
+      "path": "src/App.jsx",
+      "git_blob": "ad757aff9ae2f816ac221c38b64ea3aae6d7ee54",
+      "sha256": "3b3a75764a793f507fc50e507b46aa09d0154d65a9aa9e28be7370242b31bc4d",
+      "bytes": 50007
+    },
+    {
+      "path": "src/components/ComposerPicker.jsx",
+      "git_blob": "efd7070fa5f3ec6e917c139ce2a5b51b07f21065",
+      "sha256": "b95775fb2d0caf094e70e7b898a6e1d50312d3e430cdfcfb0287da8c7f80eed7",
+      "bytes": 5088
+    },
+    {
+      "path": "src/components/ConcertRegionPicker.jsx",
+      "git_blob": "24bb7d078519058e6337b4f52c982f0992aaf13b",
+      "sha256": "dde7d4ef849fa99a593e5a6222f6507f28245ec5a32908e6605eeff681fb4a1a",
+      "bytes": 2247
+    },
+    {
+      "path": "src/components/ConcertScreens.jsx",
+      "git_blob": "c5e8a8466b739b5b3b13198f0511d4dd50a5a2e7",
+      "sha256": "96725218195e8b04b1d1778669ce2c7fe2b3766ccc1efa571b783a733f942cba",
+      "bytes": 13974
+    },
+    {
+      "path": "src/components/ConcertSearchForm.jsx",
+      "git_blob": "37ea2a9c052edcdc8e3dc743262208e165cbef2c",
+      "sha256": "c8072271761cae3cd6fc67ce302e648f008065db8156d2d366ce8b84857bf265",
+      "bytes": 3920
+    },
+    {
+      "path": "src/components/ConcertTrackPicker.jsx",
+      "git_blob": "52dde48b68ee91ba7c60440e47dfe9653582a0a5",
+      "sha256": "edc7799fe293f9299da5f4f1ef4d02a5fd2e8aa0d971515b582ce055ee49689d",
+      "bytes": 2210
+    },
+    {
+      "path": "src/components/TargetConcertResults.jsx",
+      "git_blob": "64b8421f9236438b2579241bad08152c65c2e130",
+      "sha256": "78eb9fafa5856f9380a0c917494ec90479542d91338d133cbdf9701cf5b0ffdf",
+      "bytes": 4215
+    },
+    {
+      "path": "src/components/WeeklySelectionScreens.jsx",
+      "git_blob": "a950602f7e31ed3bb755e39f7cba6c4cedf57151",
+      "sha256": "92b528047eff9a5873466ae6a023bc8afc70242030b644f95725ef57d9baa54f",
+      "bytes": 5753
+    },
+    {
+      "path": "src/components/useConcertSearch.js",
+      "git_blob": "21d8a3efd05075e1d0465e91f56ff3c1318590f2",
+      "sha256": "e9579c6e5ded3bc1a2389136b37e589b03ba34f949525718bcef82955c5bea7c",
+      "bytes": 10125
+    },
+    {
+      "path": "src/components/useHomeDiscovery.js",
+      "git_blob": "9b5771c4bfa205c1cd6c60ef3470f0422d1b10b2",
+      "sha256": "a0dd4fd31128f57d9871bc5c9f1e587054261a6527bf0edf35f690e56a45e6b7",
+      "bytes": 1512
+    },
+    {
+      "path": "src/data/catalogAdditions.test.js",
+      "git_blob": "6cf24406d38c438085e4a7b95edb1c9b132cc894",
+      "sha256": "8793295fd6b993e10da0e7696ca721d842aae4b176ff17568ef664b624cd68a8",
+      "bytes": 4511
+    },
+    {
+      "path": "src/data/catalogAdditions20261020.test.js",
+      "git_blob": "c5979ae05d9820ef9d0ed898e3f678b4b3d6e1a8",
+      "sha256": "713e559b57e8ad046dfdf901821fdc5e381dfb3c5c6a3e1208f9918f4681ea32",
+      "bytes": 7748
+    },
+    {
+      "path": "src/data/catalogAdditions20261021.test.js",
+      "git_blob": "373a9513bed048fdb31ed8d024fa7e06a7e3dc55",
+      "sha256": "6d01b1603a17ee0893098ff7182fc48625242758e687c91a57995f82df0c4684",
+      "bytes": 10663
+    },
+    {
+      "path": "src/data/composerSelection.js",
+      "git_blob": "63286ee496d0d1d4924bd739ef18ec7fdde840d2",
+      "sha256": "f807e5294a15e911c52c6f31e13293218b22232896f28ed92f00ca92580e3d7d",
+      "bytes": 1827
+    },
+    {
+      "path": "src/data/composerSelection.test.js",
+      "git_blob": "ea92a7da1f696deab6f903c1749615d87fd2ec16",
+      "sha256": "7f09cb30f0b1e9d1eb8ce0bdd7170437864eec214acae5bc92d915fc73876258",
+      "bytes": 5328
+    },
+    {
+      "path": "src/data/concertMatchStates.js",
+      "git_blob": "8bbdf91df37008b6339d6c4b7508c15e3e80e338",
+      "sha256": "5d20108655cd880e0fc7881e5c0d3d99cd51f7e0607c8bbf4a57b6734f3c8381",
+      "bytes": 1660
+    },
+    {
+      "path": "src/data/concertRecommendations.js",
+      "git_blob": "863a544d4ba63db8adc31b9a648231d70a77392d",
+      "sha256": "09fe0c96c5a5c6fa37a076bfb010074fd3969176f112df6fa3ecd100db3a94bd",
+      "bytes": 7543
+    },
+    {
+      "path": "src/data/concertRecommendations.test.js",
+      "git_blob": "98e5a4f1f3d14e382628c565af94875b65056342",
+      "sha256": "a0fe691ddbe644620d5ad84413634619fbacc728e54145c4e9e812574d23a516",
+      "bytes": 7493
+    },
+    {
+      "path": "src/data/concertRegions.js",
+      "git_blob": "b9712eb4b323d60dd5f4655cece80a85400d4997",
+      "sha256": "566328c8bf2261e03c48978cfdf74949c39c64bf2b4ebb3059a48f1268967667",
+      "bytes": 731
+    },
+    {
+      "path": "src/data/concertSearch.js",
+      "git_blob": "37c8a9a3958d1438045147cdd25f822af28c82c2",
+      "sha256": "e47ffabc5663f79404e814b7ea5b5a30f83eebc4d034c64d542ce9328cff32dc",
+      "bytes": 5727
+    },
+    {
+      "path": "src/data/concertSearch.test.js",
+      "git_blob": "b63aece04e4cbb6c1ea4179b27ecde83da6dee77",
+      "sha256": "c1c4d300e3760c7a066f04c233cac307707ab0c8b59df428bc3ad850954cdbc5",
+      "bytes": 6621
+    },
+    {
+      "path": "src/data/concertSearchConfig.js",
+      "git_blob": "63583bd13b1e9caf66b2ecc23ec0d4bb68921256",
+      "sha256": "780ce65494f1f1ea786057baa65e10aac18ceb292e70d9ce32337fd3dd780f3c",
+      "bytes": 1674
+    },
+    {
+      "path": "src/data/concertTargetSearch.js",
+      "git_blob": "9f4da8bb1f0afff4568e333856bcc82a86aac4d5",
+      "sha256": "80977420dd12a6f87f250748d5e085988a39fdbcdfcd5fa888cfe16752845f79",
+      "bytes": 3948
+    },
+    {
+      "path": "src/data/concertTrackSearch.js",
+      "git_blob": "86d7cd249ea04b2c153ea5e2bedec0e1dca907f4",
+      "sha256": "d41930e89ef9f03fe39e9e17255c53e46434153fcff419a6b3d338da3babaed0",
+      "bytes": 1802
+    },
+    {
+      "path": "src/data/concerts.js",
+      "git_blob": "a50fe69b2f7910fd90ffbe8457b18b32a44f02f2",
+      "sha256": "805b4e40042c6b358692956e7fe37068f202834919f0e477185bcec3538733d8",
+      "bytes": 2053
+    },
+    {
+      "path": "src/data/emotions.js",
+      "git_blob": "bc72c901bed634b5bff8ed94cf413f279cc70915",
+      "sha256": "8a6ac53f812d065f9d1c2607f84888ba05e927de6345440758a8ad4038dda059",
+      "bytes": 1935
+    },
+    {
+      "path": "src/data/feelingSuggestions.js",
+      "git_blob": "b355f813c9fee33a62d0424dd4bff7490f2f623e",
+      "sha256": "b82f551120011b426af0c2d0085ec8530bb5d6ec69ee3314007bc82a3217cc98",
+      "bytes": 959
+    },
+    {
+      "path": "src/data/halfPointRatings.test.js",
+      "git_blob": "874e2599f7775b96e89d6ea74e4a95af33abca66",
+      "sha256": "367fcf4eacce76eefeb9b328fe07465d1817299cc99d831b504a754fc3478add",
+      "bytes": 5201
+    },
+    {
+      "path": "src/data/homeDiscovery.js",
+      "git_blob": "4cfffc6ab1572038bb78a22113e39e7ca94bdf02",
+      "sha256": "9e66bdcf76eacdd266e3ecf5431fc8fe151705f96b890167717d31c0e458da84",
+      "bytes": 2036
+    },
+    {
+      "path": "src/data/homeDiscovery.test.js",
+      "git_blob": "bf958cc7aa4f92aefd0a87c4594783ffc8cd69d4",
+      "sha256": "cdf135dc574f5820a1556abca7f6357da9eaa6749d6be4614f798adb90674d65",
+      "bytes": 2202
+    },
+    {
+      "path": "src/data/manualRatings.js",
+      "git_blob": "20985bcc5de17359cb60e4fe8d32c3cbc5575541",
+      "sha256": "867ba36e62b294c64c9fd708ebcdcb997bd23d446839e5944d8074af3dfe43be",
+      "bytes": 214427
+    },
+    {
+      "path": "src/data/manualTrackDetails.js",
+      "git_blob": "7edd2339593f7355b0c1012b05fc6fafb7356004",
+      "sha256": "757f1eb79ebd9b5fa972a5a8664d4431cbc1b0635e8bacfa5b8156e1b6fcc433",
+      "bytes": 147349
+    },
+    {
+      "path": "src/data/mobileTypography.test.js",
+      "git_blob": "366c210f9e4b55903cd226d366685406e15b0d97",
+      "sha256": "d8b91c4a4947d52f5665bc59a6f216fede36ce8e26b3b42309993944d9edf984",
+      "bytes": 2096
+    },
+    {
+      "path": "src/data/musicData.js",
+      "git_blob": "b717b4f8ea7cfe4d209108e4c8b5c6831cd20811",
+      "sha256": "bb6d7d4e646fe1f6bf0531b1d0ffb84dea7f4e58a254442f32db5997e5dbffc1",
+      "bytes": 4176
+    },
+    {
+      "path": "src/data/recommendation.test.js",
+      "git_blob": "2c2d45773ec7ce22720c4fc8ddd8bc32cbfd4987",
+      "sha256": "96f1d628c552952898bfd3f3a759366965aa61ae981c51fd4a4927536dd52a8c",
+      "bytes": 33178
+    },
+    {
+      "path": "src/data/recommendationExposure.js",
+      "git_blob": "9f5fe60d58e822656ccae95cc7407283b7c54376",
+      "sha256": "523014af2dc6185641590979b70e73a5a085147d8876cbdb49d3b8662d778a5b",
+      "bytes": 2371
+    },
+    {
+      "path": "src/data/recommendations.js",
+      "git_blob": "d9bf2b6a1106bd596633b56daca36215fd7e7a91",
+      "sha256": "7977c1b6b1f1ec0bf53098728f46fa80342dc9e9b9622d202fb2c79dbfad4c5e",
+      "bytes": 12704
+    },
+    {
+      "path": "src/data/storage.js",
+      "git_blob": "ff300021b7d29d48cdeb5a35ede097ed78cf27d9",
+      "sha256": "edd311797354ebefb356e6ae22ccfa3236065b2ef4a3459848e0750c3c077991",
+      "bytes": 3889
+    },
+    {
+      "path": "src/data/storage.test.js",
+      "git_blob": "ce830798a8bafa9b49bda1faa86650307d930dfe",
+      "sha256": "68bf7ddb672ab91c557086395eea889e6f6882318169d60c9003c479637dec2e",
+      "bytes": 11218
+    },
+    {
+      "path": "src/data/tchaikovskySeasons.js",
+      "git_blob": "989b2f73f90e3322b1d3f4b43e5023973d46b60b",
+      "sha256": "8beae7a7608077cd693f2969e89b837bd127ce964b27b66119edefdcd6a26697",
+      "bytes": 7586
+    },
+    {
+      "path": "src/data/weeklySelectionHelpers.js",
+      "git_blob": "d41422c673ef9bf107d578a044ba35b020a4549a",
+      "sha256": "cf00276319e6463e12d806ab62f2690addf570a569c157f483427b9df4ad8d5f",
+      "bytes": 3752
+    },
+    {
+      "path": "src/data/weeklySelections.js",
+      "git_blob": "51873d29c57ecfc92af08eb9fafefeeb2a528adf",
+      "sha256": "8f9399d0b26f11d3416328bdd5dde6b3e67badb5392733d242b35194d066a1bf",
+      "bytes": 1552
+    },
+    {
+      "path": "src/data/weeklySelections.test.js",
+      "git_blob": "b674c428affc75a802c02cd5f5ddf6797c79e5d4",
+      "sha256": "a57c65d533b7fb1eee986355ba44bb7dc28221776b95674e52a3b24bd7335f2b",
+      "bytes": 4181
+    },
+    {
+      "path": "src/data/workCatalog.js",
+      "git_blob": "6b193e41476f315daac8ce2282d254e1a7c47f16",
+      "sha256": "57e74538ee5bff9724bececc1f0d85fb0504e611d5b269efec4866d84bbd7046",
+      "bytes": 5299
+    },
+    {
+      "path": "src/main.jsx",
+      "git_blob": "158b7c8515cad0ca562543e13f51b883f7f2141f",
+      "sha256": "4797d1a6d73778328ce609350500ef0cce95b68e77d10e46133c691e50998ffa",
+      "bytes": 237
+    },
+    {
+      "path": "src/styles.css",
+      "git_blob": "481237cffbde48895ca81838c5a72cef4c9a7714",
+      "sha256": "9c4cfd03bc0320b5282b0154ddf937b3eb6d096b5a749f11105b4683f3493c69",
+      "bytes": 67066
+    },
+    {
+      "path": "supabase/diagnostics/20261022_program_automation_preflight.sql",
+      "git_blob": "1d871e5a9e6dad268a84808abccc3f06cb27471f",
+      "sha256": "c515e211baa19a51cbd3e2a4e9068d44762614d9978ca26adac2e22b1a8e9091",
+      "bytes": 3879
+    },
+    {
+      "path": "supabase/diagnostics/20261023_program_automation_bounded.sql",
+      "git_blob": "e745296e1e373ca6cab1e3f3a265dcee5c1683b4",
+      "sha256": "80b02c5d00838f6a6842f1def5cb9b1798fde942401a2b8e1bbadce311a4576c",
+      "bytes": 1911
+    },
+    {
+      "path": "supabase/drafts/202610230001_program_automation_bounded.sql",
+      "git_blob": "5178f62b9feb1e4cb1c2b70f49c6989d9a1e2b28",
+      "sha256": "ad4778b2b1116bf9e2b658412519bb32e32821753d994537b39d15bd5412faed",
+      "bytes": 18698
+    },
+    {
+      "path": "supabase/drafts/PROGRAM_ANALYSIS_V3_DRAFT.sql",
+      "git_blob": "63122a413fc71acba11ec9a2139501dbba6ada0a",
+      "sha256": "f4967ec3e5f9f01a80c2703f1e7d055d31bbacea50af675cb7dc87af7a0ee0d8",
+      "bytes": 13589
+    },
+    {
+      "path": "supabase/drafts/README.md",
+      "git_blob": "3f88088155ee4afcb4adf5f4cd4b3f4ac476a986",
+      "sha256": "aca4f34bdb625bfab82afa6d31e36a099f91cd1b9a5f7efcad1c713a59eb78a9",
+      "bytes": 395
+    },
+    {
+      "path": "supabase/migrations/202610140001_concert_collection.sql",
+      "git_blob": "2a91fd35ecb5ee2673c39b4baa445febb14f1c06",
+      "sha256": "d9f0136f40851949705107c279000c4e5cea24ae8ec1109f96f242440bddab30",
+      "bytes": 5473
+    },
+    {
+      "path": "supabase/migrations/202610140002_concert_image_ocr.sql",
+      "git_blob": "79f89adb67dad648530ff19e7fd21db803dd56fe",
+      "sha256": "89ede6c92c8f4ac6762992973fc8c79cfd8a1985052c21ca527c1a9bd12d140a",
+      "bytes": 6280
+    },
+    {
+      "path": "supabase/migrations/202610150001_concert_program_analysis.sql",
+      "git_blob": "01bbd4024a1a9be94eca67658356b1f62100f0b8",
+      "sha256": "9beb1e95693b19053a2ad6f7a69f2e70988e14f556c2a628ec060c7adc39ba6f",
+      "bytes": 18046
+    },
+    {
+      "path": "supabase/migrations/202610160001_expired_concert_cleanup.sql",
+      "git_blob": "3aea004bf2f991fcc74468f2206b90ba66b463db",
+      "sha256": "858b151dd3721867f3935d413d9df3ce1ba25ea7e1774e6cfc2e5451e2a55a7b",
+      "bytes": 13271
+    },
+    {
+      "path": "supabase/migrations/202610210001_program_work_identity.sql",
+      "git_blob": "311a649b54f696fb4d02336f28ec0e7e724848ca",
+      "sha256": "2cd62e5e09fd51b35c1d064d4acd60b218818343aa0ed1bb8a05e19f2fd569ec",
+      "bytes": 26423
+    },
+    {
+      "path": "supabase/migrations/202610220001_program_automation.sql",
+      "git_blob": "dd91ab62acb91a49bea4db6a6330c4cb7cf0f6f7",
+      "sha256": "ac5281753c5e65a73415a565b9c435598dc6006e8b11267dac4516c5feae18d8",
+      "bytes": 21791
+    },
+    {
+      "path": "supabase/migrations/202610230002_kopis_detail_text.sql",
+      "git_blob": "eb2c7bc236ad5cafc3a6c627709836ed122028e7",
+      "sha256": "02b5e16c91ca6a9b5b0aac8f009d60029904fb5c955014313fde8997a6fbd690",
+      "bytes": 4955
+    },
+    {
+      "path": "supabase/migrations/202610230003_program_analysis_v4.sql",
+      "git_blob": "d7807a9bf871554475fa06214151c7a96c3fec6b",
+      "sha256": "8669d065f8f63cd117c1e28ce0425f7aadd01008db3baeef34b39ae27aa9a691",
+      "bytes": 4730
+    },
+    {
+      "path": "supabase/migrations/202610260001_program_text_analysis_v4.sql",
+      "git_blob": "9dca4bc0956407a652e28e96f0b93bed3a889a62",
+      "sha256": "e577e3817042e805625c3bbba9fcd2c5ee51b99931a641d4d1cb6042a14ff773",
+      "bytes": 14732
+    },
+    {
+      "path": "supabase/migrations/202610260002_program_text_status.sql",
+      "git_blob": "cda7bdd8969c8f967aa08e2e2517e21021dcd9b4",
+      "sha256": "7af26c1c4f468fce66c3701e511a7be6ce2508aed728e0627f9fba8ee1d0e330",
+      "bytes": 7591
+    },
+    {
+      "path": "supabase/migrations/202610260003_program_text_confirmation.sql",
+      "git_blob": "c73b04efdbf8ff612fc2a2f4abd5caf662290872",
+      "sha256": "0431acf84b217c68306b42011ab489e0656e21d7b4617317d97bddaf2f4397c7",
+      "bytes": 11825
+    },
+    {
+      "path": "supabase/migrations/202610260004_program_text_confirmation_status.sql",
+      "git_blob": "777f2789441ca715b6409b8eee860249a615c6de",
+      "sha256": "b2ffd278b1517a1d0f17c67cba48faa2a72413156e6333b734a2f76dcbe9dbfd",
+      "bytes": 9026
+    },
+    {
+      "path": "supabase/verification/concert_collection.sql",
+      "git_blob": "e66c1a24baf2267af4d3dc8a48bddc5391b3b918",
+      "sha256": "bd5966e919eb93dfecbcb11696bceff02faab1edd6886cbea0c4643b2b88b673",
+      "bytes": 1341
+    },
+    {
+      "path": "supabase/verification/concert_image_ocr.sql",
+      "git_blob": "c378031d6058aefbccebb7cc312f345c4e24eeff",
+      "sha256": "8b35a14704ddb0e6de634d4986ed38cc0465cd39561b09db75e79a9615c0c6ec",
+      "bytes": 1062
+    },
+    {
+      "path": "supabase/verification/concert_program_analysis.sql",
+      "git_blob": "a7d6367f57a92c1afb9da48bffb2f4984e055129",
+      "sha256": "6fa670dac52067f0609c7aff8fe7ea15ff74a30365e1f6cf019138dfbbf4483d",
+      "bytes": 1409
+    },
+    {
+      "path": "supabase/verification/expired_concert_cleanup.sql",
+      "git_blob": "16f49f12fbff921054bb0b43fabaa6ebd3fe86bd",
+      "sha256": "fe51bea4eacccfdb46519b50e767b326a80b10ae67b4da9f5091c60deb246815",
+      "bytes": 900
+    },
+    {
+      "path": "vercel.json",
+      "git_blob": "ac6a402089c32261fb6f7291f682006edfb98f1d",
+      "sha256": "dc7c735f5ff56bae42137706d48568115db3c71a6ba20f2575797be1c9f53983",
+      "bytes": 496
+    },
+    {
+      "path": "vite.config.js",
+      "git_blob": "3b912a24f68da0cc65ddda560c5e8c7f7d51d2f7",
+      "sha256": "b30af578c8d385e73c4e8a54fc6043e010ef8b0c268b529b19201fbd7250f8cb",
+      "bytes": 846
+    }
+  ],
+  "baseTests": [
+    "scripts/emma/emma.test.js",
+    "server/automaticProgramCoverage.test.mjs",
+    "server/automaticProgramLimits.test.mjs",
+    "server/boundedProgramBatch.test.mjs",
+    "server/boundedProgramBatchSql.test.mjs",
+    "server/concertCleanupSql.test.mjs",
+    "server/concertCollectionSql.test.mjs",
+    "server/concertCollector.test.mjs",
+    "server/concertPipeline.test.mjs",
+    "server/concertSearchV1.test.mjs",
+    "server/easyOcrBatch.test.mjs",
+    "server/easyOcrSql.test.mjs",
+    "server/kopis.test.mjs",
+    "server/pipelineAnalysisOnly.test.mjs",
+    "server/pipelineCleanup.test.mjs",
+    "server/pipelineDeadline.test.mjs",
+    "server/pipelinePriority.test.mjs",
+    "server/pipelineRecovery.test.mjs",
+    "server/pipelineWindows.test.mjs",
+    "server/programAnalysis.test.mjs",
+    "server/programAnalysisSql.test.mjs",
+    "server/programAutomation.test.mjs",
+    "server/programAutomationSql.test.mjs",
+    "server/programItemBoundaries.test.mjs",
+    "server/programLogicalWorks.test.mjs",
+    "server/programMatching.test.mjs",
+    "server/programMatchingNormalization.test.mjs",
+    "server/programOcr.test.mjs",
+    "server/programRollout.test.mjs",
+    "server/programVersion.test.mjs",
+    "server/programVersionSql.test.mjs",
+    "server/programWorkIdentity.test.mjs",
+    "server/programWorkIdentitySql.test.mjs",
+    "server/supabaseConcertSearch.test.mjs",
+    "server/vercel.test.mjs",
+    "src/data/catalogAdditions.test.js",
+    "src/data/catalogAdditions20261020.test.js",
+    "src/data/catalogAdditions20261021.test.js",
+    "src/data/composerSelection.test.js",
+    "src/data/concertRecommendations.test.js",
+    "src/data/concertSearch.test.js",
+    "src/data/halfPointRatings.test.js",
+    "src/data/homeDiscovery.test.js",
+    "src/data/mobileTypography.test.js",
+    "src/data/recommendation.test.js",
+    "src/data/storage.test.js",
+    "src/data/weeklySelections.test.js"
+  ],
+  "directTests": [
+    "server/programSourceRouter.test.mjs",
+    "server/programAnalysis.test.mjs",
+    "server/programRollout.test.mjs",
+    "server/programScherzo.test.mjs",
+    "server/programVersion.test.mjs",
+    "server/programV4Sql.test.mjs",
+    "server/selectedProgramAnalysis.test.mjs",
+    "server/programTextAnalysisSql.test.mjs",
+    "server/supabaseProgramTextAnalysis.test.mjs",
+    "server/programSourcePlan.test.mjs",
+    "server/programSourcePlanSql.test.mjs",
+    "server/programTextConfirmationSql.test.mjs",
+    "server/supabaseProgramTextConfirmation.test.mjs",
+    "server/programTextConfirmationStatusSql.test.mjs",
+    "server/supabaseConcertSearch.test.mjs",
+    "server/programTextCoordinator.test.mjs",
+    "server/programTextCoordinatorSql.test.mjs"
+  ],
+  "supplemental": [
+    "server/programSourceRouter.test.mjs",
+    "server/programScherzo.test.mjs",
+    "server/programV4Sql.test.mjs",
+    "server/selectedProgramAnalysis.test.mjs",
+    "server/programTextAnalysisSql.test.mjs",
+    "server/supabaseProgramTextAnalysis.test.mjs",
+    "server/programSourcePlan.test.mjs",
+    "server/programSourcePlanSql.test.mjs",
+    "server/programTextConfirmationSql.test.mjs",
+    "server/supabaseProgramTextConfirmation.test.mjs",
+    "server/programTextConfirmationStatusSql.test.mjs",
+    "server/programTextCoordinator.test.mjs",
+    "server/programTextCoordinatorSql.test.mjs"
+  ]
+}

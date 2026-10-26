@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,21 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3J — 통합 회귀·운영 읽기 전용 preflight / READY
+## 명세 4 작업 3J — 통합 회귀·운영 읽기 전용 preflight / BLOCKED
 
 작업 3I 결과 SHA `ef09461350ca0bb5ff03952f9f461ae91c3af661`와 구현 SHA `e89f98a0b2380948dd747fc80dd1192424c73c31`를 **ACCEPTED**한다. DRY_RUN 무쓰기, SAVE 전 전체 prerequisite 확인, 공식 source 전용 처리, 기존 receipt 재확정 차단, 신규 confirmation 최대 1회 고정과 격리 14/14 검증을 확인했다.
 
 이번 작업은 새 기능을 추가하지 않고 **3A~3I 전체를 하나의 release 후보로 검증하고, 운영 DB가 어떤 migration 상태인지 읽기 전용으로 판정**한다. 운영 적용 순서와 공연 1건 canary 대상을 확정하되 migration 적용·policy 활성화·POST는 다음 작업으로 남긴다.
+
+### 작업 3J 검증 결과 — 2026-10-27 KST / BLOCKED
+
+- 공동 문서5개와 release 기준 SHA: `8c32de828c458d4fc288103f5ee3cea848a0231a`. 3A~3I 구현9커밋을 포함한 전체308파일 snapshot의 Git blob/sha256·누락/중복/추가0을 확인했고 검증 후308파일 hash도 모두 같다. [release manifest](docs/collaboration/CA-AUTO-20261022-001/SPEC4_TASK3J_RELEASE_MANIFEST.json)에 전체 경로/hash와 단계별 구현 SHA를 게시한다.
+- 전체 `npm test`: **408개 중387 PASS /21 FAIL**, skip0. 실패를 수정·재실행하지 않았다. 기본 test에 빠진 직접 테스트13파일은 한 번 추가 실행하여 **83/83 PASS**, 실패/skip0이다. production build는 **PASS**(npm exit0, Vite6.4.3,56 modules,7.08s); JS613.88kB의 기존 chunk>500kB 경고가 있다.
+- 새 빈 disposable PostgreSQL18.4에서 선행6파일 후 지정6개 migration을 각각1회/지정 순서로 적용했다. RPC signature/ACL, RLS, view security_invoker, 기본v4 enabled=false, 기존OCR schema/fixture rows 불변, coordinator DRY_RUN GET1/POST0을 확인했다. 격리 DB는 종료했다.
+- 운영 관리자 연결 존재·성공, `BEGIN READ ONLY`/`transaction_read_only=on`/ROLLBACK 확인. 지정6개 migration은 **모두 ABSENT**다. 기존 sync 함수는 CRLF 정규화 후 선행본문·서명·권한과 일치하고 공식 텍스트 컬럼/constraint가 없다. PARTIAL/INCOMPATIBLE0. v4 policy 행 없음(활성 상태로 취급하지 않음).
+- 운영 REST/OpenAPI **GET9/POST0**: OpenAPI200, 기존sync만 노출, 신규3RPC·3view 비노출. source column GET400/42703, 신규3table·3view GET404/PGRST205, v4 policy GET200/빈배열. SQL 판정과 REST 비노출을 구분했다. anon key 미설정으로 anon HTTP probe 미실행이며 권한 우회를 하지 않았다.
+- 2026-10-27 08:34:39 KST 예약 읽기: `ClassicAtlas-LocalPipeline` State=Disabled/Enabled=false. 공식 원문/hash 저장 계약 미준비로 운영 canary **미선정/미실행**이다. 운영DDL/DML/migration/POST·KOPIS/OCR·batch/예약 실행·변경·배포·병합0.
+- 원본main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`, 기존40파일/index/.env 보존. 구현/migration/test 변경0. **전체 회귀21실패로 release BLOCKED**이며 개별3A~3I 수락을 통합release 통과로 대체하지 않는다. 실패 목록·후속 조건부 적용/rollback 순서·구현자 의견은 HANDOFF 최신3J 결과를 참조한다. 결과 문서 게시 후 중단한다.
 
 ### 허용 범위
 

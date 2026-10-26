@@ -4,13 +4,121 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3I 수락·작업3J 통합 preflight)
+- 현재 상태: BLOCKED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3J BLOCKED)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3J — 통합 회귀·운영 읽기 전용 preflight / BLOCKED
+
+- 작업/명세: CA-AUTO-20261022-001 /4 /3J만. 공동 문서5개·원격HEAD·검증 코드 기준은 `8c32de828c458d4fc288103f5ee3cea848a0231a`다. 2026-10-27 KST. 구현·migration·테스트 수정0이며 3I를 별도 재구현/실행하지 않았다. 아래 테스트의 fixture 실행은 통합검증 범위다.
+- 원본main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`, 기존40개 tracked/untracked 파일 내용·index·.env hash를 보존했다. pull/switch/reset/stash/원본 자동commit0. 자격증명·환경값·운영 원문·후보 상세는 게시하지 않는다.
+- 최종 판정: **release BLOCKED — 전체 회귀21실패**. 직접 테스트83PASS·격리chain PASS·운영상태ABSENT는 이 실패를 상쇄하지 않는다. 이번 범위에서 실패 수정/재실행은 하지 않았으며 실제 운영 적용·policy 활성화·canary/예약 실행 준비 완료로 표시하지 않는다.
+
+### release snapshot / 파일·커밋 manifest
+
+전체 원격 tree의308개 blob을 별도 detached checkout에 확보했다. snapshot 초기 누락/중복/예상 밖 파일0, .env/.env.local 복사0, 각 Git blob SHA와sha256 일치이며 테스트 후에도308파일 모두 동일·tracked diff0이다. [전체 파일/hash·단계별 변경파일·test 포함 여부 manifest](docs/collaboration/CA-AUTO-20261022-001/SPEC4_TASK3J_RELEASE_MANIFEST.json)를 함께 게시한다. manifest SHA-256: `a84d2aff4a3d62fbe3ffc57229098a069d79b7cc07e40ab26491b89dbda8697f`.
+
+| 단계 | 포함한 구현 SHA | release 기준 ancestor |
+| --- | --- | --- |
+| 3A | `9bf94c2b229410d3afc2616dec73f81372bebd11` | 확인 |
+| 3B | `a1986b26a3f8b1e727d545762eecf38134a7bae3` | 확인 |
+| 3C | `f31655183ce02526978206028387e50d0171e9de` | 확인 |
+| 3D | `bac81a063d86a8bfa687d6358372a00c1cff6613` | 확인 |
+| 3E | `0653d763d854d1504c5bfdf67d13c99719265ea5` | 확인 |
+| 3F | `27ceba06b5b622887e086f5f6300805c408b9622` | 확인 |
+| 3G | `905021d2f7698e732a25f3bf1ac25bf16d39dfb7` | 확인 |
+| 3H | `6964e88ec0dac047dc60f605c03316d2576308da` | 확인 |
+| 3I | `e89f98a0b2380948dd747fc80dd1192424c73c31` | 확인 |
+
+실행 위치는 로컬 `.cache/ca-auto-20261022-001/spec4-task3j/release`다. Node22.18.0/npm10.9.3, Vite6.4.3, PGlite0.5.9. release package-lock과 기존 설치의 lock이 같고 optional을 제외한 설치 dependency84개의 version 누락/불일치0을 확인한 뒤 상위 기존 node_modules를 사용했다. npm install/lock 변경0이며 새 독립 dependency 설치까지 검증한 결과는 아니다. 원본 .env는 운영 읽기 probe에서만 메모리로 읽었고 release에 복사하지 않았다.
+
+### 전체 test/build와 누락 직접 테스트
+
+| 실행 | 결과 | 범위/비고 |
+| --- | --- | --- |
+| `npm test` | 408개:387PASS/21FAIL, skip0, npm exit1 | 기본 runner의47 test파일, 한 번 실행 |
+| 누락 직접 suite 추가 | 83/83PASS, fail/skip0, exit0 | 기본 import graph에 없는13파일만 한 번 실행 |
+| `npm run build` | PASS, npm exit0 | Vite56 modules,7.08s, JS613.88kB/gzip154.72kB; chunk>500kB 경고 |
+
+PowerShell stderr 리다이렉션은 build 경고를 NativeCommandError로 표시해 wrapper exit1을 반환했지만, 해당 npm debug log의 exit0/info ok·Vite built·dist 산출물을 함께 확인했다. build를 다시 실행하지 않았다. 테스트 실패는 wrapper 문제가 아닌 TAP21FAIL/npm exit1이다.
+
+추가13파일: `programSourceRouter.test.mjs`, `programScherzo.test.mjs`, `programV4Sql.test.mjs`, `selectedProgramAnalysis.test.mjs`, `programTextAnalysisSql.test.mjs`, `supabaseProgramTextAnalysis.test.mjs`, `programSourcePlan.test.mjs`, `programSourcePlanSql.test.mjs`, `programTextConfirmationSql.test.mjs`, `supabaseProgramTextConfirmation.test.mjs`, `programTextConfirmationStatusSql.test.mjs`, `programTextCoordinator.test.mjs`, `programTextCoordinatorSql.test.mjs` (모두server/). 기본 runner에 포함된 나머지 직접 테스트4파일은 중복 실행하지 않았다. 재현은 같은 SHA에서 기본 runner의 상대 import graph와 manifest.supplemental을 대조한 뒤 해당13개 모듈만 import하는 방식이다.
+
+전체 runner 실패21건(번호는 이번 TAP 기준):
+
+| TAP 번호 | 파일 | 확인한 오류/차이 |
+| --- | --- | --- |
+| 47 | src/data/catalogAdditions20261021.test.js | DB_SEARCH_UNAVAILABLE |
+| 100,105,106,108 | server/boundedProgramBatchSql.test.mjs | BOUNDED_INVALID_ANALYSIS |
+| 101,102,103,104,107 | server/boundedProgramBatchSql.test.mjs | V3 version required |
+| 228 | server/programVersionSql.test.mjs | V3 version required |
+| 230,231 | server/programRollout.test.mjs | DB_SEARCH_UNAVAILABLE |
+| 264,265 | server/programWorkIdentity.test.mjs | rematch 결과0 vs 기대1/2 |
+| 267 | server/programWorkIdentitySql.test.mjs | V3 version required |
+| 274 | server/programAutomationSql.test.mjs | V3 version required |
+| 295 | server/concertPipeline.test.mjs | 실제stored-program-4 vs 기대stored-program-3 |
+| 327 | server/pipelineAnalysisOnly.test.mjs | PROGRAM_ANALYSIS_V4_MIGRATION_REQUIRED |
+| 352 | server/pipelineCleanup.test.mjs | PROGRAM_ANALYSIS_V4_MIGRATION_REQUIRED |
+| 353 | server/pipelineCleanup.test.mjs | v3/schema-ready 기대와 v4/UNKNOWN 실제 차이 |
+
+오류들은 격리 fixture/mock 회귀에서 발생했다. DB_SEARCH_UNAVAILABLE를 운영 검색 장애 증거로 해석하지 않는다. observed mismatch는 v4 기본값/신규 읽기 계약과 v3 fixture 기대가 함께 존재함을 보여준다. 다만21건 모두가 테스트만 고치면 되는 문제라고 단정하지 않았고 이번 범위에서는 코드·fixture·정책을 수정하지 않았다.
+
+### 빈 PostgreSQL 통합 migration chain
+
+새 loopback 전용 disposable **PostgreSQL18.4**(기존 cluster 재사용0)에 anon/authenticated/service_role fixture role을 만들고 다음 선행파일을 각각1회 적용했다: `202610140001_concert_collection.sql` → `202610140002_concert_image_ocr.sql` → `202610150001_concert_program_analysis.sql` → `supabase/drafts/PROGRAM_ANALYSIS_V3_DRAFT.sql` → `202610210001_program_work_identity.sql` → `202610220001_program_automation.sql`. 이는 격리 dependency 구성이고 운영에 과거draft를 다시 적용하라는 뜻이 아니다.
+
+그 뒤 아래 운영상태 표의6개 migration을 순서대로 정확히1회 적용했다. 모든파일 자체 transaction 완료, 통합chain PASS. 실제 production credentials는 격리 DB에 사용하지 않았다.
+
+- 4개 RPC: sync_kopis_concert(jsonb,jsonb), save_concert_program_analysis_v4(jsonb,text), save_concert_program_text_analysis_v4(jsonb,text), confirm_concert_program_text_candidate_v4(jsonb,text). 반환uuid/security_invoker, service_role EXECUTE=true, anon/authenticated=false 확인.
+- 공식 text3table RLS=true 및 service_role SELECT·anon/authenticated SELECT=false, status3view security_invoker=true와 읽기권한 확인. 추가 직접 SQL suite의 mutation/rollback·least privilege 검증83PASS도 별도 근거다.
+- fresh v4 policy는 정확히1행 enabled=false이며6개 chain 동안 활성화하지 않았다.
+- migration 전 OCR fixture 이미지1/성공result1/attempt1을 만들고 기존 이미지/OCR 결과·시도/분석·후보·review 테이블의 schema 및 전체 row digest를 chain 후 대조해 동일함을 확인했다. 기존 OCR 정의나 데이터를 공식 테이블로 옮기지 않았다.
+- fixture의 공식 Program 텍스트만 사용한 coordinator DRY_RUN: GET1/POST0, 후보1/MATCHED1, receipt0. 기존 OCR row digest·schema 불변. 실제 운영 canary와 구분한다. 격리 server는 검증 후 종료했다.
+
+### 운영 관리자 SQL / REST GET preflight
+
+2026-10-27 08:35~08:37 KST, root .env의 관리자 URL **존재/연결 성공**만 확인했다. 연결 startup default_transaction_read_only=on, 명시적 BEGIN READ ONLY, transaction_read_only=on 확인 후 pg_catalog/information_schema/정책 SELECT만 실행하고 ROLLBACK했다. 기존9개 선행 테이블 존재 확인. 운영 DDL/DML/함수 실행/NOTIFY0이다.
+
+| 순서 | migration | 관리자 SQL 판정 | 근거 |
+| --- | --- | --- | --- |
+| 1 | 202610230002_kopis_detail_text.sql | **ABSENT** | 공식2column/hash constraint 없음; 기존sync는 선행본문/서명/권한 유지 |
+| 2 | 202610230003_program_analysis_v4.sql | **ABSENT** | v4 OCR save RPC·v4 policy 행 없음 |
+| 3 | 202610260001_program_text_analysis_v4.sql | **ABSENT** | 공식analysis/candidate 테이블·save RPC 없음 |
+| 4 | 202610260002_program_text_status.sql | **ABSENT** | 공식analysis/candidate status view 없음 |
+| 5 | 202610260003_program_text_confirmation.sql | **ABSENT** | receipt table/confirm RPC/불변성 trigger·function 없음 |
+| 6 | 202610260004_program_text_confirmation_status.sql | **ABSENT** | confirmation status view 없음 |
+
+초기sync 본문 byte hash 차이는 별도 READ ONLY SELECT로 확인했다. **CRLF→LF 정규화 후 선행본문이 정확히 일치**하고 공식텍스트 참조가 없으며 서명·uuid 반환·service-only EXECUTE가 일치한다. 이 차이를 부분 적용으로 오판하지 않았다. 최종 PARTIAL/INCOMPATIBLE0이며 이후 운영 적용 직전에 다시 판정해야 한다.
+
+REST/OpenAPI는 실제 네트워크 **GET9/POST0**, retry0이다.
+
+- service OpenAPI200: 기존sync path 있음, 신규save OCR v4/save official/confirm official 3RPC와status3view path 없음. RPC endpoint를 GET으로 실행하지도 않았다.
+- concerts 공식column probe(limit0): HTTP400/42703. 신규3table·3view probe(limit0): 각각404/PGRST205, 총6회.
+- v4 policy probe: HTTP200/[]; 활성화도 기본false 행 생성도 하지 않았다. SQL에서도 행 없음이며 이를 enabled=true로 추정하지 않는다.
+- anon key 미설정으로 anon HTTP 권한 probe 미실행. 기존sync의 service-only EXECUTE는 SQL로 확인했고 신규object는 부재라 운영 ACL 검증 대상 자체가 없다. 실제 anon 응답을 검사했다고 보고하지 않는다.
+- 404는 REST/schema-cache 상태이며 실제 migration 부재는 관리자SQL의 object/column/함수 판정에서 확인했다.
+
+공식원문/hash 저장 column이 없고 GET 읽기계약도 불가능하므로 **운영 canary 대상 미선정/DRY_RUN 미실행**. UUID/KOPIS/source·payload hash를 임의 fixture나 수집으로 대체하지 않았다. KOPIS/OCR/API 수집·이미지 다운로드0이다.
+
+예약 읽기는 **2026-10-27 08:34:39 KST**에 `ClassicAtlas-LocalPipeline` State=Disabled/Settings.Enabled=false였다. action 실행·Enable/Disable·설정 변경0이며 다음 예약 결과를 확인한 것으로 표현하지 않는다. 전체 운영 migration/DDL/DML/POST/receipt/CONFIRMED/REJECTED 쓰기0. batch/queue/예약 연결·배포·병합0이다.
+
+### 구현자 의견 / 다음 검토와 조건부 순서
+
+**Q-3J-001:** 전체 회귀21실패를 다음 수정 명세로 분리해 검토해 달라. 우선 v3 테스트 입력이 현재 v4 기본값을 암묵적으로 쓰는 경로와 새 공식-read preflight가 추가된 mock 계약을 구분하고, 실제 검색/정책/기존v3 보존에 문제가 있는지 확인하는 것이 필요하다. v4를 임의 활성화하거나 기존 검색을 느슨하게 해서 테스트를 통과시키는 방향은 권하지 않는다. 기본 runner에서13개 직접 suite가 빠져 있으므로 추후 runner 편입도 명시적 후속 범위로 검토할 수 있다. 이번 작업에서는 변경하지 않았다.
+
+운영6건은 모두ABSENT이므로 아래는 **향후 회귀 해결·새 적용 지시 후의 조건부 순서**이며 지금 실행할 계획/승인이 아니다. 현재release는 BLOCKED여서 적용 시작 조건이 충족되지 않는다.
+
+1. 회귀21건 원인/수정 검토와 새고정SHA의 전체test/build 통과 → 운영 READ ONLY 재판정·선행function/column/index/ACL 전체 계약 대조. PARTIAL/INCOMPATIBLE이면 적용안 작성/실행을 중단한다. 기존sync 정의·ACL·OCR schema/data digest·정책 상태는 자격증명 없이 안전한 로컬 rollback 자료로 확보한다.
+2. 모두ABSENT/선행조건충족이면 **202610230002 → 202610230003 → 202610260001 → 202610260002 → 202610260003 → 202610260004** 순서로 각파일 transaction을 한 번만 적용하고 매단계 확인한다. 기존 선행draft 전체 재적용·이미적용파일 반복 금지. policy disabled/예약Disabled를 유지한다.
+3. SQL/ACL·REST schema-cache 읽기 재확인 후, 이미 저장된 유효 공식source가 있을 때 한공연 DRY_RUN만 다음 canary 후보로 선정한다. 현재는 대상없음. source 수집·SAVE·policy활성화는 별도 명세/사용자 지시 없이는 시작하지 않는다.
+4. 실패한 파일의 자체 transaction은 ROLLBACK하고 재전송하지 않는다. 이미commit된 앞단계의 기본 rollback은 **caller/SAVE 차단 → 예약Disabled 유지 → v4 비활성 유지 → 읽기 재확인**이며 additive schema/data를 보존한다. 기존CONFIRMED/REJECTED나 원문/receipt를 삭제하는 자동down은 만들지 않는다.
+5. 별도 승인된 **빈 신규테이블 한정 schema 철회**가 꼭 필요하면, 새row/외부의존성0 확인 후 역순 **260004 confirmation view → 260003 confirm RPC·receipt triggers/trigger function·빈receipt table → 260002 candidate/analysis status views → 260001 official save RPC·빈candidate/analysis tables → 230003 v4 OCR save RPC/이번 생성 policy(외부사용0 확인) → 230002 기존sync 정의·ACL 복구 후 hash constraint/2column** 순서다. CASCADE 사용0. 신규텍스트/분석/receipt가 있거나 의존성/정책 소유가 불명확하면 파괴적 철회는 중단하고 additive schema를 유지한다. 이 순서를 이번에 실행하지 않았다.
+
+후속 검토자는 이 결과를 통합release 성공이나 운영쓰기 승인으로 수락하지 말고, 실패21건/조건부 적용 보류/미선정canary를 함께 검토해 달라. 같은 브랜치에 CURRENT_TASK/HANDOFF/검증manifest만 게시하고 작업3J를 중단한다.
 
 ## 웹 GPT → Codex: 명세 4 작업 3I ACCEPTED / 작업 3J READY
 
