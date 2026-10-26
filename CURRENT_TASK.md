@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,41 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3G — 공식 텍스트 단건 자동 CONFIRMED 계약·격리 검증 / READY
+
+작업 3F 결과 SHA `722b8b4cf56cea55b32558404e7c5254771a541a`와 구현 SHA `27ceba06b5b622887e086f5f6300805c408b9622`를 **ACCEPTED**한다. 공식 status view의 live freshness, source 우선순위, 공식 분석 pending, 중복·모호 후보 제외, GET 전용 planner와 기존 OCR/review/search 보존이 격리 10/10 테스트로 확인됐다.
+
+이번 작업은 3F plan을 쓰기 권한으로 신뢰하지 않고, DB 잠금 안에서 조건을 다시 검증해 **공식 텍스트의 명확한 후보 한 건만 자동 CONFIRMED receipt로 기록할 수 있는 계약**을 작성·격리 검증한다. 부적격 후보에는 REJECTED row를 만들지 않는다.
+
+### 허용 범위
+
+1. additive migration으로 공식 텍스트 후보 전용 append-only confirmation/review table과 단건 RPC를 추가한다. 이름은 `confirm_concert_program_text_candidate_v4` 또는 의미가 동등하게 명확해야 한다.
+2. RPC 입력은 최소한 candidate ID, analysis ID, expected source hash, payload hash, catalog hash, matcher version과 자동 판정 버전을 포함한다. 클라이언트가 전달한 track/work/outcome을 신뢰하지 않고 잠근 DB snapshot에서 다시 읽는다.
+3. 하나의 transaction 안에서 policy → concert → analysis → candidate를 일관된 순서로 잠그고 다음을 전부 재검증한다.
+   - v4 policy가 정확히 존재하고 enabled=true
+   - 공식 analysis가 text namespace의 saved-current이며 현재 원문/hash/실제 UTF-8 SHA-256/context/revision과 일치
+   - 전체 analysis/candidate snapshot·payload/catalog hash와 expected 값이 일치
+   - candidate가 `MATCHED + EXACT`, 등록된 track/work, REVIEW_REQUIRED
+   - 충돌·모호·악장 범위·편곡·발췌·알 수 없는 review reason이 없음
+   - 같은 analysis 안에 동일 track 또는 work 후보가 중복되지 않음
+4. 모든 조건을 통과한 경우에만 CONFIRMED receipt 한 건을 추가한다. 부적격·stale·중복·정책 비활성 후보는 오류/보류로 끝내고 CONFIRMED뿐 아니라 REJECTED row도 추가하지 않는다.
+5. receipt에는 candidate/analysis/concert/track/work, source hash, payload/catalog hash, matcher version, 자동 판정 버전, evidence hash와 검증한 identity snapshot/hash를 보존한다. 원문 전체나 비밀값은 복제하지 않는다.
+6. 같은 candidate와 동일한 검증 snapshot·판정 버전의 재시도는 같은 receipt ID를 반환하고 행 증가 0이어야 한다. 같은 idempotency key에 다른 snapshot/hash를 보내면 거부한다.
+7. 기존 OCR analysis/candidate/review/receipt/status/search와 공식 text analysis/candidate row를 수정하거나 재해석하지 않는다. 공식 confirmation table만 append-only로 사용한다.
+8. RPC는 service_role만 실행할 수 있고 public/anon/authenticated 실행·조회와 RLS 우회를 허용하지 않는다.
+9. 전용 adapter는 명시적 RPC·policy preflight 후 이 단건 RPC에만 POST한다. OCR review/automation RPC나 v3 RPC로 fallback하지 않는다.
+10. 격리 PostgreSQL·mock adapter 테스트로 성공1건, 모든 부적격 무쓰기, idempotent retry, stale source/context·snapshot 변조·중복·정책 변경, transaction rollback, 동시 잠금 계약, ACL/RLS와 기존 OCR 데이터 보존을 확인한다.
+
+### 제한
+
+- 변경 구현·테스트 파일은 가능하면 5개 이하로 한다.
+- 운영 migration 적용, 운영 DB/KOPIS/OCR/API 호출과 이미지 다운로드를 하지 않는다.
+- 3F planner/view, source router·matcher, 3E 저장 RPC와 기존 OCR 계약을 수정하지 않는다.
+- 다건 batch·queue·runner 연결, 자동 REJECTED 처리, public search·UI 노출은 하지 않는다.
+- 운영 후보·receipt·CONFIRMED/REJECTED 쓰기, v4 policy 활성화, 예약·환경·배포 변경을 하지 않는다.
+- 전체 회귀/build 없이 신규 단건 RPC·adapter의 직접 관련 테스트만 실행한다.
+- 결과는 receipt 계약, 잠금·재검증, 무쓰기 제외 결과, 변경 파일·테스트만 게시하고 중단한다.
 
 ## 명세 4 작업 3F — 공식 텍스트 상태 조회·source 우선순위 계획 / IMPLEMENTED
 
