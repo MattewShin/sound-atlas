@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,39 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3J — 통합 회귀·운영 읽기 전용 preflight / READY
+
+작업 3I 결과 SHA `ef09461350ca0bb5ff03952f9f461ae91c3af661`와 구현 SHA `e89f98a0b2380948dd747fc80dd1192424c73c31`를 **ACCEPTED**한다. DRY_RUN 무쓰기, SAVE 전 전체 prerequisite 확인, 공식 source 전용 처리, 기존 receipt 재확정 차단, 신규 confirmation 최대 1회 고정과 격리 14/14 검증을 확인했다.
+
+이번 작업은 새 기능을 추가하지 않고 **3A~3I 전체를 하나의 release 후보로 검증하고, 운영 DB가 어떤 migration 상태인지 읽기 전용으로 판정**한다. 운영 적용 순서와 공연 1건 canary 대상을 확정하되 migration 적용·policy 활성화·POST는 다음 작업으로 남긴다.
+
+### 허용 범위
+
+1. 원본 로컬 변경·index·`.env`를 보존한 격리 release snapshot에서 현재 브랜치의 3A~3I 구현을 모두 포함했는지 파일·commit manifest를 만든다. 누락·중복·예상 밖 파일이 있으면 중단한다.
+2. release snapshot에서 전체 `npm test`와 production build를 실행한다. 3A~3I 직접 테스트가 기본 test에 포함되지 않으면 해당 테스트만 추가로 한 번 실행하고 중복 재실행하지 않는다.
+3. 빈 disposable PostgreSQL에 선행 schema부터 다음 migration을 정확한 순서로 한 번 적용해 통합 검증한다.
+   - `202610230002_kopis_detail_text.sql`
+   - `202610230003_program_analysis_v4.sql`
+   - `202610260001_program_text_analysis_v4.sql`
+   - `202610260002_program_text_status.sql`
+   - `202610260003_program_text_confirmation.sql`
+   - `202610260004_program_text_confirmation_status.sql`
+4. 격리 DB에서 RPC signature·ACL/RLS·view security_invoker·기본 v4 policy disabled·기존 OCR schema/data 보존과 coordinator DRY_RUN POST0을 확인한다. 테스트 fixture 외의 CONFIRMED/REJECTED는 만들지 않는다.
+5. 로컬에 설정된 `CLASSIC_ATLAS_DATABASE_URL`을 사용할 수 있으면 운영 관리자 **READ ONLY transaction**으로 위 6개 migration의 object/column/function/view/policy 상태를 조회한다. 연결 문자열·host·user·비밀번호·원문은 출력하거나 문서에 기록하지 않는다.
+6. 운영 상태를 각 migration별 `ABSENT | COMPLETE | PARTIAL | INCOMPATIBLE`로 판정한다. PARTIAL/INCOMPATIBLE이면 적용 계획을 만들지 말고 BLOCKED로 끝낸다.
+7. 운영 REST/OpenAPI도 GET만 사용해 필요한 column/view/RPC 노출 여부와 권한 응답을 확인한다. 404를 migration 부재의 유일한 근거로 사용하지 않고 관리자 SQL 결과와 구분한다.
+8. 공식 Program 원문/hash가 이미 운영에 저장되어 있고 읽기 계약이 가능할 때만 coordinator `DRY_RUN`을 공연 한 건에 실행한다. 후보 원문·곡명·evidence는 게시하지 않고 concert UUID/KOPIS ID, source/payload hash, 후보·outcome/reason 집계만 기록한다. 조건이 없으면 canary 대상 미선정으로 명시한다.
+9. 최종 보고에는 전체 test/build, 격리 migration chain, 운영 6개 migration 상태, v4 policy/예약의 읽기 상태, GET/POST 수, canary 대상과 다음 작업의 정확한 적용·rollback 순서를 짧게 기록한다.
+
+### 제한
+
+- 구현 코드·migration·테스트를 수정하지 않는다. 검증 실패를 이번 작업에서 고치지 말고 BLOCKED로 보고한다.
+- 운영 migration 적용·DDL/DML, policy 활성화, 분석/receipt/CONFIRMED/REJECTED 쓰기와 모든 POST를 금지한다.
+- KOPIS/OCR/API 수집, 이미지 다운로드, batch/queue/예약 실행·수정, 배포·브랜치 병합을 하지 않는다.
+- 운영 원문·후보 상세·자격증명·환경값을 공동 문서나 로그에 남기지 않는다.
+- 이미 통과한 개별 테스트를 불필요하게 반복하지 않는다.
+- 결과를 같은 브랜치의 공동 문서에 게시하고 운영 적용 없이 중단한다.
 
 ## 명세 4 작업 3I — 공식 Program 단일 공연 제한 실행기 / IMPLEMENTED
 
