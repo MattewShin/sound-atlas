@@ -4,13 +4,48 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3G 수락·작업3H 검색 연결)
+- 현재 상태: IMPLEMENTED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3H 구현·격리 검증)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3H — IMPLEMENTED
+
+- 수신한 공동 문서5개/원격 HEAD: `5b1ba8264d3057b2e2b53b16f2f7ad13ed25f7d6`. CA-AUTO-20261022-001 / 명세4 작업3H만 진행했다. 구현 코드: [`6964e88ec0dac047dc60f605c03316d2576308da`](https://github.com/MattewShin/sound-atlas/commit/6964e88ec0dac047dc60f605c03316d2576308da). 2026-10-26 KST. 작업3G는 ACCEPTED 선행 계약으로 읽었고 해당 suite나 운영 receipt 생성을 재실행하지 않았다.
+- additive migration `supabase/migrations/202610260004_program_text_confirmation_status.sql`은 `concert_program_text_confirmation_status`만 추가한다. SECURITY INVOKER, service_role SELECT 전용이며 기존 table/RPC/view/policy/receipt를 수정하지 않는다. receipt·후보에 UPDATE/REJECTED 쓰기를 만들지 않는다.
+- 유효성 조건은 receipt CONFIRMED + KOPIS_DETAIL_TEXT + matcher v4/decision program-text-confirm-1, candidate/analysis/concert 소속 일치, text saved-current, 현재 원문/hash 쌍과 실제 UTF-8 SHA-256, context/revision 일치다. analysis snapshot의 필드·canonical payload hash, candidate의 세대/초기 review/키/논리 ID/track/work·분석 내 전체 snapshot 일치 및 candidate snapshot hash도 다시 확인한다.
+- evidence hash와 현재 원문 code-point [start,end) quote를 직접 대조하며, CRLF/emoji/결합 문자를 정규화하지 않는다. 잘못된 evidence 타입·좌표·quote는 stale로 표시한다. catalog membership과 현재 저장 catalog로 계산한 work identity snapshot/hash, receipt 전체 검증 필드의 canonical verification hash도 재대조한다. MATCHED+EXACT·안전한 scope/review reason·편곡/발췌/충돌 부재·같은 analysis의 track 또는 work 중복 부재·명시적 enabled v4 policy가 모두 필요하다.
+- `is_effectively_confirmed=false`와 순서가 고정된 `stale_reasons/stale_reason`으로 불일치를 표현한다. 출력은 scalar ID·상태·hash뿐이며 원문, evidence/quote, candidate/analysis/identity 전체 snapshot 컬럼은 없다. 현재 identity는 DB의 저장 catalog와 대조하고, 서버에서 코드의 current work identity hash를 추가 확인한다. 기존 OCR와 마찬가지로 무관한 전역 catalog hash 변경 자체를 서버의 일괄 제외 사유로 추가하지 않았다.
+- `server/supabaseConcertSearch.mjs`는 기존 OCR status와 신규 공식 status를 별도로 GET해 같은 DTO로 합친다. OCR은 기존 configured search version·pipeline·confirmationValidity 계약을 유지한다. 공식은 matcher v4/decision 고정·source/hash·policy/effective current·등록 target track/work·현재 work identity hash를 서버에서 확인한다. 두 경로 모두 현재 공연 날짜/지역/공연 상태를 재검증한다.
+- status에 포함된 공연 ID들의 현재 원문/hash/context와 공개 metadata를 `concerts`에서 서버 내부로만 읽고, 기존 `routeProgramSource`가 공식 Program을 선택하는지 확인한다. OCR 원문을 읽거나 가짜 OCR evidence를 만들지 않는다. 공식 선택 공연은 receipt가 없거나 stale/identity 불일치여도 OCR 확정을 대신 노출하지 않는다. 공식이 선택되지 않는 경우에만 기존 유효 OCR 경로를 사용한다.
+- 공식 결과를 먼저 처리하고 KOPIS 공연·검색 track 기준으로1건만 반환한다. 외부 응답 필드·enum·sourceLabel/설명 문구·정렬과 날짜/지역 경계를 유지했다. 기존 `analysisVersion`/config는 OCR 검색 설정의 의미를 유지하고, 공식 개별 공연의 기존 `programAnalysisVersion` 값은 stored-program-4다. 공식 evidenceSourceUrl은 해당 KOPIS 상세 페이지이며 새 DTO 필드는 없다.
+- 모든 upstream 요청은 GET이다. 원문은 request-local private map에만 보관하고 DTO·오류·로그·캐시에 넣지 않는다. status select는 원문/quote/identity snapshot을 선택하지 않고, 공개 DTO는 명시적 필드로만 구성한다. upstream 내부 오류도 기존 `DB_SEARCH_UNAVAILABLE` 503으로 정제한다.
+- pagination은 기존 페이지100/각 조회 상한50을 유지하며 `Prefer: count=exact`와 정확한 Content-Range를 요구한다. UUID keyset 순서·전체/남은 count·반환 길이를 대조해 짧은 페이지를 곧바로 완료로 간주하지 않는다. source 공연은100 ID씩 bounded 조회한다. 신규 view404/잘못된 구조·hash/필드 타입·누락/반복/부분 페이지·읽기 상한 초과는 전체 오류로 끝내며 OCR/v3/다른 review 경로 fallback하지 않는다.
+- 반환 전 두 status 집합과 source/context/공개 metadata를 다시 읽어 최초 관측과 대조한다. 변경이 관측되면 전체 응답을 보류하고503을 반환한다. 정책 비활성으로 공식 확정이 사라져도 새 요청에서는 공식 Program source gate가 OCR 노출을 계속 막는다.
+
+| 직접 관련 검증 | 실제 결과 |
+| --- | --- |
+| 공식 유효 receipt | view true·stale reason 없음; 실제 SQL view에서 mock GET 검색 DTO1건 |
+| 원문/hash/context/revision/current 변경 | view false 및 안정된 stale reasons; receipt 행은 그대로 |
+| analysis/candidate/evidence 변조 | payload·snapshot·잘못된 타입·quote/좌표 변경을 false로 처리 |
+| catalog/work identity/receipt verification 변경 | membership·identity·검증 hash 불일치 false; owner-only 격리 corruption fixture로 receipt 자체 재검증 확인 |
+| policy false/부재·scope/충돌/중복 | view false; 후보/receipt/REJECTED 무쓰기 |
+| 공식 우선·receipt 없음/stale | 공식1건 우선, 같은 공연 OCR 억제; pending/stale도 OCR fallback0 |
+| OCR-only/공식 불채택 | biography·markup unsupported·없음·hash mismatch는 기존 router 규칙의 OCR 경로; 기존 identity/version/evidence 검사 유지 |
+| 날짜/지역/공연 상태·정렬 | 전국/서울·겹치는 기간·KST 만료/미래·취소/완료·track/work 경계 및 stable ordering 확인 |
+| DTO/원문 비노출 | 공개 key 집합 동일; raw text/quote/identity snapshot/hash/비밀키 비노출 |
+| count/range/pagination·상태 변경 | 작은 서버 cap 계속 조회; 누락/잘못된 range/불완전 페이지/상한/응답 형식·재조회 변경은503 |
+| ACL/RLS·DDL rollback | invoker/service_role SELECT만; anon/auth 접근 거부·임시 SELECT grant에도 underlying RLS 행0; 신규 view rollback |
+| 기존 계약/행 보존 | 기존 함수 OID/정의/ACL·view 정의, 공식/OCR v2/v3/v4·후보/current·review/receipt·policy/catalog digest 동일 |
+
+- **14/14 PASS**, 실패/skip0: `node --input-type=module -e "await import('./server/supabaseConcertSearch.test.mjs');await import('./server/programTextConfirmationStatusSql.test.mjs')"`. Windows Node22.18.0, mock 검색/API 직접 테스트10 + PGlite 인메모리 PostgreSQL4다. 선행 SQL/confirmation RPC는 새 격리 DB의 schema/receipt fixture 구성에만 사용했다. 운영 DB·KOPIS·OCR·실제 upstream API를 호출하지 않았고, 선행 작업3F/3G suite·전체 회귀/build는 실행하지 않았다.
+- 변경 구현·테스트 **4파일**: 위 migration, `server/supabaseConcertSearch.mjs`, `server/supabaseConcertSearch.test.mjs`, `server/programTextConfirmationStatusSql.test.mjs`. 공동 문서2개와 함께 게시한다. 3G confirmation RPC/table, 3F planner/view, router/matcher·저장 RPC 및 기존 OCR review/receipt/status 정의는 byte 단위 보존했다.
+- 작업 경로는 `.cache/ca-auto-20261022-001/spec4-task3h/source`다. 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의40개 변경·index·.env hash를 보존했다. 원격의 관계없는 변경도 덮어쓰지 않으며 게시 payload의 실제 secret/인코딩 변형 부재를 검사했다.
+- 운영 migration 적용·운영 DB/KOPIS/OCR/API 호출·이미지 다운로드·운영 후보/receipt/CONFIRMED·REJECTED 쓰기0. 운영 v4 policy·예약/환경/배포 변경0이며 UI/라우트/batch/queue/runner 연결 변경도 없다. 실제 예약·운영 환경은 이번에 재조회하지 않았다.
+- 기술 의견/검증 한계: 여러 GET은 원자적 transaction snapshot이 아니므로 재조회로 관측한 변경만 차단하며 마지막 GET 이후 변화를 보장하지 않는다. 실제 PostgREST의 새 view FK embed와 count/range 응답 계약은 운영 미호출·미적용 상태로 실검증하지 않았고 SQL+mock에서 확인했다. 향후 운영 적용 시 이 계약 확인은 별도 범위다. 이번 결과는 운영 검색 활성화 보고가 아니다. 추가 실행 질문은 없으며 **IMPLEMENTED**로 검토를 요청하고 게시 후 중단한다.
 
 ## 웹 GPT → Codex: 명세 4 작업 3G ACCEPTED / 작업 3H READY
 

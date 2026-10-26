@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,20 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3H — 공식 텍스트 확정의 유효 상태·공연 검색 연결 / READY
+## 명세 4 작업 3H — 공식 텍스트 확정의 유효 상태·공연 검색 연결 / IMPLEMENTED
 
 작업 3G 결과 SHA `b72eeb80e56bbce6fd6be5c1258d79fce498f8b7`와 구현 SHA `905021d2f7698e732a25f3bf1ac25bf16d39dfb7`를 **ACCEPTED**한다. 단건 RPC가 policy → concert → analysis → candidates 순서로 잠그고 현재 원문·context·snapshot·catalog·eligibility를 재검증하며, 적격 후보에만 append-only CONFIRMED receipt를 만들고 부적격 후보에는 REJECTED도 만들지 않는 계약과 격리 12/12 검증을 확인했다.
 
 이번 작업은 공식 텍스트 receipt 자체를 영구적인 검색 권한으로 신뢰하지 않고, **현재도 유효한 공식 확정만 기존 공연 검색 결과에 읽기 전용으로 합치는 단계**다. 외부 검색 응답 형식과 기존 OCR 확정 데이터는 유지하며 공식 Program이 선택되는 공연에서는 OCR 결과가 대신 노출되지 않게 한다.
+
+### 작업 3H 구현 결과
+
+- 공동 문서 기준 `5b1ba8264d3057b2e2b53b16f2f7ad13ed25f7d6`, 구현 코드 `6964e88ec0dac047dc60f605c03316d2576308da`. additive `concert_program_text_confirmation_status`와 기존 Supabase 공연 검색의 읽기 전용 병합을 구현했다. 원문·quote·identity snapshot은 신규 view/검색 응답에 노출하지 않는다.
+- view가 현재 source/context·saved-current·analysis/candidate/evidence/catalog/work identity·receipt verification hash·안전한 후보 scope/reason/중복 부재·명시적 v4 policy를 재검증한다. 불일치는 receipt/후보를 수정하지 않고 false와 stale reasons로 표시한다.
+- 서버 내부에서 현재 공식 원문을 router로 판정해 공식 Program 선택 공연의 OCR을 억제한다. 공식 receipt 부재/stale에도 OCR fallback하지 않으며 유효 공식 결과를 우선해 같은 KOPIS/곡1건으로 합친다. 기본 OCR 검색 버전·외부 DTO·정렬·날짜/지역/상태 경계는 유지했다.
+- exact Content-Range/count와 keyset pagination(페이지100/상한50)을 확인하고, 반환 전 status/source/context를 재조회한다. 신규 view 부재·잘못된 형식·부분 페이지·읽기 한도·관측된 상태 변경은 전체 503이며 다른 source/review 경로로 재시도하지 않는다.
+- 검색/API 직접 테스트10 + PGlite SQL4, **14/14 PASS**, 실패/skip0. 공식/OCR-only·source 우선·stale·중복 제거·원문 비노출·ACL/RLS·migration rollback·기존 데이터/정의 보존을 확인했다. 실제 운영 PostgREST·운영 DB 검증은 하지 않았다.
+- 변경 구현·테스트4파일 및 공동 문서2개. 기존3G RPC/table·3F planner/view·source router/matcher·저장/OCR review 계약과 원본40개 변경/index/.env를 보존했다. 운영 migration/호출/쓰기·policy/예약/환경/배포 변경0, 선행 suite·전체 회귀/build 재실행0이다. 2026-10-26 KST **작업3H IMPLEMENTED**로 게시 후 중단한다.
 
 ### 허용 범위
 
