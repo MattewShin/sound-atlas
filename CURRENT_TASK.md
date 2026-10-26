@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,20 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3G — 공식 텍스트 단건 자동 CONFIRMED 계약·격리 검증 / READY
+## 명세 4 작업 3G — 공식 텍스트 단건 자동 CONFIRMED 계약·격리 검증 / IMPLEMENTED
 
 작업 3F 결과 SHA `722b8b4cf56cea55b32558404e7c5254771a541a`와 구현 SHA `27ceba06b5b622887e086f5f6300805c408b9622`를 **ACCEPTED**한다. 공식 status view의 live freshness, source 우선순위, 공식 분석 pending, 중복·모호 후보 제외, GET 전용 planner와 기존 OCR/review/search 보존이 격리 10/10 테스트로 확인됐다.
 
 이번 작업은 3F plan을 쓰기 권한으로 신뢰하지 않고, DB 잠금 안에서 조건을 다시 검증해 **공식 텍스트의 명확한 후보 한 건만 자동 CONFIRMED receipt로 기록할 수 있는 계약**을 작성·격리 검증한다. 부적격 후보에는 REJECTED row를 만들지 않는다.
+
+### 작업 3G 구현 결과
+
+- 공동 문서 기준 `2dfe0df1921cc4cfd18f373c76a3c68493f29bc4`, 구현 코드 `905021d2f7698e732a25f3bf1ac25bf16d39dfb7`. 공식 텍스트 전용 append-only `concert_program_text_confirmations`와 단건 `confirm_concert_program_text_candidate_v4(jsonb,text) → uuid`, 전용 adapter 및 격리 테스트를 추가했다.
+- policy → concert → analysis → candidate 순서로 잠그고 현재 원문/hash/context/revision·전체 snapshot/payload/catalog·MATCHED+EXACT·등록 track/work·명확한 scope/reason·중복 부재를 DB에서 재검증한다. 3F plan은 입력받거나 쓰기 권한으로 신뢰하지 않는다.
+- 적격 한 건에만 CONFIRMED receipt를 추가하고 같은 candidate/판정 버전·동일 검증 snapshot 재시도는 같은 ID/행 증가0이다. 부적격·정책 변경·stale·변조·중복은 오류와 receipt0으로 끝나며 REJECTED row나 기존 공식/OCR 후보·review 변경을 만들지 않는다.
+- receipt는 출처/분석/후보/공연/track/work·각 hash·matcher/판정 버전·evidence hash·검증된 catalog work identity snapshot/hash를 보존하며 전체 원문은 복제하지 않는다. adapter는 전용 RPC·명시적 enabled policy를 매번 GET preflight한 뒤 이 RPC에만 단건 POST한다.
+- mock4 + PGlite SQL5 + 전용 loopback PostgreSQL18.4 다중 연결3, **12/12 PASS**, 실패/skip0. 동시 요청은 receipt1건으로 수렴하고 잠금 중 policy/source/analysis/candidate 변경·후보 phantom INSERT가 차단됐다. 테스트 서버는 중지했다. 세부 계약·테스트는 HANDOFF 참조.
+- 변경 구현·테스트5파일 및 공동 문서2개. 작업3F suite 재실행·운영 migration/호출/쓰기0, 기존 source/planner/view/저장·OCR 계약 및 정책/예약/환경/배포 변경0. 원본40개 변경/index/.env를 보존했다. 2026-10-26 KST **작업3G IMPLEMENTED**로 같은 브랜치에 게시하고 중단한다.
 
 ### 허용 범위
 

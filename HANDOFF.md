@@ -4,13 +4,48 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3G 단건 자동 확정 계약)
+- 현재 상태: IMPLEMENTED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-26 (Asia/Seoul; 명세4 작업3G 구현·격리 검증)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3G — IMPLEMENTED
+
+- 공동 문서5개 및 원격 HEAD 기준: `2dfe0df1921cc4cfd18f373c76a3c68493f29bc4`. CA-AUTO-20261022-001 / 명세4 작업3G만 구현했다. 코드: [`905021d2f7698e732a25f3bf1ac25bf16d39dfb7`](https://github.com/MattewShin/sound-atlas/commit/905021d2f7698e732a25f3bf1ac25bf16d39dfb7). 2026-10-26 KST. 작업3F는 ACCEPTED 선행 계약으로 읽었고 구현·suite를 재실행하거나 변경하지 않았다.
+- additive `supabase/migrations/202610260003_program_text_confirmation.sql`은 공식 전용 `concert_program_text_confirmations`와 `confirm_concert_program_text_candidate_v4(p_expected jsonb,p_catalog_json text) → uuid`를 추가한다. 기존 OCR review/receipt와 별도 namespace이며 공식 analysis/candidate의 REVIEW_REQUIRED/current/snapshot도 그대로 둔다. 기존 view/planner/search/runner 연결은 추가하지 않는다.
+- p_expected의 정확한 7개 필드는 `candidate_id, analysis_id, source_hash, payload_hash, catalog_hash, matcher_version, decision_version`이다. v4와 `program-text-confirm-1`만 허용한다. 클라이언트 track/work/outcome/status/readiness 등 추가 키는 거부하며 판단은 DB snapshot에서 다시 읽는다. 전용 adapter는 코드의 catalog hash와 입력 형식도 선확인하고 literal catalog JSON을 별도 전달한다.
+- 잠금 순서는 **v4 policy FOR SHARE → concert FOR UPDATE → analysis FOR UPDATE → 해당 analysis의 candidates UUID 순 FOR UPDATE → 선택 candidate FOR UPDATE**다. 첫 analysis 조회는 concert를 찾는 비잠금 lookup뿐이며 analysis 잠금 후 concert 소속을 다시 확인한다. 요청 candidate는 해당 analysis 소속으로 제한해 다른 공연의 잘못된 ID를 불필요하게 잠그지 않는다. sibling row 잠금과 parent analysis FOR UPDATE가 중복 검사 중 후보 변경 및 FK 기반 새 후보 삽입을 막는다.
+- 잠금 안에서 명시적 policy enabled=true, text saved-current, 현재 원문/hash 쌍·실제 UTF-8 SHA-256·context/revision, expected source/payload/catalog/matcher, 전체 analysis canonical payload hash와 candidate snapshot의 분석 내 정확한 일치를 대조한다. catalog literal bytes SHA-256과 저장 JSON도 비교한다. 기존 catalog ACL은 service_role SELECT/INSERT만이므로 UPDATE 권한을 추가하거나 기존 계약을 변경하지 않는다.
+- 기존 3F candidate status를 **잠금 이후 DB 안에서 조회**해 full snapshot 일치·effective current·MATCHED+EXACT·등록 track/work·안전한 review/scope·중복 부재를 재검증한다. caller plan은 입력으로 받지 않는다. 추가로 전체 snapshot의 중첩 quote까지 현재 원문의 Unicode code-point [start,end) substring과 대조하고 bbox/confidence는 null만 허용한다. 진단 UTF-16 값은 신뢰 좌표가 아니다.
+- 모든 조건 통과 시에만 CONFIRMED 한 행을 INSERT한다. 부적격·stale·disabled/정책 부재·unknown reason·중복은 예외로 끝나며 **CONFIRMED/REJECTED 모두 무쓰기**다. REJECTED 처리 코드가 없고 receipt table status CHECK도 CONFIRMED만 허용한다. 기존 후보를 CONFIRMED/REJECTED로 UPDATE하거나 기존 review/receipt를 추가하지 않는다.
+- receipt에는 candidate/analysis/concert/track/work, source kind/hash, payload/catalog hash, matcher/판정 버전, evidence hash, candidate snapshot hash, 검증한 catalog `work-identity-1` snapshot/hash와 전체 verification hash를 저장한다. 전체 원문·원 evidence quote·OCR ID·비밀값은 복제하지 않는다. identity는 기존 catalog work identity helper로 계산하며 후보가 제공한 identity hash를 신뢰하지 않는다.
+- idempotency key는 **candidate_id + decision_version**이다. 매번 live 조건을 먼저 재검증하고, 기존 receipt의 전체 검증 필드/verification hash가 동일할 때만 같은 UUID를 반환한다. 동일 key에 변경된 expected snapshot/hash는 거부한다. 기존 receipt가 있어도 현재 policy disabled 또는 source stale이면 성공으로 돌려주지 않는다. 후보/분석 행은 그대로이므로 재시도도 REVIEW_REQUIRED 초기 계약을 유지한다.
+- 신규 table은 RLS enabled, public/anon/authenticated 접근 없음이다. service_role에는 SELECT/INSERT와 전용 RPC EXECUTE만 부여하고 receipt UPDATE/DELETE/TRUNCATE는 부여하지 않는다. 별도 row/statement trigger가 소유자의 UPDATE/DELETE/TRUNCATE도 거부한다. RPC/trigger는 SECURITY INVOKER·빈 search_path다. 기존 객체의 ACL/RLS를 넓히거나 security-definer 우회 경로를 만들지 않았다.
+- `createProgramTextConfirmationStore`는 매 confirm 호출마다 전용 RPC 존재와 v4의 정확한 enabled=true 1행을 GET preflight한 뒤 **전용 단건 RPC에만 POST**한다. 정책 변경은 DB 잠금에서 다시 확인한다. 전용 RPC404/부적격 오류에 OCR review/automation/v3 RPC fallback하지 않는다. batch/queue/runner/UI/search 연결은 없다.
+
+| 직접 관련 검증 | 실제 결과 |
+| --- | --- |
+| 적격 단건 | 공식 Scherzo MATCHED+EXACT 후보에 CONFIRMED receipt1; 원본 공식/OCR 데이터 digest 동일 |
+| 같은 expected 재시도 | 같은 receipt UUID, 총1행; evidence/candidate/work identity hash를 JS canonical JSON과 대조 |
+| expected/hash/판정 버전·caller 결정 필드 변경 | 거부; 기존 receipt 포함 행 증가0 |
+| 부적격 matrix | policy false/부재, stale bytes/hash/context/revision, superseded, snapshot/catalog 변조, 없는 ID, 충돌/악장 범위/편곡/발췌/unknown reason, non-EXACT/미등록 track, 중복 모두 receipt0 |
+| preflight 이후 policy 변경 | mock GET은 true였어도 실제 격리 SQL POST에서 차단; receipt0 |
+| transaction rollback | receipt INSERT 뒤 후속 오류 시 receipt0; migration 후반 오류 시 신규 table/RPC/trigger 전체 rollback |
+| ACL/RLS·append-only | service_role 전용 RPC, anon/auth 조회·실행 거부; 임시 SELECT grant에도 RLS 행0; service_role 및 owner의 receipt 변형/삭제/비우기 차단 |
+| 기존 계약 보존 | policy·기존 함수 OID/정의/ACL·모든 기존 view 정의 및 OCR v2/v3/v4·review/receipt·공식 분석/후보/status digest 동일 |
+| PostgreSQL 실제 잠금 | 미커밋 receipt transaction 중 다른 연결의 policy/source/analysis/candidate 변경·동일 RPC·FK phantom INSERT는 lock_timeout 55P03 |
+| PostgreSQL lock 후 재검증·경합 | policy/source/context 변경 commit 후 receipt0; 동시 동일 요청2개는 동일 UUID/receipt1; 기존 데이터 동일 |
+
+- **12/12 PASS**, 실패/skip0. Windows Node22.18.0, adapter mock4 + PGlite 신규 SQL5 + **전용 로컬 PostgreSQL18.4 다중 연결3**이다. 기본 직접 테스트 명령은 `node --input-type=module -e "await import('./server/supabaseProgramTextConfirmation.test.mjs');await import('./server/programTextConfirmationSql.test.mjs')"`이고 9/9 PASS다.
+- 추가 PostgreSQL 테스트는 같은 SQL test 파일의 `--isolated-postgres-config=<전용 config 파일> --pg-module=<로컬 pg module 경로>` 모드로 3/3 PASS다. config host=127.0.0.1/user=text_confirm_test/database=postgres, source 작업 공간 옆 전용 postgres-data 경로와 실제 서버 data_directory 일치를 강제한다. .env/DATABASE_URL/기존 운영 서비스는 사용하지 않았다. cache 안 새 클러스터·임시 DB만 생성했으며 DB는 테스트 뒤 제거하고 서버도 중지했다(postmaster.pid 없음 확인). 테스트용 policy 활성화·receipt/선행 fixture 저장은 이 새 격리 DB 안에서만 수행했다.
+- 최초 SQL 검증에서 UPDATE 권한을 요구하는 catalog row-lock 가정을 제거해 기존 catalog ACL을 보존했고, PostgreSQL int8 문자열을 fixture의 안전한 revision 정수로 변환한 뒤 최종 관련 테스트12개가 모두 통과했다. 선행 migration/RPC는 신규 격리 DB의 schema/fixture 구성용이며 작업3F suite·전체 회귀/build는 실행하지 않았다.
+- 변경 구현·테스트 **5파일**: 위 migration, `server/supabaseProgramTextConfirmation.mjs`, `server/supabaseProgramTextConfirmation.test.mjs`, `server/programTextConfirmationSql.test.mjs`, `server/testSupport/programTextConfirmationFixture.mjs`. 공동 문서2개와 함께 같은 브랜치에 게시한다. 기존3F view/planner·source router/matcher·3E 저장 RPC·기존 OCR 계약은 byte 단위 보존했다.
+- 원본 main/`1607ca201c3a559bc7f28aabe998ef062db02ef9`의40개 변경·index·.env hash를 보존했다. 작업 경로는 `.cache/ca-auto-20261022-001/spec4-task3g/source`다. 새 구현5개와 문서2개의 게시 payload에서 실제 secret 값/인코딩 변형이 없음을 검사했다.
+- 운영 migration 적용·운영 DB/KOPIS/OCR/API 호출·이미지 다운로드·운영 후보/receipt/CONFIRMED·REJECTED 쓰기0. 운영 policy 활성화·예약/환경/배포 변경0이다. 예약은 이번에 조회·실행·수정하지 않았고 직전 Disabled 기록을 운영 재검증으로 표현하지 않는다.
+- 구현자 의견/한계: 단건 receipt 계약·격리 검증까지 완료했다. 실제 운영 migration/권한/PostgREST 연결은 검증하지 않았으며 현재 운영 자동화가 활성화됐다는 결과가 아니다. receipt는 근거 행을 FK로 참조하므로 삭제보다는 append-only 보존 계약이며, 이번에 cleanup/retention 정책을 변경하지 않았다. 별도 실행 질문은 없고 **IMPLEMENTED**로 검토를 요청한다. 게시 후 후속 batch·검색 연결 없이 중단한다.
 
 ## 웹 GPT → Codex: 명세 4 작업 3F ACCEPTED / 작업 3G READY
 
