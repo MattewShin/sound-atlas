@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: BLOCKED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -30,6 +30,19 @@
 - 해당 곡의 공개 공연 검색에서 canary 공연 노출
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
+
+### 작업 3M Gate C candidate-status timeout 최소 보정·canary 재개 / READY
+
+결과 SHA `c74d36553b6146ff87220bcb153a46d98e7861ff`의 bounded source 준비와 실패 후 안전 중단을 **ACCEPTED**한다. `PF304387`의 공식 원문/hash 저장, 분석 1행·후보 18행은 보존하며 KOPIS 상세 56건 조사, source sync, 분석 save, 기존 migration 6개와 ACL 보정을 반복하지 않는다. 현재 신규 CONFIRMED 0건이므로 아직 OPERATIONAL은 아니다.
+
+1. 먼저 policy=false·예약 Disabled를 유지하고 정확히 `PF304387` / 분석 `6999ba97-d340-434e-8414-3094c9bb26b3`에 한정해 READ ONLY `EXPLAIN (FORMAT JSON, COSTS, VERBOSE)`와 안전한 범위의 `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)`으로 57014의 실행 지점을 확인한다. 실행계획·행수·시간만 기록하고 공식 원문, evidence quote, 자격증명은 기록하지 않는다.
+2. 현재 후보 view가 analysis-level source/context/payload/catalog 검증을 후보별로 반복하는지 확인한다. 추측만으로 index나 timeout을 바꾸지 않는다. 전역 `statement_timeout` 상향, 검증 생략, policy 우회, service-role 권한 확대는 금지한다.
+3. 근거가 확인되면 **새 additive migration 1개와 필요한 최소 adapter/test 변경만** 허용한다. 이미 적용한 migration 파일을 수정·재적용하지 않는다. 구현은 기존 view의 의미를 유지하는 최적화 또는 analysis UUID를 받는 service-role 전용·SECURITY INVOKER·STABLE 단건 GET RPC 중 더 작은 쪽을 택한다. 공통 analysis 검증은 한 번만 계산하고 18개 candidate의 기존 필드·stale/exclusion/automatic-ready 의미는 byte/JSON 동등하게 유지한다. 기존 view는 호환성을 위해 보존한다.
+4. 격리 DB에서 기존 view와 새 경로의 결과 동등성, 큰 공식 snapshot과 18개 이상 후보의 bounded 완료, RLS/ACL, policy false/true, stale·중복·모호 후보 fail-closed를 검증한다. 직접 관련 테스트 후 전체 `npm test`와 production build를 한 번 실행한다.
+5. 새 migration만 운영에 1회 적용하고, policy=false에서 해당 analysis 단건 조회가 timeout 없이 완전한 18행을 반환하는지 확인한다. 다른 migration/ACL/source/analysis를 재적용·재저장하지 않는다.
+6. 같은 실행에서 Gate C를 재개한다. 정확히 한 v4 policy 행만 활성화하고 기존 저장 source/analysis를 재사용해 coordinator SAVE를 1회 실행한다. 신규 공식 CONFIRMED는 최대 1건, REJECTED 0건이어야 한다. 즉시 같은 입력을 다시 실행해 신규 분석·후보·receipt 쓰기 0을 확인한다.
+7. 공개/release 검색에서 `PF304387`의 확정 곡과 기존 PF295548의 쇼팽·리스트·브람스 연결을 확인한다. 예상 밖 후보, 57014 재발, 결과 불일치, 신규 확정 2건 이상, 기존 검색 소실이면 policy를 false로 복구하고 같은 3M을 BLOCKED로 게시한다.
+8. Gate C가 모두 통과하면 중단하지 말고 기존 3M Gate D대로 main 병합·배포·검색 재확인·제한 예약 활성화까지 진행한다. 예약은 collection ON, 공식 Program 단일 공연 ON, OCR/구 OCR 판정/cleanup OFF, 회당 공연 1개·신규 확정 1건, 매일 08:40 KST다. 배포 SHA·rollback·실제 예약 설정을 기록하고 최종 상태를 `OPERATIONAL`로 게시한다.
 
 ### 작업 3M Gate C 재개 결과 — source 준비 완료 / PLAN_READ_FAILED로 BLOCKED (2026-10-27 KST)
 
