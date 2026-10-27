@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -30,6 +30,26 @@
 - 해당 곡의 공개 공연 검색에서 canary 공연 노출
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
+
+### 작업 3M 재개 결과 — Gate B / BLOCKED (2026-10-27 KST)
+
+- 기준 `facdd5cf95d3d746db19870f7fb301fc223fcf7f`, mock 수정 [`af7dca1d8ae7e95d829297c57ababab508866752`](https://github.com/MattewShin/sound-atlas/commit/af7dca1d8ae7e95d829297c57ababab508866752). production 검색 코드는 변경하지 않았다.
+- **Gate A PASS:** 두 SQL suite2/2 → 영향107/107 → 전체 npm test510/510, fail0/skip0 → build PASS(4.66s). 직접 suite14개는 기본 runner에 각1회 포함된다.
+- **Gate B BLOCKED:** 아래 순서1~3을 각각1회 적용·commit했다. 세 번째의 두 새 테이블은 `service_role.DELETE=true`로, 격리 기준false와 불일치한다. 권한을 임의 변경하거나 후속 migration을 적용하지 않았다.
+
+| migration | 최종 판정 |
+| --- | --- |
+| 202610230002_kopis_detail_text.sql | COMPLETE(SQL/REST 확인) |
+| 202610230003_program_analysis_v4.sql | COMPLETE(SQL/REST 확인) |
+| 202610260001_program_text_analysis_v4.sql | INCOMPATIBLE — SQL commit 후 두 테이블 DELETE 권한 불일치 |
+| 202610260002_program_text_status.sql | ABSENT |
+| 202610260003_program_text_confirmation.sql | ABSENT |
+| 202610260004_program_text_confirmation_status.sql | ABSENT |
+
+- PostgreSQL17의20개 NOT NULL column은 실제 존재하며, PostgreSQL18의 named constraint 표현 차이와 실제 DELETE 권한 차이를 구분했다. 세 번째 REST 확인 전 중단했다.
+- 2026-10-27 13:55:25 KST 예약 Disabled/Enabled=false, v4 policy enabled=false. 실패 보호 확인에서 추가 policy/예약 변경0. Gate B REST GET4/POST0; Gate C/D·canary·main 병합·배포·예약 활성화 미실행.
+- **재개점:** 두 테이블(`concert_program_text_analyses`, `concert_program_text_candidates`)의 service_role DELETE 권한을 검토된 조치로 기준에 맞춘 뒤 PostgreSQL17에 맞는 SQL·REST 계약을 재검증한다. 이미 commit된 세 번째 migration은 재적용하지 않는다. COMPLETE 확인 후에만 Gate B 순서4→6, Gate C→D로 진행한다.
+- 원본40파일/index/.env 및 production 검색 byte 보존. 적용된 additive schema/receipt 삭제 없이 BLOCKED를 게시하고 중단한다.
 
 ### 작업 3M 재개 지시 — Gate A의 mock 2건 수정 후 Gate B→D 계속 / READY
 
