@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -31,7 +31,19 @@
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
 
-### 작업 3M Gate C 공식 텍스트 단건 준비·canary 재개 / READY
+### 작업 3M Gate C 재개 결과 — source 준비 완료 / PLAN_READ_FAILED로 BLOCKED (2026-10-27 KST)
+
+- 공동 문서5개·실행 release 기준 `cfb73a24ddb6a311b8af253d88061f6891a11179`. production 코드/설정/테스트 변경0. 기존 Gate A 전체510/510·build PASS와 Gate B6개/ACL ACCEPTED를 유지하며 이번에는 test/build·migration·ACL을 재실행하지 않았다.
+- READ ONLY 기존 미래26공연 + 현재 수집조건의 추가30공연을 조사했다. KOPIS 공식 상세GET56/60, 목록GET2, 이미지 다운로드/OCR0. 공식 Program15공연, MATCHED+EXACT2공연 중 시작일→KOPIS ID 순 첫 대상 `PF304387`(2026-10-29)을 선택했다.
+- policy=false에서 완전한 detail/image snapshot을 sync RPC **1회 POST**했다. 다른 공연/receipt/review/OCR/분석 테이블의 row 수·digest 불변과 대상의 예상 metadata/image membership 변경만 확인했다. 저장 source를 다시 GET해 동일한 후보18개·MATCHED+EXACT4개를 검증했다.
+- coordinator DRY_RUN은 동일 source/payload hash, 후보18개(MATCHED5/UNREGISTERED12/AMBIGUOUS1), DB쓰기0으로 통과했다. 대표 EXACT track은 `chopin-scherzo-op39-no3`이며 확정된 track이 아니다.
+- 정확히 한 v4 policy 행을 활성화한 뒤 SAVE를1회 실행했다. 공식 분석 `6999ba97-d340-434e-8414-3094c9bb26b3`와 후보18개 저장 후 **PLAN_READ_FAILED**로 실패했다. 단건 확인 RPC 호출0, 신규 CONFIRMED0/REJECTED0. policy를 즉시 false로 복구했다.
+- 최소 READ ONLY 사후 확인에서 `concert_program_text_candidate_status`의 해당 공연 조회가 **HTTP500 / SQL57014 / statement timeout**이었다. 15:00:05 KST 실제 text 분석1/후보18/confirmation0 및 v4 policy=false 확인. 저장 source/분석은 삭제하거나 재저장하지 않았다.
+- 15:00:17 KST 예약 Disabled/Enabled=false, action 변경/강제실행0. 이번 Supabase REST GET24/POST2(source sync1 + 분석 save1), confirmation POST0. policy UPDATE는 활성화1·복구1. 즉시 재실행/공개 검색 검증 및 Gate D main 병합·배포·예약 활성화는 미실행이다.
+- **실패 Gate C / 재개점:** 해당 공식 candidate status 조회의57014 timeout을 해결·검증한 뒤 저장된 `PF304387` source/분석을 재사용해 Gate C SAVE부터 재개한다. source 수집·sync1회·migration6개/ACL을 반복하지 않는다. 아직 canary·무쓰기 재실행·검색 검증을 통과하지 않았으므로 OPERATIONAL이 아니다.
+- 원본main/HEAD·40파일/index/.env 보존. 원문/evidence/자격증명 기록0. 코드/SQL·timeout 설정을 임의 변경하지 않고 BLOCKED를 게시한 뒤 중단한다.
+
+### 작업 3M Gate C 공식 텍스트 단건 준비·canary 재개 지시 / 실행 후 BLOCKED
 
 결과 SHA `2337b2efc55d8f43adc1f819ca34b6276fd99398`을 검토했다. Gate B와 ACL 보정은 **ACCEPTED**한다. migration 6개와 ACL 보정을 다시 적용하지 않는다. `apply-one 2`는 실제 미실행이므로 재시도 대상이 아니며, READ ONLY 사후 검증 결과를 기준으로 한다.
 

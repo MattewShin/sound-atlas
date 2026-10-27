@@ -4,13 +4,28 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-27 (Asia/Seoul; Gate B ACCEPTED / Gate C source 준비 재개)
+- 현재 상태: BLOCKED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-27 (Asia/Seoul; Gate C source 준비 완료 / PLAN_READ_FAILED)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: Gate C 공식 source 준비 완료 / status 조회 timeout으로 BLOCKED
+
+- 읽은 공동 문서5개와 실행 코드 SHA: `cfb73a24ddb6a311b8af253d88061f6891a11179`. 별도 detached release에서 실행했다. 변경은 CURRENT_TASK/HANDOFF2개뿐이며 production 코드·SQL·테스트·runner·설정은 수정하지 않았다.
+- 기존 Gate A 전체 npm test510/510(fail0/skip0)·build PASS, Gate B6개 migration/ACL ACCEPTED를 재사용했다. 이번 test/build·migration·ACL 적용0이며 이전 수치를 새 실행으로 보고하지 않는다.
+- **제한 source 준비 통과:** 기존 미래26공연 + 추가30공연, 공식 상세GET56(상한60)/목록GET2. 추가 조사는 기존 미래 공연에서 적격0을 확인한 뒤 수행했다. 현재 수집범위 서울/2026-10-27~11-26. 이미지 다운로드·OCR·이미지 분석0. 공식 Program15공연, MATCHED+EXACT 적격2공연에서 시작일→KOPIS ID 순 첫 `PF304387`(10/29)을 선택했다.
+- policy=false에서 기존 `sync_kopis_concert`로 그 공연의 완전한 detail/image snapshot만 **1 POST**했다. source 준비 전후 다른 공연/이미지·receipt/review·OCR/분석의 row 수/digest 불변, 기존 대상 이미지 행 보존 및 최신 membership을 검증했다. 저장 text/hash/context GET 재조회에서 로컬 결과와 같은 후보18개/EXACT4개를 확인했다.
+- 대상 concert UUID `bf031eec-2f7d-436f-8255-fd0fa75dee1c`, source hash `c62f6504449ea9ef4b6a41f4d648ebe5fdf1b41f65f89e22da848e7ff4f6b9ca`. 대표 로컬 EXACT track `chopin-scherzo-op39-no3`은 **미확정**이다. 원문/evidence quote/후보 전체 목록은 게시하지 않는다.
+- **Gate C 실패:** coordinator DRY_RUN은 동일 source/payload hash, 후보18개(MATCHED5/UNREGISTERED12/AMBIGUOUS1), DB쓰기0으로 통과했다. v4 policy의 정확히 한 행을 true로 바꾸고 SAVE1회를 실행했다. 분석 save는 성공했으나 다음 planner read에서 `FAILED / PLAN_READ_FAILED`로 중단됐다.
+- 분석 UUID `6999ba97-d340-434e-8414-3094c9bb26b3`, 공식 분석1행·후보18행이 저장됐다. confirmation RPC 호출0, 공식 confirmation0행, 신규 CONFIRMED0/REJECTED0이다. 실패 후 즉시 같은 policy 행을 false로 되돌렸으며, 보존된 source/분석/후보를 삭제·재처리하지 않았다.
+- **직접 확인한 오류:** 최소 읽기 전용 사후 probe에서 해당 공연의 `concert_program_text_candidate_status` GET이 HTTP500 / SQL `57014`(`canceling statement due to statement timeout`)을 반환했다. 별도 concerts pagination probe는 offset0=HTTP200/1행, offset1=HTTP206/0행으로 정상이다. 단순 마지막 빈 page 때문이라고 결론내리지 않는다. SQL/view/statement timeout 설정을 임의 수정하거나 canary를 재시도하지 않았다.
+- 2026-10-27 15:00:05 KST 관리자 READ ONLY: v4 policy=false, 공식 분석1/후보18/confirmation0, source hash 유지. 15:00:17 KST `ClassicAtlas-LocalPipeline` Disabled/Enabled=false. 예약 action/설정 변경·강제실행0. Supabase REST 합계 GET24/POST2(source sync1 + analysis save1); 확인 RPC POST0. policy UPDATE는 on1/off1이다.
+- 동일 입력 즉시 재실행 DB쓰기0·canary 공개 검색·기존3곡 release 검색은 실패 지점 이후이므로 미실행이다. Gate D의 PR/main 병합·production 배포·예약 활성화도 미실행, 배포 SHA 없음. 현재 상태를 OPERATIONAL로 표시하지 않는다.
+- **재개점/기술 의견:** `PF304387` source 준비는 끝났다. 해당 candidate status의 운영57014 timeout을 먼저 읽기 전용 계획/성능 근거로 확인하고, 별도 승인된 최소 수정·격리 검증 후 기존 저장 분석을 재사용하는 Gate C SAVE부터 계속한다. KOPIS 조사·source sync·migration/ACL 재적용은 필요 없다. 단건 CONFIRMED→무쓰기 재실행→release 검색이 모두 통과한 뒤에만 Gate D로 간다.
+- 원본main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`, 기존40파일·index·.env hash를 모두 보존했다. .env를 release에 복사하지 않았으며 연결 문자열/host/user/비밀번호/KOPIS key/운영 원문을 로그·문서·Git에 기록하지 않았다. 실패 지점과 재개점을 같은 브랜치에 게시하고 중단한다.
 
 ## 웹 GPT → Codex: Gate B ACCEPTED / Gate C 공식 source 단건 준비 재개
 
