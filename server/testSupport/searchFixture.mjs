@@ -1,5 +1,17 @@
 import assert from 'node:assert/strict'
 const fields='id,kopis_id,title,venue,region,start_date,end_date,performance_status,synced_at'.split(',')
+const valueAt=(row,key)=>key.split('.').reduce((value,part)=>value?.[part],row)
+const literal=value=>value==='true'?true:value==='false'?false:value
+const matches=(value,filter)=>{
+  if(filter==='is.null')return value===null
+  if(filter==='not.is.null')return value!==null&&value!==undefined
+  if(filter.startsWith('in.(')&&filter.endsWith(')'))return filter.slice(4,-1).split(',').map(literal).includes(value)
+  const match=/^(eq|gt|gte|lt|lte)\.(.*)$/.exec(filter)
+  assert.ok(match,'Unsupported PostgREST fixture filter: '+filter)
+  if(value===null||value===undefined)return false
+  const expected=literal(match[2])
+  return match[1]==='eq'?value===expected:match[1]==='gt'?value>expected:match[1]==='gte'?value>=expected:match[1]==='lt'?value<expected:value<=expected
+}
 
 // Mock the two status projections, live source/context and exact keyset ranges.
 // Reevaluate providers on each GET so live SQL mutations remain observable.
@@ -19,11 +31,16 @@ export function searchFixture({ocrRows,concerts,officialRows=()=>[],onRequest=()
           concerts:Object.fromEntries(fields.map(k=>[k,c[k]]))}
       })
     }
-    const id=url.searchParams.get('id')
-    if(id?.startsWith('in.('))rows=rows.filter(r=>id.slice(4,-1).split(',').includes(r.id))
-    if(id?.startsWith('gt.'))rows=rows.filter(r=>r.id>id.slice(3))
-    const after=/id\.gt\.([a-f0-9-]+)/i.exec(url.searchParams.get('and')||'')?.[1]
-    if(after)rows=rows.filter(r=>r.id>after)
+    // Apply SQL WHERE predicates (including inner embedded-concert conditions)
+    // before computing the keyset page and remaining exact count.
+    for(const [key,filter]of url.searchParams){
+      if(['select','order','limit'].includes(key))continue
+      if(key==='and'){
+        const after=/^\(id\.gt\.([a-f0-9-]+)\)$/i.exec(filter)?.[1]
+        assert.ok(after,'Unsupported PostgREST fixture conjunction')
+        rows=rows.filter(r=>r.id>after)
+      }else rows=rows.filter(r=>matches(valueAt(r,key),filter))
+    }
     rows.sort((a,b)=>a.id.localeCompare(b.id))
     const total=rows.length,page=rows.slice(0,Number(url.searchParams.get('limit')||100))
     return new Response(JSON.stringify(page),{headers:{'content-range':page.length?`0-${page.length-1}/${total}`:'*/0'}})
