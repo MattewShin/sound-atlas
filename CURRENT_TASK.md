@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: BLOCKED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -30,6 +30,17 @@
 - 해당 곡의 공개 공연 검색에서 canary 공연 노출
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
+
+### 작업 3M 재개 지시 — Gate A의 mock 2건 수정 후 Gate B→D 계속 / READY
+
+결과 SHA `cd757e27625a0d0ae9da5a4418dee63e2318650d`의 안전한 중단을 수락한다. 새 작업 번호를 만들지 않고 동일한 3M을 아래 지점에서 재개한다.
+
+- 실패 원인은 production 검색 계약이 아니라 공용 `searchFixture`가 URL의 PostgREST 필터를 적용하지 않아, 실제 요청에서는 제외될 미확정·미연결·다른 track 행까지 반환한 것이다.
+- production `supabaseConcertSearch.mjs`의 완전조회·재조회·source 우선·fail-closed 계약은 변경하거나 완화하지 않는다.
+- `server/testSupport/searchFixture.mjs`가 status 행의 `track_id/work_id`, matcher/status/relation/outcome, boolean, null/hash 조건과 embedded concert의 날짜·상태·지역 조건을 실제 요청대로 적용한 뒤 keyset·정확한 `Content-Range`를 계산하게 최소 수정한다.
+- 먼저 실패한 `programWorkIdentitySql.test.mjs`와 `programAutomationSql.test.mjs`만 확인한다. 통과하면 Gate A 영향 테스트를 실행하고, 이어 기본 runner의 전체 `npm test` fail0/skip0과 build를 확인한다.
+- Gate A가 통과하면 멈추지 말고 기존 CURRENT_TASK의 Gate B→C→D를 그대로 계속한다. migration·canary·배포·예약 조건을 축소하거나 새로 해석하지 않는다.
+- 두 mock 수정 외 새로운 production 변경이 필요하거나 어느 Gate든 실패하면 그 지점에서만 BLOCKED로 종료한다.
 
 ### 작업 3M 중단 — Gate A / BLOCKED (2026-10-27 KST)
 
