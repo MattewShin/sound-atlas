@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: BLOCKED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -30,6 +30,31 @@
 - 해당 곡의 공개 공연 검색에서 canary 공연 노출
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
+
+### 작업 3M Gate B 권한 정비 재개 / READY
+
+결과 SHA `115cedf8cf968c6121951c3a2bb821db674860d2`의 Gate A PASS와 Gate B 안전 중단을 수락한다. 이미 적용된 migration 1~3은 재적용하지 않는다.
+
+#### 확정 원인과 수정 범위
+
+`202610260001_program_text_analysis_v4.sql`은 두 테이블 생성 후 public/anon/authenticated의 권한만 제거하고 service_role에는 SELECT·INSERT·UPDATE를 grant했다. 운영 DB의 CREATE TABLE 기본 ACL로 service_role에 이미 부여된 DELETE가 명시적으로 회수되지 않아 남았다.
+
+1. **미래의 빈 DB용 수정:** 기존 `202610260001_program_text_analysis_v4.sql`의 ACL 구문이 service_role의 기존 table privileges를 먼저 전부 REVOKE한 뒤 SELECT·INSERT·UPDATE만 다시 GRANT하도록 최소 수정한다. SQL 함수·테이블·검증 로직은 변경하지 않는다.
+2. **이미 적용된 운영 DB용 보정:** 새 additive migration `202610270001_program_text_analysis_acl.sql`을 만든다. 대상은 아래 두 테이블로 한정한다.
+   - `public.concert_program_text_analyses`
+   - `public.concert_program_text_candidates`
+3. 보정 SQL은 transaction 안에서 두 테이블에 대해 service_role의 table privileges를 REVOKE ALL 후 SELECT·INSERT·UPDATE만 GRANT한다. public/anon/authenticated의 ALL REVOKE와 RLS enabled를 재확인한다.
+4. 전역 `ALTER DEFAULT PRIVILEGES`, role membership, 다른 table/function/schema 권한은 변경하지 않는다. 사전 조회에서 DELETE가 직접 ACL이 아니라 owner/superuser/상속 role 때문에 생긴 것으로 판명되면 부모 역할을 변경하지 말고 BLOCKED로 중단한다.
+5. 신규 migration은 적용 전 빈 DB 전체 chain과 “원본 3개 적용 상태→ACL 보정” upgrade fixture 양쪽에서 검증한다. 보정 migration 2회차는 권한 변화 없이 성공하는 idempotent 계약이어야 한다.
+6. 운영에는 신규 ACL 보정 migration만 한 번 적용한다. 이미 적용된 `202610260001`을 다시 실행하지 않는다.
+7. 사후 기준:
+   - service_role: SELECT/INSERT/UPDATE=true
+   - service_role: DELETE/TRUNCATE/REFERENCES/TRIGGER=false
+   - public/anon/authenticated: table privilege 없음
+   - 두 테이블 RLS enabled
+   - 기존 row 수·digest, RPC signature/EXECUTE, v4 policy disabled 상태 불변
+8. 위 기준을 SQL과 REST GET으로 확인하면 세 번째 migration을 COMPLETE로 재판정하고, 기존 Gate B의 migration 4→6을 순서대로 적용한 뒤 Gate C→D를 계속한다.
+9. 권한 정비 외 문제가 발생하거나 기존 데이터·함수·policy가 변하면 policy/예약 Disabled를 유지하고 해당 지점에서 BLOCKED로 종료한다.
 
 ### 작업 3M 재개 결과 — Gate B / BLOCKED (2026-10-27 KST)
 
