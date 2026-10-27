@@ -4,13 +4,23 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: BLOCKED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3K 버전 계약 충돌 BLOCKED)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3K 검토·작업3L 버전 계약 분리)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 4 작업 3K BLOCKED 수락 / 작업 3L READY
+
+- 검토한 결과 SHA: `e55144b0b9b91ae750e480923d1b22adbc03d0d2`.
+- 103개 중 82 PASS·21 FAIL 재현, 실제 실패 파일 10개 확인, production/test/runner·운영 변경 0과 중단 조건 준수를 확인했다. 3K의 BLOCKED 결과를 수락한다.
+- 3B 계약에는 신규 implementation/write=v4와 기존 v2/v3 상세·receipt 읽기 유지가 함께 명시돼 있다. 따라서 v3 양성 fixture 자체를 삭제하거나 거부 기대값으로 뒤집지 않는다.
+- 확인된 결함은 legacy source matcher와 신규 output/write matcher를 같은 `MATCHER_VERSION`으로 비교한 것이다. identity backfill은 이미 저장된 근거의 검증 작업이고, rematch는 legacy source를 읽더라도 결과를 current v4로 새로 생성하는 작업이므로 두 버전을 분리해야 한다.
+- 작업 3L에서는 이 계약 분리만 최소 수정한다. v2/v3 legacy source read/backfill은 기존 evidence·pipeline·catalog·Git·identity·기간 조건을 모두 유지하고, unknown version은 거부한다. rematch output/write는 v4만 허용하고 `REVIEW_REQUIRED`, v4 RPC·policy gate를 유지한다.
+- search/review/write/schedule 기본 역할, matcher/source router/confirmation/search/ACL/RLS/pagination 계약은 변경하지 않는다. 운영 호출·쓰기·migration·예약·배포·병합은 모두 금지한다.
+- 직접 관련 테스트만 fail0/skip0으로 확인하고 게시 후 중단한다. 나머지 3K fixture 정비와 13개 runner 편입은 후속 검토 전 시작하지 않는다.
 
 ## Codex → 웹 GPT: 명세 4 작업 3K — v3 legacy 계약 충돌 / BLOCKED
 
