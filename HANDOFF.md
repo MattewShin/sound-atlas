@@ -4,13 +4,71 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3K 검토·작업3L 버전 계약 분리)
+- 현재 상태: IMPLEMENTED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3L IMPLEMENTED)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3L — legacy source / v4 output 분리 / IMPLEMENTED
+
+- 작업 ID CA-AUTO-20261022-001 /명세4 /작업3L만 수행했다. 공동 문서5개·시작 코드·원격 HEAD 기준은 `2a8cbe7a71b1c61027da1eaeed276130ec4b2903`, 구현 코드는 [`78db45b77667634acf372a28e991344c66dbaa83`](https://github.com/MattewShin/sound-atlas/commit/78db45b77667634acf372a28e991344c66dbaa83)다. 2026-10-27 KST. 구현 결과이며 자기 검토 ACCEPTED나 통합release 통과로 표시하지 않는다.
+- 원본 main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`와 기존40개 tracked/untracked 파일·index·.env hash를 보존했다. 별도 detached snapshot에서 구현했고 원본 pull/switch/reset/stash/자동commit0이다.
+
+### 변경 파일과 계약
+
+| 파일 | 변경 |
+| --- | --- |
+| server/programRollout.mjs | frozen PROGRAM_SOURCE_VERSIONS와 strict isSupportedProgramSourceVersion을 한 곳에 정의(v2/v3/current v4). write/review/search/schedule 설정은 유지 |
+| server/programIdentityBackfill.mjs | 기존 버전 gate에서 공통 source helper 사용. 다른 검증·사유·순서는 그대로 유지 |
+| server/programRematch.mjs | 지원 source와 current output 검증 분리, builder의 old output 거부, SAVE 첫 단계부터 rematch:true preflight, source provenance 표시 및 current generation 재사용 검사 |
+| server/supabaseProgramAnalysis.mjs | rematchSources의 단일 v4 조회를 지원 버전 in-filter GET으로 교체하고 unsupported row를 제외. 기존 pagination/증거·review 조립/저장 RPC·policy gate는 유지 |
+| server/programWorkIdentity.test.mjs | 기존 v3 양성 기대를 유지. 모의 저장 결과에 실제 생성 v4 generation을 기록하고 rematch preflight 옵션/v4 output을 추가 검증 |
+| server/programSourceVersion.test.mjs | source/출력·저장 분리, 보존·음성 조건, GET 조회와 v4 mock RPC를 직접 검증하는15테스트 추가 |
+
+### source별 결과와 보존
+
+| 입력 source matcher | identity backfill | rematch 입력 | 신규 output/write |
+| --- | --- | --- | --- |
+| stored-program-2 | 기존 모든 조건 충족 시 적격 | 기존 안전 조건 충족 시 허용 | v4만, REVIEW_REQUIRED |
+| stored-program-3 | 기존 모든 조건 충족 시 적격 | 기존 안전 조건 충족 시 허용 | v4만, REVIEW_REQUIRED |
+| stored-program-4 | 기존 모든 조건 충족 시 적격 | 기존 안전 조건 충족 시 허용 | v4만, REVIEW_REQUIRED |
+| unknown/빈값/누락/null/숫자/object/공백으로 변형한 버전 | MATCHER_VERSION_CHANGED | MATCHER_VERSION_CHANGED로 제외 | 생성·저장0 |
+
+기존 PF295548 v3 identity 양성은 eligible2를 그대로 유지하고 만료 공연 제외도 통과한다. source 버전을 현재 버전으로 덮어쓰지 않았고 기존 snapshot/evidence·review/receipt를 수정하지 않는다. v2/v4 control도 같은 조건 아래 적격이다. backfill은 review event·기간·evidence/currentness·pipeline·attempt/result/bytes·snapshot quote·Git catalog·work identity 검사를 그대로 거친다. v2/v3/v4 각각에 동일한13개 음성 변형을 넣어 버전 허용이 다른 검증을 우회하지 않는지 확인했다.
+
+rematch는 legacy source를 읽어 새 current 후보를 만든다. output version은 생략 시 현재 v4이고, v2/v3/알 수 없는 명시 output은 builder와 orchestration 모두 WRITE_VERSION_NOT_IMPLEMENTED로 거부한다. 새 후보 generation_version=v4, review_status=REVIEW_REQUIRED이며 source_matcher_version은 결과에 별도로 표시한다. 기존 source matcher·identity·evidence는 변경하지 않는다. 새 analyzeStoredProgram의 matcher/candidate generation v4 및 writeVersion 환경 설정의 v2/v3 거부도 기존 직접 테스트로 확인했다.
+
+기존 rematch ID의 catalog hash가 같더라도 v2/v3/버전 누락 결과를 v4로 보고하지 않는다. rematch_snapshot.generation_version(우선) 또는 저장 generation/matcher가 명시적으로 current일 때만 ID를 재사용한다. 명시적 v4 snapshot이 있는 기존 결과의 재사용·동일 입력 재실행 무증가와 수동 review/보호된 equivalent/만료/증거 변경/manifest 제외를 검증했다.
+
+### 저장 gate와 운영 검증 한계
+
+SAVE는 첫 source 조회 전에 `preflightSave({rematch:true})`를 호출하고, 실제 saveRematch도 기존 자체 preflight를 다시 수행한다. 기존 v4 분석 RPC·identity 선행 계약·v4 rematch RPC 및 정확히1행 enabled=true인 v4 policy 검사를 유지한다. 모의 transport에서는 source2/3/4 각각 v4 rematch RPC로만1 POST, policy 재확인2회를 검증했다. 기존 v3 RPC로 fallback하지 않는다.
+
+v4 rematch RPC 부재나 policy disabled이면 source 조회·POST 전에 중단한다. policy missing/malformed/disabled와 old generation 저장 거부도 기존 programVersion 직접 suite로 확인했다. 실제 v4 rematch RPC의 운영 존재 여부나 SQL 구현을 이번에 조회/추가/적용하지 않았다. **이는 JS 계약과 mock 저장 검증이며 실제 SQL 저장 성공 보고가 아니다.** 운영 readiness가 없으면 기존 gate가 계속 차단한다.
+
+### 실행 검증
+
+격리 snapshot의 Node22.18.0과 기존 설치 dependency를 사용했다. .env/.env.local을 복사하거나 테스트에 로드하지 않았다. 다음 명령을 한 번 실행했다.
+
+```text
+node --test server/programWorkIdentity.test.mjs server/programSourceVersion.test.mjs server/programVersion.test.mjs
+53 tests /53 PASS /0 FAIL /0 skipped /0 cancelled /0 todo /exit 0
+```
+
+기존 identity27 + 기존 version11 + 신규 source/output15 =53이다. git diff --check도 통과했다. 3K의 다른 회귀 파일, SQL fixture, 13개 suite runner 편입은 변경/실행하지 않았다. 전체 npm test·build도 이번 범위에서 실행하지 않았다. 새 테스트의 runner 등록 역시 이번 제한에 따라 미변경이며 후속 회귀 정비 때 검토할 항목이다.
+
+production 변경은 위4개 version/source-contract 모듈뿐이다. migration·SQL·matcher 알고리즘·source router·receipt/confirmation 유효성·public search adapter·pipeline coordinator·runner·dependency/lock 변경0. public search 기본v2/review 기본v3/write v4/schedule disabled를 유지했다. source query의 기존 pagination 방식이나 fail-closed 계약을 완화하지 않았다. 관련 없는301파일은3J snapshot hash와 byte 단위로 동일하다.
+
+이번 운영 DB/REST/KOPIS/OCR/이미지 다운로드 호출0, 운영 POST·DDL/DML/migration·분석/receipt/CONFIRMED/REJECTED 쓰기0, policy/예약/환경/배포·병합 변경0이다. 예약 상태를 재조회하지 않았으며 Disabled는 이전3J 기록으로 구분한다. 모의 store의 POST와 실제 운영 호출을 혼동하지 않는다.
+
+### 구현자 의견과 후속 검토
+
+3K를 막았던 source/write 버전 혼용을 이 범위에서 해소했다. 다른19개 예상 실패는 수정하거나 재측정하지 않았으므로 현재 전체 실패 수를 새로 확정하지 않는다. 전체release는 아직 회귀 통과로 간주할 수 없다.
+
+후속 검토에서는 legacy v3 양성 유지, v4-only 생성·저장, unsupported source 제외, 증거/receipt 불변과 gate 보존을 확인해 달라. 검토 전3K 잔여 fixture/runner 정비나 운영 적용을 시작하지 않는다. 같은 브랜치에 구현6파일과 CURRENT_TASK/HANDOFF2개를 게시하고 작업3L을 중단한다.
 
 ## 웹 GPT → Codex: 명세 4 작업 3K BLOCKED 수락 / 작업 3L READY
 

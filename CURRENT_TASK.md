@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: IMPLEMENTED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3L — legacy source 읽기와 v4 신규 쓰기 계약 분리 / READY
+## 명세 4 작업 3L — legacy source 읽기와 v4 신규 쓰기 계약 분리 / IMPLEMENTED
 
 작업 3K 결과 SHA `e55144b0b9b91ae750e480923d1b22adbc03d0d2`를 **BLOCKED 결과로 수락**한다. 103개 영향 테스트에서 21개 실패를 재현했고, production·test·runner 및 운영 상태를 변경하지 않은 중단 절차가 정확하다.
 
@@ -42,6 +42,16 @@
 - 운영 DB/REST/KOPIS/OCR 호출·쓰기, migration 적용, policy/예약/배포/병합 변경을 하지 않는다.
 - legacy source를 현재 버전으로 덮어쓰거나 기존 receipt를 재확정하지 않는다.
 - 위 최소 분리 외 production 변경이 필요하거나 직접 테스트가 하나라도 실패하면 BLOCKED로 게시하고 중단한다.
+
+### 작업 3L 구현 결과 — 2026-10-27 KST / IMPLEMENTED
+
+- 공동 문서5개/코드 시작 기준 `2a8cbe7a71b1c61027da1eaeed276130ec4b2903`, 구현 SHA [`78db45b77667634acf372a28e991344c66dbaa83`](https://github.com/MattewShin/sound-atlas/commit/78db45b77667634acf372a28e991344c66dbaa83). legacy source read/backfill 지원 버전(v2·v3·v4)을 공통 상수/helper로 정의하고 current output/write v4와 분리했다.
+- identity backfill의 버전 gate만 교체했다. 기존 PF295548 v3 양성·v2/v4 control은 적격이며 unknown/누락 버전은 거부한다. evidence/currentness/pipeline/catalog/Git/identity/기간·review 검증과 순서를 유지한다.
+- rematch adapter는 지원 source 버전을 모두 GET하고, orchestration은 원본 matcher/evidence를 유지하며 새 후보를 v4/REVIEW_REQUIRED로만 생성한다. 결과에 source_matcher_version을 별도로 기록한다. v2/v3 output은 builder/실행기에서 거부하며 v3 결과를 v4로 재라벨링하지 않는다.
+- SAVE 시작부터 기존 v4 전용 RPC·enabled policy preflight를 요구한다. 기존 v2/v3·버전 없는 rematch ID를 v4 결과로 재사용하지 않고, 명시적 v4 generation/snapshot만 재사용한다. 기존 receipt 재확정0.
+- 직접 관련3파일: `node --test server/programWorkIdentity.test.mjs server/programSourceVersion.test.mjs server/programVersion.test.mjs` → **53/53 PASS, fail0/skip0/cancel0**, exit0. 실제 운영이 아닌 순수 함수/모의 store·REST 검증이다.
+- production4파일/test2파일 변경. migration/SQL/search adapter/pipeline coordinator/runner/dependency 변경0. 원본main/HEAD·40파일/index/.env 보존, 관련 없는301파일 byte 동일. 운영 호출·쓰기·policy/예약/환경/배포·병합0.
+- 작업3K의 다른19개 예상 실패 정비·13개 runner 편입·전체 npm test/build는 시작하지 않았다. 통합release 통과/운영 적용 완료를 뜻하지 않는다. CURRENT_TASK/HANDOFF에 기록하고 같은 브랜치 게시 후 중단한다.
 
 ### 완료 보고
 
