@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -31,7 +31,28 @@
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
 
-### 작업 3M Gate B 권한 정비 재개 / READY
+### 작업 3M ACL 재개 결과 — Gate B PASS / Gate C BLOCKED (2026-10-27 KST)
+
+- 공동 문서5개 기준 `c303cd0b042bee1a526716726f18a924620b6369`, ACL 구현 [`da470fcde89624f0f09a4048ab6782a4e1786828`](https://github.com/MattewShin/sound-atlas/commit/da470fcde89624f0f09a4048ab6782a4e1786828). 기존 migration 1~3 재적용0. 원본main/HEAD·40파일/index/.env 보존.
+- 두 text table의 과다 권한이 service_role 직접 ACL임을 READ ONLY로 확인했다. owner/superuser/상속 원인이 아니었다. 빈 DB용 원본 migration ACL1줄과 신규 `202610270001_program_text_analysis_acl.sql`만 수정/추가했다.
+- 격리 PGlite: 빈 DB 전체6개 chain, 원본1~3→데이터 있는 upgrade, 보정2회차 불변을 검증했다. 신규2 + 기존 저장SQL4 = **6/6 PASS, fail0/skip0**. Gate A의 전체 npm test510/510·build PASS(4.66s)는 직전 수락 결과를 유지하며 이번에는 재실행하지 않았다.
+- 운영 보정 migration1회 commit. service_role SELECT/INSERT/UPDATE만 true, DELETE/TRUNCATE/REFERENCES/TRIGGER/MAINTAIN false. public/anon/authenticated 무권한·RLS=true. 두 테이블0행/digest, 기존 RPC 본문/signature/EXECUTE, 다른 ACL/default ACL/membership, v4 policy=false를 commit 전후 확인했다.
+- 이어 migration4→5→6을 각각1회 적용하고 매번 SQL·REST/OpenAPI GET으로 COMPLETE를 확인했다. PostgreSQL17/18의 named NOT NULL 표현만 정규화했으며 column NOT NULL은 계속 검증했다.
+
+| Gate B migration | 최종 상태 |
+| --- | --- |
+| 202610230002_kopis_detail_text.sql | COMPLETE — 기존 적용 유지 |
+| 202610230003_program_analysis_v4.sql | COMPLETE — 기존 적용 유지 |
+| 202610260001_program_text_analysis_v4.sql | COMPLETE — 신규 ACL 보정 후 SQL/REST 확인, 원본 재적용0 |
+| 202610260002_program_text_status.sql | COMPLETE — 이번1회 적용 |
+| 202610260003_program_text_confirmation.sql | COMPLETE — 이번1회 적용 |
+| 202610260004_program_text_confirmation_status.sql | COMPLETE — 이번1회 적용 |
+
+- **실패 Gate C / 2026-10-27 14:46:25 KST:** 전체47공연 중 공식 text/hash 저장0, 미래26공연 중 저장pair0, 적격 MATCHED+EXACT 공연0. `NO_STORED_OFFICIAL_PROGRAM_MATCHED_EXACT`. policy 활성화·DRY_RUN/SAVE canary·신규 CONFIRMED/REJECTED·canary 쓰기 모두0.
+- 14:46:25 KST v4 policy=false, 14:46:50 KST 예약 Disabled/Enabled=false. 이번 Gate B REST GET10/POST0. KOPIS/OCR/수집·예약 강제 실행·action 변경0. Gate D·main 병합·production 배포·예약 활성화는 미실행.
+- **재개점:** 저장된 공식 Program 원문/hash와 v4 MATCHED+EXACT가 있는 미래 공연을 준비한 뒤 Gate C 단건 DRY_RUN→SAVE→무쓰기 재실행→공개검색 검증부터 재개한다. 최초 공식 텍스트 적재의 허용 범위는 후속 명세에서 정한다. migration6개와 ACL 보정은 다시 적용하지 않는다. 모든 Gate가 통과하기 전에는 OPERATIONAL이 아니다.
+
+### 작업 3M Gate B 권한 정비 재개 지시 / 완료
 
 결과 SHA `115cedf8cf968c6121951c3a2bb821db674860d2`의 Gate A PASS와 Gate B 안전 중단을 수락한다. 이미 적용된 migration 1~3은 재적용하지 않는다.
 

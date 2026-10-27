@@ -4,13 +4,28 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-27 (Asia/Seoul; 작업3M Gate B ACL 정비 재개)
+- 현재 상태: BLOCKED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-27 (Asia/Seoul; Gate B PASS / Gate C BLOCKED)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 작업 3M ACL 정비 완료 / Gate C BLOCKED
+
+- 읽은 공동 문서5개와 코드 시작 SHA: `c303cd0b042bee1a526716726f18a924620b6369`. 구현 [`da470fcde89624f0f09a4048ab6782a4e1786828`](https://github.com/MattewShin/sound-atlas/commit/da470fcde89624f0f09a4048ab6782a4e1786828). 기존 migration1~3은 재적용하지 않았다.
+- 변경4파일: `202610260001_program_text_analysis_v4.sql`의 service_role ALL REVOKE 추가1줄, 신규 `202610270001_program_text_analysis_acl.sql`, `server/programTextAnalysisAclSql.test.mjs`, `server/testSupport/programTextAclFixture.mjs`. production 검색/함수·테이블 검증 로직과 runner/dependency는 변경0.
+- 사전 READ ONLY에서 두 테이블의 service_role 직접 ACL에 DELETE/TRUNCATE/REFERENCES/TRIGGER/MAINTAIN이 남았음을 확인했다. service_role은 superuser/owner/owner 상속이 아니고 상속 DELETE도 없었다. 전역 default privileges·role membership은 운영에서 변경하지 않았다.
+- **격리 검증6/6 PASS, fail0/skip0:** `node --test server/programTextAnalysisAclSql.test.mjs server/programTextAnalysisSql.test.mjs`. PGlite의 빈 DB 전체6개 chain과 원본1~3 upgrade 양쪽에서 Supabase형 직접 기본 ACL을 재현했다. upgrade의 분석1행/후보1행을 보존하며 보정했고, 각 fixture에서 보정2회차도 권한·데이터·함수·다른 ACL·default ACL/membership 불변이었다. 기본 ACL 재현은 격리 DB에만 적용했다.
+- Gate A는 직전 수락한 전체 npm test510/510(fail0/skip0)·build4.66s PASS를 유지한다. 이번에는 ACL 직접 영향6건과 새 chain/upgrade를 검증했으며 전체 npm test/build를 다시 실행한 것으로 보고하지 않는다.
+- **운영 ACL 보정1회 commit:** service_role은 SELECT/INSERT/UPDATE만 허용, DELETE/TRUNCATE/REFERENCES/TRIGGER/MAINTAIN 금지. public/anon/authenticated 무권한, 두 테이블 RLS=true. 보정 전후 두 테이블 각각0행·digest 동일, 기존 public 함수 본문/signature/EXECUTE·다른 table/view ACL·전역 default ACL·membership·v4 policy=false 불변을 확인했다. 적용 중 불변 검사를 commit 전에 수행하고 commit 후 READ ONLY로 재확인했다.
+- SQL/REST GET으로 세 번째 COMPLETE 판정 후 migration4 `202610260002` →5 `202610260003` →6 `202610260004`를 각각1회 적용했다. 매 단계 SQL과 REST/OpenAPI GET COMPLETE. **Gate B6개 모두 COMPLETE**, 신규 ACL 보정 COMPLETE. 이번 REST GET10/POST0. PG17/18 차이는 named NOT NULL constraint만 제외해 비교하고 실제 column NOT NULL은 검증했다.
+- **실패 Gate C:** 2026-10-27 14:46:25 KST 관리자 READ ONLY 조회에서 전체47공연의 공식 text/hash 저장0, 미래26공연의 저장pair0, official router/MATCHED+EXACT 적격공연0. 사유 `NO_STORED_OFFICIAL_PROGRAM_MATCHED_EXACT`. 원문 수집이나 OCR 대체로 canary를 만들지 않았다. policy 활성화·canary DRY_RUN/SAVE·신규 CONFIRMED/REJECTED·canary 쓰기0이며 공개 검색 검증은 미실행이다.
+- 안전 상태:14:46:25 KST v4 policy=false,14:46:50 KST `ClassicAtlas-LocalPipeline` Disabled/Enabled=false. 예약 action/설정 변경·강제실행0. Gate D의 main 병합/production 배포/예약 활성화 미실행, 배포 SHA 없음. 안전 상태를 유지했으므로 rollback 실행은 필요 없었고 additive schema는 보존했다.
+- **재개점/기술 의견:** Gate B ACL 문제는 해소됐다. 저장된 공식 Program text/hash가 있는 미래 공연과 v4 MATCHED+EXACT 후보를 준비한 후 Gate C의 단건 DRY_RUN→SAVE→즉시 무쓰기 재실행→공개 검색부터 진행한다. 최초 공식 텍스트 적재의 허용 범위는 후속 명세에서 정해야 한다. migration1~6/ACL 보정 재적용 금지. Gate C 통과 전 배포·예약 활성화 금지.
+- 원본main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`, 기존40파일/index/.env hash 모두 보존. 연결 문자열·host·user·비밀번호·운영 원문을 로그/문서/Git에 기록하지 않았다.
+- 실행 통제 기록: 자동 승인 검토가 `apply-one 2`를 migration3 재적용 가능성 때문에 실행 전에 거절했다. 해당 명령은 미실행이며, 적용 경로가 없는 `verify-third`의 READ ONLY SQL/GET으로 사후 확인을 완료했다.
 
 ## 웹 GPT → Codex: 작업 3M Gate B ACL 정비 재개 / READY
 
