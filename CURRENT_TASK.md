@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: BLOCKED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,38 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3K — v4 전환 통합 회귀 정비 / READY
+
+작업 3J 결과 SHA `78985de7a836ddf43d48863f44067f076421af25`를 **BLOCKED 결과로 수락**한다. release snapshot·build·격리 migration chain·운영 read-only preflight는 정상이나 전체 `npm test` 408개 중 21개가 실패했으므로 운영 적용은 계속 금지한다. 운영 6개 migration은 모두 ABSENT이고 PARTIAL/INCOMPATIBLE은 없으며 예약은 Disabled다.
+
+실패는 신규 검색의 완전조회 계약을 반영하지 않은 mock과, v4 분석을 v3 RPC fixture에 암묵적으로 전달한 기존 테스트가 주된 원인으로 보인다. 이번 작업은 **운영 코드를 느슨하게 하거나 v4를 되돌리지 않고 테스트 fixture와 기본 test runner만 현재 계약에 맞게 정비**한다. 실제 운영 코드 수정이 필요하다고 판명되면 수정하지 말고 BLOCKED로 중단한다.
+
+### 허용 범위
+
+1. 3J의 실패 21건을 해당 9개 test 파일 단위로 먼저 재현하고 아래 범주로 확정한다.
+   - 검색 mock의 신규 공식 status/source 재조회·정확한 `Content-Range` 계약 누락
+   - v4 기본 분석 payload를 v3 전용 SQL/RPC에 넣은 fixture 버전 불일치
+   - pipeline mock의 v4 RPC·명시적 enabled policy 계약 누락
+   - legacy v3 rematch/identity 검증에 v4 candidate를 사용한 fixture 불일치
+2. 검색 관련 테스트는 production 검색 코드를 완화하지 않는다. mock이 OCR status와 공식 confirmation status, concert source/context GET, 재조회, `Prefer: count=exact`와 정확한 `Content-Range`를 실제 계약대로 반환하도록 수정한다.
+3. v3 보존을 검증하는 SQL/identity/automation 테스트는 분석·candidate의 matcher/generation version을 명시적으로 `stored-program-3`으로 만들고 payload hash를 다시 계산한다. v3 RPC가 v4 payload를 허용하도록 SQL이나 production validator를 완화하지 않는다.
+4. 현재 v4 pipeline을 검증하는 테스트는 v4 save RPC path, v4 policy 정확한 1행 `enabled=true`, 현재 matcher/version 기대값을 명시한다. migration/policy 부재·disabled를 검증하는 음성 테스트는 계속 실패하도록 보존한다.
+5. 기존 v2 검색, v3 review/history, v4 공식 분석·확정의 역할 분리는 유지한다. searchVersion 기본 v2, reviewVersion 기본 v3, writeVersion v4와 schedule disabled 기본값을 바꾸지 않는다.
+6. 3J에서 기본 `npm test`에 누락된 직접 테스트 13개를 `scripts/test.mjs`의 명시적 import 목록에 한 번만 포함한다. 중복 import·중복 실행이 없어야 한다.
+7. 수정 가능 파일은 실패한 test/fixture와 `scripts/test.mjs`로 제한한다. production `server/*.mjs`, `src` 구현, migration SQL은 변경하지 않는다.
+8. 먼저 영향받은 test 파일만 실행해 원인을 확인한 뒤, 최종 고정 snapshot에서 전체 `npm test`를 한 번 실행한다. 최종 기준은 fail0/skip0이며 새로 편입한 13개 직접 suite도 같은 runner 결과에 포함되어야 한다.
+9. production source가 byte 단위로 동일하면 build는 재실행하지 않고 3J의 PASS를 그대로 인용한다. production source 변경이 불가피하면 이번 작업에서 변경하지 말고 원인과 필요한 별도 명세를 기록해 BLOCKED로 끝낸다.
+
+### 제한
+
+- 테스트 통과를 위해 matcher/version/policy/source 우선순위, eligibility, ACL/RLS, pagination fail-closed를 완화하지 않는다.
+- production 코드·migration·package dependency/lock을 수정하지 않는다.
+- 운영 DB/REST/KOPIS/OCR 호출, migration·DDL/DML·POST, policy/예약/환경/배포·병합 변경을 하지 않는다.
+- 기존 3A~3I 직접 테스트의 기대 결과를 약화하거나 삭제하지 않는다.
+- 관계없는 테스트 포맷 정리·리팩터링을 하지 않는다.
+- 최종 전체 테스트가 하나라도 실패하면 BLOCKED로 게시하고 운영 적용으로 넘어가지 않는다.
+- 결과를 같은 브랜치의 공동 문서에 게시하고 중단한다.
 
 ## 명세 4 작업 3J — 통합 회귀·운영 읽기 전용 preflight / BLOCKED
 
