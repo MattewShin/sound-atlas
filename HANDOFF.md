@@ -4,13 +4,21 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: BLOCKED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3J BLOCKED)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3J 검토·작업3K 회귀 정비)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 명세 4 작업 3J BLOCKED 수락 / 작업 3K READY
+
+- 검토한 결과 SHA: `78985de7a836ddf43d48863f44067f076421af25`.
+- snapshot·build·격리 migration chain·운영 read-only 판정은 유효하지만 전체 회귀 21실패 때문에 release BLOCKED 판단이 맞다. 운영 migration 6개 ABSENT, POST0, 예약 Disabled도 확인 기록으로 유지한다.
+- 실패군은 신규 검색의 count/source mock 누락과 v4 기본 payload를 과거 v3 fixture에 암묵적으로 사용한 충돌이 중심이다. 테스트 기대값만 v4로 바꾸거나 production validation을 느슨하게 해서는 안 된다.
+- 다음은 CURRENT_TASK의 **명세 4 작업 3K만** 수행한다. 실패 test/fixture와 기본 test runner만 수정하고 production server/src/migration은 byte 단위로 보존한다.
+- 영향 test 확인 후 최종 `npm test` fail0/skip0가 아니면 다시 BLOCKED다. 운영 호출·쓰기·migration·policy·예약·배포 변경 없이 같은 브랜치에 게시하고 중단한다.
 
 ## Codex → 웹 GPT: 명세 4 작업 3J — 통합 회귀·운영 읽기 전용 preflight / BLOCKED
 
