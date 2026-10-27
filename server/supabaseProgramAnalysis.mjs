@@ -1,7 +1,7 @@
 import { createSupabaseRest } from './supabaseRest.mjs'
 import { analyzeStoredProgram, CATALOG_HASH, CATALOG_JSON, MATCHER_VERSION } from './programAnalysis.mjs'
 import { validateProgramManifest, programAnalysisCounts } from './programCanary.mjs'
-import {getProgramWriteVersion,getProgramReviewVersion,PROGRAM_ANALYSIS_SAVE_RPC,PROGRAM_ANALYSIS_MIGRATION_REQUIRED} from './programRollout.mjs'
+import {getProgramWriteVersion,getProgramReviewVersion,PROGRAM_ANALYSIS_SAVE_RPC,PROGRAM_ANALYSIS_MIGRATION_REQUIRED,PROGRAM_SOURCE_VERSIONS,isSupportedProgramSourceVersion} from './programRollout.mjs'
 import {workIdentity,confirmationValidity,canonicalIdentityJson} from './programWorkIdentity.mjs'
 import {koreaDate} from '../src/data/concertSearchConfig.js'
 const currentCatalog={...JSON.parse(CATALOG_JSON),catalog_hash:CATALOG_HASH}
@@ -154,7 +154,8 @@ export const createProgramAnalysisStore = (options = {}) => {
         p_analysis_id: expectedAnalysisId, p_matcher_version: getProgramReviewVersion(options.env||process.env), p_catalog_json: CATALOG_JSON } })
     },
     async rematchSources(kopisId){
-      const candidates=await all('concert_program_candidate_status',{matcher_version:`eq.${MATCHER_VERSION}`,...(kopisId?{kopis_id:`eq.${kopisId}`}:{})})
+      const candidates=(await all('concert_program_candidate_status',{matcher_version:`in.(${PROGRAM_SOURCE_VERSIONS.join(',')})`,...(kopisId?{kopis_id:`eq.${kopisId}`}:{})}))
+        .filter(c=>isSupportedProgramSourceVersion(c.matcher_version))
       const analyses=await all('concert_program_analyses'),reviews=await all('concert_program_reviews'),concerts=await all('concerts')
       return candidates.filter(c=>!c.rematch_source_candidate_id).map(c=>{
         const analysis=analyses.find(a=>a.id===c.analysis_id)

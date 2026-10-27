@@ -1,5 +1,8 @@
 // Implementation identity is not an operator-selectable label for old algorithms.
 export const PROGRAM_IMPLEMENTATION_VERSION='stored-program-4'
+// Stored provenance is readable without making its historical algorithm writable.
+export const PROGRAM_SOURCE_VERSIONS=Object.freeze(['stored-program-2','stored-program-3',PROGRAM_IMPLEMENTATION_VERSION])
+export const isSupportedProgramSourceVersion=value=>PROGRAM_SOURCE_VERSIONS.includes(value)
 export const PROGRAM_ANALYSIS_SAVE_RPC='save_concert_program_analysis_v4'
 export const PROGRAM_ANALYSIS_MIGRATION_REQUIRED='PROGRAM_ANALYSIS_V4_MIGRATION_REQUIRED'
 export const PROGRAM_ROLLOUT_DEFAULTS=Object.freeze({writeVersion:'stored-program-4',reviewVersion:'stored-program-3',searchVersion:'stored-program-2',scheduleEnabled:false})
