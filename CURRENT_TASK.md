@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: BLOCKED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,40 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3L — legacy source 읽기와 v4 신규 쓰기 계약 분리 / READY
+
+작업 3K 결과 SHA `e55144b0b9b91ae750e480923d1b22adbc03d0d2`를 **BLOCKED 결과로 수락**한다. 103개 영향 테스트에서 21개 실패를 재현했고, production·test·runner 및 운영 상태를 변경하지 않은 중단 절차가 정확하다.
+
+3B에서 확정한 계약은 “신규 구현·write는 v4, 기존 v2/v3 상세·receipt 읽기는 유지”다. 그런데 현재 identity backfill과 rematch는 legacy source의 버전을 현재 write 버전과 직접 비교해 v3만 배제한다. 이번 작업은 **입력 source의 지원 버전과 신규 출력/write 버전을 분리**하는 최소 production 수정만 수행한다. 3K의 나머지 fixture 정비와 runner 편입은 하지 않는다.
+
+### 확정 정책
+
+- 신규 분석·후보 생성·저장 버전은 계속 `stored-program-4`만 허용한다. v3 write 또는 v4 결과의 v3 재라벨링은 금지한다.
+- 이미 저장된 `stored-program-2`·`stored-program-3` 근거는 source provenance를 보존한 채 읽기·identity backfill 입력으로 사용할 수 있다. 기존 evidence/currentness/pipeline/catalog/Git/identity/공연기간 검증을 모두 통과해야 한다.
+- rematch는 지원되는 legacy source를 읽을 수 있지만 새 후보는 항상 현재 v4로 생성하며 `REVIEW_REQUIRED`로 남긴다. 저장 시 v4 전용 RPC·enabled policy 검증을 그대로 거친다.
+- 알 수 없는 버전과 누락 버전은 fail-closed로 제외한다.
+
+### 허용 범위
+
+1. source read/backfill 지원 버전과 current write/output 버전을 명시적으로 분리한다. 중복 문자열을 흩뿌리지 말고 한 곳의 상수 또는 작은 helper로 표현한다.
+2. `planIdentityBackfill`이 유효한 v2·v3·v4 source를 동일한 기존 안전 조건 아래 평가하도록 수정한다. 버전 이외의 검증 순서·사유는 완화하지 않는다.
+3. `rematchProgramCandidates`에서 source matcher 검증과 output version 검증을 분리한다. 호출자가 선택할 수 있는 output/write는 계속 현재 v4 하나뿐이며, 생성 candidate의 `generation_version`도 v4여야 한다.
+4. 기존 PF295548 v3 identity 양성, v2/v4 control, unknown-version 음성, legacy source→v4 rematch, v3 output/write 거부를 직접 테스트한다.
+5. 직접 관련 테스트만 실행해 fail 0·skip 0을 확인한다. 3K의 나머지 19개 예상 실패를 고치거나 전체 `npm test`를 실행하지 않는다.
+6. 변경 파일은 version 계약 production 모듈과 직접 관련 test로 제한한다. migration·SQL·search adapter·pipeline coordinator·runner는 변경하지 않는다.
+
+### 금지 및 중단 조건
+
+- public search 기본 v2, review 기본 v3, write v4, schedule disabled 역할을 변경하지 않는다.
+- matcher 판정, source 우선순위, receipt 유효성, policy/RPC gate, ACL/RLS, pagination fail-closed를 완화하지 않는다.
+- 운영 DB/REST/KOPIS/OCR 호출·쓰기, migration 적용, policy/예약/배포/병합 변경을 하지 않는다.
+- legacy source를 현재 버전으로 덮어쓰거나 기존 receipt를 재확정하지 않는다.
+- 위 최소 분리 외 production 변경이 필요하거나 직접 테스트가 하나라도 실패하면 BLOCKED로 게시하고 중단한다.
+
+### 완료 보고
+
+변경 파일, source별 허용/거부 결과, output version, 직접 테스트 수치와 운영 호출 0을 CURRENT_TASK·HANDOFF에 기록하고 같은 브랜치에 게시한 뒤 중단한다. 3K 재개는 웹 GPT의 후속 검토 전 시작하지 않는다.
 
 ## 명세 4 작업 3K — v4 전환 통합 회귀 정비 / BLOCKED
 
