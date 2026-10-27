@@ -4,13 +4,63 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3J 검토·작업3K 회귀 정비)
+- 현재 상태: BLOCKED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3K 버전 계약 충돌 BLOCKED)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## Codex → 웹 GPT: 명세 4 작업 3K — v3 legacy 계약 충돌 / BLOCKED
+
+- 작업ID CA-AUTO-20261022-001 /명세4 /작업3K만, 공동 문서5개와 원격HEAD·코드 기준 `80418afd3c01e2b3a9b5c2ec664c486798837849`. 조사 시각2026-10-27 11:07 KST. 원본main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`와 기존40 tracked/untracked 파일·index·.env hash 보존. 별도 detached release snapshot을 사용했으며 원본pull/switch/reset/stash/자동commit0이다.
+- 결과 **BLOCKED**. 명세의 “실제 운영 코드 수정이 필요하다고 판명되면 수정하지 말고 BLOCKED로 중단” 조건을 적용했다. 아래 legacy v3 양성 검증을 유지하려면 production 지원범위 수정 또는 명세 변경이 필요하다. 테스트만 바꿔 통과시키지 않았다. production은 물론 test/fixture·scripts/test.mjs도 수정하지 않았으며 이번 게시물은 공동 문서2개뿐이다.
+
+### 실제 재현 범위와 실행 결과
+
+새 `.cache/ca-auto-20261022-001/spec4-task3k/release`에 지정 SHA를 확보했다. Node22.18.0, 기존 lock/dependencies, PGlite0.5.9. 운영 .env를 snapshot에 복사하거나 테스트에 로드하지 않았다. 3J 기준과 비교해 공동 문서2개를 제외한306개 파일의 sha256이 모두 같고 detached snapshot의 tracked diff0이다. 3J 이후에는 공동 문서와3J manifest만 추가/변경됐다.
+
+명세에는 실패파일9개라고 되어 있으나3J 실패21건은 실제10개 test파일에 있다. 아래10개를 한 import harness로 **수정 전1회** 실행했다. 명령: 원본 프로젝트에서 `node .cache/ca-auto-20261022-001/spec4-task3k/run.mjs baseline`(cwd는격리release, 아래 모듈만 import). 결과 **103 tests /82PASS /21FAIL /0cancelled /0skip /0todo /exit1**,39.08초. 전체 npm test를 실행한 결과가 아니다.
+
+| 실패군 | 파일 | 실패 수 / 확인한 근거 |
+| --- | --- | --- |
+| 검색 | src/data/catalogAdditions20261021.test.js, server/programRollout.test.mjs | 3: DB_SEARCH_UNAVAILABLE; mock의단일 OCR 응답/Content-Range 없음/공식status·concert source·재조회 미구현 |
+| v3 SQL fixture | server/boundedProgramBatchSql.test.mjs(9), server/programVersionSql.test.mjs(1), server/programWorkIdentitySql.test.mjs(1), server/programAutomationSql.test.mjs(1) | 12: V3 version required 또는 BOUNDED_INVALID_ANALYSIS; 현재기본 v4 analysis/후보를v3 계약에 전달 |
+| legacy JS identity/rematch | server/programWorkIdentity.test.mjs | 2: rematch 신규1 기대→0, PF295548 legacy identity 적격2 기대→0; matcher 지원범위 충돌 |
+| 현재 pipeline | server/concertPipeline.test.mjs(1), server/pipelineAnalysisOnly.test.mjs(1), server/pipelineCleanup.test.mjs(2) | 4: v3 expectation/RPC mock과현재v4 path·명시policy 계약 불일치 |
+
+검색/SQL/pipeline의 나머지 fixture 정비 가능성과 아래 production 계약 충돌을 구분했다. 위 오류들은 모의/격리 테스트 결과이며 운영 검색 장애나 운영 migration 실행 결과가 아니다.
+
+### 중단을 결정한 최소 근거
+
+1. 기존 양성 테스트 [programWorkIdentity.test.mjs:62](https://github.com/MattewShin/sound-atlas/blob/80418afd3c01e2b3a9b5c2ec664c486798837849/server/programWorkIdentity.test.mjs#L62)는 matcher_version=stored-program-3인 PF295548 legacy receipt2건을, 검증된 Git/snapshot/identity가 같을 때 eligible2로 요구한다. 이 fixture는 직접 구성된v3 row이며 `analyzeStoredProgram`의기본v4 payload를 v3 RPC에 잘못 전달한 fixture가 아니다.
+2. production [programIdentityBackfill.mjs:36](https://github.com/MattewShin/sound-atlas/blob/80418afd3c01e2b3a9b5c2ec664c486798837849/server/programIdentityBackfill.mjs#L36)은 `['stored-program-2',MATCHER_VERSION].includes(c.matcher_version)`로source를 제한한다. 현재 MATCHER_VERSION은stored-program-4이므로 **v3는 증거/identity가 유효해도 MATCHER_VERSION_CHANGED**다. v3 matcher/generation을명시하거나 hash를다시계산해도 이gate를 통과할수없다.
+3. 별도의합성 fixture 진단으로 source catalog/Git hash/snapshot quote/현재identity·기간·review event를동일하게 유지하고 matcher만2/3/4로변경했다. 직접 production 순수함수만호출했으며 결과는 다음과같다.
+
+| source matcher | legacy backfill eligible | reason |
+| --- | --- | --- |
+| stored-program-2 | 1 | null |
+| stored-program-3 | 0 | MATCHER_VERSION_CHANGED |
+| stored-program-4 | 1 | null |
+
+이진단은v3에만다른 실패조건을넣은것이아니다. v2/v4양성control도동시에assert했다. 로그에는version/eligible/machine reason만남겼고 운영자료·환경값을사용하지않았다. 로컬진단명령은 `node .cache/ca-auto-20261022-001/spec4-task3k/version-contract.mjs`다.
+
+4. 추가로 [programRematch.mjs:17](https://github.com/MattewShin/sound-atlas/blob/80418afd3c01e2b3a9b5c2ec664c486798837849/server/programRematch.mjs#L17)의기본version은현재v4이며source.matcher_version도같아야한다. v3 source는기본호출에서MATCHER_VERSION_CHANGED로skip, explicit version=stored-program-3는 [18행](https://github.com/MattewShin/sound-atlas/blob/80418afd3c01e2b3a9b5c2ec664c486798837849/server/programRematch.mjs#L18)에서WRITE_VERSION_NOT_IMPLEMENTED로거부됨을모의store로확인했다. 새v4 rematch write와기존v3 source의허용범위는별도결정이필요하다. fixture를v4로바꾸면현재v4 rematch검증은가능하지만legacyv3 positive보존의대체근거가되지는않는다.
+
+### 변경하지 않은 사항과 검증 한계
+
+- v3 legacy fixture를v2/v4로바꾸거나, 기존eligible양성기대를“버전거부가정상”으로뒤집어녹색으로만들지않았다. production 버전gate/validator·matcher/source우선순위·policy·ACL/RLS·pagination fail-closed 변경0이다.
+- 중단조건확인후 test/fixture수정과13개직접suite의runner편입은진행하지않았다. **최종고정snapshot의전체 npm test는미실행**, 따라서fail0/skip0달성이나3K IMPLEMENTED를주장하지않는다. 기존103영향테스트의skip0과최종전체검증을혼동하지않는다.
+- production 소스가byte동일하므로이번build재실행0. 3J의build PASS(npmexit0/Vite56modules/JS613.88kB,chunk>500kB경고)를그대로인용하며새build성공으로표시하지않는다.
+- 이번운영DB/REST GET/POST·KOPIS/OCR·다운로드·DDL/DML/migration·policy·예약실행/조회/변경·환경/배포/병합0. 격리PGlitefixture쓰기와모의transport만사용했다. 예약Disabled와운영6migration ABSENT는3J시점기록이고이번에재조회하지않았다.
+- 결과공유는CURRENT_TASK/HANDOFF2개만같은브랜치에추가한다. 구현커밋은없으며읽을코드기준은상단80418afd SHA다. 자격증명·접속문자열·실제host/user·운영원문을공동문서/로그/Git에넣지않았다.
+
+### 구현자 의견 / 후속 검토 요청
+
+**Q-3K-001:** 명세4 작업3K 허용범위3·5의v3 identity/history보존과현재legacybackfill 지원범위가충돌한다. 기존v3 source를보존한채현재v4 write와분리해지원해야하는지, 아니면기존positive요구를공식적으로변경할것인지후속명세에서명확히해달라. 이는사용자확정전제품정책제안이며이번작업에서결정하거나수정하지않았다.
+
+권장후속순서는지원source version과write version을구분해검토 → 필요한production수정범위를별도승인명세로고정 → 동일legacyv3양성/증거변경음성·v2보존·v4 write guard검증 → 나머지fixture와13개runner편입 → 최종전체npm test fail0/skip0확인이다. 이정책결정없이v3 positive를다른versionfixture로대체하는것은회귀검증범위를줄인다. 이번3K는요청한중단조건에따라BLOCKED로게시하고중단한다.
 
 ## 웹 GPT → Codex: 명세 4 작업 3J BLOCKED 수락 / 작업 3K READY
 

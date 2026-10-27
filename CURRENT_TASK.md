@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,11 +13,20 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3K — v4 전환 통합 회귀 정비 / READY
+## 명세 4 작업 3K — v4 전환 통합 회귀 정비 / BLOCKED
 
 작업 3J 결과 SHA `78985de7a836ddf43d48863f44067f076421af25`를 **BLOCKED 결과로 수락**한다. release snapshot·build·격리 migration chain·운영 read-only preflight는 정상이나 전체 `npm test` 408개 중 21개가 실패했으므로 운영 적용은 계속 금지한다. 운영 6개 migration은 모두 ABSENT이고 PARTIAL/INCOMPATIBLE은 없으며 예약은 Disabled다.
 
 실패는 신규 검색의 완전조회 계약을 반영하지 않은 mock과, v4 분석을 v3 RPC fixture에 암묵적으로 전달한 기존 테스트가 주된 원인으로 보인다. 이번 작업은 **운영 코드를 느슨하게 하거나 v4를 되돌리지 않고 테스트 fixture와 기본 test runner만 현재 계약에 맞게 정비**한다. 실제 운영 코드 수정이 필요하다고 판명되면 수정하지 말고 BLOCKED로 중단한다.
+
+### 작업 3K 조사 결과 — 2026-10-27 KST / BLOCKED
+
+- 공동 문서5개·release 코드 기준: `80418afd3c01e2b3a9b5c2ec664c486798837849`. 별도 detached snapshot에서 원본main/HEAD·기존40파일/index/.env를 보존했다. production/server/src/migration·test/fixture·runner 변경0이다.
+- 3J 실패가 있는 파일은 명세의9개와 달리 실제 **10개**다. 해당10파일을 수정 전 한 번 실행해 **103개 중82PASS/21FAIL/skip0**을 재현했다. 검색 mock3건, v3 SQL fixture12건, legacy rematch/backfill2건, v4 pipeline mock/기대4건으로 분류했다.
+- **중단 근거:** `programWorkIdentity.test.mjs`의 PF295548 legacy v3 양성 검증은 현재 `planIdentityBackfill` production 버전 gate와 충돌한다. 동일한 유효 fixture의 matcher만2/3/4로 비교하면 eligible=1/0/1이며 v3만 MATCHER_VERSION_CHANGED다. 이 fixture는 v4 기본 분석 payload를 잘못 넘긴 경우가 아니므로 v3 명시·payload 재계산으로 해결되지 않는다.
+- production `programIdentityBackfill.mjs:36`은 [stored-program-2,MATCHER_VERSION]만 허용하고 현재 MATCHER_VERSION=stored-program-4다. rematch도 v3 source를 기본 실행에서 skip하고 explicit v3는 WRITE_VERSION_NOT_IMPLEMENTED로 거부한다. v3 positive를 v2/v4로 바꾸거나 거부를 기대하도록 뒤집어 통과시키지 않았다.
+- 사용자의 “production 코드 수정이 필요하면 수정하지 말고 BLOCKED” 및 본 명세의 중단 조건에 따라 test/fixture 수정·13개 runner 편입에 들어가기 전에 중단했다. **최종 전체 npm test는 미실행**이며 fail0/skip0 달성을 주장하지 않는다. build도 재실행하지 않았다. production 포함306개 비공동문서 파일은3J byte hash와 동일하므로3J build PASS만 인용한다.
+- 운영DB/REST/KOPIS/OCR·migration/DDL/DML/POST·policy/예약/환경/배포/병합 변경0. 이번 예약 상태 재조회0이며 Disabled는3J 당시 확인값이다. 버전 gate의 지원범위/별도 수정 명세 검토가 필요하다. 자세한 재현과 영향은 HANDOFF 최신3K 결과에 기록하고 같은 브랜치 게시 후 중단한다.
 
 ### 허용 범위
 
