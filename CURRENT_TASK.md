@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: IMPLEMENTED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,85 @@
 - 선행 인계 기준: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
+
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
+
+작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
+
+이번 작업 하나에서 잔여 회귀 정비부터 실제 운영 전환까지 끝낸다. 같은 원인을 다시 조사하거나 선행 작업을 재구현하지 않는다. 각 Gate가 통과할 때만 다음 Gate로 진행하며, 실패하면 예약 Disabled와 자동 정책 disabled를 유지하고 **BLOCKED**로 종료한다.
+
+### 완료 상태
+
+아래가 모두 충족될 때만 최종 상태를 `OPERATIONAL`로 기록한다.
+
+- 전체 `npm test`: fail 0·skip 0이며 3A~3L 직접 suite가 기본 runner에 중복 없이 포함됨
+- production build 통과
+- 운영 migration 6개가 COMPLETE
+- 공식 Program 텍스트 공연 단건 canary에서 신규 CONFIRMED 최대 1건, 동일 입력 재실행 신규 쓰기 0
+- 해당 곡의 공개 공연 검색에서 canary 공연 노출
+- 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
+- OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
+
+### Gate A — 잔여 회귀와 최소 예약 연결
+
+1. 3K에 남은 기존 실패를 다시 장시간 조사하지 말고 기록된 분류대로 수정한다.
+   - search mock: 공식 status/source 재조회, 정확한 `Content-Range`
+   - v3 SQL fixture: 명시적 v3 payload와 재계산 hash
+   - v4 pipeline fixture: v4 RPC와 정확히 한 행의 enabled policy
+2. 3J supplemental 13개와 3L 신규 source-version suite를 `scripts/test.mjs`에 한 번씩만 편입한다.
+3. 기존 단건 coordinator를 예약 경로에 최소 연결한다. 별도 명시적 switch는 기본 false로 두고, 켜졌을 때 공식 `KOPIS_DETAIL_TEXT` 대상 중 한 공연만 선택해 coordinator를 한 번 호출한다. 한 실행당 신규 CONFIRMED는 기존 coordinator 상한인 최대 1건이다.
+4. OCR source와 NONE은 이 예약 경로에서 처리하지 않는다. OCR fallback·REJECTED 생성·전체 backfill·rematch는 실행하지 않는다.
+5. 영향 테스트 후 전체 `npm test` 한 번과 production build 한 번을 실행한다. 하나라도 fail/skip이면 이후 운영 Gate를 실행하지 않는다.
+6. 구현·test·runner·필수 설정 문서 외의 리팩터링, dependency/lock 변경은 금지한다.
+
+### Gate B — 운영 migration 적용
+
+Gate A 통과 후 `CLASSIC_ATLAS_DATABASE_URL`을 사용한 관리자 read-only preflight로 아래 6개를 다시 판정한다.
+
+1. `202610230002_kopis_detail_text.sql`
+2. `202610230003_program_analysis_v4.sql`
+3. `202610260001_program_text_analysis_v4.sql`
+4. `202610260002_program_text_status.sql`
+5. `202610260003_program_text_confirmation.sql`
+6. `202610260004_program_text_confirmation_status.sql`
+
+- 각 항목이 ABSENT 또는 COMPLETE일 때만 진행한다. PARTIAL/INCOMPATIBLE이면 적용하지 않고 BLOCKED.
+- ABSENT만 위 순서로 각 migration 전체를 한 번씩 적용하고 매번 관리자 SQL과 REST/OpenAPI GET으로 COMPLETE를 확인한다.
+- 연결 문자열·host·user·비밀번호·운영 원문은 출력하거나 Git에 기록하지 않는다.
+- v4 policy는 canary 직전까지 disabled로 유지한다.
+
+### Gate C — 공식 텍스트 단건 canary
+
+1. 미래 공연이며 공식 Program 원문/hash가 저장되고, v4에서 `MATCHED + EXACT`인 등록곡이 있는 대상 한 건만 선택한다. 후보가 없으면 임의로 OCR을 사용하지 말고 BLOCKED.
+2. policy를 정확히 한 행 `enabled=true`로 전환한 뒤 동일 대상에 `DRY_RUN → SAVE` 순서로 실행한다.
+3. 신규 CONFIRMED는 최대 1건, REJECTED 0건이어야 한다. 예상 밖 후보·기존 receipt 변경·두 번째 확정·오류가 있으면 즉시 policy를 disabled로 되돌리고 중단한다.
+4. 같은 입력을 즉시 다시 실행해 신규 DB 쓰기 0을 확인한다.
+5. 해당 track의 공개 검색 API에서 canary 공연이 `EXACT + CONFIRMED`로 노출되고 기존 쇼팽·리스트·브람스 연결이 유지되는지 확인한다. 원문·evidence 본문은 결과 문서에 적지 않는다.
+
+### Gate D — 배포와 제한 예약 활성화
+
+Gate C 통과 후에만 진행한다.
+
+1. 최종 코드 SHA로 versioned release 디렉터리를 만들고 원본 로컬 40개 변경·index·`.env`를 보존한다.
+2. main 반영 전 비교에서 이번 명세 외 예상하지 않은 파일이 없고 CI/build/canary가 모두 통과한 경우에만 PR을 생성·병합하고 production 배포 상태를 확인한다. 권한·충돌·배포 실패 시 병합을 우회하지 말고 예약 Disabled로 BLOCKED.
+3. production 공개 검색에서 canary 공연이 다시 확인된 뒤 예약 action을 검증된 release로 전환한다.
+4. 실제 운영 설정은 다음으로 고정한다.
+   - collection=true
+   - 공식 Program 단건 처리=true
+   - OCR=false
+   - 기존 OCR 분석/자동판정=false
+   - cleanup=false
+   - 공연 1건/신규 CONFIRMED 최대 1건/실행
+   - 기존 daily 08:40 KST·IgnoreNew·시간 제한 유지
+5. 예약을 Enabled로 전환한 뒤 등록 action·설정·다음 실행 시각만 읽기 확인한다. 즉시 전체 batch를 수동 실행하지 않는다.
+6. rollback은 예약 Disabled → v4 policy disabled → 예약 action을 이전 값으로 복원하는 순서로 준비한다. 이미 정확히 생성된 canary receipt나 additive migration을 임의 삭제하지 않는다.
+
+### 최종 보고 제한
+
+- 이전 3A~3L 내용을 다시 길게 요약하지 않는다.
+- 변경 파일, 전체 test/build 수치, migration 6개 상태, canary KOPIS ID/track ID와 신규 쓰기 수, 공개 검색 결과, 배포 SHA, 예약 상태·다음 실행 시각, rollback 준비 여부만 간결하게 기록한다.
+- 자격증명·운영 원문·후보 전체 목록은 기록하지 않는다.
+- 모든 Gate가 통과하면 `OPERATIONAL`; 그렇지 않으면 실패 Gate와 재개점만 적어 `BLOCKED`로 게시하고 추가 작업 없이 중단한다.
 
 ## 명세 4 작업 3L — legacy source 읽기와 v4 신규 쓰기 계약 분리 / IMPLEMENTED
 
