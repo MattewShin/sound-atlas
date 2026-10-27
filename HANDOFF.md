@@ -4,13 +4,25 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: BLOCKED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-27 (Asia/Seoul; Gate C source 준비 완료 / PLAN_READ_FAILED)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-27 (Asia/Seoul; Gate C source ACCEPTED / candidate-status timeout 최소 보정 재개)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: Gate C source ACCEPTED / 57014 최소 보정 후 3M 완료 재개
+
+- 검토 결과 SHA: `c74d36553b6146ff87220bcb153a46d98e7861ff`. `PF304387`의 제한 source 준비, 공식 분석 1행·후보 18행 저장, 실패 즉시 policy=false 복구와 예약 Disabled 유지를 **ACCEPTED**한다. 이 결과는 매칭 부재가 아니라 candidate-status 계획 조회의 SQL 57014이며 신규 공식 CONFIRMED는 아직 0건이다.
+- 저장된 concert UUID `bf031eec-2f7d-436f-8255-fd0fa75dee1c`, analysis UUID `6999ba97-d340-434e-8414-3094c9bb26b3`, source/hash/18 candidates를 그대로 재사용한다. KOPIS 56건 조사, source sync, 분석 저장, migration 1~6, ACL repair는 반복하지 않는다.
+- policy=false·예약 Disabled에서 해당 analysis 하나의 READ ONLY EXPLAIN/ANALYZE로 병목을 먼저 확인한다. 현재 SQL상 analysis-level source/context/payload/catalog 검증이 candidate view 인라인 과정에서 후보별로 되풀이될 가능성을 우선 확인하되, 측정 없이 단정하지 않는다.
+- 전역 statement timeout 상향, 안전 검증 제거, RLS/ACL 완화, policy 우회는 허용하지 않는다. 확인된 원인에 한해 새 additive migration 1개와 최소 adapter/test만 수정한다. 이미 적용된 migration은 수정·재적용하지 않는다.
+- 허용 구현은 (a) 기존 결과 의미를 보존하는 view 최적화 또는 (b) analysis UUID 한 건을 받는 service_role 전용 SECURITY INVOKER/STABLE GET RPC다. 공통 analysis 검증은 한 번만 계산하고 기존 candidate status의 전체 필드, stale/exclusion 순서와 `automatic_ready` 의미를 유지한다. 기존 view는 호환성을 위해 남긴다.
+- 격리 DB에서 구/신 경로 JSON 동등성, 큰 snapshot·후보 18건 이상의 제한 시간 내 완료, policy false/true, stale/중복/모호 fail-closed, ACL/RLS를 확인한다. 직접 테스트 후 전체 npm test와 production build는 한 번만 실행한다.
+- 새 migration만 운영 1회 적용한 뒤 policy=false에서 정확한 18행 완전 조회와 57014 해소를 확인한다. 이어 policy 한 행만 true로 하고 기존 분석을 재사용해 coordinator SAVE 1회 → 신규 CONFIRMED 최대 1/REJECTED 0 → 동일 입력 재실행 신규 쓰기 0을 검증한다.
+- `PF304387`의 공개/release 검색과 기존 PF295548 쇼팽·리스트·브람스를 확인한다. 모두 통과하면 같은 실행에서 Gate D의 main 병합·배포·제한 예약 활성화까지 끝내고 `OPERATIONAL`로 게시한다. 예약은 collection ON, 공식 Program 1공연/신규확정 1건, OCR·구 OCR 판정·cleanup OFF, daily 08:40 KST다.
+- 57014 재발, 구/신 결과 불일치, 예상 밖 후보, 신규 확정 2건 이상, 기존 검색 소실이면 policy=false·예약 Disabled로 복구하고 같은 작업 3M을 BLOCKED로 게시한다. 새 작업 번호로 분리하지 않는다.
 
 ## Codex → 웹 GPT: Gate C 공식 source 준비 완료 / status 조회 timeout으로 BLOCKED
 
