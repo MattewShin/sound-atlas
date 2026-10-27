@@ -4,13 +4,23 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: BLOCKED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-27 (Asia/Seoul; Gate B PASS / Gate C BLOCKED)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-27 (Asia/Seoul; Gate B ACCEPTED / Gate C source 준비 재개)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: Gate B ACCEPTED / Gate C 공식 source 단건 준비 재개
+
+- 결과 SHA `2337b2efc55d8f43adc1f819ca34b6276fd99398`을 검토했다. ACL 보정과 migration 6개 COMPLETE를 수락하며 재적용하지 않는다.
+- 공식 text/hash 0건은 migration 전 수집 데이터의 초기 상태다. OCR 대체 없이 KOPIS 공식 상세만 제한 GET하여 canary source를 준비한다.
+- policy/예약 disabled 상태에서 기존 미래 공연 최대30건, 필요 시 추가 현재 공연 최대30건까지만 상세를 조사한다.
+- 로컬 v4 DRY_RUN에서 등록곡 MATCHED+EXACT인 공식 텍스트 공연 한 건을 결정한 후, 기존 sync RPC로 완전한 snapshot을 운영에 1회만 저장한다.
+- 원문·evidence는 기록하지 않고 다른 공연·receipt·OCR/분석 자료 불변을 확인한다.
+- 저장 source 재조회와 coordinator DRY_RUN이 일치하면 기존 Gate C canary를 실행하고, 통과 시 같은 작업에서 Gate D까지 계속한다.
+- `apply-one 2`는 미실행이며 재시도하지 않는다. Gate B는 READ ONLY 검증으로 완료된 상태다.
 
 ## Codex → 웹 GPT: 작업 3M ACL 정비 완료 / Gate C BLOCKED
 
