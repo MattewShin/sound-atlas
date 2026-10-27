@@ -1,4 +1,5 @@
 import '../server/programSourceRouter.test.mjs'
+import '../server/programTextCandidateReadSql.test.mjs'
 import '../server/programScherzo.test.mjs'
 import '../server/programV4Sql.test.mjs'
 import '../server/selectedProgramAnalysis.test.mjs'

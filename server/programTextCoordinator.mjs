@@ -3,7 +3,7 @@ import {CollectionError} from './collectionHttp.mjs'
 import {routeProgramSource} from './programSourceRouter.mjs'
 import {analyzeSelectedProgramSource} from './selectedProgramAnalysis.mjs'
 import {buildProgramTextAnalysisPayload,createProgramTextAnalysisStore,PROGRAM_TEXT_SAVE_RPC} from './supabaseProgramTextAnalysis.mjs'
-import {createProgramSourceReader} from './programSourcePlan.mjs'
+import {createProgramSourceReader,PROGRAM_TEXT_STATUS_READ_RPC} from './programSourcePlan.mjs'
 import {createProgramTextConfirmationStore,PROGRAM_TEXT_CONFIRM_RPC,PROGRAM_TEXT_CONFIRM_VERSION} from './supabaseProgramTextConfirmation.mjs'
 import {MATCHER_VERSION} from './programAnalysis.mjs'
 
@@ -27,7 +27,7 @@ export function createProgramTextCoordinator({env=process.env,fetchImpl=fetch,de
       counts:{total:0,ready:0,already:0,hold:0,pending:0},outcomes:{},reasons:{},receipt_id:null}
     let phase='SOURCE_READ_FAILED',writePreflight=false,confirmationPosts=0
     try{
-      const allowedReads=new Set(['','concerts','concert_program_version_policy',...views])
+      const allowedReads=new Set(['','concerts','concert_program_version_policy','concert_program_text_analyses','rpc/'+PROGRAM_TEXT_STATUS_READ_RPC,...views])
       const guardedFetch=async(url,init)=>{
         const path=new URL(url).pathname.replace(/^\/rest\/v1\//,'')
         if(init.method==='GET'){
@@ -62,7 +62,7 @@ export function createProgramTextCoordinator({env=process.env,fetchImpl=fetch,de
         phase='PREFLIGHT_FAILED'
         await store.preflightSave();await confirmer.preflightConfirm()
         const schema=await request('')
-        for(const name of [...views,'rpc/'+PROGRAM_TEXT_SAVE_RPC,'rpc/'+PROGRAM_TEXT_CONFIRM_RPC])if(!schema.paths?.['/'+name])throw safeFailure('PREFLIGHT_FAILED')
+        for(const name of [...views,'rpc/'+PROGRAM_TEXT_STATUS_READ_RPC,'rpc/'+PROGRAM_TEXT_SAVE_RPC,'rpc/'+PROGRAM_TEXT_CONFIRM_RPC])if(!schema.paths?.['/'+name])throw safeFailure('PREFLIGHT_FAILED')
         for(const name of views){
           const probe=await request(name,{params:{select:'id',concert_id:'eq.'+concertId,limit:'1'}})
           if(!Array.isArray(probe)||probe.length>1||probe.some(row=>!uuid(row?.id)))throw safeFailure('PREFLIGHT_FAILED')
@@ -76,8 +76,16 @@ export function createProgramTextCoordinator({env=process.env,fetchImpl=fetch,de
       result.payload_hash=payload.payload_hash;result.counts.total=payload.candidates.length;result.counts.pending=payload.candidates.length
       for(const c of payload.candidates){add(result.outcomes,c.outcome);for(const reason of new Set(c.review_reasons||[]))add(result.reasons,reason)}
       if(mode==='DRY_RUN')return {...result,status:'DRY_RUN',reason:'DRY_RUN_ANALYZED'}
+      phase='ANALYSIS_LOOKUP_FAILED'
+      const stored=await request('concert_program_text_analyses',{params:{select:'id,concert_id,source_kind,matcher_version,source_hash,catalog_hash,payload_hash,is_current',
+        concert_id:'eq.'+concertId,source_kind:'eq.KOPIS_DETAIL_TEXT',matcher_version:'eq.'+MATCHER_VERSION,source_hash:'eq.'+payload.source_hash,catalog_hash:'eq.'+payload.catalog_hash,is_current:'eq.true',limit:'2'}})
+      if(!Array.isArray(stored)||stored.length>1||stored.some(a=>!uuid(a?.id)||a.concert_id!==concertId||a.source_kind!=='KOPIS_DETAIL_TEXT'
+        ||a.matcher_version!==MATCHER_VERSION||a.source_hash!==payload.source_hash||a.catalog_hash!==payload.catalog_hash||a.is_current!==true
+        ||typeof a.payload_hash!=='string'))throw safeFailure('ANALYSIS_LOOKUP_FAILED')
       phase='ANALYSIS_SAVE_FAILED'
-      const analysisId=await store.save({concert,analysis})
+      // Reuse only the complete matching payload. The following authoritative
+      // status read and locked confirmation still revalidate freshness/identity.
+      const analysisId=stored[0]?.payload_hash===payload.payload_hash?stored[0].id:await store.save({concert,analysis})
       if(!uuid(analysisId))throw safeFailure('ANALYSIS_SAVE_FAILED')
       result.analysis_id=analysisId
       phase='PLAN_READ_FAILED'

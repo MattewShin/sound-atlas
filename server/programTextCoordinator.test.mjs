@@ -6,8 +6,9 @@ import {createProgramTextCoordinator} from './programTextCoordinator.mjs'
 const id=n=>'00000000-0000-4000-8000-'+String(n).padStart(12,'0')
 const hash=s=>createHash('sha256').update(s).digest('hex')
 const saveRpc='save_concert_program_text_analysis_v4',confirmRpc='confirm_concert_program_text_candidate_v4'
+const readRpc='read_concert_program_text_candidate_status_v4'
 const analysisView='concert_program_text_analysis_status',candidateView='concert_program_text_candidate_status',receiptView='concert_program_text_confirmation_status'
-const endpoints=[analysisView,candidateView,receiptView,'rpc/'+saveRpc,'rpc/'+confirmRpc]
+const endpoints=[analysisView,candidateView,receiptView,'rpc/'+saveRpc,'rpc/'+confirmRpc,'rpc/'+readRpc]
 const single='PRIVATE \u{1f3b9} e\u0301\r\n[Program]\r\nF. Chopin\r\nScherzo No.4 in E Major, Op.54'
 const multiple=single+'\r\nBiography\r\nPRIVATE history\r\n[Program]\r\nJ. Brahms\r\nIntermezzo Op.118 No.2'
 const env={SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'PRIVATE-fixture-key'}
@@ -23,7 +24,7 @@ function fixture(text=single,options={}){
   const coordinator=createProgramTextCoordinator({env:{...env,PROGRAM_TEXT_MAX_CONFIRMATIONS:'99'},delay:async()=>{state.delays++},fetchImpl:async(url,init)=>{
     url=new URL(url);const name=url.pathname.replace('/rest/v1/',''),body=init.body===undefined?null:JSON.parse(init.body)
     state.calls.push({name,method:init.method,params:Object.fromEntries(url.searchParams),body})
-    assert.ok(['','concerts','concert_program_version_policy',...endpoints].includes(name),name)
+    assert.ok(['','concerts','concert_program_version_policy','concert_program_text_analyses',...endpoints].includes(name),name)
     const intercepted=await state.hook?.({name,init,url,body,state})
     if(intercepted!==undefined)return intercepted
     if(init.method==='POST'){
@@ -39,9 +40,11 @@ function fixture(text=single,options={}){
     const p=state.saved
     let data=[]
     if(name==='concerts')data=[state.concert]
+    if(name==='concert_program_text_analyses'&&p)data=[{id:id(20),concert_id:id(1),source_kind:'KOPIS_DETAIL_TEXT',matcher_version:p.matcher_version,
+      source_hash:p.source_hash,catalog_hash:p.catalog_hash,payload_hash:p.payload_hash,is_current:true}]
     if(name===analysisView&&p&&!state.pending)data=[{id:id(20),concert_id:id(1),source_kind:'KOPIS_DETAIL_TEXT',source_hash:p.source_hash,
       matcher_version:p.matcher_version,catalog_hash:p.catalog_hash,analysis_is_current:true,is_fresh:!state.stale,policy_enabled:state.enabled,is_effective_current:state.enabled&&!state.stale}]
-    if(name===candidateView&&p)data=p.candidates.map((c,i)=>({id:candidateId(i),analysis_id:id(20),concert_id:id(1),candidate_key:c.candidate_key,
+    if((name===candidateView||name==='rpc/'+readRpc)&&p)data=p.candidates.map((c,i)=>({id:candidateId(i),analysis_id:id(20),concert_id:id(1),candidate_key:c.candidate_key,
       source_kind:'KOPIS_DETAIL_TEXT',source_hash:p.source_hash,matcher_version:p.matcher_version,catalog_hash:p.catalog_hash,
       analysis_is_current:true,is_fresh:!state.stale,is_effective_current:state.enabled&&!state.stale,policy_enabled:state.enabled,stale_reason:state.stale?'CONCERT_CONTEXT_CHANGED':null,
       outcome:c.outcome,relation:c.relation,track_id:c.track_id,work_id:c.work_id,review_reasons:c.review_reasons,candidate_snapshot:c,
@@ -116,7 +119,7 @@ test('SAVE order: all preflights, 3E save, 3F current plan, 3H receipt read, the
   const saveIndex=f.state.calls.findIndex(c=>c.name==='rpc/'+saveRpc)
   for(const name of [analysisView,candidateView,receiptView])assert.ok(f.state.calls.slice(0,saveIndex).some(c=>c.name===name))
   const after=f.state.calls.slice(saveIndex+1),confirmIndex=after.findIndex(c=>c.name==='rpc/'+confirmRpc)
-  assert.ok(after.slice(0,confirmIndex).some(c=>c.name===candidateView));assert.ok(after.slice(0,confirmIndex).some(c=>c.name===receiptView&&c.params.select!=='id'))
+  assert.ok(after.slice(0,confirmIndex).some(c=>c.name==='rpc/'+readRpc&&c.method==='GET'&&c.params.p_analysis_id===id(20)));assert.ok(after.slice(0,confirmIndex).some(c=>c.name===receiptView&&c.params.select!=='id'))
   assert.equal(confirmations(f)[0].body.p_expected.analysis_id,out.analysis_id)
   for(const forbidden of ['PRIVATE','evidence','quote','candidate_snapshot','identity','kopis_detail_text'])assert.ok(!JSON.stringify(out).includes(forbidden))
 })
@@ -126,6 +129,7 @@ test('single-candidate retry is ALREADY_CONFIRMED with no additional confirmatio
   assert.equal(first.status,'CONFIRMED');const second=await f.run('SAVE')
   assert.equal(second.reason,'ALREADY_CONFIRMED');assert.equal(second.counts.already,1);assert.equal(second.counts.ready,0);assert.equal(second.counts.pending,0)
   assert.equal(f.state.saved.payload_hash,savedHash);assert.equal(confirmations(f).length,1);assert.equal(f.state.receipts.length,1)
+  assert.equal(posts(f).filter(c=>c.name==='rpc/'+saveRpc).length,1)
   for(const change of [{is_effectively_confirmed:false,stale_reason:'SOURCE_HASH_CHANGED_OR_INVALID'},{is_effectively_confirmed:'true',stale_reason:null},
     {is_effectively_confirmed:true,stale_reason:null,payload_hash:'e'.repeat(64)}]){
     Object.assign(f.state.receipts[0],change);const held=await f.run('SAVE')

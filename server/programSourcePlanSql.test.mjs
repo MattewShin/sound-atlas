@@ -134,14 +134,16 @@ test('same-source duplicates remain separate and excluded; fresh zero-candidate 
   for(const options of [{duplicate:true},{empty:true}]){
     const {db,concert,ocr}=await setup(options)
     try{
-      await db.exec(migration);await db.exec('set role service_role')
+      await db.exec(migration)
+      await db.exec(await readFile(new URL('../supabase/migrations/202610270002_program_text_candidate_status_read.sql',import.meta.url),'utf8'))
+      await db.exec('set role service_role')
       const before=await legacy(db),statuses=await rows(db,views[1]),analyses=await rows(db,views[0])
       if(options.duplicate){assert.equal(statuses.length,2);assert.ok(statuses.every(c=>!c.automatic_ready&&c.exclusion_reasons.includes('DUPLICATE_TRACK_OR_WORK')))}
       else assert.equal(statuses.length,0)
       const calls=[],reader=createProgramSourceReader({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture'},fetchImpl:async(url,init)=>{
         assert.equal(init.method,'GET');assert.equal(init.body,undefined)
-        const name=url.pathname.split('/').pop();assert.ok(['concerts',...views].includes(name));calls.push(name)
-        let data=await rows(db,name)
+        const name=url.pathname.split('/').pop();assert.ok(['concerts',...views,'read_concert_program_text_candidate_status_v4'].includes(name));calls.push(name)
+        let data=name==='read_concert_program_text_candidate_status_v4'?(await db.query('select * from public.read_concert_program_text_candidate_status_v4($1)',[url.searchParams.get('p_analysis_id')])).rows:await rows(db,name)
         for(const [key,value] of url.searchParams)if(value.startsWith('eq.'))data=data.filter(r=>String(r[key])===value.slice(3))
         const offset=Number(url.searchParams.get('offset')||0);return new Response(JSON.stringify(data.slice(offset,offset+1)))
       }})

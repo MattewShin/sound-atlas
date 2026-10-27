@@ -5,6 +5,7 @@ import {createSupabaseRest} from './supabaseRest.mjs'
 import {getTrackTarget} from '../src/data/workCatalog.js'
 
 const hash=text=>createHash('sha256').update(text,'utf8').digest('hex')
+export const PROGRAM_TEXT_STATUS_READ_RPC='read_concert_program_text_candidate_status_v4'
 const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value)
 const benign=new Set(['COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY','COMPOSER_AND_EXPLICIT_ITEM_IDENTITY',
   'TITLE_OR_REGISTERED_ALIAS_AGREES','KEY_CORROBORATES_IDENTITY','ABSENT_ORDINAL_NOT_INVENTED'])
@@ -95,7 +96,7 @@ export function createProgramSourceReader(options={}){
       const analyses=await readAll('concert_program_text_analysis_status',filter)
       const fresh=analyses.filter(a=>a.analysis_is_current===true&&a.is_fresh===true&&a.catalog_hash===CATALOG_HASH)
       if(fresh.length!==1)return planProgramSource({concert,current_ocr_evidence,analyses})
-      const statuses=await readAll('concert_program_text_candidate_status',{...filter,analysis_id:'eq.'+fresh[0].id})
+      const statuses=await readAll('rpc/'+PROGRAM_TEXT_STATUS_READ_RPC,{p_analysis_id:fresh[0].id,...filter,analysis_id:'eq.'+fresh[0].id})
       // Separate GETs are not an atomic snapshot. Recheck metadata and fail
       // closed on changes; even a ready plan is not a write authorization.
       const after=await readAll('concert_program_text_analysis_status',filter)

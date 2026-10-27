@@ -21,8 +21,9 @@ const env={SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:
 
 function mock(tables,{cap=200,change}={}){
   const calls=[],reader=createProgramSourceReader({env,fetchImpl:async(url,init)=>{
-    assert.equal(init.method,'GET');assert.equal(init.body,undefined);assert.ok(!url.pathname.includes('/rpc/'))
-    const name=url.pathname.split('/').pop(),params=Object.fromEntries(url.searchParams)
+    assert.equal(init.method,'GET');assert.equal(init.body,undefined)
+    const endpoint=url.pathname.split('/').pop(),name=endpoint==='read_concert_program_text_candidate_status_v4'?'concert_program_text_candidate_status':endpoint,params=Object.fromEntries(url.searchParams)
+    if(endpoint!==name){assert.equal(params.p_analysis_id,id(2));assert.ok(url.pathname.includes('/rpc/'))}
     calls.push({name,params});change?.(name,params,tables,calls)
     if(!(name in tables))throw Error('UNEXPECTED_READ '+name)
     let data=tables[name]

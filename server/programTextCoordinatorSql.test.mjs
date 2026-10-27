@@ -7,6 +7,7 @@ import {confirmationMigration,programTextConfirmationFixture,rows,originalDigest
 import {hashJson} from './programAnalysis.mjs'
 
 const saveRpc='save_concert_program_text_analysis_v4',confirmRpc='confirm_concert_program_text_candidate_v4'
+const readRpc='read_concert_program_text_candidate_status_v4'
 const views=['concert_program_text_analysis_status','concert_program_text_candidate_status','concert_program_text_confirmation_status']
 const receiptTable='concert_program_text_confirmations'
 const legacyTables=['concert_program_images','concert_image_ocr_results','concert_image_ocr_attempts','concert_program_analyses','concert_program_candidates','concert_program_reviews','concert_program_candidate_status']
@@ -17,11 +18,12 @@ async function setup(){
   const db=new PGlite()
   try{
     const f=await programTextConfirmationFixture(db);await db.exec(confirmationMigration);await db.exec(sql)
+    await db.exec(await readFile(new URL('../supabase/migrations/202610270002_program_text_candidate_status_read.sql',import.meta.url),'utf8'))
     const state={calls:[],loseConfirmationResponse:false}
     const coordinator=createProgramTextCoordinator({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'PRIVATE-test-only-key'},delay:async()=>{},fetchImpl:async(url,init)=>{
       const name=url.pathname.replace('/rest/v1/',''),body=init.body===undefined?null:JSON.parse(init.body)
       state.calls.push({name,method:init.method,body})
-      assert.ok(['','concerts','concert_program_version_policy',...views,'rpc/'+saveRpc,'rpc/'+confirmRpc].includes(name))
+      assert.ok(['','concerts','concert_program_version_policy','concert_program_text_analyses',...views,'rpc/'+saveRpc,'rpc/'+confirmRpc,'rpc/'+readRpc].includes(name))
       if(init.method==='POST'){
         assert.ok(name==='rpc/'+saveRpc||name==='rpc/'+confirmRpc)
         const params=name==='rpc/'+saveRpc?[JSON.stringify(body.p_analysis),body.p_catalog_json]:[JSON.stringify(body.p_expected),body.p_catalog_json]
@@ -36,11 +38,11 @@ async function setup(){
       }
       assert.equal(init.method,'GET');assert.equal(init.body,undefined);assert.equal(init.headers.Prefer,'count=exact')
       if(name===''){
-        const paths={['/rpc/'+saveRpc]:{},['/rpc/'+confirmRpc]:{}}
+        const paths={['/rpc/'+saveRpc]:{},['/rpc/'+confirmRpc]:{},['/rpc/'+readRpc]:{}}
         for(const v of views)if((await db.query('select to_regclass($1) v',['public.'+v])).rows[0].v)paths['/'+v]={}
         return new Response(JSON.stringify({paths}))
       }
-      let data=await rows(db,name)
+      let data=name==='rpc/'+readRpc?(await db.query('select * from public.'+readRpc+'($1)',[url.searchParams.get('p_analysis_id')])).rows:await rows(db,name)
       for(const [key,value]of url.searchParams){
         if(value.startsWith('eq.'))data=data.filter(r=>String(r[key])===value.slice(3))
         if(key==='id'&&value.startsWith('gt.'))data=data.filter(r=>r.id>value.slice(3))
@@ -71,6 +73,7 @@ test('isolated coordinator DRY_RUN writes zero; SAVE and identical rerun reuse a
     assert.equal(await originalDigest(db),before)
     const again=await f.run('SAVE');assert.equal(again.reason,'ALREADY_CONFIRMED');assert.equal(again.counts.already,1)
     assert.equal(confirmations(f).length,1);assert.equal((await rows(db,receiptTable)).length,1);assert.equal(await originalDigest(db),before)
+    assert.equal(posts(f).filter(c=>c.name==='rpc/'+saveRpc).length,0)
     for(const s of ['PRIVATE','evidence','quote','snapshot','kopis_detail_text'])assert.ok(!JSON.stringify(first).includes(s))
   }finally{await db.close()}
 })
