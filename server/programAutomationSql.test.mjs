@@ -1,3 +1,5 @@
+import {legacyAnalysisFixture,legacyRematchFixture} from './testSupport/legacyProgramFixture.mjs'
+import {searchFixture} from './testSupport/searchFixture.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {PGlite} from '@electric-sql/pglite'
@@ -26,7 +28,7 @@ test('automatic SQL receipts, deduplication, source races, reevaluation and actu
   }
   const make=async(image,text,hash)=>{
    const attempt=await record(image,text,hash),ocr=(await rows('concert_image_ocr_results')).find(x=>x.id===attempt.result_id)
-   const t={concert:{...k,...concert},image,attempt,ocr},a=analyzeStoredProgram(t)
+   const t={concert:{...k,...concert},image,attempt,ocr},a=legacyAnalysisFixture(analyzeStoredProgram(t))
    const id=(await db.query('select public.save_concert_program_analysis_v3($1,$2) id',[JSON.stringify(a),CATALOG_JSON])).rows[0].id
    return {a,id,t,c:(await rows('concert_program_candidates')).filter(c=>c.analysis_id===id)}
   }
@@ -64,7 +66,7 @@ test('automatic SQL receipts, deduplication, source races, reevaluation and actu
   await record(images[0],null,null,true)
   assert.equal((await rows('concert_program_candidate_status')).find(c=>c.id===f.c[0].id).is_effectively_confirmed,true)
   const search=createSupabaseConcertSearch({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture',PROGRAM_SEARCH_VERSION:'stored-program-3'},now:()=>Date.parse('2099-10-27T00:00:00Z'),
-   fetchImpl:async()=>new Response(JSON.stringify((await rows('concert_program_candidate_status')).sort((a,b)=>a.id.localeCompare(b.id)).map(c=>({...c,concerts:concert}))))})
+   fetchImpl:searchFixture({ocrRows:()=>rows('concert_program_candidate_status'),concerts:()=>[{...k,...concert}]})})
   assert.equal((await search.search({region:'서울',from:'2099-10-27',to:'2099-10-27',targetTrackId:'brahms-intermezzo-op118-no2'})).concerts.length,1)
   await record(images[0],null,'c'.repeat(64),true)
   assert.equal((await rows('concert_program_candidate_status')).find(c=>c.id===f.c[0].id).is_effectively_confirmed,false,'known changed bytes invalidate old confirmation')

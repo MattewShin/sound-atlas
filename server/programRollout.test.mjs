@@ -1,4 +1,5 @@
 import test from 'node:test'
+import {searchFixture} from './testSupport/searchFixture.mjs'
 import assert from 'node:assert/strict'
 import {randomUUID} from 'node:crypto'
 import {getProgramRollout,getProgramReviewVersion,getProgramSearchVersion} from './programRollout.mjs'
@@ -35,9 +36,8 @@ test('rollout defaults split v4 writes, v3 review, v2 public search and disabled
 
 test('v3 pending canary and even v3 confirmed rows cannot displace explicitly selected v2 public results',async()=>{
   const t=f(),v2=row(t,'stored-program-2'),v3=row(t,'stored-program-3','REVIEW_REQUIRED'),calls=[]
-  const service=createSupabaseConcertSearch({env,now:()=>Date.parse('2026-10-20T00:00:00Z'),fetchImpl:async(url,init)=>{
-    calls.push(url);assert.equal(init.method,'GET');return new Response(JSON.stringify([v2,v3,row(t,'stored-program-3')].sort((a,b)=>a.id.localeCompare(b.id))))
-  }})
+  const statuses=[v2,v3,row(t,'stored-program-3')]
+  const service=createSupabaseConcertSearch({env,now:()=>Date.parse('2026-10-20T00:00:00Z'),fetchImpl:searchFixture({ocrRows:()=>statuses,concerts:()=>[t.concert],onRequest:url=>calls.push(url)})})
   const result=await service.search(query)
   assert.equal(result.analysisVersion,'stored-program-2');assert.equal(result.concerts.length,1)
   assert.equal(result.concerts[0].programAnalysisVersion,'stored-program-2')
@@ -47,9 +47,8 @@ test('v3 pending canary and even v3 confirmed rows cannot displace explicitly se
 test('only explicit v3/v4 search settings select those versions; no automatic union or latest fallback',async()=>{
   for(const version of ['stored-program-3','stored-program-4']){
   const t=f(),calls=[]
-  const service=createSupabaseConcertSearch({env:{...env,PROGRAM_SEARCH_VERSION:version},now:()=>Date.parse('2026-10-20T00:00:00Z'),fetchImpl:async(url)=>{
-    calls.push(url);return new Response(JSON.stringify(['stored-program-2','stored-program-3','stored-program-4'].map(v=>row(t,v)).sort((a,b)=>a.id.localeCompare(b.id))))
-  }})
+  const statuses=['stored-program-2','stored-program-3','stored-program-4'].map(v=>row(t,v))
+  const service=createSupabaseConcertSearch({env:{...env,PROGRAM_SEARCH_VERSION:version},now:()=>Date.parse('2026-10-20T00:00:00Z'),fetchImpl:searchFixture({ocrRows:()=>statuses,concerts:()=>[t.concert],onRequest:url=>calls.push(url)})})
   const result=await service.search(query);assert.equal(result.analysisVersion,version);assert.equal(result.concerts.length,1)
   assert.equal(calls[0].searchParams.get('matcher_version'),`eq.${version}`)
   }

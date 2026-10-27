@@ -1,3 +1,4 @@
+import {legacyAnalysisFixture} from './legacyProgramFixture.mjs'
 import {readFile} from 'node:fs/promises'
 import {randomUUID,createHash} from 'node:crypto'
 import {boundedProgramItem} from '../boundedProgramBatch.mjs'
@@ -21,6 +22,8 @@ export async function boundedFixture(db){
   const attempt=(await db.query('select to_jsonb(t) data from public.concert_image_ocr_attempts t where id=$1',[id])).rows[0].data
   const ocr=(await db.query('select to_jsonb(o) data from public.concert_image_ocr_results o where id=$1',[attempt.result_id])).rows[0].data
   const item=boundedProgramItem({concert:k,image,attempt,ocr})
+  item.analysis=legacyAnalysisFixture(item.analysis)
+  item.decisions=item.decisions.map(d=>({...d,verified:item.analysis.candidates.find(c=>c.candidate_key===d.candidate_key)}))
   if(save)item.savedId=(await db.query('select public.save_concert_program_analysis_v3($1,$2) id',[JSON.stringify(item.analysis),CATALOG_JSON])).rows[0].id
   return item
  }

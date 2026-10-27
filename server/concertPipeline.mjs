@@ -101,6 +101,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
         read_capacity:{list_max_raw_rows:options.listPages*100,db_rows_per_table_or_relation_batch:options.dbPages*100,db_scan_overflow:'EXPLICIT_DB_SCAN_LIMIT_ERROR'},
         ocr_selection_semantics:'Ordered download-check candidates; stop at imageChecks or new OCR attempt cap. Cache/change outcomes are UNKNOWN until download.',
         selected_analysis_ocr_ids:analysis.ready.slice(0,options.analysisLimit).map(t=>t.ocr.id)}
+      if(runtime.programText){check();report.official_program=await runtime.programText.run({conditions,plan:true});check()}
       report.status='PLAN_READY'
       finishStage()
     } else {
@@ -326,6 +327,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
         a.limit_reached ||= report.automation.limit_reached
       }
       }
+      if(runtime.programText){check();report.official_program=await runtime.programText.run({conditions,plan:false});check()}
       report.status=Object.values(report.stages).some(x=>x.failed)||report.stages.ocr.time_budget_reached?'PARTIAL':'SUCCESS'
       if(report.automation.retry_pending)report.status='PARTIAL'
       finishStage()

@@ -72,7 +72,7 @@ test('analysis-only individual failure retains successes and retry state',async(
 })
 test('analysis-only runtime needs no KOPIS or Python and rejects non-analysis writes before network',async()=>{
   const calls=[],runtime=createAnalysisOnlyRuntime({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture-private-key',EASYOCR_PYTHON:'nonexistent'},
-    fetchImpl:async(url,init)=>{calls.push([new URL(url).pathname,init.method]);return new Response(JSON.stringify(new URL(url).pathname==='/rest/v1/'?{paths:{'/rpc/save_concert_program_analysis_v3':{},'/rpc/review_concert_program_candidate_identity':{},'/rpc/save_concert_program_rematch':{},'/rpc/decide_automatic_program_candidate':{}}}:[]),{status:200})}})
+    fetchImpl:async(url,init)=>{calls.push([new URL(url).pathname,init.method]);return new Response(JSON.stringify(new URL(url).pathname==='/rest/v1/'?{paths:{'/rpc/save_concert_program_analysis_v4':{},'/rpc/review_concert_program_candidate_identity':{},'/rpc/save_concert_program_rematch':{},'/rpc/decide_automatic_program_candidate':{}}}:new URL(url).pathname.endsWith('/concert_program_version_policy')?[{enabled:true}]:[]),{status:200})}})
   await runtime.preflight();assert.equal(runtime.worker,undefined);assert.equal(runtime.download,undefined);assert.equal(runtime.client,undefined)
   await assert.rejects(()=>runtime.repository.analysis.review(randomUUID(),'CONFIRMED','fixture',randomUUID()),{code:'ANALYSIS_ONLY_OPERATION_FORBIDDEN'})
   assert.ok(calls.every(([,method])=>method==='GET'));assert.equal(runtime.activity.analysis_save_calls,0)
