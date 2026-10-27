@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: BLOCKED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -30,6 +30,28 @@
 - 해당 곡의 공개 공연 검색에서 canary 공연 노출
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
+
+### 작업 3M Gate C 공식 텍스트 단건 준비·canary 재개 / READY
+
+결과 SHA `2337b2efc55d8f43adc1f819ca34b6276fd99398`을 검토했다. Gate B와 ACL 보정은 **ACCEPTED**한다. migration 6개와 ACL 보정을 다시 적용하지 않는다. `apply-one 2`는 실제 미실행이므로 재시도 대상이 아니며, READ ONLY 사후 검증 결과를 기준으로 한다.
+
+현재 대상 0건은 migration 적용 전 수집된 기존 공연에 `sty` 저장 컬럼이 없었던 초기 상태다. Gate C에 필요한 source 한 건을 아래 제한 안에서 준비한다.
+
+1. policy와 예약을 disabled로 유지한 채 운영 DB의 미래 공연 최대 30건을 ID·기간·상태만 READ ONLY로 조회한다.
+2. 해당 KOPIS ID의 **공식 상세 XML만 GET**하여 `sty`를 기존 collector와 동일하게 정규화·hash하고, release 코드의 official router와 v4 분석기로 로컬 DRY_RUN한다. 이미지 다운로드·OCR·이미지 분석은 0회다.
+3. 기존 미래 공연에서 대상이 없을 때만 현재 수집 조건의 추가 공연을 목록/상세 GET으로 최대 30건 더 조사한다. 전체 상세 조회 상한은 60건이다.
+4. canary target은 미래 공연·`KOPIS_DETAIL_TEXT`·유효 text/hash·등록곡 `MATCHED + EXACT`를 모두 만족해야 한다. 여러 건이면 공연 시작일→KOPIS ID 순 첫 건을 선택한다. 원문이나 evidence quote는 로그·문서에 남기지 않는다.
+5. 대상이 확인된 뒤에만 기존 `sync_kopis_concert` RPC로 **그 공연 한 건의 완전한 detail/image snapshot만 1회 저장**한다. policy=false 상태를 유지한다. source 준비 단계의 운영 POST 상한은 1회다.
+6. 저장 전후 기존 receipt/review, 다른 공연, OCR/분석 테이블은 불변이어야 한다. 대상 공연은 공식 text/hash와 KOPIS 최신 metadata/image membership의 예상 변경만 허용한다.
+7. 저장된 text/hash·context를 다시 GET하여 local dry-run과 동일한 `MATCHED + EXACT`가 나오는지 확인한다. 다르면 policy를 켜지 말고 BLOCKED.
+8. 일치하면 기존 Gate C를 그대로 실행한다.
+   - coordinator DRY_RUN
+   - v4 policy 정확히 한 행 enabled=true
+   - SAVE 신규 CONFIRMED 최대 1건·REJECTED 0
+   - 동일 입력 즉시 재실행 신규 쓰기 0
+   - release 검색 adapter에서 해당 track의 canary 공연 노출 및 기존 3곡 유지
+9. Gate C가 모두 통과하면 중단하지 말고 기존 Gate D의 병합·production 배포·공개검색 재확인·OCR-off 제한 예약 활성화까지 계속한다.
+10. 상세 GET 상한 내 대상이 없거나 수집 저장/DRY_RUN/canary 검증이 실패하면 policy·예약 disabled를 유지하고 정확한 실패 지점만 BLOCKED로 게시한다.
 
 ### 작업 3M ACL 재개 결과 — Gate B PASS / Gate C BLOCKED (2026-10-27 KST)
 
