@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -31,7 +31,21 @@
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
 
-### 작업 3M Gate C candidate-status timeout 최소 보정·canary 재개 / READY
+### 작업 3M timeout 재개 결과 — 보정 완료 / Gate C 즉시 재실행 BLOCKED (2026-10-27 KST)
+
+- 공동 문서5개/시작 코드 `61bc0f6798f55154b986994190911d0633e4bcc0`, 구현 [`ea6e9270b0a1f307292e30954f6dd858ee87080c`](https://github.com/MattewShin/sound-atlas/commit/ea6e9270b0a1f307292e30954f6dd858ee87080c). 저장된 PF304387 source·분석 `6999ba97-d340-434e-8414-3094c9bb26b3`·후보18개를 재사용했다. KOPIS/source sync/분석 save/기존 migration6개/ACL 반복0.
+- READ ONLY EXPLAIN/ANALYZE에서 223,048byte snapshot, 후보18개, 공통 canonical 식이 candidate projection에6회 나타나며 기존 실행13,747ms임을 확인했다. 단독 canonical123ms 대비 반복 비용이었다. 새 CTE는 해당 analysis 공통 검증을1회 materialize한다. 실제 저장18행의 구/신 전체 JSON 동등, SELECT14,812→657ms, 새 EXPLAIN183ms/계산식1회 확인.
+- 신규 `202610270002_program_text_candidate_status_read.sql`1개로 analysis UUID 전용 `read_concert_program_text_candidate_status_v4(uuid)`를 추가했다. SECURITY INVOKER/STABLE, service_role EXECUTE만 허용. 기존 view/검증/ACL/RLS/timeout 설정은 그대로다. reader는 GET RPC를 쓰고 coordinator는 전체 payload hash가 같은 기존 분석을 읽어 재사용한다.
+- 직접26/26 PASS. 전체 **npm test512/512, fail0/skip0(301.96s)**와 **build PASS(3.23s)**를 각각1회 실행했다. 큰 snapshot/19후보, 구/신 JSON 동등성, policy on/off·stale·중복·모호 fail-closed·RLS/ACL을 격리 검증했다. 기존613.88kB chunk 경고 유지.
+- 신규 migration만 운영1회 commit. 기존 모든 데이터/함수/view/ACL/RLS/default ACL/membership/policy 불변을 commit 전후 확인했다. policy=false에서 새 GET은 HTTP200, **18행/Content-Range0-17/18,1,824ms**로 통과했다.
+- **Gate C SAVE 통과:** 기존 분석/후보 재저장0. planning-ready4개 중 coordinator가 UUID 순 첫 후보를1회 확정했다. `PF304387 / chopin-scherzo-op31-no2`, receipt `dc572eb9-9756-4fbb-a03b-2a9b00474893`, EXACT/MATCHED/CONFIRMED1, REJECTED0. 이 시점에는 effective=true였다.
+- **실패 Gate C / IMMEDIATE_RERUN:** 기존 확정1·남은 ready3을 읽은 뒤 두 번째 candidate 확정을 시도했다. 전체 canary 상한을 지키기 위해 전송 전에 차단했다. 실제 추가POST0/신규DB쓰기0이나 결과는 기대한 ALREADY_CONFIRMED가 아닌 FAILED/CONFIRMATION_FAILED여서 멱등 검증 미통과다.
+- 즉시 v4 policy=false 복구. 15:34:11 KST 분석1/후보18/receipt1 및 모든 원본 row hash 보존 확인. 새 receipt는 append-only로 보존했고 policy OFF에 따라 effective=false/VERSION_POLICY_DISABLED_OR_MISSING이다. 15:34:24 KST 예약 Disabled/Enabled=false, action 변경/강제실행0.
+- 이번 REST GET46/POST1(확정1), 분석 저장POST0. policy UPDATE는 on1/off1. 공개/release 검색·기존3곡 검색 및 Gate D PR/main 병합·배포·예약 활성화는 미실행이다.
+- **재개점:** timeout은 새 단건 경로에서 해결됐다. 동일 source/payload/analysis의 유효 receipt가 이미 있는 다중 ready 후보 재실행 계약을 먼저 보정·격리 검증한 뒤 Gate C의 즉시 재실행→검색부터 재개한다. 신규 확정·source/분석 저장·migration/ACL을 반복하지 않는다. timeout만의 현재 범위를 넘겨 확정 정책을 임의 변경하지 않고 BLOCKED를 게시한다.
+- 원본main/HEAD·40파일/index/.env 보존. 자격증명·운영 원문/evidence 기록0. 아직 OPERATIONAL이 아니다.
+
+### 작업 3M Gate C candidate-status timeout 최소 보정·canary 재개 지시 / 실행 후 BLOCKED
 
 결과 SHA `c74d36553b6146ff87220bcb153a46d98e7861ff`의 bounded source 준비와 실패 후 안전 중단을 **ACCEPTED**한다. `PF304387`의 공식 원문/hash 저장, 분석 1행·후보 18행은 보존하며 KOPIS 상세 56건 조사, source sync, 분석 save, 기존 migration 6개와 ACL 보정을 반복하지 않는다. 현재 신규 CONFIRMED 0건이므로 아직 OPERATIONAL은 아니다.
 
