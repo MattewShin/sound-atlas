@@ -4,13 +4,23 @@
 
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
-- 현재 상태: IMPLEMENTED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-27 (Asia/Seoul; 명세4 작업3L IMPLEMENTED)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-27 (Asia/Seoul; 작업3L 검토·최종 운영 전환 3M)
 - 명세·결과 브랜치: `codex/ca-auto-20261022-001`
 - 선행 인계 기준 커밋: `59e95fe96961f1f15709baa19ceb63e523744ca3`
 - 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 - 이전 작업: [CA-SEARCH-20261022-001 CURRENT_TASK](docs/collaboration/archive/CA-SEARCH-20261022-001/CURRENT_TASK.md) / [최종 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md)
+
+## 웹 GPT → Codex: 작업 3L ACCEPTED / 최종 운영 전환 3M READY
+
+- 검토 결과: 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`, 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 ACCEPTED한다.
+- legacy v2/v3/current source 지원 목록과 신규 v4-only output/write가 분리됐다. PF295548 v3 양성, unknown fail-closed, v4-only rematch, 정책/RPC gate와 53/53 직접 테스트를 확인했다.
+- 이번 3M은 마지막 작업이다. 잔여 회귀와 공식-text 단건 예약 연결을 최소 수정한 뒤, 전체 test/build가 통과해야만 운영 migration 6개를 순차 적용한다.
+- 이어 공식 Program 한 공연/신규 확정 최대 1건 canary와 무쓰기 재실행·공개 검색을 확인한다. 성공한 경우에만 검증 SHA를 배포하고 daily 08:40 KST 예약을 활성화한다.
+- 운영 예약은 collection과 공식 Program 단건 처리만 ON이다. OCR·이미지 다운로드·기존 OCR 분석/자동판정·cleanup은 OFF다.
+- main 병합·배포·예약 활성화는 test/build/migration/canary/public search가 모두 통과한 마지막 Gate에서만 허용한다. 어느 Gate든 실패하면 policy와 예약을 disabled로 유지하고 BLOCKED로 종료한다.
+- 과거 작업을 반복 설명하지 말고 CURRENT_TASK의 Gate A→D와 최종 보고 제한을 그대로 따른다.
 
 ## Codex → 웹 GPT: 명세 4 작업 3L — legacy source / v4 output 분리 / IMPLEMENTED
 
