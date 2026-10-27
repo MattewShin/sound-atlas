@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -30,6 +30,14 @@
 - 해당 곡의 공개 공연 검색에서 canary 공연 노출
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
+
+### 작업 3M 중단 — Gate A / BLOCKED (2026-10-27 KST)
+
+- 기준 `9a4eec3acafa35d16ff423961239ba4ba9d88517`, Gate A 작업 코드 [`2adb97edd60df7a53841beae4c75c9007c1aa48f`](https://github.com/MattewShin/sound-atlas/commit/2adb97edd60df7a53841beae4c75c9007c1aa48f).
+- 영향 테스트 **107개:105 PASS /2 FAIL /skip0**. 실패: `server/programWorkIdentitySql.test.mjs`, `server/programAutomationSql.test.mjs`의 검색 검증 `DB_SEARCH_UNAVAILABLE`.
+- 전체 `npm test`·build와 Gate B→D는 미실행. 운영 migration/canary/main 병합/production 배포/예약 활성화0.
+- 예약은2026-10-27 13:35:45 KST **Disabled/Enabled=false**. 별도 최소 READ ONLY 확인에서 v4 policy 행 없음(비활성); policy 변경0. 원본40파일/index/.env 보존.
+- **재개점:** Gate A의 위2개 SQL 검색 mock 응답 계약을 수정·확인한 뒤 영향 테스트 → 전체 npm test fail0/skip0 → production build. 그 전에는 Gate B로 진행하지 않는다. 기본 OFF 예약 연결과 미통과 Gate A 변경은 검토용이며 운영 준비 완료가 아니다.
 
 ### Gate A — 잔여 회귀와 최소 예약 연결
 
