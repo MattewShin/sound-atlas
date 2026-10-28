@@ -11,7 +11,7 @@ import {EASYOCR_PIPELINE_VERSION} from './easyOcrConfig.mjs'
 
 // Independent fixture: imports production helpers, never another test suite.
 const sql=await readFile(new URL('../supabase/migrations/202610280001_ocr_fallback.sql',import.meta.url),'utf8')
-async function setup(){
+async function setup({width=1200,height=1600}={}){
  const db=new PGlite();await programTextConfirmationFixture(db);await db.exec(confirmationMigration)
  for(const file of ['202610260004_program_text_confirmation_status.sql','202610270001_program_text_analysis_acl.sql','202610270002_program_text_candidate_status_read.sql'])await db.exec(await readFile(new URL('../supabase/migrations/'+file,import.meta.url),'utf8'))
  await db.exec(sql)
@@ -20,7 +20,7 @@ async function setup(){
  await db.query('select public.sync_kopis_concert($1,$2)',[JSON.stringify(data),JSON.stringify([{source_url:'https://kopis.or.kr/upload/ocr-isolated.png',image_type:'DETAIL',sort_order:0}])])
  const concert={...(await rows(db,'concerts')).find(k=>k.kopis_id===data.kopis_id),...data},image=(await rows(db,'concert_program_images')).find(i=>i.concert_id===concert.id)
  const lines=['PROGRAM','F. Chopin - Ballade No.4 Op.52','F. Liszt - Liebestraum No.3 S.541','J. Brahms - Intermezzo Op.118 No.2'],hash='b'.repeat(64),attempt={id:randomUUID(),image_id:image.id,source_url:image.source_url,status:'SUCCEEDED',content_sha256:hash,pipeline_version:EASYOCR_PIPELINE_VERSION,started_at:new Date().toISOString(),finished_at:new Date().toISOString(),duration_ms:0}
- const result={raw_text:lines.join('\n'),width:1200,height:1600,detections:lines.map((text,n)=>({text,confidence:.99,bbox:[[0,n*50],[1000,n*50],[1000,n*50+30],[0,n*50+30]]})),engine_version:'fixture',torch_version:'fixture',settings:{ocr_fallback_quality:{schema:'program-ocr-fallback-1',decoded:true,content_hash:hash,mime:'image/png',bytes:10000,original_width:1200,original_height:1600,laplacian_variance:500}}}
+ const result={raw_text:lines.join('\n'),width,height,detections:lines.map((text,n)=>({text,confidence:.99,bbox:[[0,n*50],[width-100,n*50],[width-100,n*50+30],[0,n*50+30]]})),engine_version:'fixture',torch_version:'fixture',settings:{ocr_fallback_quality:{schema:'program-ocr-fallback-1',decoded:true,content_hash:hash,mime:'image/png',bytes:10000,original_width:width,original_height:height,laplacian_variance:500}}}
  await db.query('select public.record_concert_image_ocr($1,$2)',[JSON.stringify(attempt),JSON.stringify(result)])
  const ocr=(await rows(db,'concert_image_ocr_results')).find(o=>o.image_id===image.id),target={concert,image,attempt,ocr},plan=planOcrFallback(target)
  assert.equal(plan.eligible.length,3)
@@ -60,7 +60,7 @@ test('isolated authoritative RPC: stale expected/quality/source/identity never c
   }
   await db.exec('reset role')
   const savedOcr=structuredClone(f.target.ocr)
-  for(const change of [o=>delete o.settings.ocr_fallback_quality,o=>o.settings.ocr_fallback_quality.original_width=799,o=>o.settings.ocr_fallback_quality.laplacian_variance=0,o=>o.detections.forEach(d=>d.confidence=.2),o=>o.detections[1].bbox=[]]){
+  for(const change of [o=>delete o.settings.ocr_fallback_quality,o=>o.settings.ocr_fallback_quality.original_width=699,o=>o.settings.ocr_fallback_quality.laplacian_variance=0,o=>o.detections.forEach(d=>d.confidence=.2),o=>o.detections[1].bbox=[]]){
    const o=structuredClone(savedOcr);change(o);await db.query('update public.concert_image_ocr_results set settings=$1,detections=$2 where id=$3',[JSON.stringify(o.settings),JSON.stringify(o.detections),o.id]);assert.equal((await db.query('select public.ocr_fallback_quality($1,$2) q',[o.id,JSON.stringify(f.plan.analysis.sections)])).rows[0].q,null)
   }
   await db.query('update public.concert_image_ocr_results set settings=$1,detections=$2 where id=$3',[JSON.stringify(savedOcr.settings),JSON.stringify(savedOcr.detections),savedOcr.id])
@@ -73,5 +73,16 @@ test('isolated authoritative RPC: stale expected/quality/source/identity never c
   const acl=(await db.query("select has_function_privilege('anon','public.confirm_concert_ocr_fallback_v1(jsonb,text)','EXECUTE') anon,has_function_privilege('authenticated','public.confirm_concert_ocr_fallback_v1(jsonb,text)','EXECUTE') auth,has_function_privilege('service_role','public.confirm_concert_ocr_fallback_v1(jsonb,text)','EXECUTE') service,has_table_privilege('service_role','public.concert_program_ocr_fallback_receipts','UPDATE,DELETE,TRUNCATE') excessive")).rows[0]
   assert.deepEqual(acl,{anon:false,auth:false,service:true,excessive:false})
   await db.exec('set role anon');await assert.rejects(confirm(f),/permission denied/)
+ }finally{await db.close()}
+})
+test('isolated SQL accepts exactly 700px; 699px fails closed without changing policy/RPC/ACL contracts',async()=>{
+ const f=await setup({width:700,height:900}),{db}=f
+ try{
+  assert.deepEqual((await db.query('select public.ocr_fallback_quality($1,$2) q',[f.target.ocr.id,JSON.stringify(f.plan.analysis.sections)])).rows[0].q,f.plan.quality.snapshot)
+  await db.exec("update public.concert_program_version_policy set enabled=true where matcher_version='program-ocr-fallback-1'")
+  const id=await confirm(f);assert.equal(await confirm(f),id)
+  await db.exec('reset role');await db.query("update public.concert_image_ocr_results set width=699,settings=jsonb_set(settings,'{ocr_fallback_quality,original_width}','699') where id=$1",[f.target.ocr.id])
+  assert.equal((await db.query('select public.ocr_fallback_quality($1,$2) q',[f.target.ocr.id,JSON.stringify(f.plan.analysis.sections)])).rows[0].q,null)
+  assert.equal((await rows(db,'concert_program_ocr_fallback_receipts')).length,1)
  }finally{await db.close()}
 })

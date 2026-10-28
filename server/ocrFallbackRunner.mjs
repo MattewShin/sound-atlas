@@ -21,7 +21,7 @@ export async function runOcrFallbackOne({store,concert,image,download,worker,sav
     report.downloads++;const decoded=await download(image.source_url,{signal})
     // Low-quality images never initialize/call the OCR worker.
     const q=decoded.quality
-    if(!q||q.decoded!==true||q.original_width<800||q.original_height<800||q.laplacian_variance<100)return {...report,reason:'SKIPPED_IMAGE_QUALITY'}
+    if(!q||q.decoded!==true||q.original_width<700||q.original_height<700||q.laplacian_variance<100)return {...report,reason:'SKIPPED_IMAGE_QUALITY'}
     report.ocr_calls++;const result=await worker.recognize(decoded,{signal})
     const started=now(),attempt={id:randomUUID(),image_id:image.id,source_url:image.source_url,content_sha256:decoded.contentHash,pipeline_version:EASYOCR_PIPELINE_VERSION,status:'SUCCEEDED',started_at:new Date(started).toISOString(),finished_at:new Date(started).toISOString(),duration_ms:0}
     const ocr={...result,id:randomUUID(),image_id:image.id,content_sha256:decoded.contentHash,pipeline_version:EASYOCR_PIPELINE_VERSION,settings:{...EASYOCR_SETTINGS,ocr_fallback_quality:q}}

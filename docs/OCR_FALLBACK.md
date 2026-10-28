@@ -4,7 +4,7 @@ CA-OCR-FALLBACK-20261028-001 / 명세1. 기존 공식 Program v4 router/matcher/
 
 `fallbackSource`는 기존 router의 공식 사유 중 `OFFICIAL_TEXT_ABSENT`, `OFFICIAL_PROGRAM_ABSENT`, `OFFICIAL_PROGRAM_EMPTY`만 OCR로 허용한다. 공식 선택은 즉시 반환하고 invalid/incomplete/hash/markup 오류는 HOLD다. fallback은 기존 `programAutomation`의 decision/finish/unavailable RPC를 사용하지 않는다.
 
-`downloadFallbackImage`는 허용 KOPIS source에 GET 1회만 보내며 redirect/재시도가 없다. MIME와 실제 decoder format, 6MB/12Mpixel/20,000px 상한을 모두 검사한다. 원본 width/height 각각800px, 실제 decode, 고정 grayscale Laplacian variance100 이상을 요구한다. variance는 방향 보정 후 최대1,000px 축소 이미지에서 4-neighbour Laplacian으로 계산한다. blur threshold는 명세의 blur 실패를 보수적으로 구현한 추가 안전 상수이며 env로 완화할 수 없다.
+`downloadFallbackImage`는 허용 KOPIS source에 GET 1회만 보내며 redirect/재시도가 없다. MIME와 실제 decoder format, 6MB/12Mpixel/20,000px 상한을 모두 검사한다. 승인된 Gate C calibration(2026-10-29)에 따라 원본 width/height 하한만 각각800px에서700px로 변경했다. upscaling 없이 실제 decode, 고정 grayscale Laplacian variance100 이상을 요구한다. variance는 방향 보정 후 최대1,000px 축소 이미지에서 4-neighbour Laplacian으로 계산한다. confidence/coverage/identity와 다른 안전 기준은 그대로이며 env로 완화할 수 없다.
 
 OCR 결과의 기존 immutable `settings`에 `ocr_fallback_quality`를 포함한다. 원본 크기·byte 수·MIME·content hash·decode·blur 측정값이 없는 기존 결과는 사용할 수 없다. 같은 content/pipeline 결과가 이미 존재해 기존 immutable 결과가 재사용되더라도 필수 품질값이 없으면 SKIPPED이며 덮어쓰지 않는다.
 

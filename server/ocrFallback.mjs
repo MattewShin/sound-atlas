@@ -7,7 +7,7 @@ import {getTrackTarget} from '../src/data/workCatalog.js'
 import {checkProgramContext} from './programContext.mjs'
 
 export const OCR_FALLBACK_RULE='program-ocr-fallback-1'
-export const OCR_FALLBACK_QUALITY=Object.freeze({minDimension:800,minLines:3,minCoverage:.8,minMedian:.9,minEvidence:.85,minIdentity:.9,minLaplacianVariance:100,maxBytes:6_000_000,maxPixels:12_000_000,maxDimension:20000})
+export const OCR_FALLBACK_QUALITY=Object.freeze({minDimension:700,minLines:3,minCoverage:.8,minMedian:.9,minEvidence:.85,minIdentity:.9,minLaplacianVariance:100,maxBytes:6_000_000,maxPixels:12_000_000,maxDimension:20000})
 export const fallbackHash=value=>createHash('sha256').update(canonicalIdentityJson(value),'utf8').digest('hex')
 const absent=new Set(['OFFICIAL_TEXT_ABSENT','OFFICIAL_PROGRAM_ABSENT','OFFICIAL_PROGRAM_EMPTY'])
 export function fallbackSource(concert){

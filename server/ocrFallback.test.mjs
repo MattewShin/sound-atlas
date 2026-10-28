@@ -23,11 +23,18 @@ test('explicit inline high quality catalogue candidates are eligible; constants 
  const p=planOcrFallback(fallbackFixture());assert.equal(p.quality.eligible,true);assert.equal(p.eligible.length,3);assert.equal(p.skipped.length,0);assert.ok(Object.isFrozen(OCR_FALLBACK_QUALITY));assert.equal(OCR_FALLBACK_QUALITY.minMedian,.9)
 })
 test('missing/malformed/low quality has no eligible output',()=>{
- const variants=[t=>delete t.ocr.settings.ocr_fallback_quality,t=>t.ocr.settings.ocr_fallback_quality.original_width=799,t=>t.ocr.settings.ocr_fallback_quality.laplacian_variance=0,
+ const variants=[t=>delete t.ocr.settings.ocr_fallback_quality,t=>t.ocr.settings.ocr_fallback_quality.original_width=699,t=>t.ocr.settings.ocr_fallback_quality.laplacian_variance=0,
   t=>t.ocr.settings.ocr_fallback_quality.decoded=false,t=>t.ocr.settings.ocr_fallback_quality.bytes=6000001,t=>t.ocr.settings.ocr_fallback_quality.content_hash='x',
   t=>t.ocr.detections[1].bbox=null,t=>t.ocr.detections[1].confidence='0.99',t=>t.ocr.detections.forEach(d=>d.confidence=.899),
   t=>t.ocr.raw_text+='\nmore\nmore\nmore\nmore',t=>t.ocr.detections=t.ocr.detections.slice(0,2)]
  for(const change of variants){const t=fallbackFixture();change(t);const p=planOcrFallback(t);assert.equal(p.eligible.length,0);assert.equal(p.quality.eligible,false)}
+})
+test('700px boundary only: 700 accepted, 699 rejected; all other safety constants remain fixed',()=>{
+ assert.deepEqual(OCR_FALLBACK_QUALITY,{minDimension:700,minLines:3,minCoverage:.8,minMedian:.9,minEvidence:.85,minIdentity:.9,minLaplacianVariance:100,maxBytes:6_000_000,maxPixels:12_000_000,maxDimension:20000})
+ const t=fallbackFixture();t.ocr.width=700;t.ocr.height=900;Object.assign(t.ocr.settings.ocr_fallback_quality,{original_width:700,original_height:900});t.ocr.detections.forEach(d=>d.bbox.forEach(p=>p[0]=Math.min(p[0],650)))
+ assert.equal(planOcrFallback(t).eligible.length,3)
+ t.ocr.width=699;t.ocr.settings.ocr_fallback_quality.original_width=699;assert.equal(planOcrFallback(t).quality.reason,'SKIPPED_LOW_RESOLUTION')
+ t.ocr.width=700;t.ocr.settings.ocr_fallback_quality.original_width=700;t.ocr.height=699;t.ocr.settings.ocr_fallback_quality.original_height=699;assert.equal(planOcrFallback(t).quality.reason,'SKIPPED_LOW_RESOLUTION')
 })
 test('inferred composer, catalogue missing, movement scope, arrangement, duplicate and unknown reason never qualify',()=>{
  const cases=[['PROGRAM','F. Chopin','Ballade No.4 Op.52'],['PROGRAM','F. Chopin - Ballade No.4'],['PROGRAM','L. Beethoven - Sonata No.8 Op.13'],['PROGRAM','F. Chopin - Ballade No.4 Op.52 arr. for four hands'],['PROGRAM','F. Chopin - Ballade No.4 Op.52','Intermission','F. Chopin - Ballade No.4 Op.52']]

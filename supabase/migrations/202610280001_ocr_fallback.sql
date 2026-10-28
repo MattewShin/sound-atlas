@@ -47,7 +47,7 @@ begin
   if jsonb_typeof(q->field) is distinct from 'number' then return null;end if;
  end loop;
  w:=(q->>'original_width')::int;h:=(q->>'original_height')::int;
- if (q->>'original_width')::numeric<>w or (q->>'original_height')::numeric<>h or w<800 or h<800 or w>20000 or h>20000 or w::bigint*h>12000000
+ if (q->>'original_width')::numeric<>w or (q->>'original_height')::numeric<>h or w<700 or h<700 or w>20000 or h>20000 or w::bigint*h>12000000
   or (q->>'bytes')::numeric<1 or (q->>'bytes')::numeric>6000000 or (q->>'bytes')::numeric<>trunc((q->>'bytes')::numeric)
   or (q->>'laplacian_variance')::numeric<100 or (q->>'laplacian_variance')::numeric>1040400
   or not ((o.width=w and o.height=h) or (o.width=h and o.height=w)) then return null;end if;
