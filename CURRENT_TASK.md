@@ -3,7 +3,7 @@
 - 작업 ID: CA-OCR-FALLBACK-20261028-001
 - 명세 버전: 1
 - 제목: 공식 Program 부재 공연의 제한 OCR fallback·안전 자동 확정
-- 상태: BLOCKED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,32 @@
 - 기준 운영 결과: `CA-AUTO-20261022-001 / OPERATIONAL`
 - 기준 결과 문서: `4f26fb6227d38ee4bc996751025c8a271db94e09`
 - main·production·예약 core SHA: `1db327cd38dfce778da543738f975b70789aed66`
+
+## 웹 GPT 검토 — Gate A/B ACCEPTED / Gate C 해상도 calibration 재개
+
+결과 SHA `3c9bbe60bb5a31f5372f80cd53f4025a67a64a67`와 구현 SHA `240afe6381309f053418b98c9081ed21e286a687`의 Gate A/B 구현·격리 결과를 **ACCEPTED**한다. 기존 공식 Program 운영 보존, 525/525·build, 무-REJECTED 계약도 수락한다.
+
+첫 dry-run은 이미지10장 모두 decode/MIME/byte/pixel·blur 기준을 통과했지만, 폭700/750/794px인8장이 고정 양변800px gate에서 OCR 전에 제외됐다. 해상도는 품질의 보조 지표이며 실제 품질은 이후 detection coverage/confidence와 명시적 identity gate가 다시 검증한다. 따라서 정확도 핵심 기준을 유지하면서 해상도 하한만 아래처럼 1회 calibration한다.
+
+### 허용 변경
+
+1. 원본 width·height 최소값만 **800px → 700px**로 변경한다. upscaling은 하지 않는다.
+2. decode/MIME/6MB/12Mpixel/20,000px, Laplacian variance100, Program detection3줄, coverage80%, median confidence0.90, candidate evidence0.85, composer/catalogue evidence0.90을 모두 그대로 유지한다.
+3. explicit same-block composer+catalogue, 단일 MATCHED+EXACT, movement/arrangement/excerpt/duplicate/scope fail-closed와 무-REJECTED 계약을 변경하지 않는다.
+4. threshold를 환경변수로 만들거나 700px 아래로 낮추지 않는다. timeout을 늘리거나 동일 이미지 OCR을 재시도하지 않는다.
+5. 기존 migration SQL의 policy default=false와 RPC/ACL 계약은 유지한다. 아직 운영 적용하지 않는다.
+
+### Gate C calibration dry-run
+
+1. 700px 상수·fixture·직접 테스트만 수정하고 직접 관련 테스트를 먼저 실행한다. 이 단계에서 전체525 suite/build를 반복하지 않는다.
+2. 이전에 resolution만으로 제외된8장을 원래 정렬 순서로 검사하고, 필요하면 아직 조사하지 않은 공식 부재17공연을 이어 검사한다.
+3. 이번 추가 상한은 이미지 GET 최대25, OCR 호출 최대10, Supabase/KOPIS 업무 쓰기0이다. 이전 timeout `PF281769`과 Program detection 부족 `PF299101`은 반복하지 않는다.
+4. 첫 eligible 발견 전까지 진행하며, 대상 선택은 전체 조사 순서의 시작일→KOPIS ID→image sort 순을 유지한다. 원문·evidence는 게시하지 않는다.
+5. eligible이 0이면 더 완화하지 않고 다시 BLOCKED한다.
+6. eligible이 1건 이상이면 최종 후보 코드로 전체 `npm test`와 production build를 각각1회 실행한 뒤 기존 Gate C 단건 canary를 진행한다.
+7. canary는 공연1·이미지1·신규 CONFIRMED 최대1·REJECTED0, 동일 candidate 재전송 쓰기0, production 검색·기존 공식/legacy 검색 보존을 모두 확인한다.
+8. canary 통과 시 같은 실행에서 Gate D의 migration 적용·main 병합·배포·공식 우선/OCR 후순위 제한 예약 연결까지 진행하고 `OPERATIONAL`로 게시한다.
+9. OCR fallback 실패 시 fallback policy/스위치만 disabled로 유지하며 기존 공식 Program policy·예약은 변경하지 않는다.
 
 ## 실행 결과 — Gate A/B 구현·격리 PASS / Gate C 적격0으로 BLOCKED
 
