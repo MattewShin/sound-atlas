@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: BLOCKED
+- 상태: READY
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / BLOCKED
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -30,6 +30,21 @@
 - 해당 곡의 공개 공연 검색에서 canary 공연 노출
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
+
+### 작업 3M Gate C 멱등 기준 정정·검색 및 Gate D 완료 / READY
+
+결과 SHA `dac46dc51b16de14292ea8f88e78fb3b6dd5d487`를 검토했다. timeout 보정, 신규 단건 read RPC의 운영 적용, 전체 테스트 512/512·build, `PF304387`의 첫 공식 CONFIRMED 1건을 **ACCEPTED**한다.
+
+이전의 “동일 공연 coordinator를 즉시 재실행하면 전체 신규 쓰기 0” 기준은 다중 ready 후보와 “호출당 신규 확정 최대 1건” 계약이 충돌한다. 두 번째 coordinator 호출이 남은 ready 후보를 선택하는 것은 정상적인 다음 작업이며, 이를 공연 단위로 영구 차단하면 같은 공연의 다른 등록곡이 연결되지 않는다. Gate C의 멱등 기준을 아래처럼 정정한다.
+
+1. production coordinator의 다중 후보 진행 동작을 변경하지 않는다. “기존 유효 receipt가 하나라도 있으면 공연 전체 종료” 로직, 새 run-ledger, 새 migration, 새 작업 번호를 추가하지 않는다.
+2. timeout migration/RPC, source, analysis, candidates, 기존 receipt를 재적용·재저장·삭제하지 않는다. 현재 policy=false와 예약 Disabled에서 시작한다.
+3. policy의 v4 한 행만 다시 true로 하고, 이미 확정된 candidate `chopin-scherzo-op31-no2`에 기존 confirmation adapter/RPC의 **동일 expected 입력을 정확히 1회 재전송**한다. 이는 coordinator 전체 재실행이 아니라 동일 candidate receipt의 idempotency 검증이다.
+4. 호출 전후 confirmation row 수와 해당 receipt ID·verification hash가 동일하고, 반환 ID가 기존 `dc572eb9-9756-4fbb-a03b-2a9b00474893`와 같으며 신규 CONFIRMED/REJECTED가 0이면 Gate C 멱등 PASS다. 다른 candidate를 확정하지 않는다.
+5. `PF304387 / chopin-scherzo-op31-no2`가 공개/release 공연 검색에 노출되는지 확인하고, 기존 PF295548의 쇼팽 발라드 4번·리스트 사랑의 꿈 3번·브람스 인터메초 연결도 보존됐는지 확인한다.
+6. 위 검증이 통과하면 같은 실행에서 Gate D를 진행한다. main 병합·production 배포·배포 검색 재확인 후 제한 예약을 활성화한다. 예약은 collection ON, 공식 Program 처리 ON, OCR·이미지 다운로드·구 OCR 분석/자동판정·cleanup OFF, **한 실행당 공연 1개·신규 확정 최대 1건**, 매일 08:40 KST를 유지한다.
+7. 예약 실행의 자동 재시도는 두지 않는다. 다음 정상 예약 실행이 같은 공연의 남은 ready 후보 하나를 처리하는 것은 허용하며, 이것은 중복 쓰기가 아니라 1-run-1-confirmation의 다음 작업이다. 동일 candidate RPC 재시도만 동일 receipt로 수렴해야 한다.
+8. 동일 candidate replay에서 receipt 증가/다른 ID, 공개 검색 실패, 기존 3곡 소실, 배포/예약 상한 불일치가 있으면 policy=false·예약 Disabled로 복구하고 같은 3M을 BLOCKED로 게시한다. 모두 통과하면 배포 SHA·rollback·실제 예약 설정과 함께 최종 상태를 `OPERATIONAL`로 게시한다.
 
 ### 작업 3M timeout 재개 결과 — 보정 완료 / Gate C 즉시 재실행 BLOCKED (2026-10-27 KST)
 
