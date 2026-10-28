@@ -2,7 +2,10 @@
 
 `analysis-only`는 수집·cleanup·이미지 다운로드·Python/OCR을 생성하거나 실행하지 않습니다.
 서버 전용 Supabase 연결을 재사용하며, HTTP 쓰기는 기존
-`save_concert_program_analysis_v3` RPC만 허용합니다. 새 환경변수·마이그레이션은 없습니다.
+`save_concert_program_analysis_v3`와 자동 처리의 결정·완료·재시도 RPC만 허용합니다.
+현재 구현에는 `202610210001_program_work_identity.sql` 및
+`202610220001_program_automation.sql`의 선행 identity/automation 함수가 필요합니다.
+자동화 RPC가 노출되지 않으면 run의 사전 검사에서 중단합니다. plan은 운영 DB를 쓰지 않습니다.
 일반 `daily`/`initial` 프로필과 등록된 Windows 작업은 변경하지 않습니다.
 
 분석 대상은 `program-ocr-manifest-2` 형식의 명시적인 manifest로 고정해야 합니다.
@@ -26,5 +29,9 @@ run은 통합 배치와 같은 잠금·실행 식별자·절전 방지·원자�
 완료 결과만 보존합니다. 취소 및 파일 정리 시간은 제한 이후에 추가될 수 있습니다.
 부분 완료 후 자동 재실행하지 말고 새 plan으로 남은 대상을 확인해야 합니다.
 
-`activity`에는 실행 중 Supabase 읽기/분석 저장 호출 수와 금지 단계의 0회 값이 기록됩니다.
+`activity`에는 실행 중 Supabase 읽기/분석 저장/자동 처리 저장 호출 수와 금지 단계의 0회 값이 기록됩니다.
 검토를 위해 나중에 원본 이미지를 여는 작업은 분석 실행과 구분해 별도 집계합니다.
+
+분석 이후 `program-auto-1` 규칙을 적용합니다. 충분한 작품·악장 근거는 자동 확정하고,
+모호하거나 부족한 근거는 이유와 함께 미연결로 종료하며 입력 변경 시 재평가합니다.
+사람의 반복 승인 대기열을 만들지 않습니다. [자동 처리 안내](PROGRAM_AUTOMATION.md)를 참조하세요.

@@ -1,0 +1,2425 @@
+{
+  "taskId": "CA-AUTO-20261022-001",
+  "specification": 2,
+  "specificationSha": "6d874178fad7a7fdc1793af23f1bd1273b6dc3ad",
+  "snapshotAt": "2026-10-22T06:03:44.707Z",
+  "snapshotMode": "Administrator REPEATABLE READ READ ONLY; all stored tables, current analysis image IDs partitioned into <=90 IDs per queue RPC (limit100). No queue partition reached limit100.",
+  "readOnly": true,
+  "remoteWrites": 0,
+  "allStoredConcerts": 47,
+  "eligibleQueue": 48,
+  "eligibleConcerts": 41,
+  "candidates": 123,
+  "expectedNewUniqueTrackConcert": 1,
+  "positives": [
+    {
+      "kopisId": "PF295588",
+      "imageId": "b83eb130-0b73-4e35-bbe3-d428482ec7c3",
+      "trackId": "chopin-fantaisie-impromptu-op66",
+      "workId": "chopin-fantaisie-impromptu-op66"
+    }
+  ],
+  "duplicates": 0,
+  "reasons": {
+    "PROGRAM_DATE_SCOPE_AMBIGUOUS": 53,
+    "PROGRAM_EVIDENCE_MISSING": 46,
+    "COMPOSER_OUTSIDE_CATALOG": 16,
+    "PARENT_WORK_TITLE_UNCONFIRMED": 15,
+    "UNCERTAIN_NUMBERED_ITEM_RELATION": 15,
+    "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 119,
+    "CATALOG_TARGET_MISSING": 74,
+    "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 8,
+    "COMPOSER_MISSING": 23,
+    "UNRESOLVED_NUMBER_BOUNDARY": 3,
+    "UNCERTAIN_ROMAN_LABEL": 1,
+    "SCOPE_LABEL_REQUIRES_REVIEW": 1,
+    "OCR_NUMBER_UNCERTAIN": 3,
+    "MULTIPLE_ITEM_NUMBERS": 2,
+    "CHECK_MULTIPLE_WORK_NUMBERS": 1,
+    "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED": 1,
+    "ARRANGEMENT_IDENTITY_UNRESOLVED": 1,
+    "UNCERTAIN_NUMERIC_TOKEN": 2,
+    "CONTEXT_DATE": 8,
+    "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT": 3,
+    "CONFLICTING_COMPOSERS": 1
+  },
+  "stages": {
+    "activeDetail": 66,
+    "usableOcr": 53,
+    "noUsableOcr": 13,
+    "usableOcrNoCandidate": 27,
+    "candidateImages": 26
+  },
+  "details": [
+    {
+      "analysisId": "4de92b01-db66-4d13-bcf9-f35a8b842866",
+      "imageId": "aebd1ee6-bd2e-4361-b079-4d2f51b4f8af",
+      "concertId": "9d44808d-4bbd-439b-912c-b1c635546ed5",
+      "kopisId": "PF281769",
+      "region": "서울",
+      "start": "2026-02-25",
+      "end": "2026-12-16",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "36646fce892bc5debc046b66ec7bbae450e388469047b16d7972f0d7eec30378",
+      "candidateCount": 7,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "7a8a48d05b0ff7156cb8dc252ab8c0ca26a46e9d7ce65c98eda2738a1bf0ab59",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "563f743d61ee1cb219bee61b7a0877fed9b9c35e4ba478f74492d7ee459603e1",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "10871bbfee1614ba5d6b2ff7aeb581db21be0b7de2786b6cde92f06cff675aa4",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "2f7eae53bf7b6acd62d08ebc43b2264021f62e37619f0542109011c85eaa651d",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "6544fb089f1031e5e8f68739406bc66341677c682eacd98d8b456904a79e6125",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "cac48be8cdbcb84e296e587c01bbbf7ef7b414636d5253c347fa2c273c6942f0",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "ff4d8f4b1c1f53481b1ce86a845b2b35deeb84df909db60b30b92b44a759d0bd",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "ec0ff7e3-aeeb-4ac7-9c1e-8bed55d734c1",
+      "imageId": "c163f31f-ae59-4865-82dd-ef40b3690a1a",
+      "concertId": "7fe27d5d-8985-482a-a6cf-b7c0a4f62910",
+      "kopisId": "PF281822",
+      "region": "서울",
+      "start": "2026-03-05",
+      "end": "2026-11-05",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "0cb7871e4c843bf690ffba05f64b84c8ffa33d307d64c16a123445b684de5228",
+      "candidateCount": 5,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "d00056ab57f59533fc002a52d78928d262978061d109cf6c315dcf3c7acde2d2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "90a31b54cf30b522c1efb533217e596d417c37a6e44ebd382405927022af1be5",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "471ff98aa8ae5eeefe1c006befb6509a7b2d663e4bd7172c6a062954ef164b34",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "b5f444c0dfa48a333d46ce914b56cca9808ed71bdfcb75a914f755ecc2628d65",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "3a13f2e4be6515f521e370a123d914b189064ea2dedc1043b35ce5a4f887ac9e",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "8a477aad-ba7a-49b8-a34e-1f1148ef2a1a",
+      "imageId": "43377dd0-4177-4f11-8f9e-81b18d31ef64",
+      "concertId": "0c3f78ce-9e4f-4b05-815d-0e93ffaf3bc0",
+      "kopisId": "PF296289",
+      "region": "서울",
+      "start": "2026-08-02",
+      "end": "2026-12-06",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "232397569dc3682459627a647ab8175ffa224811ebc8f6dc41cecc57796d4514",
+      "candidateCount": 6,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "dd26f01ee60be9d35e7ec082c61e071b16d0575bce13911f6eb6ec24b5ef2737",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "UNRESOLVED_NUMBER_BOUNDARY",
+            "UNCERTAIN_ROMAN_LABEL",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "SCOPE_LABEL_REQUIRES_REVIEW",
+            "OCR_NUMBER_UNCERTAIN"
+          ]
+        },
+        {
+          "key": "b7b527aa27a94fb0035a06ce20a389add7ff7bd7bdca287078d885e976df491e",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "6d2be4c8af9d120f8291b8770dbb333aa74bbbdd268c341f183a7c32a5e74d4c",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "b511f6be02b3b177ab7646ce61138348475f197d6e79f978bfcf5115ecbfabeb",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "04d1b0b5b4c20439f18f09567f4735700b05375bebd86bdd3cd1ccee718b6e29",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "b71d277a7c48a8746609b6261ce7aa5dda0c5549bb6b73892114a460e15dfdb0",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "UNRESOLVED_NUMBER_BOUNDARY",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "OCR_NUMBER_UNCERTAIN"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "56dbad01-5018-4a35-935d-8fe8eebc3ef5",
+      "imageId": "7db9a484-ff24-4781-870c-993754b6979f",
+      "concertId": "0c3f78ce-9e4f-4b05-815d-0e93ffaf3bc0",
+      "kopisId": "PF296289",
+      "region": "서울",
+      "start": "2026-08-02",
+      "end": "2026-12-06",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "32345c900bc73cd893189e74995f66e4b5a5e6512d9df9fc6e5faddcba0dd6b6",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "07324b26-8ce1-4a1f-8cd7-c8b754d4bf51",
+      "imageId": "92039fc8-a640-489a-a73d-2ca30cf43a48",
+      "concertId": "9b190136-9d01-49dc-8901-82e5c907cf90",
+      "kopisId": "PF300258",
+      "region": "서울",
+      "start": "2026-09-15",
+      "end": "2026-11-17",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "b6b66db75249515f1fd63c577d1ef1da601cb2c7a7eae7fae2285c6492c4ac51",
+      "candidateCount": 8,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "321dda2fa633be266902ac534c62d26df18caea0fa74c1f7239033f54ab85d5e",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "MULTIPLE_ITEM_NUMBERS",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "CHECK_MULTIPLE_WORK_NUMBERS"
+          ]
+        },
+        {
+          "key": "24c149951fc6a66d3377d2b36ab785ec2e9882b7b43939f97e745292ee489601",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "942d3d84d3843ee3f18544f0b9cd7006eedac6a5e04d346a0b37803f9e10eaa3",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "cd4d8478dff98eb87617cc2a525ffa63fc0fb4852a4afed34bcf94b369aa099d",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "d39227f97a2209a706afcb0cc3847131211a6ac19e5afb0305aae87de5f75c0f",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "e89a75b0d05ddf76f63976d39eb4b671bdfc98b2533e4620120be89186453578",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "fbc32318a2d598b2a16253787e0b97078a4a7429463ef3b5c59286cfad2f6e23",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+          ]
+        },
+        {
+          "key": "74c7e21930e7967b3c46f7c2cb26a96e5eccc57d13d3d7461039bdf39ae6376b",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "36b92c05-12af-44c1-b001-34962e5421c1",
+      "imageId": "3b396483-642a-40de-81d6-da3aca445f7e",
+      "concertId": "9b190136-9d01-49dc-8901-82e5c907cf90",
+      "kopisId": "PF300258",
+      "region": "서울",
+      "start": "2026-09-15",
+      "end": "2026-11-17",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "d40cae7565ecb99ea628c1393366e2079482066eba72de75976f7229f8897cf2",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "92c69a31-cd11-44de-9838-3c1d96baad73",
+      "imageId": "b3623e73-17f3-40a6-a3f3-d300fd38520e",
+      "concertId": "9b190136-9d01-49dc-8901-82e5c907cf90",
+      "kopisId": "PF300258",
+      "region": "서울",
+      "start": "2026-09-15",
+      "end": "2026-11-17",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "a74811768e5d7b1e838bc25fff0ac21c4f11a0966bbcb1531cce36b392b6197a",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "5f0487e8-ca8c-412b-ba12-961e9816a065",
+      "imageId": "6047b381-e762-4a05-a9ba-b8a960b0c334",
+      "concertId": "84105a87-50e8-4b66-ba8e-ada66eab2a08",
+      "kopisId": "PF299101",
+      "region": "서울",
+      "start": "2026-10-18",
+      "end": "2026-11-01",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "fbbb04de222ebad8aceb07428e04bca879a5948e329389c79544b13d04b99bd4",
+      "candidateCount": 1,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "93d13e8493f2875fbe37da07e401249ece9f54b726e5135088b2f1b05aa0d979",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "58cd6984-8621-4672-9a90-da3176d21462",
+      "imageId": "ee23ff78-234a-48a5-b3d9-804268ebcff6",
+      "concertId": "84105a87-50e8-4b66-ba8e-ada66eab2a08",
+      "kopisId": "PF299101",
+      "region": "서울",
+      "start": "2026-10-18",
+      "end": "2026-11-01",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "78877fa9210da56f493759d2ec1de2083211a9f1e5fee7a6fb07162a2e41cda0",
+      "candidateCount": 6,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "4b329978f38b26bcabecfcf7772edc7ce505313290d9cb332bbdfb6bf8f92f98",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "5ce43cb27c2ae4160bb27f3478979f7ba430153fb28615e9a8d36d05a33d0061",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "58bf4a35e9c2cd9f2c2549dddcc159d7891a7bb97d12d55b0f48019c1afd3e7f",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "df0ede396789edec9b2a2869edd17bdb02d85e0c55cc2d2e77507c0b19e9f6b5",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "9a1ec636e284bcfaa7d307825449ff9dd6bbc10c84c917b5eff8fdd8a1d29d5c",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "6744097fa94cfa96cf991b883012ee17940a57d0aede06cb7684fcab1428f272",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "6d5499aa-c194-478d-a853-4a9a32914391",
+      "imageId": "ff29952a-3b76-4a21-ba20-0159de34a1cd",
+      "concertId": "84105a87-50e8-4b66-ba8e-ada66eab2a08",
+      "kopisId": "PF299101",
+      "region": "서울",
+      "start": "2026-10-18",
+      "end": "2026-11-01",
+      "performanceStatus": "공연중",
+      "usableOcr": true,
+      "payloadHash": "c33938dfe94c974f84abae33782eda34fc6973c7cfff97309cdb6ec8bce6ab2b",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "e9f9916a-5561-4d34-9ac4-0d9dacc390f9",
+      "imageId": "8ee076bf-87d4-45d6-8940-2aeca5dccdfd",
+      "concertId": "38284be4-9da2-4c5f-9df6-da654a655df5",
+      "kopisId": "PF299019",
+      "region": "서울",
+      "start": "2026-10-22",
+      "end": "2026-10-22",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "85a3922a34e948d9f96fd3206ec7d6eacf9f84e82b3d5514a80b209c652b782e",
+      "candidateCount": 8,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "2a7d06b319a92b7d4d9f33f947b7de83d913978b588c9b46afbd4a39f373d83d",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "UNRESOLVED_NUMBER_BOUNDARY",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "d0813aa993296481f26cae95c5020e81c8ae4e7300f0d60c927d5b982dcb2a09",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "a4106660ee55d2e3bd808037bc2d8da5104759bf75e4ebb7f97476b592244fcf",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "93bea8d565e767e1ede553022c6cdcfc84ea8497d48551419db637e60c016a75",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "a53e6f82d7b8a92a186621f72fb68a68ba03b217486e88525de9955a06531e85",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "33350f346840a9ee89d7671def1598aefb61e031210788e2f2a23329a91dc0a7",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+          ]
+        },
+        {
+          "key": "398d55d1eaa1a94d534951727d9602b18092d9ed656ceef3d1578bc5dba9413a",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK",
+            "OCR_NUMBER_UNCERTAIN"
+          ]
+        },
+        {
+          "key": "eed41e31acb8ece9646ca8000b16a75db7af0bfffebecbc4bd16e1a0ee439bcb",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "de10bf8f-8c07-404e-a798-b3d531f604d3",
+      "imageId": "b83eb130-0b73-4e35-bbe3-d428482ec7c3",
+      "concertId": "6cecb374-a8f5-48a0-8b91-9adc3a396cf6",
+      "kopisId": "PF295588",
+      "region": "서울",
+      "start": "2026-10-22",
+      "end": "2026-10-22",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "a7178a18131cb3afe6bec0510981e891f545016fcf7afb1bc721c208572fdbf8",
+      "candidateCount": 8,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "4fe5f26ba7b2b511eeafc3a0423ff4ef3dd702c850d5882c8fde8106715e74d8",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "1859023e4294d21e37100fff64ef5136735d961a6271cabc74a815f3171ac9e1",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "7a954c70e23aa85a33f135c29f5e2fb88428d5672f209d99fc7fe8162e304f76",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "a5d2cbf2016b86387ef538222f2ac8b239c23cd11b734e88c92045ff2ad1bca8",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "137094f50bd4a13ffe6f9295b7f75f224cf5640b95d798c7d16bf8235da7483c",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "ee604154d20c4d9edebd64dcf614d943d2807b21d8d5b6e0fb14143512dacf6c",
+          "trackId": "chopin-fantaisie-impromptu-op66",
+          "workId": "chopin-fantaisie-impromptu-op66",
+          "relation": "EXACT",
+          "matcherOutcome": "MATCHED",
+          "expected": "AUTO_CONFIRMED",
+          "reasons": [
+            "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+          ]
+        },
+        {
+          "key": "37ae660b29ad4e16034a72be0042ea900a3a6daf86588ce6a5f2f5e25f09a11c",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "ARRANGEMENT_IDENTITY_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "a0c6ffc4a9b51e48fc6b2f67e7a870e4c6225e2febeb4a9ba0e47f84b530a1f1",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "c2e1ef98-27a0-4a72-982d-6b39eedf4bb5",
+      "imageId": "c83015d1-0e4a-4635-9dda-221a0e3b9722",
+      "concertId": "32937fa0-3a10-4de1-bc3f-317047bd1a18",
+      "kopisId": "PF300707",
+      "region": "서울",
+      "start": "2026-10-22",
+      "end": "2026-10-22",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "1e3f90c8f519e0dd36cc580455e0e7124fbe8fc5a107394b2019588fed5bc9b6",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "c73791f7-ee27-4ade-850b-81ba5cdf9ac7",
+      "imageId": "f111479d-2c79-4bee-b00b-db4ea2bb2671",
+      "concertId": "e2684782-07c7-4a15-a3f1-1bb46bbc6133",
+      "kopisId": "PF301161",
+      "region": "서울",
+      "start": "2026-10-22",
+      "end": "2026-10-22",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "95cd868dde780757d5113feabac648a02f2dd7619fb4e9703f76656b24836de4",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "ee7b4bd1-c65f-4a31-9e2e-4922b685bc59",
+      "imageId": "4891796b-6439-44be-9476-418cf18d153d",
+      "concertId": "30294a52-f3b0-4e15-854b-be7ee0434943",
+      "kopisId": "PF301359",
+      "region": "서울",
+      "start": "2026-10-22",
+      "end": "2026-10-22",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "2204c775e73f6b004726e80b946ebd1e7fdadd540797e160947ec2ae02263f0c",
+      "candidateCount": 9,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "31bb3492817736968659fe8da2f7678e1b3abe441565f79f32da8067e99a1ce9",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "3fbd24f1b44019d0cd734b1d9680fcf262c59bf312446554be4189fa666495da",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "8a45755f989c18226ac1a0e7e66ea44bd10aeb19efff7dfe5c47167e67df7982",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "40d0a1156069d8602f53cba83a9248262d910c26237acae89b30680aee82fe93",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "da7c159439558dfbfcfbf4e7fc8cc29ff7f9c044a3b6a9c62e66e31f65a1fc46",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "f01439e0e979647cad8ae84c12275c40ea995bba9249430300f666060fb956ff",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "3b770e0a4aa2b9a8223a719b782268e3590321eb19ebabb18e031234107c95c9",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "bb0808b547867b8dcf080a2c47b54905fce978a71676e0c73a3da7351d83617a",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "760780372c4ff0e1ab6561a4bbf7fd0923f69a46ea81ccc7254b1061a0900dcd",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "a9d98f75-e4f6-4fd0-8753-d69f5bc7c6b2",
+      "imageId": "67eb4679-21f3-42a7-a7ff-0706c0b70827",
+      "concertId": "c0a9cf08-de2d-4eac-9ddf-d9052c2e054b",
+      "kopisId": "PF302369",
+      "region": "서울",
+      "start": "2026-10-22",
+      "end": "2026-10-22",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "cafe8808defc69131ae126034c1c906f224cd70708ea705968473d7ccd89545f",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "33ff1ee8-343b-4741-9d11-ec1ca4af0301",
+      "imageId": "9bfc0c9f-7ee6-43f5-a683-0f0420f0484c",
+      "concertId": "c8d65fea-2b52-44b9-905b-74d3900b0cf4",
+      "kopisId": "PF279451",
+      "region": "서울",
+      "start": "2026-10-22",
+      "end": "2026-10-22",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "44161421dbb16fddc80221d2be1fc7b53701b86ea144231fc62cfeca92fd89db",
+      "candidateCount": 9,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "ac6e78c6ff73334050053d1b04988126281463ebde5faa0c46a367a75a1ff528",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "9b7d882cafe96bc1f288aa93f35d47b4b70352f2c3715e2505b00c3094564d08",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "b20283d8141ea1ab01dd7eaf02877c3168832390b6a6779079c296363ec82981",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "80e617fdd9cda740bf702acf8565d46fee6ccf3b5b303ebbb3c123771153a6c4",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "c75e4fa15fdc09214f994026d8f6f70d8f5f9bd5ce7c6bf756c323d1ac28acda",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "UNCERTAIN_NUMERIC_TOKEN",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "3e56c47e3fcbf6d552b044a19f7807d29565dc4729371ba52dd88583094d28a8",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "3509aba64a5191c3272d586a2b297f56f82781101c9b9a48845563862f8d7710",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "0bf6a07b9a0b834c6d82aac98f898c5a2f115a083d356b38330351853240fce5",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "adf8eb76ecf9bd86ed1cf8e75d04c7e7286d5df12a9d4f3c770aea8cdab376fe",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "UNCERTAIN_NUMERIC_TOKEN",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "b0ad35d9-74e9-4fa4-b821-27e14997b78e",
+      "imageId": "0619a726-679d-4ae4-8f92-5d56809ff6cd",
+      "concertId": "cbf598ec-2469-4f73-ba83-a53a4b3bab56",
+      "kopisId": "PF282069",
+      "region": "서울",
+      "start": "2026-10-23",
+      "end": "2026-10-24",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "4f0801f9ead4102194c2db24b3cf281b5c553fb704d1feadea93a3a54d1616c4",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "4692d74a-560f-45de-b9eb-9eccfc9fb9da",
+      "imageId": "09729a79-9946-4cae-a746-e331597d5d83",
+      "concertId": "cbf598ec-2469-4f73-ba83-a53a4b3bab56",
+      "kopisId": "PF282069",
+      "region": "서울",
+      "start": "2026-10-23",
+      "end": "2026-10-24",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "ad7d6bf7888cea0402389fe0d782a6c030f0f14c5ef929853b39575c0a83879a",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "f367b81d-051a-41ee-9acd-90c58ab97ed4",
+      "imageId": "73afb7a8-84ca-4b39-a96c-5d21d038e13c",
+      "concertId": "a2d05019-3205-483a-af14-4ecb64a5f374",
+      "kopisId": "PF299209",
+      "region": "서울",
+      "start": "2026-10-23",
+      "end": "2026-10-23",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "473bf196a97c1b442e956fd308e0441e66fce17b63ab1f57410395c82ab0f08f",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "007a3bf8-3491-4565-83da-29ecc0594bd0",
+      "imageId": "abd302d0-c540-4f04-9a5c-b9ce2fad2c09",
+      "concertId": "9403d716-401c-45ad-97dc-af8697b58a7c",
+      "kopisId": "PF299466",
+      "region": "서울",
+      "start": "2026-10-23",
+      "end": "2026-10-23",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "221c88181929154d8e32a3aae085f1af3ab083ac2d4bc1b33e629d9fd9b305ab",
+      "candidateCount": 1,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "dc8e98f87aa27d84fc65081d84148e71f6960fbcf1b775dcf566bf0a3f2b1a87",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CONTEXT_DATE",
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "cd6221db-8b60-4a3e-a921-e7907706a6e8",
+      "imageId": "32392fef-ca6a-40f6-8d6c-85e07b129c6a",
+      "concertId": "8dab0b29-4d8f-42f1-b8df-b4c3904372ff",
+      "kopisId": "PF277338",
+      "region": "서울",
+      "start": "2026-10-23",
+      "end": "2026-10-23",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "1c62799be0ee2dea39755d40531a1816162f5d0d858ce2d5a0267a8c11a029ad",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "f0232432-8c2d-4229-b77d-0497c3723065",
+      "imageId": "28960a0e-48c4-40f3-ad4a-88e1dc567377",
+      "concertId": "ead7482d-fb46-4728-918a-187483623f49",
+      "kopisId": "PF297771",
+      "region": "서울",
+      "start": "2026-10-23",
+      "end": "2026-10-23",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "982a6b724a7f8d1fb9ba0d7744e1953dc860be334381fbdef6f6926e88296101",
+      "candidateCount": 2,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "4f8df5a9c8960278de2d93257493c7692206f816e84dd4625797cf92a0c157d8",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "d9e6a4233b1f5487049befec2d3b7c0f2b5d89083cabc601ccad377801b5df69",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "4422c6fb-9afb-4b0e-a648-50696bdab872",
+      "imageId": "432a0418-a92c-4a49-8ae8-5cbd595ff6da",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "kopisId": "PF300742",
+      "region": "서울",
+      "start": "2026-10-26",
+      "end": "2026-10-26",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "626bdf8717737a15cf87533dc7d4a639496bbbbd8dc64e63cd47973777a2c074",
+      "candidateCount": 1,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "47408d2252a386dc1cc18ec8e76f460d8af5e2dd8c29844455b234249a93cc65",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "bcf93904-578c-4032-a839-46e112685aa1",
+      "imageId": "cca470fa-65d9-48c9-9d8a-01d87aed7b92",
+      "concertId": "307c3bc0-b9e2-4932-a490-914c7b4cddf3",
+      "kopisId": "PF301065",
+      "region": "서울",
+      "start": "2026-10-26",
+      "end": "2026-10-26",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "89e762ee6e0e5d10d0e5ab2222cb26c06c00445a9722778237e54127034ba55b",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "4fee2542-1bf7-4b3f-9b11-ebef663f6fd2",
+      "imageId": "0f143edf-6f93-48e7-8e16-f2f7b711b75e",
+      "concertId": "3a6fb99f-20db-4027-bfed-8f9f61a0d070",
+      "kopisId": "PF303424",
+      "region": "서울",
+      "start": "2026-10-26",
+      "end": "2026-10-26",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "1d77a0a99cc3bd4747bed5e0608671f79c4af392e73f8b77672f6592931b43c4",
+      "candidateCount": 14,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "a533d1736deb2a35931ffeb58780f64986c1247b22391f3d3562c9c85a5c6573",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "0866bf80e35d4435fdc7615b9889307077d85c6bf11e4ab9e9967158bfed1a7e",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "2dbae3473f7708936eb125ed82e2c08c30f5ace0cc3fd22948e3367d46c1a72f",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+          ]
+        },
+        {
+          "key": "ae0713257f2268c724d2e041a283e50106bbf19050373fc3008faf0773275c59",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "ce68e10d11e536902c7bea46eef03e43d5c8cafc6dd1838e21c37508c904942d",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "ea466dab5c507a1050f439a4ae13d4047e4e0a882fb7303c78eb896ef189107b",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "32a2d52845bd07197100f50af311f1586bcb8504be26f05355832b59fe13c4e5",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "ad49ea883fa10e8110d43804a0c7faa95cc2f394b2977f7aa639ac876386745a",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "0f17e4faa462e78dc6ead212a9615c3efc488d1b4ce4fc192716bd3f7b0dfd87",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "35d4c6db785a99996b005586234b52883aef07cfcbc40165ca0c1ef58e680292",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "56a673f0d379fe4c99ae6d06ffbf0ac0c29fde56299d993a22127f19803e6d9c",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "e2d78e901b5f00ea348c408241119c83c70c1d870cc0ea94af7d5ff717e3a98e",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "64cfe6487333569435846eb920fffd2b9d550615c348f5c05698b97b12c3e0c4",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "405f41afe95d4deb0e89ddcffff9c31c0b6e1f68b3c4ac6f9773db00d0d60554",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "76978505-e544-4953-9cb0-a3c778d4cfc6",
+      "imageId": "62d6f3f2-d2f9-4729-8cac-2070d31925c5",
+      "concertId": "15fc0f7d-aac7-468d-bfc8-0377a70bd742",
+      "kopisId": "PF300742",
+      "region": "서울",
+      "start": "2026-10-26",
+      "end": "2026-10-26",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "fbfeca448b45f64e1ba1775a44b7cc9c26d731fea7a2a3e7e05a5ac6cd0363f3",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "c139eca0-6451-4421-8584-5f476b72eb64",
+      "imageId": "a9796707-7606-4e0a-b56e-679dc1aa28e3",
+      "concertId": "b4b7ed0d-13aa-482f-902a-9eaec81009dd",
+      "kopisId": "PF298796",
+      "region": "서울",
+      "start": "2026-10-27",
+      "end": "2026-10-27",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "ccea6c6d4d9a6a055002c04b1c4b7debf30570e5fdfbb9a87d3626594e3d395a",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "b270a7f8-c8d0-4ea1-bc36-993d7d9128ad",
+      "imageId": "4b507440-ceb5-4ad4-a649-87a312e95113",
+      "concertId": "2b6d2f31-b4e0-4fee-a189-0b1e2f0dee60",
+      "kopisId": "PF303474",
+      "region": "서울",
+      "start": "2026-10-27",
+      "end": "2026-10-27",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "40809f8b4d84806002096119b6d800730592968d245b9e15122c599542102f74",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "57b18add-263d-4298-bf9b-5b5c369a3d9f",
+      "imageId": "6cfafac8-0baf-4821-99a9-31d117796238",
+      "concertId": "fa6facb2-745b-4a91-9122-c573b602c63a",
+      "kopisId": "PF293214",
+      "region": "서울",
+      "start": "2026-10-27",
+      "end": "2026-10-27",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "0d090ed1b1d4b042b8088d025ce3550b9fbc211873b1589e0384f8a78f6b8bc5",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "85c97b2d-d9b7-46e3-ba5d-df09980d046e",
+      "imageId": "2e4a8491-0fa3-451e-a167-3b6c4eb9b9c8",
+      "concertId": "8ed43b50-bd9a-4958-aa13-15905e4d2ec4",
+      "kopisId": "PF289272",
+      "region": "서울",
+      "start": "2026-10-28",
+      "end": "2026-10-28",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "b479156ffda6898cb5ab0d78a19dc9f4a2594e4c42822d8f885d6d3f91e4fd6a",
+      "candidateCount": 1,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "fe6cec988c2cbc9956e67548ddcef5e34145b74018ad3136d833494f5c4ea0d2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "0e37acdc-3f44-492f-b050-74a3633ff42d",
+      "imageId": "3e49980f-3dc1-4729-9210-189dd1a123f0",
+      "concertId": "189b59f9-68c0-45e1-a485-43136b41e22d",
+      "kopisId": "PF296224",
+      "region": "서울",
+      "start": "2026-10-29",
+      "end": "2026-10-29",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "279fcec94450fedaf22b1f8586497ab3ccf2bae1f771626afe90e640246ca719",
+      "candidateCount": 7,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "4664a0f5c475a21d66a510f868695745ab1817e062e433bbdd34ee2ed4efccbc",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CONTEXT_DATE",
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "60339a8bdd431fe75d6e776ec24802f5f39654384b5245a65760ad05340f86d0",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CONTEXT_DATE",
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "b88ba8edf143321ec0f9fa9e62652293dc5ec4d642cd71ed88190d955c97cbb8",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CONTEXT_DATE",
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "b4f2c5a2a60ddef7277cc3b1774fb72fda14b08409cbd7cde02e28b57c97bf79",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CONTEXT_DATE",
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "50858930f326ed811fa5ffe1e740bdbe1aebf7c03f73e676595a96ea56b89d5e",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CONTEXT_DATE",
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "MULTIPLE_ITEM_NUMBERS",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "ee60334c118c567b9d45b5ebf5315de564a5cc8aff773a7985c744a226bfb2dc",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CONTEXT_DATE",
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "148c0156a847f5c557bc436440f14e26093eb5f5c1ea839844e886bde2edb751",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CONTEXT_DATE",
+            "PROGRAM_DATE_SCOPE_AMBIGUOUS",
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "06208819-efc5-4665-bc9b-fab92105c7f5",
+      "imageId": "8af3446d-2b3a-46f6-967c-6bb526efa1ea",
+      "concertId": "22d84dca-4ce5-4079-8648-04029167f735",
+      "kopisId": "PF303290",
+      "region": "서울",
+      "start": "2026-10-29",
+      "end": "2026-10-29",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "4e9e1de4be084804eb1405c5df7641e7f7ac2e27c79395e30d2a84a42430d023",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "d75fef1c-31ab-4490-bfd9-42225cd431f8",
+      "imageId": "db6f5414-bc04-4d50-a171-6190ab48f5ed",
+      "concertId": "25874394-ac49-4e5e-a4e4-d90a336fa558",
+      "kopisId": "PF303365",
+      "region": "서울",
+      "start": "2026-10-29",
+      "end": "2026-10-29",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "cf2a0034d594204a62d51c1552e1e7ae7616cb37c1c80bd7647790312d7b052c",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "694361fe-a3b2-4898-a3ce-c065d9f5d63a",
+      "imageId": "4be810de-e6a4-4888-81f0-5b13db12ed76",
+      "concertId": "16b8f953-6f38-4d2f-a96a-34a47e2de918",
+      "kopisId": "PF298811",
+      "region": "서울",
+      "start": "2026-10-29",
+      "end": "2026-10-29",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "c396b62226e42b0abd05facba19edd2c0faa574c70a6777b5f9875c41e908678",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "92678b16-3e6e-42c2-a1ec-cb65847b96c6",
+      "imageId": "f4de9adb-91ed-447c-87b4-09e9913831f0",
+      "concertId": "dfaf4d48-ecec-4144-9539-e6fdb83d775b",
+      "kopisId": "PF285002",
+      "region": "서울",
+      "start": "2026-10-29",
+      "end": "2026-11-01",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "589add20ebaa136e7717e91af08922b09e784749d44fa0b9b068b818c08905f0",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "d1487f6a-0eb1-4bb3-9855-1574a36fd121",
+      "imageId": "02be7fb5-e623-45e6-9af8-a0572910ee20",
+      "concertId": "04eeece1-be6c-4a44-b0eb-01e9e0e79ac9",
+      "kopisId": "PF296173",
+      "region": "서울",
+      "start": "2026-10-29",
+      "end": "2026-10-29",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "d71acbd434d02be3671309b40c217ea0e6adf9ef4c91dac4d733b6bce586e376",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "96db3576-1586-4909-a668-07576adb22d5",
+      "imageId": "d2cdff0c-6070-46c2-938e-70a6d16059e4",
+      "concertId": "3e433443-87e4-4de0-9102-50755af30817",
+      "kopisId": "PF303383",
+      "region": "서울",
+      "start": "2026-11-01",
+      "end": "2026-11-01",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "0bcb2215af757e4a449f478bc86d6b004b168dcd7033288cf369c6cfa5a5ef57",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "8c00880c-3cd2-4590-92da-d4b8d490b43c",
+      "imageId": "73065fbc-8816-49e8-b17f-7d70dd589312",
+      "concertId": "e7d8d579-f5c6-46f4-82d9-96e96019dacb",
+      "kopisId": "PF303298",
+      "region": "서울",
+      "start": "2026-11-01",
+      "end": "2026-11-01",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "0c5351d3bcb78b79f86a5f7b3ff2aef78a4d3a7d2c38d9d9f1473d19201a5a74",
+      "candidateCount": 1,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "aacfa370da3f7a3ec0813b692662297f329732123ad8d35960f8e76a17c8474a",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "dd6ba70d-977c-4285-9776-59fa8c168bd6",
+      "imageId": "038caf49-3abf-4de9-aee3-baa16ef9c068",
+      "concertId": "f1001b93-9d1b-48a4-853a-25bf3430c783",
+      "kopisId": "PF303306",
+      "region": "서울",
+      "start": "2026-11-04",
+      "end": "2026-11-04",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "53a25b2d8e666994a4d09edcf58f52b7fca506d67f8cf0260ad37be59390262d",
+      "candidateCount": 1,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "9b212834c50dcba620b266508f8255ed343d9ea2b73b5b3db6b8513f0f44af60",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "272d8682-60a9-463e-89be-f0672de3f651",
+      "imageId": "2dfd607b-840b-4b81-869e-fb80a80e4f43",
+      "concertId": "32686813-da13-4ec4-bf25-10df9e5cc8c4",
+      "kopisId": "PF303416",
+      "region": "서울",
+      "start": "2026-11-07",
+      "end": "2026-11-07",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "a77254ae2dfcc2a56dc85cce6619af0e038563db72a3ce8db6090885ff0877de",
+      "candidateCount": 1,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "2d4e8e2dfd95a2aaf05bea8da3a0a70a093f80437e4edc903b125026f02c739d",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "a2a5ee31-3f56-4243-bf52-0f122f9c9807",
+      "imageId": "a6385c54-f7bb-47b1-a62d-8bbc3e49479d",
+      "concertId": "a25c3f42-8b02-486e-bcac-292b3dd9b547",
+      "kopisId": "PF303303",
+      "region": "서울",
+      "start": "2026-11-09",
+      "end": "2026-11-09",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "a3010c4ae83ab69529a8894c1ede73033d77e1d2ed937df5309fc9267c3da3ef",
+      "candidateCount": 12,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "86f6b9aa7ea2cd0fb28229f508104bf686f8da83fa0c6af43c17ebc245fb6004",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "d4a473b0c7552e738fc3d4254c7df66bed3ca87f806da268b3d6e6fc8388b46f",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "5bbc84c04ff7f03dc4689bb322dbd1153c3b0c8b55d1610f72310ea1947bbbc0",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "3efe5f4283c502013c33f54e472addff7a444e216d463963db58b0e998dd3917",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "f01bd30669e73bfd007dd01b116f2f56185685d7331f23e5bd2eab8e530b9b2e",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "4afa02c9155bbc9c547fd55a8b1248664d7d181ed312fddd02ee5405ccbe94b2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "955b777874ab2bdbd7f8f02fa7168c3c8ad6130ab550778bd0d83278fdb8ec22",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "ef172ca2f9ca3a47d0ab403be1b229a66170e58c866cc695226893c2b4a7d1c8",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "0422c97f9b08f760897abe57504a660906ef8e89505a7cf984ff011a24aa50b6",
+          "trackId": null,
+          "workId": "beethoven-sonata-op27-2-no14",
+          "relation": "WHOLE_WORK_REFERENCE",
+          "matcherOutcome": "MATCHED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT"
+          ]
+        },
+        {
+          "key": "9e48cdbc7bcd25f469fddf1b94049f6e7426521d24c3b7eb30da107ad4e1ec10",
+          "trackId": null,
+          "workId": "beethoven-sonata-op27-2-no14",
+          "relation": "WHOLE_WORK_REFERENCE",
+          "matcherOutcome": "MATCHED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT"
+          ]
+        },
+        {
+          "key": "56608b4b618e1d96ad8592e0680a6db901fdba0182e2b9f38f455549ce926bed",
+          "trackId": null,
+          "workId": "beethoven-sonata-op27-2-no14",
+          "relation": "WHOLE_WORK_REFERENCE",
+          "matcherOutcome": "MATCHED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "WHOLE_WORK_WITHOUT_EXPLICIT_MOVEMENT"
+          ]
+        },
+        {
+          "key": "f042850e907f62bd6ce08d006d468de51196c155756c51aa973bc9c11a7b8cea",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "ef00e9b6-5123-46a3-9949-0f52b3eca2f6",
+      "imageId": "e9fd4d44-5be5-4b39-af60-d8a3585883ff",
+      "concertId": "cd8e4e99-a76f-44a7-85c0-1c09e1db7a6e",
+      "kopisId": "PF303362",
+      "region": "서울",
+      "start": "2026-11-10",
+      "end": "2026-11-10",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "836ef5094aa70895764ed5bbbbfe256bb8250e420fd9a235d9c88e3a5ff04760",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    },
+    {
+      "analysisId": "e46defd3-e836-4b87-a177-1e5e145e9d92",
+      "imageId": "6d024956-bd1d-4545-9d8c-6909b45386b9",
+      "concertId": "a74e0e50-7902-4812-ac98-a52d45378b89",
+      "kopisId": "PF303378",
+      "region": "서울",
+      "start": "2026-11-10",
+      "end": "2026-11-10",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "182c334fc8f5c004f964d75fa36bb552192d1c200afa10041b2179c2f026998c",
+      "candidateCount": 7,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "f2ebec6e3e16d2aa5315e123a0b1dcff62767be1907e2764bcc79a90f82c72be",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "7fae97fdc8e991b9958d28d94de8546d68b7f051a76c1070e31590fc5e090221",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "COMPOSER_OUTSIDE_CATALOG",
+            "PARENT_WORK_TITLE_UNCONFIRMED",
+            "UNCERTAIN_NUMBERED_ITEM_RELATION",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "e651ea472dbb9ecf883ed547440d7edd33bd058ac7fd46dbb7dfaa63ca7665f6",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "25481f263fd1cb2fa394465a7560773b0d0489fa0dae8c975466fc364d3660da",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "a124ba3dedcf8686a8f87f2e337c21192b69226de9dc3524f38d605d658c834a",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "c5c0dab92a7495337673292451f187d9094af76714298f11bc1af0327795ca49",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "e2dbe51598906931be70bbd9db24ed57cb0fde9eee8654689d3b8529cce27d62",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "fcb6ca74-b4e2-4022-8360-ee394a3731ff",
+      "imageId": "1acf9c89-5921-4c47-8a47-4ca933b0556a",
+      "concertId": "00bd35a0-7062-4baf-a3ab-2cfa9cb28190",
+      "kopisId": "PF303384",
+      "region": "서울",
+      "start": "2026-11-11",
+      "end": "2026-11-11",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "6a8aee01447ad96deec5279cb559ffdebf7d3a60f81081012a8814bf82d8782e",
+      "candidateCount": 4,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "c9a719403dfd0394a6b13f19ca115701af48b30cc5446c7f37ad60f5d1755e11",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "73f53a74e5188dc78e27a442e63a535f652ca0f2e41093bf2b872582074ad36a",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+          ]
+        },
+        {
+          "key": "05ee3abd4635696c64a72b66881b91a3ce02c45b5a3aca0f5038412203d98815",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "1e61eb0eefe5b403bd3e41e4b7b46bf4019b132adec3e499b1e1652ea42f4de6",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "UNREGISTERED",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "7180dcf2-7792-4d70-b65b-0454c8c688ce",
+      "imageId": "976281e6-3223-4779-b816-75dda119c318",
+      "concertId": "2245fcf7-c276-46c2-a221-cd5958104e8c",
+      "kopisId": "PF303305",
+      "region": "서울",
+      "start": "2026-11-11",
+      "end": "2026-11-11",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "7f6839c53cac5dc1362c015c658d20461b762db26b89e27fd44a57c313ad5c8e",
+      "candidateCount": 1,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "8c232e648dad4d99cab58935c881ad30a6274887f88d2785af6909bd5204f45f",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "PROGRAM_EVIDENCE_MISSING",
+            "CONFLICTING_COMPOSERS",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "869936dc-c8ea-4091-b7f3-a4fe97dacc54",
+      "imageId": "6e937ef5-2804-470c-b093-6c04a0b89a9b",
+      "concertId": "be0e47f1-b301-4e01-8645-ff459274cea2",
+      "kopisId": "PF303482",
+      "region": "서울",
+      "start": "2026-11-12",
+      "end": "2026-11-12",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "73033693aa53949d808b03812fe474ed407d0b1506632b148054a2f338dc1eb7",
+      "candidateCount": 3,
+      "unavailableReason": null,
+      "candidates": [
+        {
+          "key": "21d74f8b9e2e8f70e50bfd1cb64af61f6986cf13f627d83dc6bb00523e72faa2",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "38bf0580f286f2da80122ba950d277e1e19463598606c8c4aaea218f842b5ab7",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "key": "e30ba1d754c7974d80f21438adf2db90f76f8f49f18737a0e44934ad84dbdfde",
+          "trackId": null,
+          "workId": null,
+          "relation": "AMBIGUOUS",
+          "matcherOutcome": "AMBIGUOUS",
+          "expected": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ]
+    },
+    {
+      "analysisId": "d0beecc5-0b10-4b45-943f-a1ba46242b43",
+      "imageId": "33643da3-4c6b-430d-bc8c-0ae90e632d57",
+      "concertId": "3e686379-7538-487a-8e67-d5b37c243c86",
+      "kopisId": "PF303394",
+      "region": "서울",
+      "start": "2026-11-13",
+      "end": "2026-11-13",
+      "performanceStatus": "공연예정",
+      "usableOcr": true,
+      "payloadHash": "9eec7c0bbcacaba076be063c27633a053134ab056fc27b1a76169fe4c185f5b3",
+      "candidateCount": 0,
+      "unavailableReason": null,
+      "candidates": []
+    }
+  ]
+}

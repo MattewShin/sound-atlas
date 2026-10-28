@@ -2,9 +2,11 @@ import { createSupabaseRest } from './supabaseRest.mjs'
 import { createSupabaseCollector } from './supabaseCollector.mjs'
 import { createSupabaseOcr } from './supabaseOcr.mjs'
 import { createProgramAnalysisStore } from './supabaseProgramAnalysis.mjs'
-import { pipelineError } from './pipelineConfig.mjs'
+import { pipelineError, pipelineStageSettings, getPipelineStageSettings } from './pipelineConfig.mjs'
 import { CLEANUP_TABLES, CLEANUP_SCHEMA_VERSION, fallbackCleanupPlan } from './pipelineCleanup.mjs'
 import { MATCHER_VERSION } from './programAnalysis.mjs'
+import {getProgramWriteVersion,PROGRAM_ANALYSIS_SAVE_RPC,PROGRAM_ANALYSIS_MIGRATION_REQUIRED} from './programRollout.mjs'
+import {createProgramAutomationStore} from './supabaseProgramAutomation.mjs'
 
 const fields={
   concerts:'id,kopis_id,title,venue,region,start_date,end_date,performance_status,synced_at,program_context_revision',
@@ -14,8 +16,9 @@ const fields={
   concert_program_analyses:'id,image_id,concert_id,ocr_result_id,source_attempt_id,image_revision,concert_revision,concert_context,matcher_version,catalog_hash,is_current,created_at',
 }
 export const createPipelineRepository = options => {
+  const stages=pipelineStageSettings(options?.stageSettings||getPipelineStageSettings(options?.env))
   const request=createSupabaseRest(options)
-  let cleanupSchemaReady=false,cleanupFunctionsPresent=false
+  let cleanupSchemaReady=false,cleanupFunctionsPresent=false,automationSchemaReady=false
   const all=async(table,params={},pageLimit=20,select=fields[table]||'id')=>{
     const rows=[];let last
     for(let page=0;page<pageLimit;page++){
@@ -32,26 +35,33 @@ export const createPipelineRepository = options => {
     return rows
   }
   return {
-    collector:createSupabaseCollector(options), ocr:createSupabaseOcr(options), analysis:createProgramAnalysisStore(options),
+    collector:stages.collection?createSupabaseCollector(options):undefined, ocr:stages.ocr?createSupabaseOcr(options):undefined,
+    analysis:stages.analysis?createProgramAnalysisStore(options):undefined,automation:stages.analysis?createProgramAutomationStore(options):undefined,
     async preflight({plan=false}={}){
-      for(const table of [...Object.keys(fields),'concert_program_candidates','concert_program_reviews','concert_program_candidate_status','concert_program_catalogs']){
+      if(stages.analysis)getProgramWriteVersion(options?.env||process.env)
+      const tables=['concerts',...((stages.collection||stages.ocr||stages.analysis)?['concert_program_images']:[]),
+        ...((stages.ocr||stages.analysis)?['concert_image_ocr_results','concert_image_ocr_attempts']:[]),
+        ...(stages.analysis?['concert_program_analyses','concert_program_candidates','concert_program_reviews','concert_program_candidate_status','concert_program_catalogs']:[])]
+      for(const table of tables){
         await request(table,{params:{select:table==='concert_program_catalogs'?'catalog_hash':'id',limit:'0'}})
       }
       const schema=await request('')
-      for(const name of ['sync_kopis_concert','record_concert_image_ocr','save_concert_program_analysis'])
+      for(const name of [...(stages.collection?['sync_kopis_concert']:[]),...(stages.ocr?['record_concert_image_ocr']:[]),...(stages.analysis?['save_concert_program_analysis']:[])])
         if(!schema.paths?.[`/rpc/${name}`])throw pipelineError('BATCH_SCHEMA_REQUIRED')
-      cleanupFunctionsPresent=['plan_expired_concert_cleanup','delete_expired_concert'].every(name=>schema.paths?.[`/rpc/${name}`])
+      cleanupFunctionsPresent=stages.cleanup&&['plan_expired_concert_cleanup','delete_expired_concert'].every(name=>schema.paths?.[`/rpc/${name}`])
       cleanupSchemaReady=cleanupFunctionsPresent && (await request('rpc/plan_expired_concert_cleanup',{params:{p_limit:'1'}})).schema_version===CLEANUP_SCHEMA_VERSION
-      if(!cleanupSchemaReady&&!plan)throw pipelineError('CLEANUP_MIGRATION_REQUIRED')
-      const analysisSchemaReady=Boolean(schema.paths?.['/rpc/save_concert_program_analysis_v3'])
-      if(!analysisSchemaReady&&!plan)throw pipelineError('PROGRAM_ANALYSIS_V3_MIGRATION_REQUIRED')
+      if(stages.cleanup&&!cleanupSchemaReady&&!plan)throw pipelineError('CLEANUP_MIGRATION_REQUIRED')
+      const analysisSchemaReady=Boolean(schema.paths?.[`/rpc/${PROGRAM_ANALYSIS_SAVE_RPC}`])
+      if(stages.analysis&&!analysisSchemaReady&&!plan)throw pipelineError(PROGRAM_ANALYSIS_MIGRATION_REQUIRED)
       const identitySchemaReady=Boolean(schema.paths?.['/rpc/review_concert_program_candidate_identity']&&schema.paths?.['/rpc/save_concert_program_rematch'])
-      if(!identitySchemaReady&&!plan)throw pipelineError('PROGRAM_WORK_IDENTITY_MIGRATION_REQUIRED')
-      const policy=analysisSchemaReady?await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:`eq.${MATCHER_VERSION}`,limit:'1'}}):null
-      const analysisVersionEnabled=policy?policy[0]?.enabled!==false:'UNKNOWN'
-      if(analysisVersionEnabled===false&&!plan)throw pipelineError('PROGRAM_ANALYSIS_VERSION_DISABLED')
+      if(stages.analysis&&!identitySchemaReady&&!plan)throw pipelineError('PROGRAM_WORK_IDENTITY_MIGRATION_REQUIRED')
+      automationSchemaReady=stages.analysis&&Boolean(schema.paths?.['/rpc/decide_automatic_program_candidate'])
+      if(stages.analysis&&!automationSchemaReady&&!plan)throw pipelineError('PROGRAM_AUTOMATION_MIGRATION_REQUIRED')
+      const policy=stages.analysis&&analysisSchemaReady?await request('concert_program_version_policy',{params:{select:'enabled',matcher_version:`eq.${MATCHER_VERSION}`,limit:'2'}}):null
+      const analysisVersionEnabled=!stages.analysis?'SKIPPED_DISABLED':policy===null?'UNKNOWN':Array.isArray(policy)&&policy.length===1&&policy[0]?.enabled===true
+      if(stages.analysis&&analysisVersionEnabled!==true&&!plan)throw pipelineError(Array.isArray(policy)&&policy[0]?.enabled===false?'PROGRAM_ANALYSIS_VERSION_DISABLED':'PROGRAM_ANALYSIS_VERSION_POLICY_REQUIRED')
       if(cleanupSchemaReady)await request('concert_cleanup_events',{params:{select:'operation_id',limit:'0'}})
-      return {cleanup_schema_ready:cleanupSchemaReady,analysis_schema_ready:analysisSchemaReady,work_identity_schema_ready:identitySchemaReady,analysis_version_enabled:analysisVersionEnabled,matcher_version:MATCHER_VERSION}
+      return {cleanup_schema_ready:cleanupSchemaReady,analysis_schema_ready:analysisSchemaReady,work_identity_schema_ready:identitySchemaReady,automation_schema_ready:automationSchemaReady,analysis_version_enabled:analysisVersionEnabled,matcher_version:MATCHER_VERSION}
     },
     async cleanupPlan(limit,today,pages){
       if(cleanupFunctionsPresent){
@@ -72,11 +82,13 @@ export const createPipelineRepository = options => {
     },
     async snapshot(conditions,pages){
       const concerts=await all('concerts',{region:`eq.${conditions.region}`,start_date:`lte.${conditions.to}`,end_date:`gte.${conditions.from}`,performance_status:'in.(공연예정,공연중)'},pages)
-      const images=(await related('concert_program_images','concert_id',concerts.map(c=>c.id),pages)).filter(i=>i.image_type==='DETAIL'&&i.is_active)
+      if(!stages.ocr&&!stages.analysis)return {concerts,images:[],results:[],attempts:[],analyses:[]}
+      const images=(await related('concert_program_images','concert_id',concerts.map(c=>c.id),pages,
+        fields.concert_program_images+(automationSchemaReady?',evidence_changed_at':''))).filter(i=>i.image_type==='DETAIL'&&i.is_active)
       const ids=images.map(i=>i.id)
       const results=await related('concert_image_ocr_results','image_id',ids,pages)
       const attempts=await related('concert_image_ocr_attempts','image_id',ids,pages)
-      const analyses=await related('concert_program_analyses','image_id',ids,pages)
+      const analyses=stages.analysis?await related('concert_program_analyses','image_id',ids,pages):[]
       return {concerts,images,results,attempts,analyses}
     },
     async ocrResult(id){

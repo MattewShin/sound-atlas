@@ -1,3 +1,5 @@
+import {legacyAnalysisFixture,legacyRematchFixture} from './testSupport/legacyProgramFixture.mjs'
+import {searchFixture} from './testSupport/searchFixture.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {randomUUID} from 'node:crypto'
@@ -26,7 +28,7 @@ test('v3 SQL draft preserves v2 rows and reviews, stores complete logical eviden
         started_at:'2026-10-19T00:00:00Z',finished_at:'2026-10-19T00:00:01Z',duration_ms:1000}
       await db.query('select public.record_concert_image_ocr($1,$2)',[JSON.stringify(attempt),JSON.stringify({raw_text:text,detections:[],engine_version:'fixture',torch_version:'fixture',settings:{},width:800,height:100})])
       const ocr=(await rows('concert_image_ocr_results')).find(o=>o.image_id===image.id)
-      analyses.push(analyzeStoredProgram({concert:{...storedConcert,start_date:concert.start_date,end_date:concert.end_date},image,ocr,attempt}))
+      analyses.push(legacyAnalysisFixture(analyzeStoredProgram({concert:{...storedConcert,start_date:concert.start_date,end_date:concert.end_date},image,ocr,attempt})))
     }
     const saveLegacy=async a=>(await db.query('select public.save_concert_program_analysis($1,$2) id',[JSON.stringify(a),CATALOG_JSON])).rows[0].id
     const old=rehash({...analyses[0],matcher_version:'stored-program-2'})
@@ -55,10 +57,10 @@ test('v3 SQL draft preserves v2 rows and reviews, stores complete logical eviden
     assert.deepEqual((await rows('concert_program_candidates')).filter(c=>c.analysis_id===oldId),originalCandidates)
     assert.deepEqual(await rows('concert_program_reviews'),originalReviews)
     assert.equal((await rows('concert_program_candidate_status')).find(c=>c.id===oldCandidate.id).is_effectively_confirmed,true,'v3 canary cannot hide v2 confirmed evidence')
-    const publicSearch=createSupabaseConcertSearch({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture'},now:()=>Date.parse('2026-10-19T00:00:00Z'),fetchImpl:async(url,init)=>{
-      assert.equal(init.method,'GET');assert.equal(url.searchParams.get('matcher_version'),'eq.stored-program-2')
-      return new Response(JSON.stringify((await rows('concert_program_candidate_status')).map(c=>({...c,concerts:concert})).sort((a,b)=>a.id.localeCompare(b.id))))
-    }})
+    const publicSearch=createSupabaseConcertSearch({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture'},now:()=>Date.parse('2026-10-19T00:00:00Z'),fetchImpl:searchFixture({
+      ocrRows:()=>rows('concert_program_candidate_status'),concerts:()=>[{...storedConcert,...concert}],
+      onRequest:url=>{if(url.pathname.endsWith('/concert_program_candidate_status'))assert.equal(url.searchParams.get('matcher_version'),'eq.stored-program-2')}
+    })})
     assert.equal((await publicSearch.search({region:'서울',from:'2026-10-19',to:'2026-10-20',targetTrackId:'chopin-ballade-op52-no4'})).concerts.length,0,'legacy null identity requires the separate verified backfill migration')
     assert.equal(await saveLegacy(old),oldId)
     assert.equal((await rows('concert_program_candidate_status')).find(c=>c.id===oldCandidate.id).stale_reason,null,'each version retains its own current snapshot')

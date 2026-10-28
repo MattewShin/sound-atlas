@@ -1,0 +1,325 @@
+[
+  {
+    "input": {
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "kopis_id": "PF900054",
+        "title": "Pinned OCR regression",
+        "venue": "Local hall",
+        "start_date": "2099-10-23",
+        "end_date": "2099-10-23",
+        "program_context_revision": 0
+      },
+      "image": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "evidence_revision": 0,
+        "is_active": true,
+        "image_type": "DETAIL"
+      },
+      "ocr": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "raw_text": "PROGRAM\nF Chopin\nBallade No.4 in F minor Op.52",
+        "detections": [],
+        "width": 1000
+      },
+      "attempt": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "status": "SUCCEEDED"
+      }
+    },
+    "snapshot_hash": "2ae5e20122b50f5a7ee00398ce1446585ea08d5f83211116c85d82c91a263c6e",
+    "payload_hash": "181a2d8f173124cca6839a00924445bc9f931c7a54825b1635f68064b1da2204",
+    "cache_key": "analysis:f6732b5475c4db59dd732e0a9671bdad53886d3958e0990a76ed4c9a52cb2519"
+  },
+  {
+    "input": {
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "kopis_id": "PF900054",
+        "title": "Pinned OCR regression",
+        "venue": "Local hall",
+        "start_date": "2099-10-23",
+        "end_date": "2099-10-23",
+        "program_context_revision": 0
+      },
+      "image": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "evidence_revision": 0,
+        "is_active": true,
+        "image_type": "DETAIL"
+      },
+      "ocr": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "raw_text": "[Program]\nF. Chopin\nScherzo No.4 in E Major, Op.54",
+        "detections": [],
+        "width": 1000
+      },
+      "attempt": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "status": "SUCCEEDED"
+      }
+    },
+    "snapshot_hash": "762359ffac295b853943964b1a202c8ebe92b5e87b6c361d70b6fda9d3c7b1d3",
+    "payload_hash": "e69577d6ddf9471258dc9157b46510fa6400e85334787deb65a2e05e65f92eae",
+    "cache_key": "analysis:f6732b5475c4db59dd732e0a9671bdad53886d3958e0990a76ed4c9a52cb2519"
+  },
+  {
+    "input": {
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "kopis_id": "PF900054",
+        "title": "Pinned OCR regression",
+        "venue": "Local hall",
+        "start_date": "2099-10-23",
+        "end_date": "2099-10-23",
+        "program_context_revision": 0
+      },
+      "image": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "evidence_revision": 0,
+        "is_active": true,
+        "image_type": "DETAIL"
+      },
+      "ocr": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "raw_text": "🎹 é 소개\r\n[Program]\r\nF. Chopin\r\nBallade No.4 in F minor Op.52",
+        "detections": [],
+        "width": 1000
+      },
+      "attempt": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "status": "SUCCEEDED"
+      }
+    },
+    "snapshot_hash": "8b62019fdd65a7acdd9a8d7e2c3cac005c7c8f9e1f8429842bbea0d378102691",
+    "payload_hash": "00ced95b83291dfa0159bcd284ec0d7643313e55111a9ad2322c8a1fbfa1fd60",
+    "cache_key": "analysis:f6732b5475c4db59dd732e0a9671bdad53886d3958e0990a76ed4c9a52cb2519"
+  },
+  {
+    "input": {
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "kopis_id": "PF900054",
+        "title": "Pinned OCR regression",
+        "venue": "Local hall",
+        "start_date": "2099-10-23",
+        "end_date": "2099-10-23",
+        "program_context_revision": 0
+      },
+      "image": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "evidence_revision": 0,
+        "is_active": true,
+        "image_type": "DETAIL"
+      },
+      "ocr": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "raw_text": "PROGRAM\nF. Chopin\nBallade No.4 Op.52\nBiography\nPreviously performed Liszt\nPROGRAM\nJ. Brahms\nIntermezzo Op.118 No.2",
+        "detections": [],
+        "width": 1000
+      },
+      "attempt": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "status": "SUCCEEDED"
+      }
+    },
+    "snapshot_hash": "c829d9cf34029f61fe498ebe71845450f4382f4afdd90a3f8cb8b1cec5eb2cf5",
+    "payload_hash": "b3886c30135a3832b6aa38aab6536878f958b99a4153f48103a01640eca60fa5",
+    "cache_key": "analysis:f6732b5475c4db59dd732e0a9671bdad53886d3958e0990a76ed4c9a52cb2519"
+  },
+  {
+    "input": {
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "kopis_id": "PF900054",
+        "title": "Pinned OCR regression",
+        "venue": "Local hall",
+        "start_date": "2099-10-23",
+        "end_date": "2099-10-23",
+        "program_context_revision": 0
+      },
+      "image": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "evidence_revision": 0,
+        "is_active": true,
+        "image_type": "DETAIL"
+      },
+      "ocr": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "raw_text": "PROGRAM\nL. van Beethoven\nPiano Sonata No.14 Op.27 No.2\nIII. Scherzo",
+        "detections": [],
+        "width": 1000
+      },
+      "attempt": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "status": "SUCCEEDED"
+      }
+    },
+    "snapshot_hash": "4b2e0de1f0a0ffacbe4db64d01e4e4ddb4d477f4973fd3a34b218f538bb881ee",
+    "payload_hash": "4b61fc6585f880c73d0c4fb741148c87c55a6505fb0a625bd7fc8d930461ba0a",
+    "cache_key": "analysis:f6732b5475c4db59dd732e0a9671bdad53886d3958e0990a76ed4c9a52cb2519"
+  },
+  {
+    "input": {
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "kopis_id": "PF900054",
+        "title": "Pinned OCR regression",
+        "venue": "Local hall",
+        "start_date": "2099-10-23",
+        "end_date": "2099-10-23",
+        "program_context_revision": 0
+      },
+      "image": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "evidence_revision": 0,
+        "is_active": true,
+        "image_type": "DETAIL"
+      },
+      "ocr": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "raw_text": "PROGRAM\n2026.12.24\nF. Chopin\nBallade No.4 Op.52 (arranged for four hands)",
+        "detections": [],
+        "width": 1000
+      },
+      "attempt": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "status": "SUCCEEDED"
+      }
+    },
+    "snapshot_hash": "ea1d74638b725f410795d229c9f82d3b8369032ea87642c8e78abfbd69c6ecab",
+    "payload_hash": "e280136aa8660a98f87c8330b5ec3c34f555aa058125fea8853c0512d9cad4f8",
+    "cache_key": "analysis:f6732b5475c4db59dd732e0a9671bdad53886d3958e0990a76ed4c9a52cb2519"
+  },
+  {
+    "input": {
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "kopis_id": "PF900054",
+        "title": "Pinned OCR regression",
+        "venue": "Local hall",
+        "start_date": "2099-10-23",
+        "end_date": "2099-10-23",
+        "program_context_revision": 0
+      },
+      "image": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "evidence_revision": 0,
+        "is_active": true,
+        "image_type": "DETAIL"
+      },
+      "ocr": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "raw_text": "PROGRAM",
+        "detections": [],
+        "width": 1000
+      },
+      "attempt": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "status": "SUCCEEDED"
+      }
+    },
+    "snapshot_hash": "914b117bd94a82705fb7c514ea8c0cf05369ffbe18a0a4a76325cda5a3d1fa9b",
+    "payload_hash": "ddf1a4bc0c5a9f7d39f2c4de573f4ff228f1b38390a640feb6e9aed1144912d4",
+    "cache_key": "analysis:f6732b5475c4db59dd732e0a9671bdad53886d3958e0990a76ed4c9a52cb2519"
+  },
+  {
+    "input": {
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "kopis_id": "PF900054",
+        "title": "Pinned OCR regression",
+        "venue": "Local hall",
+        "start_date": "2099-10-23",
+        "end_date": "2099-10-23",
+        "program_context_revision": 0
+      },
+      "image": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "evidence_revision": 0,
+        "is_active": true,
+        "image_type": "DETAIL"
+      },
+      "ocr": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "raw_text": "PROGRAM\nF. Chopin\nBallade No.4 Op.52",
+        "detections": [
+          {
+            "text": "PROGRAM",
+            "bbox": [
+              [
+                10,
+                0
+              ],
+              [
+                600,
+                0
+              ],
+              [
+                600,
+                20
+              ],
+              [
+                10,
+                20
+              ]
+            ],
+            "confidence": 0.91
+          },
+          {
+            "text": "F. Chopin",
+            "bbox": [
+              [
+                10,
+                30
+              ],
+              [
+                600,
+                30
+              ],
+              [
+                600,
+                50
+              ],
+              [
+                10,
+                50
+              ]
+            ],
+            "confidence": 0.91
+          },
+          {
+            "text": "Ballade No.4 Op.52",
+            "bbox": [
+              [
+                10,
+                60
+              ],
+              [
+                600,
+                60
+              ],
+              [
+                600,
+                80
+              ],
+              [
+                10,
+                80
+              ]
+            ],
+            "confidence": 0.91
+          }
+        ],
+        "width": 1000
+      },
+      "attempt": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "status": "SUCCEEDED"
+      }
+    },
+    "snapshot_hash": "f78d5561f3b9567eb56a27073dc588060f40c4095e11c51c23d7d25bc5624c44",
+    "payload_hash": "a686218ef150e13789996d43ede43de047e3966bf6690eaa9dfe45e82570935b",
+    "cache_key": "analysis:f6732b5475c4db59dd732e0a9671bdad53886d3958e0990a76ed4c9a52cb2519"
+  }
+]

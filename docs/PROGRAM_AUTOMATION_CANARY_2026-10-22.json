@@ -1,0 +1,3051 @@
+{
+  "taskId": "CA-AUTO-20261022-001",
+  "specVersion": 1,
+  "status": "BLOCKED",
+  "statusReason": "PERIODIC_AUTOMATION_LIMIT_ONE_NOT_VERIFIED",
+  "phaseStatus": {
+    "administratorReadOnlySql": "PASS",
+    "designatedMigration": "APPLIED",
+    "pf295548DryRun": "PASS",
+    "pf295548Save": "PASS",
+    "sameInputRepeat": "PASS_ZERO_POST",
+    "productionSearchAndDto": "PASS",
+    "scheduledPreflight": "PASS",
+    "periodicExpansion": "BLOCKED"
+  },
+  "recordedAt": "2026-10-22T05:41:37.811Z",
+  "timeZone": "Asia/Seoul",
+  "specRef": "aab5f7b23b63d5ec3311e301ee8c28010564ef98",
+  "resumeReadRef": "a3b2f1f4e3b72decec1a6947375c30a47c6aec7e",
+  "codeRef": "ad5ab3cf5984146c4b2dc94428a146944af23fab",
+  "connection": {
+    "administratorConnectionPresent": true,
+    "connectionSucceeded": true,
+    "connectionDetailsPublished": false
+  },
+  "preflight": {
+    "before": {
+      "recordedAt": "2026-10-22T05:30:08.957Z",
+      "transaction": {
+        "transaction_read_only": "on",
+        "server_version_num": "170011"
+      },
+      "summary": {
+        "prerequisiteMissing": [],
+        "prerequisiteTypeMismatch": [],
+        "prerequisitePermissionMismatch": [],
+        "automationFunctionsPresent": 0,
+        "automationColumnsPresent": 0,
+        "automationTypeMismatch": [],
+        "automationPermissionMismatch": [],
+        "columnTypeMismatch": [],
+        "viewFieldsMissing": [],
+        "manualReceiptCount": 2,
+        "manualTracks": [
+          "chopin-ballade-op52-no4",
+          "liszt-liebestraum-s541-no3"
+        ]
+      },
+      "automationFunctions": [
+        {
+          "category": "AUTOMATION",
+          "signature": "public.decide_automatic_program_candidate(uuid,uuid,text,text,text,jsonb,jsonb,text)",
+          "expected_result": "jsonb",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.defer_automatic_program(uuid,text,text,text)",
+          "expected_result": "jsonb",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.finish_automatic_program(uuid,text,text,text)",
+          "expected_result": "boolean",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.program_auto_input_hash(uuid,text,text)",
+          "expected_result": "text",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.queue_automatic_programs(integer,text,text,uuid[])",
+          "expected_result": "jsonb",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        }
+      ],
+      "columns": [
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_input_hash",
+          "expected_type": "text",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_retry_at",
+          "expected_type": "timestamp with time zone",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_retry_hash",
+          "expected_type": "text",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_input_hash",
+          "expected_type": "text",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_outcome",
+          "expected_type": "text",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_reasons",
+          "expected_type": "jsonb",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_images",
+          "column_name": "evidence_changed_at",
+          "expected_type": "timestamp with time zone",
+          "actual_type": null,
+          "exists": false
+        }
+      ]
+    },
+    "immediatelyBeforeMigration": {
+      "recordedAt": "2026-10-22T05:31:08.423Z",
+      "transaction": {
+        "transaction_read_only": "on",
+        "server_version_num": "170011"
+      },
+      "summary": {
+        "prerequisiteMissing": [],
+        "prerequisiteTypeMismatch": [],
+        "prerequisitePermissionMismatch": [],
+        "automationFunctionsPresent": 0,
+        "automationColumnsPresent": 0,
+        "automationTypeMismatch": [],
+        "automationPermissionMismatch": [],
+        "columnTypeMismatch": [],
+        "viewFieldsMissing": [],
+        "manualReceiptCount": 2,
+        "manualTracks": [
+          "chopin-ballade-op52-no4",
+          "liszt-liebestraum-s541-no3"
+        ]
+      },
+      "automationFunctions": [
+        {
+          "category": "AUTOMATION",
+          "signature": "public.decide_automatic_program_candidate(uuid,uuid,text,text,text,jsonb,jsonb,text)",
+          "expected_result": "jsonb",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.defer_automatic_program(uuid,text,text,text)",
+          "expected_result": "jsonb",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.finish_automatic_program(uuid,text,text,text)",
+          "expected_result": "boolean",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.program_auto_input_hash(uuid,text,text)",
+          "expected_result": "text",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.queue_automatic_programs(integer,text,text,uuid[])",
+          "expected_result": "jsonb",
+          "exists": false,
+          "actual_signature": null,
+          "actual_result": null,
+          "service_can_execute": null,
+          "anon_can_execute": null,
+          "authenticated_can_execute": null
+        }
+      ],
+      "columns": [
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_input_hash",
+          "expected_type": "text",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_retry_at",
+          "expected_type": "timestamp with time zone",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_retry_hash",
+          "expected_type": "text",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_input_hash",
+          "expected_type": "text",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_outcome",
+          "expected_type": "text",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_reasons",
+          "expected_type": "jsonb",
+          "actual_type": null,
+          "exists": false
+        },
+        {
+          "table_name": "concert_program_images",
+          "column_name": "evidence_changed_at",
+          "expected_type": "timestamp with time zone",
+          "actual_type": null,
+          "exists": false
+        }
+      ]
+    },
+    "afterMigration": {
+      "recordedAt": "2026-10-22T05:31:21.936Z",
+      "transaction": {
+        "transaction_read_only": "on",
+        "server_version_num": "170011"
+      },
+      "summary": {
+        "prerequisiteMissing": [],
+        "prerequisiteTypeMismatch": [],
+        "prerequisitePermissionMismatch": [],
+        "automationFunctionsPresent": 5,
+        "automationColumnsPresent": 7,
+        "automationTypeMismatch": [],
+        "automationPermissionMismatch": [],
+        "columnTypeMismatch": [],
+        "viewFieldsMissing": [],
+        "manualReceiptCount": 2,
+        "manualTracks": [
+          "chopin-ballade-op52-no4",
+          "liszt-liebestraum-s541-no3"
+        ]
+      },
+      "automationFunctions": [
+        {
+          "category": "AUTOMATION",
+          "signature": "public.decide_automatic_program_candidate(uuid,uuid,text,text,text,jsonb,jsonb,text)",
+          "expected_result": "jsonb",
+          "exists": true,
+          "actual_signature": "decide_automatic_program_candidate(uuid,uuid,text,text,text,jsonb,jsonb,text)",
+          "actual_result": "jsonb",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.defer_automatic_program(uuid,text,text,text)",
+          "expected_result": "jsonb",
+          "exists": true,
+          "actual_signature": "defer_automatic_program(uuid,text,text,text)",
+          "actual_result": "jsonb",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.finish_automatic_program(uuid,text,text,text)",
+          "expected_result": "boolean",
+          "exists": true,
+          "actual_signature": "finish_automatic_program(uuid,text,text,text)",
+          "actual_result": "boolean",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.program_auto_input_hash(uuid,text,text)",
+          "expected_result": "text",
+          "exists": true,
+          "actual_signature": "program_auto_input_hash(uuid,text,text)",
+          "actual_result": "text",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.queue_automatic_programs(integer,text,text,uuid[])",
+          "expected_result": "jsonb",
+          "exists": true,
+          "actual_signature": "queue_automatic_programs(integer,text,text,uuid[])",
+          "actual_result": "jsonb",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        }
+      ],
+      "columns": [
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_input_hash",
+          "expected_type": "text",
+          "actual_type": "text",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_retry_at",
+          "expected_type": "timestamp with time zone",
+          "actual_type": "timestamp with time zone",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_retry_hash",
+          "expected_type": "text",
+          "actual_type": "text",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_input_hash",
+          "expected_type": "text",
+          "actual_type": "text",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_outcome",
+          "expected_type": "text",
+          "actual_type": "text",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_reasons",
+          "expected_type": "jsonb",
+          "actual_type": "jsonb",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_images",
+          "column_name": "evidence_changed_at",
+          "expected_type": "timestamp with time zone",
+          "actual_type": "timestamp with time zone",
+          "exists": true
+        }
+      ]
+    },
+    "afterCanary": {
+      "recordedAt": "2026-10-22T05:34:41.837Z",
+      "transaction": {
+        "transaction_read_only": "on",
+        "server_version_num": "170011"
+      },
+      "summary": {
+        "prerequisiteMissing": [],
+        "prerequisiteTypeMismatch": [],
+        "prerequisitePermissionMismatch": [],
+        "automationFunctionsPresent": 5,
+        "automationColumnsPresent": 7,
+        "automationTypeMismatch": [],
+        "automationPermissionMismatch": [],
+        "columnTypeMismatch": [],
+        "viewFieldsMissing": [],
+        "manualReceiptCount": 2,
+        "manualTracks": [
+          "chopin-ballade-op52-no4",
+          "liszt-liebestraum-s541-no3"
+        ]
+      },
+      "automationFunctions": [
+        {
+          "category": "AUTOMATION",
+          "signature": "public.decide_automatic_program_candidate(uuid,uuid,text,text,text,jsonb,jsonb,text)",
+          "expected_result": "jsonb",
+          "exists": true,
+          "actual_signature": "decide_automatic_program_candidate(uuid,uuid,text,text,text,jsonb,jsonb,text)",
+          "actual_result": "jsonb",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.defer_automatic_program(uuid,text,text,text)",
+          "expected_result": "jsonb",
+          "exists": true,
+          "actual_signature": "defer_automatic_program(uuid,text,text,text)",
+          "actual_result": "jsonb",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.finish_automatic_program(uuid,text,text,text)",
+          "expected_result": "boolean",
+          "exists": true,
+          "actual_signature": "finish_automatic_program(uuid,text,text,text)",
+          "actual_result": "boolean",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.program_auto_input_hash(uuid,text,text)",
+          "expected_result": "text",
+          "exists": true,
+          "actual_signature": "program_auto_input_hash(uuid,text,text)",
+          "actual_result": "text",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        },
+        {
+          "category": "AUTOMATION",
+          "signature": "public.queue_automatic_programs(integer,text,text,uuid[])",
+          "expected_result": "jsonb",
+          "exists": true,
+          "actual_signature": "queue_automatic_programs(integer,text,text,uuid[])",
+          "actual_result": "jsonb",
+          "service_can_execute": true,
+          "anon_can_execute": false,
+          "authenticated_can_execute": false
+        }
+      ],
+      "columns": [
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_input_hash",
+          "expected_type": "text",
+          "actual_type": "text",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_retry_at",
+          "expected_type": "timestamp with time zone",
+          "actual_type": "timestamp with time zone",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_analyses",
+          "column_name": "auto_retry_hash",
+          "expected_type": "text",
+          "actual_type": "text",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_input_hash",
+          "expected_type": "text",
+          "actual_type": "text",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_outcome",
+          "expected_type": "text",
+          "actual_type": "text",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_candidates",
+          "column_name": "auto_reasons",
+          "expected_type": "jsonb",
+          "actual_type": "jsonb",
+          "exists": true
+        },
+        {
+          "table_name": "concert_program_images",
+          "column_name": "evidence_changed_at",
+          "expected_type": "timestamp with time zone",
+          "actual_type": "timestamp with time zone",
+          "exists": true
+        }
+      ]
+    }
+  },
+  "migration": {
+    "recordedAt": "2026-10-22T05:31:08.925Z",
+    "status": "APPLIED",
+    "file": "supabase/migrations/202610220001_program_automation.sql",
+    "sha256": "ac5281753c5e65a73415a565b9c435598dc6006e8b11267dac4516c5feae18d8",
+    "oneFileOneTransaction": true
+  },
+  "scope": {
+    "kopisId": "PF295548",
+    "imageLimit": 1,
+    "candidateLimit": 20,
+    "writeRequestHardCap": 32,
+    "noOtherConcertWrites": true
+  },
+  "requestCounts": {
+    "administratorReadOnlySnapshots": 4,
+    "migrationFiles": 1,
+    "migrationTransactions": 1,
+    "restGet": 33,
+    "restPost": 17,
+    "publicGet": 4,
+    "backfillRuns": 0,
+    "integratedBatchRuns": 0
+  },
+  "dryRun": {
+    "recordedAt": "2026-10-22T05:33:31.435Z",
+    "requests": {
+      "GET": 8,
+      "POST": 0,
+      "paths": {
+        "GET ": 2,
+        "GET rpc/queue_automatic_programs": 1,
+        "GET concerts": 1,
+        "GET concert_program_images": 1,
+        "GET concert_image_ocr_attempts": 1,
+        "GET concert_image_ocr_results": 1,
+        "GET concert_program_candidate_status": 1
+      }
+    },
+    "schemaProof": {
+      "functions": [
+        {
+          "name": "decide_automatic_program_candidate",
+          "exposed": true
+        },
+        {
+          "name": "queue_automatic_programs",
+          "exposed": true
+        },
+        {
+          "name": "program_auto_input_hash",
+          "exposed": true
+        },
+        {
+          "name": "finish_automatic_program",
+          "exposed": true
+        },
+        {
+          "name": "defer_automatic_program",
+          "exposed": true
+        }
+      ]
+    },
+    "report": {
+      "confirmed": 1,
+      "duplicate_maintained": 2,
+      "unlinked": 12,
+      "retry_pending": 0,
+      "failed": 0,
+      "unchanged": 0,
+      "reasons": {
+        "CATALOG_TARGET_MISSING": 6,
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 12,
+        "ARRANGEMENT_IDENTITY_UNRESOLVED": 4,
+        "INCOMPLETE_CATALOGUE_VARIANT": 1,
+        "COMPOSER_OUTSIDE_CATALOG": 2,
+        "UNCERTAIN_ROMAN_LABEL": 3,
+        "SCOPE_LABEL_REQUIRES_REVIEW": 2,
+        "OCR_NUMBER_UNCERTAIN": 1,
+        "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED": 3,
+        "UNRESOLVED_NUMBER_BOUNDARY": 1,
+        "UNCERTAIN_NUMERIC_TOKEN": 1,
+        "MULTIPLE_ITEM_NUMBERS": 1,
+        "INCOMPLETE_NUMBER_VARIANT": 1,
+        "CHECK_MULTIPLE_WORK_NUMBERS": 1,
+        "IDENTITY_CONFLICT_OR_INCOMPLETE": 1,
+        "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 2,
+        "COLLECTION_LABEL_REQUIRES_REVIEW": 1,
+        "MOVEMENT_NOT_IN_CATALOG": 1,
+        "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW": 1
+      },
+      "items": [
+        {
+          "candidate_id": "bdcd5d183ce21d494d36206d4ff4fdb1617cc7caadeb5f72211066063520e715",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "ARRANGEMENT_IDENTITY_UNRESOLVED",
+            "INCOMPLETE_CATALOGUE_VARIANT"
+          ]
+        },
+        {
+          "candidate_id": "7fc68d4d83c97a13500b6fc9025a19cdc991826b433295c65c548d14599723da",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "UNCERTAIN_ROMAN_LABEL",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "SCOPE_LABEL_REQUIRES_REVIEW"
+          ]
+        },
+        {
+          "candidate_id": "aa70fa031aee4dca596bce154de7e0d0227dd0a6d98f1c9adcebfdc588a6432d",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "UNCERTAIN_ROMAN_LABEL",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "SCOPE_LABEL_REQUIRES_REVIEW",
+            "OCR_NUMBER_UNCERTAIN"
+          ]
+        },
+        {
+          "candidate_id": "1a282d55846df3b8d1571edcbedefe36298263dc16e30945d0b47e020ac4a56d",
+          "track_id": "brahms-intermezzo-op118-no2",
+          "outcome": "AUTO_CONFIRMED",
+          "reasons": [
+            "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+          ]
+        },
+        {
+          "candidate_id": "76bd2d510fd648ede00055e48e2858e114d4190515685125066c50b107d06fea",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "UNRESOLVED_NUMBER_BOUNDARY",
+            "UNCERTAIN_NUMERIC_TOKEN",
+            "MULTIPLE_ITEM_NUMBERS",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "ARRANGEMENT_IDENTITY_UNRESOLVED",
+            "INCOMPLETE_NUMBER_VARIANT",
+            "CHECK_MULTIPLE_WORK_NUMBERS"
+          ]
+        },
+        {
+          "candidate_id": "88bfa24854070351ae47631ee02c654fa6678c263f01960c13509f99c7527604",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "IDENTITY_CONFLICT_OR_INCOMPLETE",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "candidate_id": "37b8fdb9f1950cf3994934d75981b8e8f91012cfc9519c5f7d5e1975721b8b0b",
+          "track_id": "chopin-ballade-op52-no4",
+          "outcome": "DUPLICATE_EFFECTIVE_CONFIRMATION",
+          "reasons": [
+            "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+          ]
+        },
+        {
+          "candidate_id": "55234b85f2bd0ff1ca5c0cdfe3b5577e9151bcf1a4fff563adfab8184eab2e4c",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "UNCERTAIN_ROMAN_LABEL",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK",
+            "COLLECTION_LABEL_REQUIRES_REVIEW"
+          ]
+        },
+        {
+          "candidate_id": "66fc6fc228951fd4b943c7c3161dce4d1ba832ac41004284a6be71258c267284",
+          "track_id": "liszt-liebestraum-s541-no3",
+          "outcome": "DUPLICATE_EFFECTIVE_CONFIRMATION",
+          "reasons": [
+            "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+          ]
+        },
+        {
+          "candidate_id": "e780d7f74c678cf50360fe7078b6ea58628149800ac2943d5fb7b4b1aa04249c",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "MOVEMENT_NOT_IN_CATALOG",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+          ]
+        },
+        {
+          "candidate_id": "2b213c1f20afefa5d647ee30de787d02cf845e5824d31a140a42c4c20c457039",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "ARRANGEMENT_IDENTITY_UNRESOLVED",
+            "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW"
+          ]
+        },
+        {
+          "candidate_id": "75cdfe65737fe9af9b910c130a3e7a739f46cd604e005b39cf517ae47d2da597",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "candidate_id": "cedeff3424e5411e462a1f7b651a3a8494e99692f70a4e61908db0ded2775eba",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "ARRANGEMENT_IDENTITY_UNRESOLVED"
+          ]
+        },
+        {
+          "candidate_id": "15f97cc9bba6bd80bc57da90ebca62a14b314cb65648626b3dd2577d74bce8a4",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "candidate_id": "8f5801d319c2c40874eb32c8bf0280bef03d368ad91d9e1a9460be7efb44fbe2",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ],
+      "images_selected": 1,
+      "images_completed": 1,
+      "deferred_images": 0,
+      "limit_reached": true
+    }
+  },
+  "saveCanary": {
+    "recordedAt": "2026-10-22T05:34:06.664Z",
+    "requests": {
+      "GET": 9,
+      "POST": 17,
+      "paths": {
+        "GET ": 2,
+        "GET rpc/queue_automatic_programs": 1,
+        "GET concerts": 1,
+        "GET concert_program_images": 1,
+        "GET concert_image_ocr_attempts": 1,
+        "GET concert_image_ocr_results": 1,
+        "POST rpc/save_concert_program_analysis_v3": 1,
+        "GET rpc/program_auto_input_hash": 1,
+        "GET concert_program_candidates": 1,
+        "POST rpc/decide_automatic_program_candidate": 15,
+        "POST rpc/finish_automatic_program": 1
+      }
+    },
+    "report": {
+      "confirmed": 1,
+      "duplicate_maintained": 2,
+      "unlinked": 12,
+      "retry_pending": 0,
+      "failed": 0,
+      "unchanged": 0,
+      "reasons": {
+        "CATALOG_TARGET_MISSING": 6,
+        "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED": 12,
+        "ARRANGEMENT_IDENTITY_UNRESOLVED": 4,
+        "INCOMPLETE_CATALOGUE_VARIANT": 1,
+        "COMPOSER_OUTSIDE_CATALOG": 2,
+        "UNCERTAIN_ROMAN_LABEL": 3,
+        "SCOPE_LABEL_REQUIRES_REVIEW": 2,
+        "OCR_NUMBER_UNCERTAIN": 1,
+        "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED": 3,
+        "UNRESOLVED_NUMBER_BOUNDARY": 1,
+        "UNCERTAIN_NUMERIC_TOKEN": 1,
+        "MULTIPLE_ITEM_NUMBERS": 1,
+        "INCOMPLETE_NUMBER_VARIANT": 1,
+        "CHECK_MULTIPLE_WORK_NUMBERS": 1,
+        "IDENTITY_CONFLICT_OR_INCOMPLETE": 1,
+        "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK": 2,
+        "COLLECTION_LABEL_REQUIRES_REVIEW": 1,
+        "MOVEMENT_NOT_IN_CATALOG": 1,
+        "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW": 1
+      },
+      "items": [
+        {
+          "candidate_id": "9304c13a-1136-4e34-aa10-4fa0c246d968",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "ARRANGEMENT_IDENTITY_UNRESOLVED",
+            "INCOMPLETE_CATALOGUE_VARIANT"
+          ]
+        },
+        {
+          "candidate_id": "064612c3-dc8e-4dcc-8242-f4de7606be00",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "UNCERTAIN_ROMAN_LABEL",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "SCOPE_LABEL_REQUIRES_REVIEW"
+          ]
+        },
+        {
+          "candidate_id": "ae24793b-f318-4497-84c4-812836418699",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "COMPOSER_OUTSIDE_CATALOG",
+            "UNCERTAIN_ROMAN_LABEL",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "SCOPE_LABEL_REQUIRES_REVIEW",
+            "OCR_NUMBER_UNCERTAIN"
+          ]
+        },
+        {
+          "candidate_id": "f18b9c00-4369-4f77-825b-d9bbba1cb8a2",
+          "track_id": "brahms-intermezzo-op118-no2",
+          "outcome": "AUTO_CONFIRMED",
+          "reasons": [
+            "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+          ]
+        },
+        {
+          "candidate_id": "1db60245-08c2-40da-8265-26e9e1d5a180",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "UNRESOLVED_NUMBER_BOUNDARY",
+            "UNCERTAIN_NUMERIC_TOKEN",
+            "MULTIPLE_ITEM_NUMBERS",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "ARRANGEMENT_IDENTITY_UNRESOLVED",
+            "INCOMPLETE_NUMBER_VARIANT",
+            "CHECK_MULTIPLE_WORK_NUMBERS"
+          ]
+        },
+        {
+          "candidate_id": "dc1b57d7-8f21-4a05-992f-6c1e7183a584",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "IDENTITY_CONFLICT_OR_INCOMPLETE",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "candidate_id": "b252c279-0bb4-4a38-b268-47a83fc9c402",
+          "track_id": "chopin-ballade-op52-no4",
+          "outcome": "DUPLICATE_EFFECTIVE_CONFIRMATION",
+          "reasons": [
+            "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+          ]
+        },
+        {
+          "candidate_id": "8139f687-8e36-4905-8307-9b2ab24934cc",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "UNCERTAIN_ROMAN_LABEL",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK",
+            "COLLECTION_LABEL_REQUIRES_REVIEW"
+          ]
+        },
+        {
+          "candidate_id": "3173c56c-d096-4bb3-91c8-434272bae99f",
+          "track_id": "liszt-liebestraum-s541-no3",
+          "outcome": "DUPLICATE_EFFECTIVE_CONFIRMATION",
+          "reasons": [
+            "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+          ]
+        },
+        {
+          "candidate_id": "e660f6d4-c4eb-4f65-b817-1f5542dd357b",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "MOVEMENT_NOT_IN_CATALOG",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+          ]
+        },
+        {
+          "candidate_id": "a4a36a79-38d4-45a6-9f24-81cff5558b45",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "ARRANGEMENT_IDENTITY_UNRESOLVED",
+            "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW"
+          ]
+        },
+        {
+          "candidate_id": "9d454a21-3459-4ad4-a939-7a0ea0040a02",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "candidate_id": "563425fa-f39f-4597-9eb0-99efc3684da9",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+            "ARRANGEMENT_IDENTITY_UNRESOLVED"
+          ]
+        },
+        {
+          "candidate_id": "c160f73b-d99d-4cfb-bc35-154b0e78ed9a",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        },
+        {
+          "candidate_id": "9b5f3ebd-e062-41cd-a040-5ca2d75d01f0",
+          "track_id": null,
+          "outcome": "AUTO_UNLINKED",
+          "reasons": [
+            "CATALOG_TARGET_MISSING",
+            "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+          ]
+        }
+      ],
+      "images_selected": 1,
+      "images_completed": 1,
+      "deferred_images": 0,
+      "limit_reached": true
+    },
+    "decisions": [
+      {
+        "candidateId": "9304c13a-1136-4e34-aa10-4fa0c246d968",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "ARRANGEMENT_IDENTITY_UNRESOLVED",
+          "INCOMPLETE_CATALOGUE_VARIANT"
+        ]
+      },
+      {
+        "candidateId": "064612c3-dc8e-4dcc-8242-f4de7606be00",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "SCOPE_LABEL_REQUIRES_REVIEW"
+        ]
+      },
+      {
+        "candidateId": "ae24793b-f318-4497-84c4-812836418699",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "OCR_NUMBER_UNCERTAIN"
+        ]
+      },
+      {
+        "candidateId": "f18b9c00-4369-4f77-825b-d9bbba1cb8a2",
+        "trackId": "brahms-intermezzo-op118-no2",
+        "workId": "brahms-intermezzo-op118-no2",
+        "statusRequested": "CONFIRMED",
+        "outcome": "AUTO_CONFIRMED",
+        "reasons": [
+          "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+        ]
+      },
+      {
+        "candidateId": "1db60245-08c2-40da-8265-26e9e1d5a180",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "UNRESOLVED_NUMBER_BOUNDARY",
+          "UNCERTAIN_NUMERIC_TOKEN",
+          "MULTIPLE_ITEM_NUMBERS",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "ARRANGEMENT_IDENTITY_UNRESOLVED",
+          "INCOMPLETE_NUMBER_VARIANT",
+          "CHECK_MULTIPLE_WORK_NUMBERS"
+        ]
+      },
+      {
+        "candidateId": "dc1b57d7-8f21-4a05-992f-6c1e7183a584",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "IDENTITY_CONFLICT_OR_INCOMPLETE",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+        ]
+      },
+      {
+        "candidateId": "b252c279-0bb4-4a38-b268-47a83fc9c402",
+        "trackId": "chopin-ballade-op52-no4",
+        "workId": "chopin-ballade-op52-no4",
+        "statusRequested": "CONFIRMED",
+        "outcome": "DUPLICATE_EFFECTIVE_CONFIRMATION",
+        "reasons": [
+          "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+        ]
+      },
+      {
+        "candidateId": "8139f687-8e36-4905-8307-9b2ab24934cc",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "UNCERTAIN_ROMAN_LABEL",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK",
+          "COLLECTION_LABEL_REQUIRES_REVIEW"
+        ]
+      },
+      {
+        "candidateId": "3173c56c-d096-4bb3-91c8-434272bae99f",
+        "trackId": "liszt-liebestraum-s541-no3",
+        "workId": "liszt-liebestraum-s541-no3",
+        "statusRequested": "CONFIRMED",
+        "outcome": "DUPLICATE_EFFECTIVE_CONFIRMATION",
+        "reasons": [
+          "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+        ]
+      },
+      {
+        "candidateId": "e660f6d4-c4eb-4f65-b817-1f5542dd357b",
+        "trackId": null,
+        "workId": "schumann-kinderszenen-op15-no7",
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "MOVEMENT_NOT_IN_CATALOG",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+        ]
+      },
+      {
+        "candidateId": "a4a36a79-38d4-45a6-9f24-81cff5558b45",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "ARRANGEMENT_IDENTITY_UNRESOLVED",
+          "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW"
+        ]
+      },
+      {
+        "candidateId": "9d454a21-3459-4ad4-a939-7a0ea0040a02",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+        ]
+      },
+      {
+        "candidateId": "563425fa-f39f-4597-9eb0-99efc3684da9",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "ARRANGEMENT_IDENTITY_UNRESOLVED"
+        ]
+      },
+      {
+        "candidateId": "c160f73b-d99d-4cfb-bc35-154b0e78ed9a",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+        ]
+      },
+      {
+        "candidateId": "9b5f3ebd-e062-41cd-a040-5ca2d75d01f0",
+        "trackId": null,
+        "workId": null,
+        "statusRequested": "REJECTED",
+        "outcome": "AUTO_UNLINKED",
+        "reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+        ]
+      }
+    ]
+  },
+  "repeat": {
+    "recordedAt": "2026-10-22T05:34:35.914Z",
+    "requests": {
+      "GET": 3,
+      "POST": 0,
+      "paths": {
+        "GET ": 2,
+        "GET rpc/queue_automatic_programs": 1
+      }
+    },
+    "report": {
+      "confirmed": 0,
+      "duplicate_maintained": 0,
+      "unlinked": 0,
+      "retry_pending": 0,
+      "failed": 0,
+      "unchanged": 0,
+      "reasons": {},
+      "items": [],
+      "images_selected": 0,
+      "images_completed": 0,
+      "deferred_images": 0,
+      "limit_reached": false
+    }
+  },
+  "before": {
+    "counts": {
+      "analyses": 3,
+      "candidates": 30,
+      "reviews": 2
+    },
+    "analyses": [
+      {
+        "id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "image_id": "3aa5d416-ad3d-4e02-ad81-85bdea47ce24",
+        "is_current": false,
+        "matcher_version": "stored-program-3",
+        "catalog_hash": "71e7924a3eb85311aea4ba79f21c7727a03af966b60682e901d337d776225314"
+      },
+      {
+        "id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "image_id": "3aa5d416-ad3d-4e02-ad81-85bdea47ce24",
+        "is_current": true,
+        "matcher_version": "stored-program-3",
+        "catalog_hash": "a239a933e23c967ab8d58ba482b045be17a2f9b26227638d3d17506b59e7f0a8"
+      },
+      {
+        "id": "5409def4-aebe-4454-9a13-081320a6bbd5",
+        "image_id": "3aa5d416-ad3d-4e02-ad81-85bdea47ce24",
+        "is_current": true,
+        "matcher_version": "stored-program-2",
+        "catalog_hash": "f76ab9d16a30a28f1458be850bea3305c0f394b894389a53517e49ded90ac974"
+      }
+    ],
+    "candidates": [
+      {
+        "id": "172313c2-5ed5-4d56-8ff8-775f304fc465",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "CONFLICT",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "IDENTITY_CONFLICT_OR_INCOMPLETE",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "1ea155ac-4dd0-4167-af85-a366f5d56bb4",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "22949f59-855a-4755-a136-2091f0783f3b",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": "liszt-liebestraum-s541-no3",
+        "work_id": "liszt-liebestraum-s541-no3",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "CONFIRMED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "38aedf8d-77c0-4310-b845-70fd4773f459",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "3ed6029f-36cf-4172-9565-f1f5a1521e07",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "41be1924-61dd-4108-a2a0-d1d15d1aedda",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "451a0db5-137b-4b81-8e83-733e8373fe92",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "47de9d71-3fcb-4fce-9d52-a557d5584cce",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": "chopin-ballade-op52-no4",
+        "work_id": "chopin-ballade-op52-no4",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "CONFIRMED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "KEY_CORROBORATES_IDENTITY",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "6598e70e-94df-44c6-b043-ad7358048c0b",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "66286d90-6a70-4b47-9f05-c311870030b9",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE",
+          "OCR_NUMBER_UNCERTAIN"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "7867e734-69e5-43d0-b4c8-89379452cd1b",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": "liszt-liebestraum-s541-no3",
+        "work_id": "liszt-liebestraum-s541-no3",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "7e571340-1dad-4a8a-9c3c-b54e4be7a20f",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNRESOLVED_NUMBER_BOUNDARY",
+          "UNCERTAIN_NUMERIC_TOKEN",
+          "MULTIPLE_ITEM_NUMBERS",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_NUMBER_VARIANT",
+          "CHECK_MULTIPLE_WORK_NUMBERS"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "865de6ab-66fa-4d14-97bb-a651292d4701",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": "chopin-ballade-op52-no4",
+        "work_id": "chopin-ballade-op52-no4",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "KEY_CORROBORATES_IDENTITY",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "88b8a1b5-a1c1-40c7-8bab-dcfcb13b69f0",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_CATALOGUE_VARIANT"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "9f4a481b-ea84-4a8f-ac9f-6b8b26b435a7",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "af6e1086-9f3f-4e61-9bdf-4e10e428b5a6",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": "brahms-intermezzo-op118-no2",
+        "work_id": "brahms-intermezzo-op118-no2",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "KEY_CORROBORATES_IDENTITY",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "b3403b56-4a77-4007-a62a-34dcdc2f77ea",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "b8b9fb02-ce25-4787-96e9-586e4aa6a8f1",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "bf26a46a-5b78-4146-9294-b2e11d60064d",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "UNRESOLVED_NUMBER_BOUNDARY",
+          "UNCERTAIN_NUMERIC_TOKEN",
+          "MULTIPLE_ITEM_NUMBERS",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_NUMBER_VARIANT",
+          "CHECK_MULTIPLE_WORK_NUMBERS"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "c768fff3-a50e-478f-b848-407d2289a112",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "d633f35d-2335-4321-a2a6-f016a47a9110",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "db76e4c1-087c-4f40-9d30-6351420e3f12",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE",
+          "OCR_NUMBER_UNCERTAIN"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "e04cb623-7e0a-4d60-83b5-59acd76682f8",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "COLLECTION_LABEL_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "e1080384-644c-4af8-91fd-175fe65d7800",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "COLLECTION_LABEL_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "e565a6ed-8ab8-4dba-a850-126860ac5332",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "eea829a4-5a78-4386-a8c0-d173a0dd54f1",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_CATALOGUE_VARIANT"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "f228e774-fd12-4cfc-a9e9-8ed85c7ac2ca",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "f528881b-3417-4d0b-9b3d-ca5102441c92",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "f9a1386f-086f-4cd6-8353-c4b863a9bb0a",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "fa43acde-6023-4904-9d33-83c15f8d5957",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REVIEW_REQUIRED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      }
+    ]
+  },
+  "after": {
+    "counts": {
+      "analyses": 4,
+      "candidates": 45,
+      "reviews": 17
+    },
+    "analyses": [
+      {
+        "id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "image_id": "3aa5d416-ad3d-4e02-ad81-85bdea47ce24",
+        "is_current": false,
+        "matcher_version": "stored-program-3",
+        "catalog_hash": "71e7924a3eb85311aea4ba79f21c7727a03af966b60682e901d337d776225314"
+      },
+      {
+        "id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "image_id": "3aa5d416-ad3d-4e02-ad81-85bdea47ce24",
+        "is_current": false,
+        "matcher_version": "stored-program-3",
+        "catalog_hash": "a239a933e23c967ab8d58ba482b045be17a2f9b26227638d3d17506b59e7f0a8"
+      },
+      {
+        "id": "5409def4-aebe-4454-9a13-081320a6bbd5",
+        "image_id": "3aa5d416-ad3d-4e02-ad81-85bdea47ce24",
+        "is_current": true,
+        "matcher_version": "stored-program-2",
+        "catalog_hash": "f76ab9d16a30a28f1458be850bea3305c0f394b894389a53517e49ded90ac974"
+      },
+      {
+        "id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "image_id": "3aa5d416-ad3d-4e02-ad81-85bdea47ce24",
+        "is_current": true,
+        "matcher_version": "stored-program-3",
+        "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6"
+      }
+    ],
+    "candidates": [
+      {
+        "id": "064612c3-dc8e-4dcc-8242-f4de7606be00",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "SCOPE_LABEL_REQUIRES_REVIEW"
+        ]
+      },
+      {
+        "id": "172313c2-5ed5-4d56-8ff8-775f304fc465",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "CONFLICT",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "IDENTITY_CONFLICT_OR_INCOMPLETE",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "1db60245-08c2-40da-8265-26e9e1d5a180",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "UNRESOLVED_NUMBER_BOUNDARY",
+          "UNCERTAIN_NUMERIC_TOKEN",
+          "MULTIPLE_ITEM_NUMBERS",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_NUMBER_VARIANT",
+          "CHECK_MULTIPLE_WORK_NUMBERS"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "UNRESOLVED_NUMBER_BOUNDARY",
+          "UNCERTAIN_NUMERIC_TOKEN",
+          "MULTIPLE_ITEM_NUMBERS",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "ARRANGEMENT_IDENTITY_UNRESOLVED",
+          "INCOMPLETE_NUMBER_VARIANT",
+          "CHECK_MULTIPLE_WORK_NUMBERS"
+        ]
+      },
+      {
+        "id": "1ea155ac-4dd0-4167-af85-a366f5d56bb4",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "22949f59-855a-4755-a136-2091f0783f3b",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": "liszt-liebestraum-s541-no3",
+        "work_id": "liszt-liebestraum-s541-no3",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "CONFIRMED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "3173c56c-d096-4bb3-91c8-434272bae99f",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": "liszt-liebestraum-s541-no3",
+        "work_id": "liszt-liebestraum-s541-no3",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "DUPLICATE_EFFECTIVE_CONFIRMATION",
+        "auto_reasons": [
+          "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+        ]
+      },
+      {
+        "id": "38aedf8d-77c0-4310-b845-70fd4773f459",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "3ed6029f-36cf-4172-9565-f1f5a1521e07",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "41be1924-61dd-4108-a2a0-d1d15d1aedda",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "451a0db5-137b-4b81-8e83-733e8373fe92",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "47de9d71-3fcb-4fce-9d52-a557d5584cce",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": "chopin-ballade-op52-no4",
+        "work_id": "chopin-ballade-op52-no4",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "CONFIRMED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "KEY_CORROBORATES_IDENTITY",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": null,
+        "auto_reasons": null
+      },
+      {
+        "id": "563425fa-f39f-4597-9eb0-99efc3684da9",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "ARRANGEMENT_IDENTITY_UNRESOLVED"
+        ]
+      },
+      {
+        "id": "6598e70e-94df-44c6-b043-ad7358048c0b",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "66286d90-6a70-4b47-9f05-c311870030b9",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE",
+          "OCR_NUMBER_UNCERTAIN"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "7867e734-69e5-43d0-b4c8-89379452cd1b",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": "liszt-liebestraum-s541-no3",
+        "work_id": "liszt-liebestraum-s541-no3",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "7e571340-1dad-4a8a-9c3c-b54e4be7a20f",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNRESOLVED_NUMBER_BOUNDARY",
+          "UNCERTAIN_NUMERIC_TOKEN",
+          "MULTIPLE_ITEM_NUMBERS",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_NUMBER_VARIANT",
+          "CHECK_MULTIPLE_WORK_NUMBERS"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "8139f687-8e36-4905-8307-9b2ab24934cc",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "COLLECTION_LABEL_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "UNCERTAIN_ROMAN_LABEL",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK",
+          "COLLECTION_LABEL_REQUIRES_REVIEW"
+        ]
+      },
+      {
+        "id": "865de6ab-66fa-4d14-97bb-a651292d4701",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": "chopin-ballade-op52-no4",
+        "work_id": "chopin-ballade-op52-no4",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "KEY_CORROBORATES_IDENTITY",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "88b8a1b5-a1c1-40c7-8bab-dcfcb13b69f0",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_CATALOGUE_VARIANT"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "9304c13a-1136-4e34-aa10-4fa0c246d968",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_CATALOGUE_VARIANT"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "ARRANGEMENT_IDENTITY_UNRESOLVED",
+          "INCOMPLETE_CATALOGUE_VARIANT"
+        ]
+      },
+      {
+        "id": "9b5f3ebd-e062-41cd-a040-5ca2d75d01f0",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+        ]
+      },
+      {
+        "id": "9d454a21-3459-4ad4-a939-7a0ea0040a02",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+        ]
+      },
+      {
+        "id": "9f4a481b-ea84-4a8f-ac9f-6b8b26b435a7",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "a4a36a79-38d4-45a6-9f24-81cff5558b45",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "ARRANGEMENT_IDENTITY_UNRESOLVED",
+          "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW"
+        ]
+      },
+      {
+        "id": "ae24793b-f318-4497-84c4-812836418699",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE",
+          "OCR_NUMBER_UNCERTAIN"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "OCR_NUMBER_UNCERTAIN"
+        ]
+      },
+      {
+        "id": "af6e1086-9f3f-4e61-9bdf-4e10e428b5a6",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": "brahms-intermezzo-op118-no2",
+        "work_id": "brahms-intermezzo-op118-no2",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "KEY_CORROBORATES_IDENTITY",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "b252c279-0bb4-4a38-b268-47a83fc9c402",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": "chopin-ballade-op52-no4",
+        "work_id": "chopin-ballade-op52-no4",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "KEY_CORROBORATES_IDENTITY",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "DUPLICATE_EFFECTIVE_CONFIRMATION",
+        "auto_reasons": [
+          "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+        ]
+      },
+      {
+        "id": "b3403b56-4a77-4007-a62a-34dcdc2f77ea",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "b8b9fb02-ce25-4787-96e9-586e4aa6a8f1",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "bf26a46a-5b78-4146-9294-b2e11d60064d",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "UNRESOLVED_NUMBER_BOUNDARY",
+          "UNCERTAIN_NUMERIC_TOKEN",
+          "MULTIPLE_ITEM_NUMBERS",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_NUMBER_VARIANT",
+          "CHECK_MULTIPLE_WORK_NUMBERS"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "c160f73b-d99d-4cfb-bc35-154b0e78ed9a",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "CATALOG_TARGET_MISSING",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+        ]
+      },
+      {
+        "id": "c768fff3-a50e-478f-b848-407d2289a112",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "d633f35d-2335-4321-a2a6-f016a47a9110",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "db76e4c1-087c-4f40-9d30-6351420e3f12",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE",
+          "OCR_NUMBER_UNCERTAIN"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "dc1b57d7-8f21-4a05-992f-6c1e7183a584",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "CONFLICT",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "IDENTITY_CONFLICT_OR_INCOMPLETE",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "IDENTITY_CONFLICT_OR_INCOMPLETE",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED"
+        ]
+      },
+      {
+        "id": "e04cb623-7e0a-4d60-83b5-59acd76682f8",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "COLLECTION_LABEL_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "e1080384-644c-4af8-91fd-175fe65d7800",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "COLLECTION_LABEL_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "e565a6ed-8ab8-4dba-a850-126860ac5332",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "BILINGUAL_LAYOUT_IDENTITY_REQUIRES_REVIEW"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "e660f6d4-c4eb-4f65-b817-1f5542dd357b",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": null,
+        "work_id": "schumann-kinderszenen-op15-no7",
+        "relation": "AMBIGUOUS",
+        "outcome": "CONFLICT",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "MOVEMENT_NOT_IN_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "MOVEMENT_NOT_IN_CATALOG",
+          "MOVEMENT_OR_ARRANGEMENT_UNRESOLVED",
+          "MOVEMENT_CANNOT_EXPAND_TO_WHOLE_WORK"
+        ]
+      },
+      {
+        "id": "eea829a4-5a78-4386-a8c0-d173a0dd54f1",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "INCOMPLETE_CATALOGUE_VARIANT"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "f18b9c00-4369-4f77-825b-d9bbba1cb8a2",
+        "analysis_id": "d1a6a372-3029-40ce-8299-eb566ad3d8ff",
+        "track_id": "brahms-intermezzo-op118-no2",
+        "work_id": "brahms-intermezzo-op118-no2",
+        "relation": "EXACT",
+        "outcome": "MATCHED",
+        "review_status": "CONFIRMED",
+        "review_reasons": [
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY",
+          "TITLE_OR_REGISTERED_ALIAS_AGREES",
+          "KEY_CORROBORATES_IDENTITY",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION"
+        ],
+        "auto_outcome": "AUTO_CONFIRMED",
+        "auto_reasons": [
+          "SOURCE_AND_UNIQUE_IDENTITY_VERIFIED"
+        ]
+      },
+      {
+        "id": "f228e774-fd12-4cfc-a9e9-8ed85c7ac2ca",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "f528881b-3417-4d0b-9b3d-ca5102441c92",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "UNREGISTERED",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "WORK_NOT_REGISTERED",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "f9a1386f-086f-4cd6-8353-c4b863a9bb0a",
+        "analysis_id": "18c90a6c-148e-4665-bb1b-174621c4cb22",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      },
+      {
+        "id": "fa43acde-6023-4904-9d33-83c15f8d5957",
+        "analysis_id": "0fb27de5-c697-4e55-b03b-c2464d1d93c2",
+        "track_id": null,
+        "work_id": null,
+        "relation": "AMBIGUOUS",
+        "outcome": "AMBIGUOUS",
+        "review_status": "REJECTED",
+        "review_reasons": [
+          "COMPOSER_OUTSIDE_CATALOG",
+          "UNCERTAIN_ROMAN_LABEL",
+          "MULTIPLE_DATES_OR_SERIES_SCOPE",
+          "UNCERTAIN_PROGRAM_SECTION",
+          "SCOPE_LABEL_REQUIRES_REVIEW",
+          "LOGICAL_SEPARATE_INSUFFICIENT_GROUPING_EVIDENCE"
+        ],
+        "auto_outcome": "AUTO_UNLINKED",
+        "auto_reasons": [
+          "SUPERSEDED_BY_CURRENT_ANALYSIS"
+        ]
+      }
+    ]
+  },
+  "verification": {
+    "taskId": "CA-AUTO-20261022-001",
+    "recordedAt": "2026-10-22T05:36:27.713Z",
+    "codeRef": "ad5ab3cf5984146c4b2dc94428a146944af23fab",
+    "manualReceiptsPreserved": true,
+    "manualReceipts": [
+      {
+        "id": "38fad017-b064-4731-97bb-9ae2aa843681",
+        "trackId": "liszt-liebestraum-s541-no3",
+        "receiptSha256": "b55b02b1c0a74f383a0e494b6c1e6f0fde0840fcedf06fcfd9e9b64ea3f5c10a"
+      },
+      {
+        "id": "ffd2bc38-d7c8-4abf-abcf-a8b5ef7155d7",
+        "trackId": "chopin-ballade-op52-no4",
+        "receiptSha256": "d3cfc2ee9e455435671844199ca8185b03510038b9f07eb410a95ff2aa153065"
+      }
+    ],
+    "before": {
+      "analyses": 3,
+      "candidates": 30,
+      "reviews": 2
+    },
+    "after": {
+      "analyses": 4,
+      "candidates": 45,
+      "reviews": 17
+    },
+    "newReviews": [
+      {
+        "id": "0156c285-166d-400a-856c-f7fe48a65e05",
+        "candidateId": "9d454a21-3459-4ad4-a939-7a0ea0040a02",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "1ff53ab1-b202-4dcc-8b4a-38574ee4ed4f",
+        "candidateId": "1db60245-08c2-40da-8265-26e9e1d5a180",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "2f860815-232c-497b-8074-d56f68ef0fa7",
+        "candidateId": "9b5f3ebd-e062-41cd-a040-5ca2d75d01f0",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "4a0cfe4a-88a2-49df-b58f-ef90067b5eaf",
+        "candidateId": "064612c3-dc8e-4dcc-8242-f4de7606be00",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "69c99853-8a17-4e02-8f07-d1f42b9aea9a",
+        "candidateId": "8139f687-8e36-4905-8307-9b2ab24934cc",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "8201b917-bf0d-48e5-a139-6f024937f147",
+        "candidateId": "ae24793b-f318-4497-84c4-812836418699",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "8c6bc9e4-1141-4789-ad68-e92c067aa18d",
+        "candidateId": "dc1b57d7-8f21-4a05-992f-6c1e7183a584",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "90ef5511-6241-4343-bb75-6bbc58e944af",
+        "candidateId": "f18b9c00-4369-4f77-825b-d9bbba1cb8a2",
+        "trackId": "brahms-intermezzo-op118-no2",
+        "status": "CONFIRMED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": "AUTOMATIC_PROGRAM_RULE",
+        "workIdentityHash": "2306b019387b8e4494c98b19961acdf094a1eba294b3ff291ccfe20bf1540b2d"
+      },
+      {
+        "id": "959b9aec-9c9b-468c-ae7b-0df0e042d6df",
+        "candidateId": "c160f73b-d99d-4cfb-bc35-154b0e78ed9a",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "a0507644-4ecf-4773-8cb5-f5b52f5f1edd",
+        "candidateId": "e660f6d4-c4eb-4f65-b817-1f5542dd357b",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "aa07d7b3-cd5c-4ce2-832d-84ab5aaf0bf6",
+        "candidateId": "563425fa-f39f-4597-9eb0-99efc3684da9",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "c7450b5d-c39c-471d-aaf9-71e0e72c9fb9",
+        "candidateId": "9304c13a-1136-4e34-aa10-4fa0c246d968",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "c970de3a-d609-4af6-ba17-bce708637afd",
+        "candidateId": "3173c56c-d096-4bb3-91c8-434272bae99f",
+        "trackId": "liszt-liebestraum-s541-no3",
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "e96c3960-c3a4-40f3-bf49-68aa7f92394a",
+        "candidateId": "a4a36a79-38d4-45a6-9f24-81cff5558b45",
+        "trackId": null,
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      },
+      {
+        "id": "f1332d22-b352-429a-b82a-aea345865a5b",
+        "candidateId": "b252c279-0bb4-4a38-b268-47a83fc9c402",
+        "trackId": "chopin-ballade-op52-no4",
+        "status": "REJECTED",
+        "reviewerKind": "AUTOMATIC_PROGRAM_RULE",
+        "identitySource": null,
+        "workIdentityHash": null
+      }
+    ],
+    "newConfirmedCount": 1,
+    "newRejectedCount": 14,
+    "duplicateNewConfirmedCount": 0,
+    "dryRunWrites": 0,
+    "saveRpcPosts": 17,
+    "repeatWrites": 0,
+    "search": {
+      "query": {
+        "region": "서울",
+        "from": "2026-10-22",
+        "to": "2026-10-27"
+      },
+      "publicGetRequests": 4,
+      "status": {
+        "http": 200,
+        "backend": "supabase",
+        "analysisVersion": "stored-program-3"
+      },
+      "searches": [
+        {
+          "trackId": "brahms-intermezzo-op118-no2",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "kopisIds": [
+            "PF295548"
+          ],
+          "webDto": {
+            "programTrackIds": [
+              "brahms-intermezzo-op118-no2"
+            ],
+            "programWorkIds": [
+              "brahms-intermezzo-op118-no2"
+            ],
+            "targetTrackId": "brahms-intermezzo-op118-no2",
+            "relation": "EXACT",
+            "reviewStatus": "CONFIRMED",
+            "programStatus": "verified"
+          },
+          "privateFieldsAbsent": true
+        },
+        {
+          "trackId": "chopin-ballade-op52-no4",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "kopisIds": [
+            "PF295548"
+          ],
+          "webDto": {
+            "programTrackIds": [
+              "chopin-ballade-op52-no4"
+            ],
+            "programWorkIds": [
+              "chopin-ballade-op52-no4"
+            ],
+            "targetTrackId": "chopin-ballade-op52-no4",
+            "relation": "EXACT",
+            "reviewStatus": "CONFIRMED",
+            "programStatus": "verified"
+          },
+          "privateFieldsAbsent": true
+        },
+        {
+          "trackId": "liszt-liebestraum-s541-no3",
+          "http": 200,
+          "backend": "supabase",
+          "analysisVersion": "stored-program-3",
+          "kopisIds": [
+            "PF295548"
+          ],
+          "webDto": {
+            "programTrackIds": [
+              "liszt-liebestraum-s541-no3"
+            ],
+            "programWorkIds": [
+              "liszt-liebestraum-s541-no3"
+            ],
+            "targetTrackId": "liszt-liebestraum-s541-no3",
+            "relation": "EXACT",
+            "reviewStatus": "CONFIRMED",
+            "programStatus": "verified"
+          },
+          "privateFieldsAbsent": true
+        }
+      ]
+    },
+    "browserVisualVerified": false,
+    "liveUiInteractionVerified": false
+  },
+  "scheduler": {
+    "preflight": {
+      "recordedAt": "2026-10-22T05:38:55.520Z",
+      "status": "PASS",
+      "scope": "ACTUAL_SCHEDULE_DIRECTORY_PREFLIGHT_ONLY",
+      "schema": {
+        "cleanup_schema_ready": true,
+        "analysis_schema_ready": true,
+        "work_identity_schema_ready": true,
+        "automation_schema_ready": true,
+        "analysis_version_enabled": true,
+        "matcher_version": "stored-program-3",
+        "node": "22.18.0",
+        "python_file_checked": true,
+        "model_files_checked": true,
+        "python_dependencies_checked": false,
+        "kopis_authentication": "CHECKED_ON_FIRST_LIST_REQUEST"
+      },
+      "pythonDependenciesAndModelsProbe": true,
+      "requests": {
+        "GET": 13,
+        "POST": 0
+      },
+      "integratedBatchRun": false,
+      "kopisRequests": 0,
+      "imageDownloads": 0,
+      "ocrCalls": 0,
+      "effectiveWebProgramBatchSize": 1,
+      "explicitProgramBatchSize": false,
+      "daily": {
+        "collectLimit": 10,
+        "ocrLimit": 20,
+        "analysisLimit": 20,
+        "imageChecks": 40,
+        "maxSeconds": 1800
+      },
+      "automaticCandidateLimit": 100,
+      "automaticLimitOneVerified": false,
+      "schedulerChanged": false
+    },
+    "codeCoreFilesMatchFixedRef": 15,
+    "originalWorkspaceUnchanged": true,
+    "settingsChanged": false,
+    "periodicExpansionAllowed": false,
+    "automaticLimitOneVerified": false,
+    "nextRun": "2026-10-23 08:40 KST",
+    "lastTaskResult": 1,
+    "warning": "Existing daily registration remains enabled and code can process 20 images / 100 candidates; no expansion approval is implied by this canary"
+  },
+  "tests": {
+    "featureCode": "ad5ab3cf5984146c4b2dc94428a146944af23fab",
+    "full": {
+      "passed": 365,
+      "failed": 0,
+      "skipped": 0
+    },
+    "build": "PASS_WITH_EXISTING_CHUNK_WARNING",
+    "timing": "Same CA-AUTO task before administrator connection was supplied; feature code unchanged since verification",
+    "isolatedPgliteMigration": "PASS",
+    "actualProductionCanary": "PASS"
+  },
+  "original": {
+    "branch": "main",
+    "head": "1607ca201c3a559bc7f28aabe998ef062db02ef9",
+    "uncommittedFiles": 33,
+    "indexPreserved": true,
+    "filesPreserved": true,
+    "envEditedByAgent": false
+  },
+  "limits": {
+    "mainMerged": false,
+    "vercelDeployed": false,
+    "schedulerChanged": false,
+    "actualUiBrowserVerified": false,
+    "fullBatchRun": false,
+    "backfill": false,
+    "periodicExpansionApproved": false
+  },
+  "priorRecord": {
+    "status": "BLOCKED",
+    "reason": "Administrator connection unavailable at that time",
+    "commit": "a3b2f1f4e3b72decec1a6947375c30a47c6aec7e",
+    "resolved": true
+  }
+}

@@ -36,8 +36,8 @@ export const parseProgramArgs = (args) => {
   if(result.manifestPath&&(!['targets','analyze','snapshots','rematch'].includes(result.command)||result.kopisId))throw new Error('MANIFEST_SCOPE_CONFLICT')
   if(result.command==='snapshots'&&!result.manifestPath)throw new Error('OCR_MANIFEST_PATH_REQUIRED')
   if(result.version&&!['analyze','rematch','list','snapshots'].includes(result.command)||result.includeInactive&&result.command!=='list')throw new Error('READ_VERSION_FLAGS_ONLY')
-  if(['analyze','rematch'].includes(result.command)&&result.save&&(!result.manifestPath||result.version!=='stored-program-3'))throw new Error('V3_SAVE_REQUIRES_MANIFEST_AND_EXPLICIT_VERSION')
-  if(['analyze','rematch'].includes(result.command)&&result.version&&result.version!=='stored-program-3')throw new Error('WRITE_VERSION_NOT_IMPLEMENTED')
+  if(['analyze','rematch'].includes(result.command)&&result.save&&(!result.manifestPath||result.version!==MATCHER_VERSION))throw new Error('V4_SAVE_REQUIRES_MANIFEST_AND_EXPLICIT_VERSION')
+  if(['analyze','rematch'].includes(result.command)&&result.version&&result.version!==MATCHER_VERSION)throw new Error('WRITE_VERSION_NOT_IMPLEMENTED')
   if((result.gitRef||result.identityManifestPath)&&result.command!=='identity-backfill')throw new Error('IDENTITY_BACKFILL_FLAGS_ONLY')
   if(result.command==='identity-backfill'&&result.save&&!result.identityManifestPath)throw new Error('EXACT_IDENTITY_MANIFEST_REQUIRED')
   if (['confirm', 'reject'].includes(result.command)) {
@@ -51,11 +51,11 @@ const help = `Stored OCR analysis (no downloads or OCR execution):
 npm run program:analyze -- targets [--kopis-id PF296289]
 npm run program:analyze -- analyze --dry-run [--kopis-id PF296289]
 npm run program:analyze -- analyze --dry-run --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json
-npm run program:analyze -- analyze --save --version stored-program-3 --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json
+npm run program:analyze -- analyze --save --version ${MATCHER_VERSION} --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json
 npm run program:analyze -- config
 npm run program:analyze -- preflight
 npm run program:analyze -- rematch --dry-run [--kopis-id PF295548]
-npm run program:analyze -- rematch --save --version stored-program-3 --ocr-manifest <pinned-ocr-manifest>
+npm run program:analyze -- rematch --save --version ${MATCHER_VERSION} --ocr-manifest <pinned-ocr-manifest>
 npm run program:analyze -- identity-backfill --dry-run --kopis-id PF295548 --git-ref <full-reviewed-git-sha>
 npm run program:analyze -- identity-backfill --save --identity-manifest <reviewed-dry-run-json>
 npm run program:analyze -- snapshots --ocr-manifest docs/PROGRAM_ANALYSIS_INITIAL_CANARY.json [--version stored-program-3]
@@ -63,9 +63,10 @@ npm run program:analyze -- list [--kopis-id PF296289] [--version stored-program-
 npm run program:analyze -- show <candidate-uuid>
 npm run program:analyze -- confirm <candidate-uuid> --analysis-id <analysis-uuid-from-show> --note "Checked original source"
 npm run program:analyze -- reject <candidate-uuid> --analysis-id <analysis-uuid-from-show> --note "Reason"
-All automatic candidates are REVIEW_REQUIRED. Inspect show and original image before review.
-Reviewer is an unauthenticated local service-role operator, not a logged-in app user.
-Current extraction/grouping/matcher version: ${MATCHER_VERSION}. v3 saving requires the reviewed v3 SQL draft; dry-run uses GET only.`
+Analysis saving creates intermediate candidates. The daily pipeline automatically confirms or completes them unlinked.
+Use npm run program:auto -- --dry-run for observation; no operator approval is required.
+confirm/reject remain legacy diagnostic commands, not the normal operating procedure.
+Current extraction/grouping/matcher version: ${MATCHER_VERSION}. Saving awaits dedicated v4 RPCs and an explicitly enabled v4 policy; dry-run uses GET only.`
 
 export const runProgramCli = async (args, { store, print = console.log,env=process.env } = {}) => {
   const opts = parseProgramArgs(args)

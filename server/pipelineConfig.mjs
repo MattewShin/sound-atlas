@@ -1,4 +1,4 @@
-export const PIPELINE_DEFAULTS = Object.freeze({ cleanupLimit: 100, collectLimit: 10, ocrLimit: 3, analysisLimit: 10,
+export const PIPELINE_DEFAULTS = Object.freeze({ cleanupLimit: 100, collectLimit: 10, ocrLimit: 3, analysisLimit: 10, automaticImageLimit:3, automaticCandidateLimit:30,
   listPages: 4, dbPages: 20, imageChecks: 10, maxSeconds: 900, recheckHours: 24 })
 export const PIPELINE_PROFILES = Object.freeze({
   initial:{collectLimit:20,ocrLimit:20,analysisLimit:20,imageChecks:40,maxSeconds:1800},
@@ -6,14 +6,29 @@ export const PIPELINE_PROFILES = Object.freeze({
   'analysis-only':{analysisOnly:true,analysisLimit:40,maxSeconds:600},
 })
 export const pipelineError = code => Object.assign(new Error(code), { code })
-export const parsePipelineArgs = args => {
+export const PIPELINE_STAGE_DEFAULTS=Object.freeze({cleanup:true,collection:true,ocr:true,analysis:true})
+export const pipelineStageSettings=(settings={})=>{
+  if(Object.keys(settings).some(key=>!Object.hasOwn(PIPELINE_STAGE_DEFAULTS,key)))throw pipelineError('PIPELINE_STAGE_SETTING_INVALID')
+  return Object.fromEntries(Object.entries(PIPELINE_STAGE_DEFAULTS).map(([stage,fallback])=>{
+  const value=Object.hasOwn(settings,stage)?settings[stage]:fallback
+  if(typeof value!=='boolean')throw pipelineError('PIPELINE_STAGE_SETTING_INVALID')
+  return [stage,value]
+  }))
+}
+export const getPipelineStageSettings=(env=process.env)=>pipelineStageSettings(Object.fromEntries(Object.keys(PIPELINE_STAGE_DEFAULTS).map(stage=>{
+  const name=`PIPELINE_${stage.toUpperCase()}_ENABLED`,value=Object.hasOwn(env,name)?String(env[name]??'').trim():'true'
+  if(!['true','false'].includes(value))throw pipelineError(name+'_INVALID')
+  return [stage,value==='true']
+})))
+export const parsePipelineArgs = (args,env=process.env) => {
   const command = args[0] || 'help'
   if (!['run','plan','latest','help'].includes(command)) throw pipelineError('INVALID_COMMAND')
   let profile='custom'
   for(let i=1;i<args.length;i++){if(args[i]==='--profile')profile=args[++i];else if(args[i]!=='--analysis-only')i++}
   if(profile!=='custom'&&!PIPELINE_PROFILES[profile])throw pipelineError('INVALID_PROFILE')
-  const options = { ...PIPELINE_DEFAULTS,...PIPELINE_PROFILES[profile] }
+  const options = { ...PIPELINE_DEFAULTS,...PIPELINE_PROFILES[profile],stageSettings:getPipelineStageSettings(env) }
   const names = { 'cleanup-limit':'cleanupLimit','collect-limit':'collectLimit', 'ocr-limit':'ocrLimit', 'analysis-limit':'analysisLimit',
+    'automatic-image-limit':'automaticImageLimit','automatic-candidate-limit':'automaticCandidateLimit',
     'list-pages':'listPages', 'db-pages':'dbPages', 'image-checks':'imageChecks', 'max-seconds':'maxSeconds', 'recheck-hours':'recheckHours' }
   for (let i=1;i<args.length;i++) {
     if(args[i]==='--profile'){i++;continue}
@@ -28,6 +43,7 @@ export const parsePipelineArgs = args => {
   options.imageChecks=Math.max(options.imageChecks,options.ocrLimit)
   if(options.analysisOnly&&!options.ocrManifestPath)throw pipelineError('ANALYSIS_ONLY_MANIFEST_REQUIRED')
   if(options.ocrManifestPath&&!options.analysisOnly)throw pipelineError('MANIFEST_REQUIRES_ANALYSIS_ONLY')
+  if(options.analysisOnly&&!options.stageSettings.analysis)throw pipelineError('PIPELINE_ANALYSIS_DISABLED')
   return { command, options }
 }
 export const safeCode = error => /^[A-Z][A-Z0-9_]{0,99}$/.test(error?.code||'') ? error.code : 'BATCH_STEP_FAILED'

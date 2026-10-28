@@ -54,7 +54,7 @@ test('stored identity rematches after catalog expansion, preserves source and re
 })
 test('rematch retries reuse one record; reviewed and ended sources are skipped while other work continues',async()=>{
  const s=source(),reviewed={...source(),review_history:[{id:randomUUID()}]},ended={...source(),concert:{end_date:'2026-10-20'}},records=[]
- const store={preflightSave:async()=>{},manifestTargets:async()=>({targets:[{ocr:{id:s.analysis.ocr_result_id}}]}),rematchSources:async()=>[s,reviewed,ended],saveRematch:async(sourceId,c)=>{const row={id:randomUUID(),matching_catalog_hash:CATALOG_HASH};records.push(row);s.existing_rematches.push(row);return row.id}}
+ const store={preflightSave:async options=>assert.deepEqual(options,{rematch:true}),manifestTargets:async()=>({targets:[{ocr:{id:s.analysis.ocr_result_id}}]}),rematchSources:async()=>[s,reviewed,ended],saveRematch:async(sourceId,c)=>{assert.equal(c.generation_version,'stored-program-4');const row={id:randomUUID(),matching_catalog_hash:CATALOG_HASH,generation_version:c.generation_version};records.push(row);s.existing_rematches.push(row);return row.id}}
  const options={save:true,manifest:{targets:[s,reviewed,ended].map(c=>({ocr_result_id:c.analysis.ocr_result_id}))},now:()=>Date.parse('2026-10-21T00:00:00Z')}
  const a=await rematchProgramCandidates(store,options),b=await rematchProgramCandidates(store,options)
  assert.equal(a.new_links,1);assert.equal(a.rematched,1);assert.equal(a.results[0].review_status,'REVIEW_REQUIRED');assert.equal(b.rematched,0);assert.equal(b.reused,1);assert.equal(records.length,1);assert.equal(a.skipped.length,2)

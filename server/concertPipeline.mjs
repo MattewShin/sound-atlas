@@ -2,19 +2,23 @@ import { randomUUID } from 'node:crypto'
 import { collectionConditions, normalizeCollectionDetail } from './concertCollector.mjs'
 import { normalizeKopisConcert } from './kopisData.mjs'
 import { analyzeStoredProgram, CATALOG_HASH, MATCHER_VERSION, hashJson } from './programAnalysis.mjs'
-import { getTrackTarget } from '../src/data/workCatalog.js'
 import { runEasyOcrBatch } from './easyOcrBatch.mjs'
 import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
-import { safeCode, fatalCode, koreanTime, pipelineError } from './pipelineConfig.mjs'
+import { safeCode, fatalCode, koreanTime, pipelineError, pipelineStageSettings, getPipelineStageSettings } from './pipelineConfig.mjs'
 import { analysisSelection, ocrSelection, collectionSelection, retryDue, failedItem, completedItem, latestAttempt, imageLimitHold, imageLimitHolds } from './pipelineSelection.mjs'
 import { cleanupPlanForReport, emptyCleanupCounts, pruneExpiredPipelineState } from './pipelineCleanup.mjs'
 import { commitPriority, priorityPreview, bucketCounts } from './pipelinePriority.mjs'
 import {getProgramRollout} from './programRollout.mjs'
 import { runStoredAnalysisOnly } from './pipelineAnalysisOnly.mjs'
 import { createMonotonicDeadline, monotonicNow, ocrTimeWindow, PIPELINE_TIME_POLICY } from './pipelineDeadline.mjs'
+import {getKopisDiagnostic} from './kopisDiagnostics.mjs'
+import {runAutomaticPrograms,automaticSummary} from './programAutomation.mjs'
 
 const stage = () => ({status:'NOT_RUN',succeeded:0,failed:0,reused:0,skipped:0,limit_reached:false,remaining:null,duration_ms:0})
+const emptySelection=()=>({ready:[],new:[],recheck:[],cooldown:[],recent:[],held:[],reused:[],blocked:[]})
 export const runConcertPipeline = async ({runtime,local,state,options,plan=false,signal,now=Date.now,onProgress=()=>{},runId=randomUUID(),execution,budget,monotonicClock,deadlineFactory=createMonotonicDeadline}) => {
+  const enabled=pipelineStageSettings(options.stageSettings||runtime.stageSettings||getPipelineStageSettings())
+  if(options.analysisOnly&&!enabled.analysis)throw pipelineError('PIPELINE_ANALYSIS_DISABLED')
   if(options.analysisOnly)return runStoredAnalysisOnly({runtime,local,state,options,plan,signal,now,onProgress,runId,execution})
   const ownsBudget=!budget
   budget ||= deadlineFactory({durationMs:options.maxSeconds*1000,clock:monotonicClock||(now===Date.now?monotonicNow:now),parentSignal:signal})
@@ -22,26 +26,30 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
   const started=now();let conditions=collectionConditions(started)
   const report={run_id:runId,execution,mode:plan?'PLAN':'RUN',started_at:koreanTime(started),finished_at:null,duration_ms:0,
     status:'RUNNING',exit_code:null,last_progress_at:koreanTime(started),last_completed_stage:null,conditions,limits:options,matcher_version:MATCHER_VERSION,catalog_hash:CATALOG_HASH,
-    stages:{preflight:stage(),cleanup:stage(),collection:stage(),ocr:stage(),analysis:stage()},errors:[],review:{new_candidates:0,new_linked_candidates:0,priority:[]},
+    stages:{preflight:stage(),cleanup:stage(),collection:stage(),ocr:stage(),analysis:stage()},errors:[],review:{new_candidates:0,new_linked_candidates:0,priority:[]},automation:automaticSummary(),
     coverage:'LIMITED_SAMPLE',time_limit_reached:false,priority_selection:{collection:[],ocr:[],analysis:[]},
     retry:'Rerun the same run command after retry_at; use plan and latest to inspect.'}
   report.time_budget={clock:'MONOTONIC',max_seconds:options.maxSeconds,analysis_and_finalize_reserve_seconds:PIPELINE_TIME_POLICY.analysisAndFinalizeReserveSeconds,
     worker_shutdown_grace_ms:PIPELINE_TIME_POLICY.workerShutdownGraceMs,finalize_grace_ms:PIPELINE_TIME_POLICY.finalizeGraceMs}
+  report.stage_settings=enabled
+  for(const [name,on] of Object.entries(enabled))if(!on)report.stages[name].status='SKIPPED_DISABLED'
   let activeStage,stageStarted,stageStartedMono
   let workerShutdown
-  const closeWorker=()=>workerShutdown ||= Promise.resolve().then(()=>runtime.worker?.close())
+  const closeWorker=()=>workerShutdown ||= Promise.resolve().then(()=>enabled.ocr?runtime.worker?.close():undefined)
   const completedAnalyses=new Set()
   const finishStage=()=>{if(activeStage){Object.assign(report.stages[activeStage],{started_at:koreanTime(stageStarted),finished_at:koreanTime(now()),duration_ms:Math.max(0,budget.clock()-stageStartedMono)});if(['SUCCEEDED','PARTIAL'].includes(report.stages[activeStage].status))report.last_completed_stage=activeStage;activeStage=null}}
   const startStage=name=>{finishStage();activeStage=name;stageStarted=now();stageStartedMono=budget.clock();report.stages[name].started_at=koreanTime(stageStarted)}
   const workload=()=>{
     if(!snapshot)return
-    const c=collectionSelection(snapshot,state,now(),options.recheckHours),o=ocrSelection(snapshot,state,now(),options.recheckHours,runtime.imageValidationKey),a=analysisSelection(snapshot,state,now(),runtime.imageValidationKey)
+    const c=enabled.collection?collectionSelection(snapshot,state,now(),options.recheckHours):emptySelection(),
+      o=enabled.ocr?ocrSelection(snapshot,state,now(),options.recheckHours,runtime.imageValidationKey):emptySelection(),
+      a=enabled.analysis?analysisSelection(snapshot,state,now(),runtime.imageValidationKey):emptySelection()
     const imageItems=items=>items.map(i=>i.concerts?i:{...i,concerts:snapshot.concerts.find(c=>c.id===i.concert_id)})
     report.known_backlog={basis:'LAST_DB_SNAPSHOT_AND_CHECKPOINT',collection:{unit:'concerts',new:bucketCounts(c.new,now()),recheck:bucketCounts(c.recheck,now()),cooldown:bucketCounts(c.cooldown,now()),unseen_kopis:'UNKNOWN'},
       ocr:{unit:'images',new:bucketCounts(o.new,now()),recheck:bucketCounts(o.recheck,now()),cooldown:bucketCounts(imageItems(o.cooldown),now()),held:bucketCounts(imageItems(o.held),now()),new_ocr_after_hash:'UNKNOWN'},
       analysis:{unit:'images',ready:bucketCounts(a.ready.filter(t=>!completedAnalyses.has(t.key)),now()),blocked:bucketCounts(a.blocked.map(i=>({concerts:snapshot.concerts.find(c=>c.id===snapshot.images.find(x=>x.id===i.image_id)?.concert_id)})),now()),completed:a.reused.length+completedAnalyses.size}}
   }
-  const refreshHolds=()=>{if(snapshot){const items=imageLimitHolds(snapshot,state,runtime.imageValidationKey,now());report.ocr_holds={count:items.length,items}}}
+  const refreshHolds=()=>{if(snapshot&&enabled.ocr){const items=imageLimitHolds(snapshot,state,runtime.imageValidationKey,now());report.ocr_holds={count:items.length,items}}}
   const persist=async()=>{refreshHolds();report.last_progress_at=koreanTime(now());report.duration_ms=budget.elapsedMs();if(activeStage)report.stages[activeStage].duration_ms=Math.max(0,budget.clock()-stageStartedMono);if(!plan){await local.saveState(state);await local.saveReport(report)}}
   const checkpoint=async()=>{await persist();onProgress({event:'checkpoint',stages:report.stages})}
   const check=()=>{budget.expire();if(budget.remainingMs()===0||signal?.reason==='TIME_LIMIT')report.time_limit_reached=true
@@ -49,14 +57,14 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
   const problem=(where,error,id,retryKey)=>{
     const key=retryKey||(where==='collection'?'collect:':where+':')+id
     const code=safeCode(error)
-    // Reconstruct the fixed KOPIS route; do not copy URLs, headers or response
-    // bodies into local reports. Query values (including service) stay private.
+    // Keep legacy HTTP fields and add only client-owned, redacted diagnostics.
     const kopisHttp=where==='collection' && /^KOPIS_HTTP_\d{3}$/.test(code) && error.http_status===Number(code.slice(-3))
       ? {http_status:error.http_status,
         content_type:['application/xml','text/xml','text/html','application/json','text/plain'].includes(error.content_type)?error.content_type:null,
         endpoint:id&&/^PF\d{1,12}$/.test(id)?`/openApi/restful/pblprfr/${id}`:'/openApi/restful/pblprfr',
         query_parameter_names:id?['service']:['service','stdate','eddate','signgucode','shcate','prfstate','cpage','rows']} : undefined
-    report.errors.push({stage:where,code,...(id?{id}:{}),...(kopisHttp?{http:kopisHttp}:{}),...(state.retries[key]?{retry_at:koreanTime(state.retries[key].until)}:{})})
+    const kopis=where==='collection'?getKopisDiagnostic(error):undefined
+    report.errors.push({stage:where,code,...(id?{id}:{}),...(kopisHttp?{http:kopisHttp}:{}),...(kopis?{kopis}:{}),...(state.retries[key]?{retry_at:koreanTime(state.retries[key].until)}:{})})
     if(fatalCode(code))throw error
   }
   let snapshot,preflightDone=false
@@ -71,35 +79,38 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
     }
     startStage('preflight')
     report.stages.preflight.status='RUNNING'
-    report.environment=await runtime.preflight({plan,deferPython:true});check()
+    report.environment={...await runtime.preflight({plan,deferPython:true,stageSettings:enabled}),stage_settings:enabled};check()
     snapshot=await runtime.repository.snapshot(conditions,options.dbPages);check()
     report.stages.preflight={...stage(),status:'SUCCEEDED',succeeded:1};preflightDone=true
     if(plan){
-      startStage('cleanup')
-      const cleanup=await runtime.repository.cleanupPlan(options.cleanupLimit,conditions.from,options.dbPages);check()
-      report.stages.cleanup={...stage(),status:'PLANNED',plan:cleanupPlanForReport(cleanup,options.cleanupLimit),remaining:cleanup.total,
+      if(enabled.cleanup)startStage('cleanup')
+      const cleanup=enabled.cleanup?await runtime.repository.cleanupPlan(options.cleanupLimit,conditions.from,options.dbPages):null;check()
+      if(cleanup)report.stages.cleanup={...stage(),status:'PLANNED',plan:cleanupPlanForReport(cleanup,options.cleanupLimit),remaining:cleanup.total,
         limit_reached:cleanup.total>cleanup.targets.length}
-      const ocr=ocrSelection(snapshot,state,now(),options.recheckHours,runtime.imageValidationKey),analysis=analysisSelection(snapshot,state,now(),runtime.imageValidationKey)
-      const collection=collectionSelection(snapshot,state,now(),options.recheckHours)
+      const ocr=enabled.ocr?ocrSelection(snapshot,state,now(),options.recheckHours,runtime.imageValidationKey):emptySelection(),
+        analysis=enabled.analysis?analysisSelection(snapshot,state,now(),runtime.imageValidationKey):emptySelection()
+      const collection=enabled.collection?collectionSelection(snapshot,state,now(),options.recheckHours):emptySelection()
       report.priority_selection={collection:collection.ready.slice(0,options.collectLimit).map(priorityPreview),
         ocr:ocr.ready.slice(0,options.imageChecks).map(priorityPreview),analysis:analysis.ready.slice(0,options.analysisLimit).map(priorityPreview)}
-      report.plan={known_concerts:snapshot.concerts.length,active_detail_images:snapshot.images.length,
+      report.plan={stage_settings:enabled,automatic_decisions_enabled:enabled.analysis,known_concerts:snapshot.concerts.length,active_detail_images:enabled.ocr||enabled.analysis?snapshot.images.length:'NOT_SCANNED_DISABLED',
         collection_api_candidates:'UNKNOWN_UNTIL_KOPIS_LIST',new_or_changed_images_after_collection:'UNKNOWN',
-        images_due_for_download_check:ocr.ready.length,new_ocr_attempts:'UNKNOWN_UNTIL_IMAGE_HASH_CHECK',
+        images_due_for_download_check:ocr.ready.length,new_ocr_attempts:enabled.ocr?'UNKNOWN_UNTIL_IMAGE_HASH_CHECK':0,
         ocr_cooldown:ocr.cooldown.length,ocr_recent:ocr.recent.length,ocr_held:ocr.held.length,analysis_ready:analysis.ready.length,
         analysis_reused:analysis.reused.length,analysis_blocked:analysis.blocked,analysis_cooldown:analysis.cooldown.length,
-        collection_cursor:state.collection,checkpoint_changed:false,kopis_calls:0,image_downloads:0,ocr_calls:0,db_writes:0,
+        collection_cursor:enabled.collection?state.collection:null,checkpoint_changed:false,kopis_calls:0,image_downloads:0,ocr_calls:0,db_writes:0,
         read_capacity:{list_max_raw_rows:options.listPages*100,db_rows_per_table_or_relation_batch:options.dbPages*100,db_scan_overflow:'EXPLICIT_DB_SCAN_LIMIT_ERROR'},
         ocr_selection_semantics:'Ordered download-check candidates; stop at imageChecks or new OCR attempt cap. Cache/change outcomes are UNKNOWN until download.',
         selected_analysis_ocr_ids:analysis.ready.slice(0,options.analysisLimit).map(t=>t.ocr.id)}
+      if(runtime.programText){check();report.official_program=await runtime.programText.run({conditions,plan:true});check()}
       report.status='PLAN_READY'
       finishStage()
     } else {
       await persist()
+      const deletedTargets=[]
+      if(enabled.cleanup){
       startStage('cleanup')
       const cleanup=report.stages.cleanup;cleanup.status='RUNNING';cleanup.deleted_counts=emptyCleanupCounts();cleanup.deleted=[]
       cleanup.attempted=0;cleanup.remaining='UNKNOWN'
-      const deletedTargets=[]
       try{
         const selection=await runtime.repository.cleanupPlan(options.cleanupLimit,conditions.from,options.dbPages);check()
         if(selection.migration_required)throw pipelineError('CLEANUP_MIGRATION_REQUIRED')
@@ -131,8 +142,10 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       conditions=collectionConditions(now());report.conditions=conditions
       cleanup.local_state=pruneExpiredPipelineState(state,conditions.from,deletedTargets)
       cleanup.status=cleanup.failed?'PARTIAL':'SUCCEEDED';await persist();check()
+      }
       const removedInRun=new Set(deletedTargets.map(c=>c.kopis_id))
       // Collection authentication is independent of successful cleanup.
+      if(enabled.collection){
       startStage('collection')
       const c=report.stages.collection;c.status='RUNNING';c.pages=0;c.attempted=0;c.listing_cycle_completed=false
       let first,firstError
@@ -186,7 +199,9 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       c.page_limit_reached=c.pages>=options.listPages&&!completedCycle
       c.remaining={known_due_not_attempted:Math.max(0,selection.length-c.attempted),discovery_pending:state.collection.pending.length,unseen_kopis:'UNKNOWN'}
       c.status=c.failed?'PARTIAL':'SUCCEEDED';await persist();check()
+      }
       // Read current DB independently of collection successes, including older valid OCR.
+      if(enabled.ocr){
       startStage('ocr')
       snapshot=await runtime.repository.snapshot(conditions,options.dbPages)
       const o=report.stages.ocr;o.status='RUNNING';o.attempted=0;o.checked=0;o.cached_recovery_records=0
@@ -221,7 +236,7 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
             // Cache hits ordinarily do NOT create attempts or invalidate reviews.
             // Recovery from an intervening failed/changed attempt requires a new
             // successful hash-verification record; the immutable artifact is reused.
-            if(latest?.status==='SUCCEEDED'&&latest.result_id===cached.id)return
+            if(latest?.status==='SUCCEEDED'&&latest.result_id===cached.id&&(!image.evidence_changed_at||Date.parse(latest.created_at)>=Date.parse(image.evidence_changed_at)))return
             const artifact=await scoped.ocrResult(cached.id)
             await repository.saveAttempt({id:randomUUID(),image_id:image.id,source_url:image.source_url,
               pipeline_version:EASYOCR_PIPELINE_VERSION,content_sha256:downloaded.contentHash,status:'SUCCEEDED',error_code:null,
@@ -277,6 +292,8 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
         budget_cancelled:o.budget_cancelled_images,new_ocr_needed:'UNKNOWN_UNTIL_HASH_CHECK'}
       if(o.time_budget_reached)o.deferred_targets=unprocessed.map(i=>({image_id:i.id,kopis_id:i.concerts.kopis_id,next_selection:'ELIGIBLE_WITHOUT_NEW_COOLDOWN'}))
       o.status=o.failed||o.time_budget_reached?'PARTIAL':'SUCCEEDED';check()
+      }
+      if(enabled.analysis){
       startStage('analysis')
       const a=report.stages.analysis;a.status='RUNNING';a.remaining_total_budget_ms_at_start=budget.remainingMs()
       a.reserve_shortfall_ms=Math.max(0,PIPELINE_TIME_POLICY.analysisAndFinalizeReserveSeconds*1000-a.remaining_total_budget_ms_at_start)
@@ -294,10 +311,6 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
           if(!snapshot.analyses.some(x=>x.id===analysisId)){
             report.review.new_candidates+=candidates.length
             report.review.new_linked_candidates+=candidates.filter(x=>x.track_id).length
-            report.review.priority.push(...candidates.filter(x=>x.track_id&&x.review_status==='REVIEW_REQUIRED').map(x=>({candidate_id:x.id,kopis_id:target.concert.kopis_id,
-              concert:target.concert.title,date_from:target.concert.start_date,date_to:target.concert.end_date,
-              track_id:x.track_id,track:getTrackTarget(x.track_id)?.title||'Registered track',
-              show:`npm run program:analyze -- show ${x.id}`})))
           }else a.reused++
           a.succeeded++;completedAnalyses.add(target.key);completedItem(state,target.key,now())
         }catch(e){if(safeCode(e)==='BATCH_INTERRUPTED')throw e;a.failed++;failedItem(state,target.key,now());problem('analysis',e,target.ocr.id,target.key)}
@@ -307,24 +320,26 @@ export const runConcertPipeline = async ({runtime,local,state,options,plan=false
       a.limit_reached=analyses.ready.length>=options.analysisLimit
       a.remaining={known_ready_not_attempted:Math.max(0,analyses.ready.length-options.analysisLimit),blocked:analyses.blocked.length,cooldown:analyses.cooldown.length}
       a.status=a.failed?'PARTIAL':'SUCCEEDED'
-      report.status=Object.values(report.stages).some(x=>x.failed)||o.time_budget_reached?'PARTIAL':'SUCCESS'
+      if(runtime.repository.automation){
+        report.automation=await runAutomaticPrograms({store:runtime.repository.automation,limit:options.analysisLimit,check,
+          onCheckpoint:async progress=>{report.automation=progress;await checkpoint()}})
+        if(report.automation.failed||report.automation.retry_pending){a.status='PARTIAL';a.failed+=report.automation.failed}
+        a.limit_reached ||= report.automation.limit_reached
+      }
+      }
+      if(runtime.programText){check();report.official_program=await runtime.programText.run({conditions,plan:false});check()}
+      report.status=Object.values(report.stages).some(x=>x.failed)||report.stages.ocr.time_budget_reached?'PARTIAL':'SUCCESS'
+      if(report.automation.retry_pending)report.status='PARTIAL'
       finishStage()
     }
-    const reviews=await runtime.repository.reviewSummary(options.dbPages)
-    const pendingReviews=reviews.filter(x=>x.matcher_version===rollout.reviewVersion&&(x.matching_catalog_hash||x.catalog_hash)===CATALOG_HASH&&!x.stale_reason)
-    report.review.total_review_required=pendingReviews.length
-    for(const x of pendingReviews.filter(x=>x.track_id)){
-      const concert=snapshot.concerts.find(c=>c.kopis_id===x.kopis_id)
-      if(concert&&!report.review.priority.some(y=>y.candidate_id===x.id))report.review.priority.push({candidate_id:x.id,kopis_id:x.kopis_id,concert:x.concert_title,
-        date_from:concert.start_date,date_to:concert.end_date,track_id:x.track_id,track:getTrackTarget(x.track_id)?.title||'Registered track',show:`npm run program:analyze -- show ${x.id}`})
-    }
-    report.review.priority=report.review.priority.slice(0,20)
+    report.review.operational_queue=false
     report.coverage={cleanup_remaining:report.stages.cleanup.remaining,kopis_listing_cycle_completed:report.stages.collection.listing_cycle_completed||false,
       limited_by_caps:Object.values(report.stages).some(s=>s.limit_reached||s.page_limit_reached),
       unseen_kopis_or_changed_remote_images:'UNKNOWN',known_ocr_remaining:report.stages.ocr.remaining,known_analysis_remaining:report.stages.analysis.remaining}
     report.retry_targets=Object.entries(state.retries).map(([key,value])=>({key,failures:value.failures,retry_at:koreanTime(value.until)}))
     report.exit_code=report.status==='PARTIAL'?1:0
   }catch(error){
+    if(error.automationReport)report.automation=error.automationReport
     const code=safeCode(error)
     report.errors.push({stage:preflightDone?'execution':'preflight',code})
     report.status=code==='BATCH_INTERRUPTED'?'PARTIAL':!preflightDone||fatalCode(code)?'FATAL':'PARTIAL';report.exit_code=report.status==='FATAL'?2:1

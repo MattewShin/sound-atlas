@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import {searchFixture} from '../../server/testSupport/searchFixture.mjs'
 import {readFileSync} from 'node:fs'
 import {createHash} from 'node:crypto'
 import {tracks,trackDetails} from './musicData.js'
@@ -112,12 +113,14 @@ test('actual catalog expansion keeps both CONFIRMED EXACT PF295548 searches on w
    matcher_version:'stored-program-3',catalog_hash:oldCatalogHash,confirmed_work_identity_hash:hash,confirmation_matcher_version:'stored-program-3',confirmation_pipeline_version:EASYOCR_PIPELINE_VERSION,
    concerts:{kopis_id:'PF295548',title:'Regression fixture',venue:'Fixture hall',region:'서울',start_date:'2026-10-27',end_date:'2026-10-27',performance_status:'공연예정',synced_at:'2026-10-21T00:00:00Z'}}
   assert.equal(confirmationValidity(row,current,{version:'stored-program-3',today:'2026-10-21'}).is_effectively_confirmed,true)
+  const concert={...row.concerts,id:'22222222-2222-4222-8222-222222222222',program_context_revision:0}
+  row.concert_id=concert.id
   let calls=0
-  const service=createSupabaseConcertSearch({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture-key',PROGRAM_SEARCH_VERSION:'stored-program-3'},now:()=>Date.parse('2026-10-21T00:00:00Z'),fetchImpl:async(url,init)=>{
-   calls++;assert.equal(init.method,'GET');assert.equal(new URL(url).pathname,'/rest/v1/concert_program_candidate_status');assert.equal(new URL(url).searchParams.get('confirmed_work_identity_hash'),'eq.'+hash);assert.equal(new URL(url).searchParams.has('catalog_hash'),false)
-   return new Response(JSON.stringify([row]))
-  }})
+  const service=createSupabaseConcertSearch({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture-key',PROGRAM_SEARCH_VERSION:'stored-program-3'},now:()=>Date.parse('2026-10-21T00:00:00Z'),fetchImpl:searchFixture({ocrRows:()=>[row],concerts:()=>[concert],onRequest:url=>{
+   calls++;assert.equal(url.searchParams.has('catalog_hash'),false)
+   if(url.pathname.endsWith('/concert_program_candidate_status'))assert.equal(url.searchParams.get('confirmed_work_identity_hash'),'eq.'+hash)
+  }})})
   const result=await service.search({targetTrackId:id,region:'서울',from:'2026-10-21',to:'2026-10-27'})
-  assert.deepEqual(result.concerts.map(c=>c.kopisId),['PF295548']);assert.equal(calls,1)
+  assert.deepEqual(result.concerts.map(c=>c.kopisId),['PF295548']);assert.equal(calls,6)
  }
 })

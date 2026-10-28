@@ -1,6 +1,6 @@
 # Classic Atlas 프로젝트 맥락
 
-- 문서 버전: 1
+- 문서 버전: 4
 - 작성일: 2026-10-22 (Asia/Seoul)
 - 저장소: https://github.com/MattewShin/sound-atlas
 - 구현 확인 기준: main / 1607ca201c3a559bc7f28aabe998ef062db02ef9
@@ -65,3 +65,51 @@ README에는 서로 다른 시기의 운영 설명이 함께 있을 수 있다. 
 ## 유지 방법
 
 확정된 서비스 정책이나 구조가 바뀌면 근거 파일·기준 커밋·확인 날짜를 함께 갱신한다. 세부 구현 보고는 HANDOFF에, 이번 작업의 요구사항은 CURRENT_TASK에 기록한다.
+
+## 2026-10-22 Codex 확인 보충
+
+- 문서 기준: 원격 main / 93fa34503638d363baf5d4d3e0a9c45a0be5c41f. 로컬 코드 기준은 main / 1607ca201c3a559bc7f28aabe998ef062db02ef9 및 커밋 전 변경 28개 파일이다.
+- React 19 / Vite 6 / Node 22.x 구성과 웹 KOPIS·Tesseract, Supabase 검색, 로컬 EasyOCR 경로의 분리는 현재 파일에서도 확인했다.
+- 위의 “후보 자동 확정 없음 / 수동 확정 EXACT”는 기존 커밋의 설명이다. 로컬 미커밋 구현에는 `program-auto-1` 자동 확정·미연결 처리와 daily/analysis-only 연결이 추가되어 있다. 공유된 문서 브랜치에는 이 기능 코드가 없으며, 실제 운영 적용 완료를 뜻하지 않는다. 당시 상태와 검증 한계는 [보관된 HANDOFF.md](docs/collaboration/archive/CA-COLLAB-20261022-001/HANDOFF.md)를 참조한다.
+- 예약 작업을 읽기 전용으로 확인했다. `ClassicAtlas-LocalPipeline`: 매일 08:40 KST, 다음 실행 2026-10-23 08:40 KST, 실행 한도 PT32M, 배치 1,800초, 중복 실행 IgnoreNew. daily/08:40/배터리 허용 조건과 등록 설정이 일치했다. 이는 등록 설정 검증이며, 배치 성공 검증은 아니다. 마지막 실행 결과 코드는 1이다.
+- 원격 DB의 현재 migration 적용 상태와 실제 배포 상태는 이번 작업에서 조회하지 않았다. 기존 로컬 결과 파일의 원격 미적용 기록과 당시 직접 확인한 결과는 보관된 HANDOFF에서 구분한다.
+
+
+## 공연 검색 확장 작업 시작
+
+- CA-SEARCH-20261022-001 / 명세 1은 ACCEPTED로 종료됐다.
+- 해당 최종 기록은 `docs/collaboration/archive/CA-SEARCH-20261022-001/`에 보관한다.
+- 공동 문서 협업 테스트는 ACCEPTED/PASS로 종료했고, 최종 기록은 `docs/collaboration/archive/CA-COLLAB-20261022-001/`에 보관했다.
+- 이번 사용자 방향: SQL·예약 점검은 최소 선행 확인으로 진행하고 등록곡별 공연 검색 확장 조사를 함께 시작한다.
+- 이 문서의 이전 운영 수치와 설정 확인은 당시 보고다. 이번 작업에서 현재 값을 다시 확인하고 기준 코드 SHA·조회 시각·환경을 붙인다.
+
+## CA-SEARCH 1차 조사 결과
+
+- 고정 공유 코드: `ad5ab3cf5984146c4b2dc94428a146944af23fab` / `codex/ca-search-20261022-001`. 기존 자동화·수집 진단과 관련 SQL/운영 문서를 이제 이 브랜치에서 읽을 수 있다. 운영 배포 완료는 아니다.
+- 활성 목록 직접 집계: 291 track / 252 work. 정적 표기 준비 279 READY, 사계의 월 표기 12 UNSUPPORTED_NOTATION. 관측은 2 CONFIRMED_FOUND / 2 UNCONFIRMED / 3 상위 작품만 확인 / 284 조사 범위 귀속 근거 미발견이다.
+- 관측 snapshot: 2026-10-22 10:58 KST, 서울 10/22~11/21, 저장 공연 47개. 두 확정 곡은 같은 PF295548이므로 고유 공연은 1개다.
+- 현 API의 자동화 5 RPC/신규 column 비노출로 자동화 preflight 미충족. 운영 SQL 적용·확정 쓰기·배포·배치 run 없이 조사와 로컬 격리 검증을 완료했다.
+- 자세한 범위·결과·후속 제안은 [보관된 HANDOFF](docs/collaboration/archive/CA-SEARCH-20261022-001/HANDOFF.md), [전곡 조사](docs/CONCERT_SEARCH_COVERAGE_2026-10-22.md), [JSON](docs/CONCERT_SEARCH_COVERAGE_2026-10-22.json)을 참조한다. 이전 수치와 이번 snapshot을 섞어 최신 운영 성과로 해석하지 않는다.
+
+## 자동 확정 운영 작업 시작
+
+- 현재 작업: CA-AUTO-20261022-001 / 명세 1.
+- 명세 브랜치: `codex/ca-auto-20261022-001`.
+- 사용자 승인 범위: 관리자 읽기 전용 확인, 실제 미적용 시 지정 automation migration 적용, PF295548 한 공연의 제한 dry-run/save canary.
+- 전체 과거 backfill, 무제한 자동 확정, main 병합, Vercel 배포, 예약 시간 변경은 포함하지 않는다.
+- 명확한 EXACT 후보만 자동 CONFIRMED하며 악장·편곡·번호·날짜 범위가 모호한 후보는 확정하지 않는다.
+
+## CA-AUTO 운영 한정 canary 결과 — 2026-10-22 14:45 KST
+
+관리자 READ ONLY SQL로 실제 미적용과 선행조건을 확인한 뒤 지정 automation migration을1회 적용했다. 운영의5 RPC/7컬럼 및 service-role 권한을 재확인했고, PF295548에 한정해 브람스 Op.118 No.2 자동 CONFIRMED1건을 추가했다. 기존 쇼팽·리스트 수동 receipt2건의 전체 행 hash는 보존됐으며, 세 곡 모두 운영 검색에서 PF295548 각1건을 반환한다. 같은 입력 즉시 재실행은 POST0이었다.
+
+이전 CA-SEARCH/최초 CA-AUTO의 RPC 비노출·관리자 연결 부재는 당시 기록이다. 현재 DB/Python/모델 preflight는 PASS이나, daily의 자동화 이미지20/후보100은 초기 상한1을 보장하지 않아 정기 확대는 여전히 BLOCKED다. 기존 예약은 Enabled이며 변경하지 않았다. 공개 UI·배포 SHA는 별도 미검증이다. 자세한 결과와 정확한 요청·row 집계는 [HANDOFF](HANDOFF.md) 및 [실행 JSON](docs/PROGRAM_AUTOMATION_CANARY_2026-10-22.json)을 참조한다. 관리자 연결 값은 게시하지 않았다.
+
+## CA-AUTO 명세 2 — 단계적 검색 연결 확대
+
+- 사용자 지시: 특정 육안 확인 사례만 대조하지 않고 현재 저장된 공연 전체에서 더 많은 등록곡을 공연과 연결한다.
+- 명세 브랜치: `codex/ca-auto-20261022-001`, 작업 ID CA-AUTO-20261022-001 / 명세 2.
+- 명세1의 지정 migration과 PF295548 canary는 통과했다. 반복 적용/반복 canary하지 않는다.
+- 다음 단계는 전체 eligible queue 쓰기0 조사, 자동 확정 전용 정기 상한3/30, 묶음당3/30·누적20/100 이하의 단계적 저장이다.
+- 결과가 적거나 명확한 후보를 놓치면 OCR성공·candidate없음, identity/matcher불일치, OCR없음 순으로 제한 표본을 개선한다.
+- 모호한 악장·편곡·번호·프로그램 범위는 연결 수를 늘리기 위해 자동 확정하지 않는다.

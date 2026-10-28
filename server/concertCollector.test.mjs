@@ -1,9 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { collectConcerts, collectionConditions, createCollectionKopisClient, normalizeCollectionDetail, parseCollectionArgs } from './concertCollector.mjs'
 import { createSupabaseCollector } from './supabaseCollector.mjs'
 import { CollectionError, requestWithRetry } from './collectionHttp.mjs'
 import { parseKopisXml } from './kopisData.mjs'
+import {getKopisDiagnostic} from './kopisDiagnostics.mjs'
 
 const now = () => Date.parse('2026-10-13T15:00:00Z')
 const conditions = collectionConditions(now())
@@ -17,6 +19,45 @@ const instant = async () => {}
 const xml = (content) => new Response(`<dbs>${content}</dbs>`)
 const xmlRow = (id) => `<db><mt20id>${id}</mt20id><prfnm>검증</prfnm></db>`
 
+test('sty preserves internal wording, Unicode and bare CR; normalizes only outer whitespace and CRLF',()=>{
+  const original=' \r\n[Program]\r\n  F. Chopin — e\u0301 🎹\r\n\r\nScherzo No.4, Op.54\r단독 CR\r\n\t'
+  const expected='[Program]\n  F. Chopin — e\u0301 🎹\n\nScherzo No.4, Op.54\r단독 CR'
+  const input=row('PF900001',{sty:original}),before=structuredClone(input)
+  const a=normalize(input).concert,b=normalize(row('PF900001',{sty:expected})).concert
+  assert.equal(a.kopis_detail_text,expected);assert.deepEqual(input,before)
+  assert.equal(a.kopis_detail_text_hash,createHash('sha256').update(Buffer.from(expected,'utf8')).digest('hex'))
+  assert.match(a.kopis_detail_text_hash,/^[0-9a-f]{64}$/)
+  assert.equal(a.kopis_detail_text_hash,b.kopis_detail_text_hash)
+  assert.notEqual(a.kopis_detail_text_hash,normalize(row('PF900001',{sty:expected.replace('Op.54','Op.53')})).concert.kopis_detail_text_hash)
+})
+
+test('absent or whitespace-only sty becomes a null text/hash pair, never a fabricated string',()=>{
+  for(const value of [undefined,null,'',' \r\n\t\u00a0 ']){
+    const c=normalize(row('PF900001',{sty:value})).concert
+    assert.equal(c.kopis_detail_text,null);assert.equal(c.kopis_detail_text_hash,null)
+  }
+  assert.equal(normalize().concert.kopis_detail_text,null)
+})
+
+test('non-string, NUL and incomplete Unicode sty are rejected before any collection save',async()=>{
+  for(const sty of [false,true,0,123,[],{},new String('text'),'bad\0text','bad\ud800','\udc00'])
+    assert.throws(()=>normalize(row('PF900001',{sty})),{code:'INVALID_DETAIL_TEXT'})
+  let writes=0
+  const report=await collectConcerts({now,limit:1,repository:{save:async()=>{writes++}},client:{
+    list:async({state})=>state==='02'?[row()]:[],detail:async()=>row('PF900001',{sty:{incomplete:'text'}})}})
+  assert.equal(writes,0);assert.equal(report.failed,1)
+})
+
+test('normalized sty and UTF-8 hash reach the existing collector RPC payload without source changes',async()=>{
+  const calls=[],snapshot=normalize(row('PF900001',{sty:' \r\n[프로그램]\r\n원문  문구\r\n '}))
+  const store=createSupabaseCollector({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'local-secret'},
+    fetchImpl:async(url,init)=>{calls.push({path:url.pathname,method:init.method,body:JSON.parse(init.body)});return new Response(JSON.stringify('00000000-0000-4000-8000-000000000001'))}})
+  await store.save(snapshot)
+  assert.equal(calls.length,1);assert.equal(calls[0].path,'/rest/v1/rpc/sync_kopis_concert');assert.equal(calls[0].method,'POST')
+  assert.deepEqual(calls[0].body,{p_concert:snapshot.concert,p_images:snapshot.images})
+  assert.equal(calls[0].body.p_concert.kopis_detail_text,'[프로그램]\n원문  문구')
+})
+
 test('KST midnight, year boundaries and CLI limits are deterministic', () => {
   assert.equal(collectionConditions(Date.parse('2026-10-13T14:59:59Z')).from, '2026-10-13')
   assert.equal(conditions.from, '2026-10-14')
@@ -25,6 +66,64 @@ test('KST midnight, year boundaries and CLI limits are deterministic', () => {
   assert.deepEqual(parseCollectionArgs([]), { dryRun: false, limit: 10, help: false })
   assert.equal(parseCollectionArgs(['--dry-run', '--limit=25']).limit, 25)
   for (const args of [['--limit'], ['--limit', '0'], ['--limit=-1'], ['--limit=1.5'], ['--bad']]) assert.throws(() => parseCollectionArgs(args))
+})
+
+test('400 diagnostics identify the request and redact structured error labels without retrying or retaining bodies', async () => {
+  const key='fixture+secret/key',other='other-private-token',env={KOPIS_SERVICE_KEY:key,SUPABASE_SERVICE_ROLE_KEY:other}
+  let calls=0
+  const client=createCollectionKopisClient({env,delay:instant,fetchImpl:async()=>{
+    calls++
+    return new Response(`<html><head><title>Bad Request ${encodeURIComponent(encodeURIComponent(key))} ${other} https://kopis.or.kr/?service=${key}</title></head><body>private response body</body></html>`,{status:400,headers:{'Content-Type':'text/html; charset=utf-8'}})
+  }})
+  await assert.rejects(client.list({conditions,state:'01',page:2}),error=>{
+    assert.equal(error.code,'KOPIS_HTTP_400');assert.equal(error.retryable,false)
+    const diagnostic=getKopisDiagnostic(error),serialized=JSON.stringify(diagnostic)
+    assert.deepEqual(diagnostic.request,{origin:'https://kopis.or.kr',method:'GET',endpoint:'/openApi/restful/pblprfr',query:{stdate:'20261014',eddate:'20261113',signgucode:'11',shcate:'CCCA',prfstate:'01',cpage:'2',rows:'100'}})
+    assert.equal(diagnostic.response.http_status,400);assert.equal(diagnostic.response.body_kind,'HTML')
+    assert.ok(diagnostic.response.upstream_message.includes('Bad Request'))
+    for(const secret of [key,other,encodeURIComponent(key),encodeURIComponent(encodeURIComponent(key)),'private response body','?service='])assert.ok(!serialized.includes(secret),secret)
+    return true
+  })
+  assert.equal(calls,1)
+})
+
+test('HTTP 200 API errors and unexpected HTML remain failures while an empty dbs is valid',async()=>{
+  for(const [body,code]of [
+    ['<dbs><db><returncode>02</returncode><errmsg>SERVICE KEY IS NOT REGISTERED ERROR</errmsg></db></dbs>','KOPIS_AUTH_ERROR'],
+    ['<html><title>Bad Gateway</title></html>','KOPIS_RESPONSE_INVALID'],
+    ['<dbs><error>API failure</error></dbs>','KOPIS_RESPONSE_INVALID'],
+  ]){
+    let calls=0
+    const client=createCollectionKopisClient({env:{KOPIS_SERVICE_KEY:'fixture-secret'},delay:instant,fetchImpl:async()=>{calls++;return new Response(body,{headers:{'Content-Type':'application/xml'}})}})
+    await assert.rejects(client.list({conditions,state:'01',page:1}),error=>{
+      assert.equal(error.code,code);assert.equal(getKopisDiagnostic(error).response.http_status,200)
+      if(code==='KOPIS_AUTH_ERROR')assert.equal(getKopisDiagnostic(error).response.upstream_code,'02')
+      return true
+    })
+    assert.equal(calls,1)
+  }
+  const client=createCollectionKopisClient({env:{KOPIS_SERVICE_KEY:'fixture-secret'},delay:instant,fetchImpl:async()=>xml('')})
+  assert.deepEqual(await client.list({conditions,state:'01',page:1}),[])
+  await assert.rejects(client.detail('PF900001'),{code:'DETAIL_MISSING'})
+})
+
+test('unreadable or oversized HTTP error bodies preserve the HTTP failure and bounded diagnostics',async()=>{
+  for(const unreadable of [false,true]){
+    let calls=0
+    const client=createCollectionKopisClient({env:{KOPIS_SERVICE_KEY:'fixture-secret'},delay:instant,fetchImpl:async()=>{
+      calls++
+      const body=unreadable?new ReadableStream({start(controller){controller.error(new Error('private stream failure'))}}):'<title>'+('a'.repeat(17000))+'fixture-secret</title>'
+      return new Response(body,{status:400,headers:{'Content-Type':'text/html'}})
+    }})
+    await assert.rejects(client.detail('PF900001'),error=>{
+      assert.equal(error.code,'KOPIS_HTTP_400')
+      const diagnostic=getKopisDiagnostic(error)
+      assert.equal(diagnostic.response[unreadable?'body_unavailable':'body_truncated'],true)
+      assert.ok(!JSON.stringify(diagnostic).includes('fixture-secret'))
+      return true
+    })
+    assert.equal(calls,1)
+  }
 })
 
 test('normalize overlapping performances, original URLs, image order and nullable source timestamp', () => {

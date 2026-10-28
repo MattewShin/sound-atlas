@@ -1,5 +1,5 @@
 import { concertContext, MATCHER_VERSION, CATALOG_HASH,programAnalysisCacheKey } from './programAnalysis.mjs'
-import { evidenceIssue } from './supabaseProgramAnalysis.mjs'
+import { evidenceIssue,effectiveEvidenceAttempt } from './supabaseProgramAnalysis.mjs'
 import { EASYOCR_PIPELINE_VERSION } from './easyOcrConfig.mjs'
 import { koreanTime } from './pipelineConfig.mjs'
 import { prioritize, concertPriority } from './pipelinePriority.mjs'
@@ -54,7 +54,7 @@ export const analysisSelection = (snapshot,state,now,validationKey) => {
     if(!concertPriority(snapshot.concerts.find(c=>c.id===image.concert_id),now))continue
     if(imageLimitHold(state,image,validationKey)){blocked.push({image_id:image.id,reason:'OCR_IMAGE_LIMIT_EXCEEDED'});continue}
     const concert=snapshot.concerts.find(c=>c.id===image.concert_id)
-    const attempt=latestAttempt(snapshot,image.id),results=snapshot.results.filter(r=>r.image_id===image.id)
+    const attempt=effectiveEvidenceAttempt(snapshot.attempts.filter(a=>a.image_id===image.id)),results=snapshot.results.filter(r=>r.image_id===image.id)
     const ocr=results.find(r=>r.id===attempt?.result_id)
     const issue=ocr?evidenceIssue({image,ocr,attempts:snapshot.attempts.filter(a=>a.image_id===image.id),results}):'NO_CURRENT_SUCCESSFUL_OCR'
     if(issue){blocked.push({image_id:image.id,reason:issue});continue}
@@ -90,7 +90,8 @@ export const ocrSelection = (snapshot,state,now,recheckHours,validationKey) => {
     if(!storedHold && (!retryDue(state,key,now)||dbWait>now)){cooldown.push(image);continue}
     const successful=snapshot.results.some(r=>r.image_id===image.id&&r.pipeline_version===EASYOCR_PIPELINE_VERSION)
     const touched=state.touched[key]||(!successful?0:Date.parse(attempt?.created_at||0))
-    if(!storedHold && successful && attempt?.status==='SUCCEEDED' && now-touched<recheckHours*3600000){recent.push(image);continue}
+    const sourceRecheck=image.evidence_changed_at&&Date.parse(attempt?.created_at||0)<Date.parse(image.evidence_changed_at)
+    if(!storedHold && !sourceRecheck && successful && attempt?.status==='SUCCEEDED' && now-touched<recheckHours*3600000){recent.push(image);continue}
     ;(successful&&attempt?.status==='SUCCEEDED'?recheck:fresh).push({...image,key,touched,
       concerts:concert,work_kind:successful&&attempt?.status==='SUCCEEDED'?'RECHECK':'NEW'})
   }

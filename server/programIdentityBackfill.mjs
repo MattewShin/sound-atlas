@@ -4,7 +4,8 @@ import {resolve,dirname,sep} from 'node:path'
 import {pathToFileURL} from 'node:url'
 import {createHash} from 'node:crypto'
 import {workIdentity,canonicalIdentityJson} from './programWorkIdentity.mjs'
-import {CATALOG_JSON,CATALOG_HASH,MATCHER_VERSION} from './programAnalysis.mjs'
+import {CATALOG_JSON,CATALOG_HASH} from './programAnalysis.mjs'
+import {isSupportedProgramSourceVersion} from './programRollout.mjs'
 import {EASYOCR_PIPELINE_VERSION} from './easyOcrConfig.mjs'
 import {koreaDate} from '../src/data/concertSearchConfig.js'
 
@@ -33,7 +34,7 @@ export const planIdentityBackfill=(rows,git,{now=Date.now,currentCatalog=JSON.pa
     const sourceProven=Boolean(snapshot&&['track_id','work_id','relation','outcome','section_index','identity','evidence'].every(k=>canonicalIdentityJson(snapshot[k]??null)===canonicalIdentityJson(c[k]??null))&&Array.isArray(c.evidence)&&c.evidence.length&&c.evidence.every(e=>Number.isInteger(e.start)&&Number.isInteger(e.end)&&e.start>=0&&e.end>e.start&&e.end<=Array.from(c.ocr?.raw_text||'').length&&Array.from(c.ocr?.raw_text||'').slice(e.start,e.end).join('')===e.quote))
     const reason=c.review_status!=='CONFIRMED'||c.relation!=='EXACT'||c.outcome!=='MATCHED'?'NOT_EXACT':
       !review||review.status!=='CONFIRMED'||review.note!==c.review_note?'REVIEW_EVENT_MISMATCH':
-      c.concert.end_date<koreaDate(now())?'CONCERT_ENDED':!['stored-program-2',MATCHER_VERSION].includes(c.matcher_version)?'MATCHER_VERSION_CHANGED':
+      c.concert.end_date<koreaDate(now())?'CONCERT_ENDED':!isSupportedProgramSourceVersion(c.matcher_version)?'MATCHER_VERSION_CHANGED':
       !c.analysis_is_current||(c.evidence_stale_reason??(c.stale_reason==='CONFIRMATION_IDENTITY_MISSING'?null:c.stale_reason))?'EVIDENCE_CHANGED':
       !c.ocr||c.ocr.pipeline_version!==EASYOCR_PIPELINE_VERSION?'PIPELINE_VERSION_CHANGED':
       c.attempt?.content_sha256!==c.ocr.content_sha256||c.attempt?.result_id!==c.ocr.id?'EVIDENCE_CHANGED':

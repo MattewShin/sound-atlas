@@ -1,3 +1,5 @@
+import {legacyAnalysisFixture,legacyRematchFixture} from './testSupport/legacyProgramFixture.mjs'
+import {searchFixture} from './testSupport/searchFixture.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {randomUUID} from 'node:crypto'
@@ -28,8 +30,8 @@ test('work identity SQL: immutable receipts, safe legacy backfill, rematch histo
    const image=images[i],attempt={id:randomUUID(),image_id:image.id,source_url:image.source_url,content_sha256:String(i+1).repeat(64),pipeline_version:EASYOCR_PIPELINE_VERSION,status:'SUCCEEDED',started_at:'2026-10-21T00:00:00Z',finished_at:'2026-10-21T00:00:01Z',duration_ms:1000}
    await db.query('select public.record_concert_image_ocr($1,$2)',[JSON.stringify(attempt),JSON.stringify({raw_text:text,detections:[],engine_version:'fixture',torch_version:'fixture',settings:{},width:800,height:300})])
    const ocr=(await rows('concert_image_ocr_results')).find(o=>o.image_id===image.id)
-   let a=analyzeStoredProgram({concert:{...storedConcert,...concert},image,ocr,attempt});assert.equal(a.candidates.length,1)
-   if(i===2){const c=a.candidates[0],d=buildRematchCandidate({...c,id:randomUUID()},{catalog:old,catalogHash:oldHash});a.candidates=[{...d,logical_work_id:c.logical_work_id}];a.logical_works[0].catalog_matches=[d];assert.equal(d.track_id,null)}
+   let a=legacyAnalysisFixture(analyzeStoredProgram({concert:{...storedConcert,...concert},image,ocr,attempt}));assert.equal(a.candidates.length,1)
+   if(i===2){const c=a.candidates[0],d=legacyRematchFixture(buildRematchCandidate({...c,id:randomUUID()},{catalog:old,catalogHash:oldHash}));a.candidates=[{...d,logical_work_id:c.logical_work_id}];a.logical_works[0].catalog_matches=[d];assert.equal(d.track_id,null)}
    a=rehash({...a,catalog_hash:oldHash});const aid=(await db.query('select public.save_concert_program_analysis_v3($1,$2) id',[JSON.stringify(a),oldJson])).rows[0].id
    const c=(await rows('concert_program_candidates')).find(c=>c.analysis_id===aid);payloads.push({payload:a,aid,candidate:c,ocr})
   }
@@ -60,10 +62,10 @@ test('work identity SQL: immutable receipts, safe legacy backfill, rematch histo
   for(const key of Object.keys(beforeCandidate))assert.deepEqual(afterCandidate[key],beforeCandidate[key])
   status=(await rows('concert_program_candidate_status')).find(c=>c.id===first.candidate.id);assert.equal(status.is_effectively_confirmed,true)
   // Different full catalog, identical selected work: search works without a global hash predicate.
-  const service=createSupabaseConcertSearch({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture',PROGRAM_SEARCH_VERSION:'stored-program-3'},now:()=>Date.parse('2099-01-01T00:00:00Z'),fetchImpl:async(url,init)=>{
-   assert.equal(init.method,'GET');assert(!url.searchParams.has('catalog_hash'));assert.equal(url.searchParams.get('confirmed_work_identity_hash'),'eq.'+expected)
-   return new Response(JSON.stringify((await rows('concert_program_candidate_status')).map(c=>({...c,concerts:concert})).sort((a,b)=>a.id.localeCompare(b.id))))
-  }})
+  const service=createSupabaseConcertSearch({env:{SUPABASE_URL:'https://fixture.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fixture',PROGRAM_SEARCH_VERSION:'stored-program-3'},now:()=>Date.parse('2099-01-01T00:00:00Z'),fetchImpl:searchFixture({
+   ocrRows:()=>rows('concert_program_candidate_status'),concerts:()=>[{...storedConcert,...concert}],
+   onRequest:url=>{assert(!url.searchParams.has('catalog_hash'));if(url.pathname.endsWith('/concert_program_candidate_status'))assert.equal(url.searchParams.get('confirmed_work_identity_hash'),'eq.'+expected)}
+  })})
   assert.equal((await service.search({region:'서울',from:'2099-01-01',to:'2099-01-01',targetTrackId:'chopin-ballade-op52-no4'})).concerts.length,1)
   const changed=structuredClone(current);changed.works[first.candidate.work_id].opus=999
   assert.equal(confirmationValidity(status,{...changed,catalog_hash:'changed'},{version:'stored-program-3'}).stale_reason,'WORK_IDENTITY_CHANGED')
@@ -85,7 +87,7 @@ test('work identity SQL: immutable receipts, safe legacy backfill, rematch histo
   await db.query('select public.review_concert_program_candidate_identity($1,$2,$3,$4,$5,$6)',reviewArgs)
   assert.equal((await rows('concert_program_reviews')).length,2)
   assert((await rows('concert_program_reviews')).every(r=>r.work_identity_hash))
-  const rematch=buildRematchCandidate({...third.candidate,matcher_version:'stored-program-3'})
+  const rematch=legacyRematchFixture(buildRematchCandidate({...third.candidate,matcher_version:'stored-program-3'}))
   assert.equal(rematch.track_id,newTrack)
   const args=[third.candidate.id,CATALOG_JSON,JSON.stringify(rematch)]
   const rematchId=(await db.query('select public.save_concert_program_rematch($1,$2,$3) id',args)).rows[0].id
