@@ -4,13 +4,27 @@
 
 - 작업 ID: CA-OCR-FALLBACK-20261028-001
 - 명세 버전: 1
-- 현재 상태: READY
-- 마지막 작성자: 웹 GPT
-- 작성일: 2026-10-29 (Asia/Seoul; Gate A/B ACCEPTED / Gate C 700px calibration)
+- 현재 상태: BLOCKED
+- 마지막 작성자: Codex
+- 작성일: 2026-10-29 (Asia/Seoul; 700px calibration / OCR10 상한·적격0 BLOCKED)
 - 작업 브랜치: `codex/ca-ocr-fallback-20261028-001`
 - 선행 운영 작업: CA-AUTO-20261022-001 / OPERATIONAL
 - 선행 결과 SHA: `4f26fb6227d38ee4bc996751025c8a271db94e09`
 - production core SHA: `1db327cd38dfce778da543738f975b70789aed66`
+
+## Codex calibration 결과 — 700px 적용 / Gate C BLOCKED (2026-10-29 KST)
+
+- 읽은 공동 문서5개 SHA `4ea0c535b5ce97882e1d0a52d0f5cace398139ed`. Gate A/B ACCEPTED를 유지하며 [calibration 구현 `d23eed19a54a67cd15ef0faaabc6a82514279b6f`](https://github.com/MattewShin/sound-atlas/commit/d23eed19a54a67cd15ef0faaabc6a82514279b6f)만 추가했다.
+- **원본 해상도 하한800→700px만 변경**했다. JS 상수·runner·아직 미적용인 SQL의 크기 조건과 fixture/문서만 수정했다. policy 기본false·RPC/ACL, confidence/coverage/detection·명시적 same-block composer/catalogue·MATCHED+EXACT·무-REJECTED·blur100·180초 timeout·재시도0은 불변이다. upscaling/환경변수 완화0.
+- 직접 **15/15 PASS, fail0/skip0**(JS10·격리SQL3·예약 wrapper2). 700px 허용/699px 차단, 나머지 고정 상수 동일, SQL 품질/hash·같은 receipt 멱등·부적격 무쓰기·기존 공식/legacy 보존을 검증했다. **적격0이므로 이번 전체 test/build는 미실행**이다. 전회525/525·build ACCEPTED를 새 실행 수치로 보고하지 않는다.
+- **제한 dry-run08:45:26 KST:** 서울10/29~11/28, 표본27공연=공식1/부재26/HOLD0. 이전 해상도 미달8개 중7개가 현재 범위에 남았고 `PF289272`은10/28 종료로 제외했다. 이7개를 먼저, 미조사17개 중 첫4개를 이어 검사했다. 이전 `PF281769` timeout·`PF299101` Program 부족은 반복0.
+- **이미지 GET11/25, OCR10/10, DB REST GET34/POST0**, KOPIS 상세GET0. 첫 eligible을 발견하지 못한 채 OCR 상한에 도달해 종료했다. 이미지 MIME 실패1; decode·700px·blur 통과10; OCR 성공9/timeout1(`PF281822`,180초,재시도0). 성공9개 모두 검증된 Program 본문0줄로 detection3줄 gate 미통과. 전체 OCR detection731개/분석 후보25개였으나 explicit-catalogue0·MATCHED+EXACT0·eligible0이다. coverage/median은 선행 Program gate 실패 뒤 산출하지 않았다.
+- **calibration 업무 쓰기0:** OCR/분석 저장·review/confirmation·신규 OCR CONFIRMED/REJECTED0. migration·fallback policy 활성화·단건 canary/운영 멱등 재전송·Gate D main 병합/배포/예약 연결은 미실행. fallback RPC/policy행 미설치, 스위치 기본OFF를 유지한다. 현재 OPERATIONAL은 기존 공식 Program 경로뿐이다.
+- **기존 공식 정상 예약은 별개로 유지:**08:40에 자동 실행되어08:40:33 SUCCESS/exit0. collection1와 PF304387 공식 후보 `chopin-scherzo-op54-no4` CONFIRMED1(receipt `88b88f30-de19-4b44-9022-762264ec4526`)을 처리했다. 강제실행/예약 변경0. 이1건은 calibration의 쓰기0 집계에 포함하지 않는다.
+- **08:46:23 READ ONLY 확인:** 기존 v4 policy=true, 원래 `chopin-scherzo-op31-no2` receipt 전체 hash 불변·effective=true, 새 공식 receipt도 유효. 기존 PF295548 세 곡 effective CONFIRMED 보존. 정상 예약의 collection/확정으로 concerts48→49·images116→119·공식receipt1→2, 전체861→866행이 됐다. 나머지10개 base table의 count/digest는 동일하다. 모든 운영 데이터가 불변이었다고 주장하지 않는다.
+- 기존 production GET1/POST0 검색에서 PF304387/원래 곡 EXACT·CONFIRMED·stored-program-4 유지. 예약은 **Ready/Enabled·기존 core/action `1db327cd38dfce778da543738f975b70789aed66`**, daily08:40 KST·RestartCount0, lastResult0, 다음 **10/30 08:40**. 기존 공식 운영을 끄거나 교체하지 않았다.
+- 원본 local main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`, 기존40파일/index/.env hash 보존. 비밀값·OCR 원문·evidence·이미지URL 게시0.
+- **실패 Gate/재개점:** Gate C calibration / NO_ELIGIBLE_AT_10_OCR_LIMIT. 현 표본에서는 해상도 하한을 낮춘 뒤에도 검증된 Program 구간이 확보되지 않았다. 추가 완화나 호출 확대 없이, 같은 품질/identity 계약을 만족하는 공식 부재 source의 Program 근거 확보가 재개점이다. 현재 남은 표본까지 적격0이라고 일반화하지 않는다. [상세 검증 JSON](docs/OCR_FALLBACK_CALIBRATION_2026-10-29.json)을 게시하고 **BLOCKED로 중단**한다.
 
 ## 웹 GPT → Codex: Gate A/B ACCEPTED / Gate C 제한 calibration 재개
 

@@ -1,0 +1,666 @@
+{
+  "task_id": "CA-OCR-FALLBACK-20261028-001",
+  "specification": 1,
+  "status": "BLOCKED",
+  "failed_gate": "C_CALIBRATION",
+  "reason": "NO_ELIGIBLE_AT_10_OCR_LIMIT",
+  "read_spec_sha": "4ea0c535b5ce97882e1d0a52d0f5cace398139ed",
+  "implementation_sha": "d23eed19a54a67cd15ef0faaabc6a82514279b6f",
+  "calibration": {
+    "original_min_dimension_before": 800,
+    "original_min_dimension_after": 700,
+    "other_thresholds_changed": false,
+    "confidence_coverage_identity_contract_changed": false,
+    "upscaling": false,
+    "timeout_ms": 180000,
+    "retries": 0,
+    "policy_default": false,
+    "rpc_acl_contract_unchanged": true
+  },
+  "validation": {
+    "direct_tests": 15,
+    "direct_fail": 0,
+    "direct_skip": 0,
+    "js_tests": 10,
+    "isolated_sql_tests": 3,
+    "schedule_tests": 2,
+    "full_test_runs": 0,
+    "build_runs": 0,
+    "not_run_reason": "NO_ELIGIBLE; specification requires full test/build only after eligible",
+    "accepted_previous_full_tests": 525,
+    "accepted_previous_full_fail": 0,
+    "accepted_previous_full_skip": 0,
+    "accepted_previous_build": "PASS"
+  },
+  "dry_run": {
+    "task": "CA-OCR-FALLBACK-20261028-001",
+    "specification": 1,
+    "calibration": "ORIGINAL_DIMENSION_800_TO_700_ONLY",
+    "conditions": {
+      "region": "서울",
+      "regionCode": "11",
+      "genreCode": "CCCA",
+      "states": [
+        "02",
+        "01"
+      ],
+      "timeZone": "Asia/Seoul",
+      "from": "2026-10-29",
+      "to": "2026-11-28"
+    },
+    "source_gate": {
+      "scanned": 27,
+      "official": 1,
+      "absent": 26,
+      "hold": 0
+    },
+    "image_get": 11,
+    "ocr_calls": 10,
+    "db_get": 34,
+    "db_post": 0,
+    "kopis_detail_get": 0,
+    "new_confirmed": 0,
+    "new_rejected": 0,
+    "prior_timeout_or_program_insufficient_not_repeated": [
+      "PF281769",
+      "PF299101"
+    ],
+    "items": [
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF281822",
+        "status": "FAILED",
+        "reason": "EASYOCR_TIMEOUT",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {},
+        "image_quality": {
+          "original_width": 700,
+          "original_height": 7438,
+          "laplacian_variance": 2009.3758099041463
+        }
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF296289",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {},
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        },
+        "candidates": 0,
+        "image_quality": {
+          "original_width": 794,
+          "original_height": 1123,
+          "laplacian_variance": 1263.9709444600783
+        },
+        "eligible_tracks": [],
+        "explicit_catalogue": 0,
+        "matched_exact": 0,
+        "total_detections": 26,
+        "program_lines": 0
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF300258",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {},
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        },
+        "candidates": 0,
+        "image_quality": {
+          "original_width": 750,
+          "original_height": 3571,
+          "laplacian_variance": 3592.2522833794696
+        },
+        "eligible_tracks": [],
+        "explicit_catalogue": 0,
+        "matched_exact": 0,
+        "total_detections": 72,
+        "program_lines": 0
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF285002",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {},
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        },
+        "candidates": 0,
+        "image_quality": {
+          "original_width": 750,
+          "original_height": 937,
+          "laplacian_variance": 296.73733077580096
+        },
+        "eligible_tracks": [],
+        "explicit_catalogue": 0,
+        "matched_exact": 0,
+        "total_detections": 0,
+        "program_lines": 0
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF296173",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {},
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        },
+        "candidates": 0,
+        "image_quality": {
+          "original_width": 750,
+          "original_height": 1017,
+          "laplacian_variance": 1918.1904121119164
+        },
+        "eligible_tracks": [],
+        "explicit_catalogue": 0,
+        "matched_exact": 0,
+        "total_detections": 21,
+        "program_lines": 0
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF296224",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {
+          "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT": 7
+        },
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        },
+        "candidates": 7,
+        "image_quality": {
+          "original_width": 700,
+          "original_height": 8198,
+          "laplacian_variance": 2434.648780025636
+        },
+        "eligible_tracks": [],
+        "explicit_catalogue": 0,
+        "matched_exact": 0,
+        "total_detections": 144,
+        "program_lines": 0
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF298506",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {
+          "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT": 15
+        },
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        },
+        "candidates": 15,
+        "image_quality": {
+          "original_width": 750,
+          "original_height": 10097,
+          "laplacian_variance": 2178.0080847317427
+        },
+        "eligible_tracks": [],
+        "explicit_catalogue": 0,
+        "matched_exact": 0,
+        "total_detections": 263,
+        "program_lines": 0
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF298811",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {},
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        },
+        "candidates": 0,
+        "image_quality": {
+          "original_width": 950,
+          "original_height": 1332,
+          "laplacian_variance": 2955.4988609695083
+        },
+        "eligible_tracks": [],
+        "explicit_catalogue": 0,
+        "matched_exact": 0,
+        "total_detections": 15,
+        "program_lines": 0
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF303290",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {},
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        },
+        "candidates": 0,
+        "image_quality": {
+          "original_width": 960,
+          "original_height": 1358,
+          "laplacian_variance": 7888.792793100815
+        },
+        "eligible_tracks": [],
+        "explicit_catalogue": 0,
+        "matched_exact": 0,
+        "total_detections": 40,
+        "program_lines": 0
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF303365",
+        "status": "FAILED",
+        "reason": "OCR_IMAGE_MIME_INVALID",
+        "downloads": 1,
+        "ocr_calls": 0,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {}
+      },
+      {
+        "rule": "program-ocr-fallback-1",
+        "kopis_id": "PF293668",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "downloads": 1,
+        "ocr_calls": 1,
+        "new_confirmation_limit": 1,
+        "confirmation_posts": 0,
+        "rejected": 0,
+        "eligible": 0,
+        "skipped": {
+          "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT": 3
+        },
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        },
+        "candidates": 3,
+        "image_quality": {
+          "original_width": 750,
+          "original_height": 3158,
+          "laplacian_variance": 2198.5156493744657
+        },
+        "eligible_tracks": [],
+        "explicit_catalogue": 0,
+        "matched_exact": 0,
+        "total_detections": 150,
+        "program_lines": 0
+      }
+    ],
+    "status": "BLOCKED_NO_ELIGIBLE",
+    "previous_resolution_only_selected": [
+      "PF281822",
+      "PF296289",
+      "PF300258",
+      "PF285002",
+      "PF296173",
+      "PF296224",
+      "PF298506"
+    ],
+    "new_concerts_selected": 17,
+    "stop_reason": "OCR_CALL_LIMIT",
+    "eligible": 0,
+    "checked_at_kst": "2026-10-29 08:45:26"
+  },
+  "denominators": {
+    "source_scanned": 27,
+    "official": 1,
+    "absent": 26,
+    "hold": 0,
+    "previous_resolution_only_still_in_scope": 7,
+    "previous_resolution_only_expired": 1,
+    "new_concerts_selected_for_possible_scan": 17,
+    "new_concerts_actually_scanned": 4,
+    "images_get": 11,
+    "decoded_quality_metrics_available": 10,
+    "image_mime_failed": 1,
+    "dimensions_700_pass": 10,
+    "blur_pass": 10,
+    "ocr_calls": 10,
+    "ocr_timeout": 1,
+    "ocr_succeeded": 9,
+    "ocr_detections_total": 731,
+    "validated_program_body_lines": 0,
+    "program_detection_gate_failed": 9,
+    "analysis_candidates": 25,
+    "explicit_catalogue_candidates": 0,
+    "matched_exact_candidates": 0,
+    "eligible": 0,
+    "coverage_median": "NOT_COMPUTED_AFTER_EARLIER_PROGRAM_LINE_COUNT_FAILURE"
+  },
+  "calibration_writes": {
+    "rest_get": 34,
+    "rest_post": 0,
+    "admin_ddl": 0,
+    "admin_dml": 0,
+    "kopis_detail_get": 0,
+    "ocr_or_analysis_save": 0,
+    "new_ocr_confirmed": 0,
+    "new_rejected": 0,
+    "canary": "NOT_RUN",
+    "candidate_replay": "NOT_RUN",
+    "migration_applied": false,
+    "main_merged": false,
+    "deployed": false,
+    "ocr_schedule_connected": false
+  },
+  "operational_before": {
+    "adminUrlPresent": true,
+    "readOnly": true,
+    "connected": true,
+    "checkedAtKst": "2026-10-29 08:32:50",
+    "policy": [
+      {
+        "matcher_version": "stored-program-4",
+        "enabled": true
+      }
+    ],
+    "receipt": {
+      "id": "dc572eb9-9756-4fbb-a03b-2a9b00474893",
+      "track_id": "chopin-scherzo-op31-no2",
+      "status": "CONFIRMED",
+      "relation": "EXACT",
+      "is_effectively_confirmed": true,
+      "stale_reason": null
+    },
+    "fallbackMigrationPresent": false,
+    "baseTables": 13,
+    "baseTableRows": 861,
+    "status": "PASS"
+  },
+  "operational_after": {
+    "read_only": true,
+    "calibration_business_writes": 0,
+    "normal_scheduled_run": "767a172e-bfc2-457a-b2fd-c185e6f477b5",
+    "checked_at_kst": "2026-10-29 08:46:23",
+    "policy": [
+      {
+        "matcher_version": "stored-program-4",
+        "enabled": true
+      }
+    ],
+    "fallback_rpc_installed": false,
+    "changed_tables": [
+      {
+        "table": "concert_program_images",
+        "before": 116,
+        "after": 119,
+        "hash_changed": true
+      },
+      {
+        "table": "concert_program_text_confirmations",
+        "before": 1,
+        "after": 2,
+        "hash_changed": true
+      },
+      {
+        "table": "concerts",
+        "before": 48,
+        "after": 49,
+        "hash_changed": true
+      }
+    ],
+    "unchanged_tables": [
+      "concert_cleanup_events",
+      "concert_image_ocr_attempts",
+      "concert_image_ocr_results",
+      "concert_program_analyses",
+      "concert_program_candidates",
+      "concert_program_catalogs",
+      "concert_program_reviews",
+      "concert_program_text_analyses",
+      "concert_program_text_candidates",
+      "concert_program_version_policy"
+    ],
+    "base_tables": 13,
+    "base_rows": 866,
+    "original_receipt_unchanged": true,
+    "official_receipts": [
+      {
+        "id": "88b88f30-de19-4b44-9022-762264ec4526",
+        "track_id": "chopin-scherzo-op54-no4",
+        "status": "CONFIRMED",
+        "relation": "EXACT",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      },
+      {
+        "id": "dc572eb9-9756-4fbb-a03b-2a9b00474893",
+        "track_id": "chopin-scherzo-op31-no2",
+        "status": "CONFIRMED",
+        "relation": "EXACT",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      }
+    ],
+    "legacy": [
+      {
+        "track_id": "brahms-intermezzo-op118-no2",
+        "matcher_version": "stored-program-3",
+        "review_status": "CONFIRMED",
+        "effective_status": "CONFIRMED",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      },
+      {
+        "track_id": "chopin-ballade-op52-no4",
+        "matcher_version": "stored-program-3",
+        "review_status": "CONFIRMED",
+        "effective_status": "CONFIRMED",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      },
+      {
+        "track_id": "liszt-liebestraum-s541-no3",
+        "matcher_version": "stored-program-3",
+        "review_status": "CONFIRMED",
+        "effective_status": "CONFIRMED",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      }
+    ],
+    "prior_resolution_source_outside_current_scope": [
+      {
+        "kopis_id": "PF289272",
+        "start_date": "2026-10-28",
+        "end_date": "2026-10-28",
+        "performance_status": "공연예정"
+      }
+    ],
+    "status": "PASS"
+  },
+  "schedule_before": {
+    "state": "Ready",
+    "enabled": true,
+    "originalAction": true,
+    "coreSha": "1db327cd38dfce778da543738f975b70789aed66",
+    "restartCount": 0,
+    "dailyTime": "08:40",
+    "nextRunKst": "2026-10-29 08:40:00",
+    "lastRunKst": "2026-10-23 08:40:01",
+    "lastResult": 1,
+    "forcedRun": false
+  },
+  "schedule_after": {
+    "state": "Ready",
+    "enabled": true,
+    "originalAction": true,
+    "coreSha": "1db327cd38dfce778da543738f975b70789aed66",
+    "restartCount": 0,
+    "dailyTime": "08:40",
+    "nextRunKst": "2026-10-30 08:40:00",
+    "lastRunKst": "2026-10-29 08:40:00",
+    "lastResult": 0,
+    "forcedRun": false
+  },
+  "independent_existing_official_run": {
+    "status": "SUCCESS",
+    "started_at": "2026-10-28T23:40:12.3010439Z",
+    "finished_at": "2026-10-28T23:40:33.9795247Z",
+    "node_exit_code": 0,
+    "matcher_version": "stored-program-4",
+    "forced_run": false,
+    "report": {
+      "run_id": "767a172e-bfc2-457a-b2fd-c185e6f477b5",
+      "status": "SUCCESS",
+      "exit_code": 0,
+      "started_at": "2026-10-29T08:40:14.863+09:00",
+      "finished_at": "2026-10-29T08:40:33.576+09:00",
+      "official_program": {
+        "selected": 1,
+        "kopis_id": "PF304387",
+        "mode": "SAVE",
+        "concert_id": "bf031eec-2f7d-436f-8255-fd0fa75dee1c",
+        "status": "CONFIRMED",
+        "source": "KOPIS_DETAIL_TEXT",
+        "reason": "ONE_CANDIDATE_CONFIRMED",
+        "analysis_id": "6999ba97-d340-434e-8414-3094c9bb26b3",
+        "source_hash": "c62f6504449ea9ef4b6a41f4d648ebe5fdf1b41f65f89e22da848e7ff4f6b9ca",
+        "payload_hash": "8b8d72acc254afd360228ab1f7da2a9c5302f74f486c4f160966e82dfd5f523a",
+        "counts": {
+          "total": 18,
+          "ready": 3,
+          "already": 1,
+          "hold": 0,
+          "pending": 16
+        },
+        "outcomes": {
+          "MATCHED": 5,
+          "UNREGISTERED": 12,
+          "AMBIGUOUS": 1
+        },
+        "reasons": {
+          "COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY": 5,
+          "TITLE_OR_REGISTERED_ALIAS_AGREES": 5,
+          "KEY_CORROBORATES_IDENTITY": 5,
+          "COMPOSER_OUTSIDE_CATALOG": 7,
+          "UNCERTAIN_ROMAN_LABEL": 1,
+          "SCOPE_LABEL_REQUIRES_REVIEW": 1,
+          "WORK_NOT_REGISTERED": 6,
+          "PARENT_WORK_ONLY_NOT_MOVEMENT_PERFORMANCE": 1,
+          "ALREADY_CONFIRMED": 1
+        },
+        "receipt_id": "88b88f30-de19-4b44-9022-762264ec4526"
+      },
+      "stages": {
+        "preflight": {
+          "succeeded": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        "cleanup": {
+          "succeeded": 0,
+          "failed": 0,
+          "skipped": 0
+        },
+        "collection": {
+          "succeeded": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        "ocr": {
+          "succeeded": 0,
+          "failed": 0,
+          "skipped": 0
+        },
+        "analysis": {
+          "succeeded": 0,
+          "failed": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "initiated_by_agent": false,
+    "new_official_confirmed": 1,
+    "collection_succeeded": 1
+  },
+  "production_existing_search": {
+    "pass": true,
+    "GET": 1,
+    "POST": 0,
+    "kopis_id": "PF304387",
+    "track_id": "chopin-scherzo-op31-no2",
+    "relation": "EXACT",
+    "status": "CONFIRMED",
+    "programAnalysisVersion": "stored-program-4",
+    "origin": "https://sound-atlas.vercel.app"
+  },
+  "local_preservation": {
+    "branch": "main",
+    "head": "1607ca201c3a559bc7f28aabe998ef062db02ef9",
+    "files_checked": 40,
+    "changed_files": 0,
+    "index_preserved": true,
+    "env_preserved": true
+  },
+  "resume": "Gate C source/validated Program evidence remains unavailable in this bounded sample; do not lower criteria further or continue beyond call budgets. Official operational policy and schedule stay enabled; OCR fallback stays uninstalled/disabled."
+}
