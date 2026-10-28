@@ -3,7 +3,7 @@
 - 작업 ID: CA-OCR-FALLBACK-20261028-001
 - 명세 버전: 1
 - 제목: 공식 Program 부재 공연의 제한 OCR fallback·안전 자동 확정
-- 상태: READY
+- 상태: BLOCKED
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -12,6 +12,49 @@
 - 기준 운영 결과: `CA-AUTO-20261022-001 / OPERATIONAL`
 - 기준 결과 문서: `4f26fb6227d38ee4bc996751025c8a271db94e09`
 - main·production·예약 core SHA: `1db327cd38dfce778da543738f975b70789aed66`
+
+## 실행 결과 — Gate A/B 구현·격리 PASS / Gate C 적격0으로 BLOCKED
+
+- 읽은 공동 문서5개: `codex/ca-ocr-fallback-20261028-001` / `c936fd3a21f5dacf994a1832e22c87f0cbf10093`, CA-OCR-FALLBACK-20261028-001 / 명세1. [구현 SHA `240afe6381309f053418b98c9081ed21e286a687`](https://github.com/MattewShin/sound-atlas/commit/240afe6381309f053418b98c9081ed21e286a687).
+- **실패 Gate/중단점: Gate C-3~4 운영 무쓰기 dry-run / NO_ELIGIBLE.** 단건 canary, 운영 migration/policy 활성화, main 병합·배포·예약 연결은 미실행이다. OPERATIONAL이 아니다. 다른 Gate의 별도 승인을 기다린 것이 아니라, 명세의 적격0 중단 조건에 도달했다.
+
+| Gate | 실제 결과 |
+| --- | --- |
+| A | 별도 source/품질 rule·단건 runner·기본 OFF 예약 wrapper 구현, 직접 격리 PASS |
+| B | immutable 품질 재계산·명시적 block composer/catalogue·CONFIRMED 전용 RPC·멱등·무-REJECTED 격리 PASS |
+| C | 직접17/17 + 전체525/525 fail0/skip0 + build PASS. 운영 dry-run10건 eligible0으로 BLOCKED; canary 미실행 |
+| D | 선행 canary 미통과로 미실행. 기존 공식 Program 운영 유지 |
+
+### 구현 범위와 안전 계약
+
+- `ocrFallback.mjs`: 기존 공식 router 결과의 부재 사유3개만 허용, invalid/incomplete/hash/markup는 HOLD. 원본 decode·크기·bbox·coverage·confidence, same logical block의 명시적 composer/catalogue, 단일 MATCHED/EXACT, 중복·악장·편곡·범위·unknown reason을 fail-closed로 검증한다. 기존 v4 matcher/router와 구 `programAutomation`은 수정하지 않았다.
+- `ocrFallbackImage.mjs`: 이미지 GET1/재시도·redirect0, MIME/decoder format·6MB·12Mpixel·20,000px 제한, 원본 양변800px. blur 실패를 보수적으로 판별하는 **고정 Laplacian variance100** 상수를 추가했다. 방향 보정 후 최대1,000px grayscale에서 계산하며 env로 완화할 수 없다. 기존 threshold를 낮추거나 작은 원본을 확대해 통과시키지 않았다.
+- `ocrFallbackRunner.mjs`와 `supabaseOcrFallback.mjs`: 공연1/이미지GET1/OCR1/confirmation POST1, 저장 직전 source 재조회와 저장 후 current SUCCEEDED OCR·분석·후보 재검증. SKIPPED는 reason만 보고하고 decision/review/confirmation을 호출하지 않는다. 기존 REJECTED 저장/finish/unavailable 경로를 사용하지 않는다.
+- 새 additive `202610280001_ocr_fallback.sql`: 별도 `program-ocr-fallback-1` policy 기본false, service_role 전용 SECURITY INVOKER 확인 RPC와 append-only proof receipt. 잠금 아래 current source/image/OCR/analysis/catalog/정책·기존 유효 receipt와 저장 OCR의 품질 snapshot/hash를 재검증한다. **CONFIRMED만** 생성하고 동일 candidate/expected 재전송은 같은 receipt로 수렴한다. 원본 decode는 기존 OCR과 같은 service-role worker 신뢰 경계이며 SQL은 이미지 bytes 자체를 decode하지 않는다. 이 migration은 **운영 미적용**이다.
+- `scheduledOcrFallback.mjs`/`pipelineRuntime.mjs`: 새 스위치 `PROGRAM_OCR_FALLBACK_SCHEDULE_ENABLED=false` 기본값. 공식 선택이 있으면 그 공연이 합산 예산1을 사용하고 OCR0회다. 공식 선택0인 실행만 첫 부재 공연/첫 DETAIL 이미지에 fallback1회, worker는 실제 recognize 직전에 생성한다. 기존 OCR 대량 stage는 켜지 않는다. 기존 공식 정책·예약과 독립적으로 fallback만 끌 수 있다. 실제 예약에는 연결하지 않았다.
+- [설계·운영 조건](docs/OCR_FALLBACK.md), [검증 JSON](docs/OCR_FALLBACK_VALIDATION_2026-10-28.json)을 함께 게시한다. production 코드 변경은 위 runtime wrapper 선택과 신규 fallback 모듈뿐이며 기존 공식/legacy 검색 코드는 불변이다.
+
+### 실제 검증
+
+- Windows / Node22.18.0. 신규 직접13 + 기존 공식 예약4 = **17/17 PASS**, fail0/skip0. 고해상도 명시적 후보, composer 추론/title-only/작품번호 없음/악장 불명/편곡/중복/저신뢰/품질 누락, 공식/HOLD OCR0회, SKIPPED RPC0회, 여러 eligible 중1회 확정, uncertain POST 재시도0을 확인했다.
+- PGlite 빈 격리 DB의 기존 migration chain + 신규 migration에서 JS/SQL 품질 snapshot 동일, 기본 policyfalse, test-only 활성화, 동일 candidate receipt ID·row 수 불변, invalid/stale 입력 새 review0, 기존 공식 분석·legacy review 보존, RLS/anon/authenticated 차단과 service_role SELECT/INSERT 전용 receipt ACL을 검증했다.
+- 최종 `npm test` **525/525 PASS, fail0/skip0,440.015초**, production build **PASS7.80초**. 각각 **1회** 실행했다. 기존613.88kB chunk 경고 유지. 수정 후 전체 test/build 반복은 없었다.
+
+### 운영 dry-run — 서울 2026-10-28~11-27 / 10:32:19 KST
+
+- 미래/공연중·예정 공연28개를 GET으로 분류: **공식 선택1 / 공식 부재27 / HOLD0**. 부재 중 시작일→KOPIS ID 순 첫10개, 각 sort_order→image ID 순 첫 active DETAIL 한 장만 검사했다. 나머지17개 부재 공연까지 적격0이라고 일반화하지 않는다.
+- 이미지 GET **10**, decode/MIME/byte/pixel 통과10, 원본 양변800px 통과 **2/10**, 원본 폭700/750/794px 미달 **8/10**. blur 측정10개는 모두 threshold 이상이었다. 크기 미달8개에는 OCR0회다.
+- OCR 호출 **2**, 성공 **1**, timeout **1**. `PF281769`(1120×8762)은 기존180초 제한에서 EASYOCR_TIMEOUT, 재시도0. `PF299101`(1500×843)은 OCR 성공했으나 Program 본문 유효 detection3줄 조건 미충족이다. 분석 후보1개 중 명시적 catalogue0, MATCHED+EXACT0, eligible0. 이 earlier gate 실패 뒤 coverage/median은 산출하지 않았으며 통과한 것으로 보고하지 않는다.
+- **Supabase REST GET31/POST0**, KOPIS 공식 상세GET0, 이미지GET10, OCR2. OCR/분석 저장0, confirmation/review0, 신규 CONFIRMED0/REJECTED0. 운영 동일 candidate 재전송은 적격 canary가 없어 미실행이며, 멱등 통과는 위 격리 결과다.
+- 원문·evidence·이미지URL/비밀 query·DB 연결정보를 게시하지 않았다. 이미지 품질/제외 사유/수와 코드 기준만 기록했다.
+
+### 기존 운영 보존·최종 상태
+
+- 관리자 URL 존재/연결 성공만 확인했다. **10:19:37 → 10:33:45 KST READ ONLY SQL:** 운영 base table **13개/861행 전부 count+digest 동일**. 기존 v4 policy=true, PF304387 공식 receipt `dc572eb9-9756-4fbb-a03b-2a9b00474893` effective=true·EXACT/CONFIRMED·stale_reason=null. fallback policy행/RPC는 미설치이므로 OFF이며 DDL/DML0이다.
+- 공개 [production](https://sound-atlas.vercel.app) GET1/POST0에서도 PF304387/`chopin-scherzo-op31-no2`가 HTTP200·EXACT·CONFIRMED·stored-program-4로 유지됨을 확인했다. legacy 검색 회귀는 전체 격리 suite에서 통과했고 운영 legacy 데이터/receipt는 전체 table digest로 불변을 확인했다. 이번 운영 과거 날짜 검색을 재실행했다고 보고하지 않는다.
+- 실제 `ClassicAtlas-LocalPipeline` **Enabled/Ready**, 기존 action·core `1db327cd38dfce778da543738f975b70789aed66` 그대로. daily08:40 KST, 다음 **2026-10-29 08:40:00**, RestartCount0, lastRun10/23 그대로, 강제실행0. 기존 공식 collection/공식 Program ON·OCR/구 분석/cleanup OFF와 합산1 상한을 유지했다. fallback 설치/활성화/rollback 필요0이다.
+- 원본 local main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`, 기존40파일·index·.env hash 보존. root에서 pull/switch/reset/stash/commit을 하지 않았다.
+- **재개점/구현자 의견:** 기준을 만족하는 공식 부재 source가 확보되면 같은 명세의 Gate C bounded dry-run부터 재개한다. 현재 표본의 800px 미만 원본은 upscaling으로 해결하지 않고, 장문 이미지 timeout은 품질·evidence 기준과 분리된 실행 비용 문제로 기록한다. threshold 완화, 추가 표본 확대, timeout 재시도·migration 적용·운영 확정·예약 연결을 임의로 시작하지 않았다. 신규 코드/SQL은 구현·격리 검증 완료이나 후속 검토는 아직 미완료다. **BLOCKED를 게시하고 중단한다.**
 
 ## 목표
 
