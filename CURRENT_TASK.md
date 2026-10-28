@@ -3,7 +3,7 @@
 - 작업 ID: CA-AUTO-20261022-001
 - 명세 버전: 4
 - 제목: 명확한 공연 프로그램 후보의 운영 자동 확정 활성화 및 단계적 확대
-- 상태: READY
+- 상태: OPERATIONAL
 - 요청자: Theo
 - 명세 작성자 / 후속 검토자: 웹 GPT
 - 실행 담당: Codex
@@ -13,7 +13,7 @@
 - 선행 작업: CA-SEARCH-20261022-001 / ACCEPTED
 - 고정 기능 코드 기준: `ad5ab3cf5984146c4b2dc94428a146944af23fab`
 
-## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / READY
+## 명세 4 작업 3M — 공식 Program 공연 연결 최종 운영 전환 / OPERATIONAL
 
 작업 3L 결과 SHA `77bd9ead8e3f766538916a509b5418fe78c8722e`와 구현 SHA `78db45b77667634acf372a28e991344c66dbaa83`를 **ACCEPTED**한다. legacy v2·v3 source read/backfill과 신규 v4 output/write가 분리됐고, unknown source fail-closed·v4 RPC/policy gate·기존 receipt 불변을 유지한 직접 테스트 53/53을 확인했다.
 
@@ -26,12 +26,27 @@
 - 전체 `npm test`: fail 0·skip 0이며 3A~3L 직접 suite가 기본 runner에 중복 없이 포함됨
 - production build 통과
 - 운영 migration 6개가 COMPLETE
-- 공식 Program 텍스트 공연 단건 canary에서 신규 CONFIRMED 최대 1건, 동일 입력 재실행 신규 쓰기 0
+- 공식 Program 텍스트 공연 단건 canary에서 신규 CONFIRMED 최대 1건, 동일 candidate/decision version/confirmation expected 재전송 신규 쓰기 0
 - 해당 곡의 공개 공연 검색에서 canary 공연 노출
 - 운영 배치는 공식 Program 경로만 1공연/신규확정 1건 상한으로 활성화
 - OCR·이미지 다운로드·OCR 기반 분석/자동판정과 cleanup은 OFF
 
-### 작업 3M Gate C 멱등 기준 정정·검색 및 Gate D 완료 / READY
+### 작업 3M 최종 결과 — Gate A~D PASS / OPERATIONAL (2026-10-28 KST)
+
+- 읽은 공동 문서5개/실행 명세 SHA `510a42d0d670ff16dbdb2312f730239708adab99`. 최신 candidate 멱등 기준을 적용했다. timeout 구현 `ea6e9270b0a1f307292e30954f6dd858ee87080c`과 첫 canary는 ACCEPTED를 재사용했다. 신규 migration·기존 migration6개/ACL/timeout 재적용·KOPIS/OCR/source sync·분석/후보 저장·coordinator 재실행은 모두0이다. 공연 단위 영구 차단·run-ledger를 추가하지 않았다.
+- **Gate A PASS:** 받아들여진 전체 npm test **512/512, fail0/skip0(301.96s)** 및 production build **PASS3.23s**를 유지한다. CURRENT_TASK/HANDOFF 외318개 코드/테스트/설정 파일이 해당 검증 snapshot과 byte 단위로 같음을 확인했다. 이번에 전체 test/build를 반복 실행한 수치가 아니다. 기존613.88kB chunk 경고는 유지한다.
+- **Gate B PASS:** 기존 migration6개·제한 ACL·단건 status GET RPC의 운영 적용/검증은 ACCEPTED 상태이며 재적용0이다.
+- **Gate C 멱등 PASS:** v4 policy 한 행을 활성화하고 이미 확정된 `PF304387 / chopin-scherzo-op31-no2` candidate `0f939aa1-663b-41e4-a92f-9672f92ac694`의 동일 decision version/expected 입력을 기존 confirmation adapter에 **정확히1회 POST**했다. 반환 receipt는 기존 `dc572eb9-9756-4fbb-a03b-2a9b00474893`와 같고 verification hash·confirmation 수·전체 기존 base-table count/digest가 동일했다. 신규 CONFIRMED0/REJECTED0, 다른 candidate 확인0, 신규 업무 데이터 쓰기0이다. policy 전환은 별도이며 마지막 상태는 true다.
+- **검색 PASS:** release의 현재 검색(10/28~11/27)에서 PF304387의 위 곡이 EXACT/CONFIRMED로 노출됐다. 기존 PF295548은 **10/27 종료 공연**이므로 현재 미래 공연 검색에서 빠지는 것이 정상이다. 기존3곡의 legacy receipt/currentness/effective status를 READ ONLY로 확인한 후, release adapter의 테스트용 now를10/27로 주입한 회귀 검색에서 `chopin-ballade-op52-no4`, `liszt-liebestraum-s541-no3`, `brahms-intermezzo-op118-no2` 모두 PF295548 EXACT/CONFIRMED를 확인했다. 운영 날짜 필터는 변경하지 않았다. 최초 날짜 기대 불일치 때 policy=false로 보호 복구했고 종료일 확인/회귀 통과 후 true로 재개했다. candidate POST는 반복하지 않았다.
+- **Gate D 병합/배포 PASS:** main 대비118파일/ahead101/behind0 범위를 확인했고 승인된 program/search/pipeline 변경 범위였다. Vercel check/status 성공 후 [PR #2](https://github.com/MattewShin/sound-atlas/pull/2)를 병합했다. main·production·예약 core release SHA는 [`1db327cd38dfce778da543738f975b70789aed66`](https://github.com/MattewShin/sound-atlas/commit/1db327cd38dfce778da543738f975b70789aed66)이다. GitHub Production deployment7373999849/success와 실제 [production](https://sound-atlas.vercel.app)의 build asset/status를 확인했다. production GET 공연 검색에서도 PF304387/위 곡 EXACT·CONFIRMED·stored-program-4가 HTTP200으로 반환됐다.
+- **제한 예약 활성화 PASS:** `ClassicAtlas-LocalPipeline` **Enabled/Ready**, daily08:40 KST, **다음2026-10-29 08:40:00 KST**. collection/공식 Program ON, OCR·이미지 다운로드·구 OCR 분석/자동판정·cleanup OFF. **회당 공연1/신규확정최대1**, batch1800초/task PT32M, IgnoreNew, RestartCount0. 기존 principal/power 설정 보존. 지난 예약의 즉시 catch-up을 막도록 최초 boundary만 다음 같은08:40으로 이동했다. lastRun10/23은 그대로이며 강제실행0, 첫 정상 예약 결과는 아직 관측하지 않았다.
+- **실행 경로/rollback:** 고정 core SHA와320개 tracked file SHA256을 검증하는 로컬 launcher를 예약 action으로 사용한다. 네트워크0 verify 통과, OCR worker/download 미초기화, 기존 pipeline PowerShell의 lock/receipt/power 처리 재사용. root .env는 참조만 하고 복사/수정0, 관리자 DB URL은 실제 배치 자식 환경에서 제거한다. rollback 준비 완료: 로컬 `Manage-OfficialProgramRelease.ps1 -Mode Rollback`으로 예약 Disable → v4 policy=false → 이전 action 복원. 문법 오류0이며 실제 rollback은 미실행이다. migration/receipt 삭제는 없다.
+- **최종2026-10-28 09:48:19 KST READ ONLY:** v4 policy=true, receipt1·effective=true·EXACT/MATCHED/CONFIRMED·stale_reason=null, 재전송 전후 업무 데이터 count/digest 불변. 이번 로컬 Supabase REST GET36/POST1(동일 receipt 재전송)이며 공개 production 검색 GET은 별도다.
+- 원본 local main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`와 기존40파일/index/.env hash 보존. local root에서 브랜치 전환·reset·stash·commit을 하지 않았다. 연결 문자열/비밀번호/운영 원문/evidence quote 게시0.
+- [운영 manifest](docs/collaboration/CA-AUTO-20261022-001/operational/OPERATIONAL_RELEASE_2026-10-28.json)와 [launcher/rollback 감사 자료](docs/collaboration/CA-AUTO-20261022-001/operational/README.md)를 함께 게시한다. 실제 경로/config/hash목록과 원래 예약 XML은 로컬 .cache에만 보관한다. 결과 문서는 배포 SHA의 자식으로 같은 협업 브랜치에 게시하며, 고정 production/예약 core SHA는 위1db327c다.
+- **기술 의견/후속:** 동일 candidate의 동일 confirmation 입력은 기존 receipt로 수렴한다. 정상 다음 예약이 같은 공연의 다른 ready 후보 하나를 처리하는 것은 허용된다. 추가 구현/조사는 종료하고 다음 정상 예약의 실제 실행 결과만 별도 관측 대상으로 남긴다. 최종 상태 **OPERATIONAL**.
+
+### 작업 3M Gate C 멱등 기준 정정·검색 및 Gate D 완료 / 완료
 
 결과 SHA `dac46dc51b16de14292ea8f88e78fb3b6dd5d487`를 검토했다. timeout 보정, 신규 단건 read RPC의 운영 적용, 전체 테스트 512/512·build, `PF304387`의 첫 공식 CONFIRMED 1건을 **ACCEPTED**한다.
 

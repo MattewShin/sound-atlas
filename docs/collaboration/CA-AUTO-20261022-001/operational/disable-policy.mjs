@@ -1,0 +1,3 @@
+import pg from '../db-client/node_modules/pg/lib/index.js';
+const db=new pg.Client({connectionString:process.env.CLASSIC_ATLAS_DATABASE_URL,connectionTimeoutMillis:10000,options:'-c statement_timeout=15000'});
+try{await db.connect();await db.query('BEGIN');const q=await db.query("update public.concert_program_version_policy set enabled=false where matcher_version='stored-program-4' and enabled=true returning enabled");if(q.rowCount>1)throw Error('POLICY_NOT_UNIQUE');await db.query('COMMIT');console.log(JSON.stringify({policyDisabled:true,changed:q.rowCount}));}catch{await db.query('ROLLBACK').catch(()=>{});console.log(JSON.stringify({policyDisabled:false}));process.exitCode=1;}finally{await db.end().catch(()=>{});}

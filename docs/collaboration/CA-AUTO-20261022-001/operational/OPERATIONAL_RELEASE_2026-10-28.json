@@ -1,0 +1,138 @@
+{
+  "task_id": "CA-AUTO-20261022-001",
+  "specification": 4,
+  "work": "3M",
+  "status": "OPERATIONAL",
+  "checked_at_kst": "2026-10-28 09:48:19",
+  "implementation_sha": "ea6e9270b0a1f307292e30954f6dd858ee87080c",
+  "deployment_sha": "1db327cd38dfce778da543738f975b70789aed66",
+  "source_spec_sha": "510a42d0d670ff16dbdb2312f730239708adab99",
+  "pull_request": "https://github.com/MattewShin/sound-atlas/pull/2",
+  "production_url": "https://sound-atlas.vercel.app",
+  "tests": {
+    "accepted_total": 512,
+    "fail": 0,
+    "skip": 0,
+    "production_build": "PASS",
+    "production_build_seconds": 3.23,
+    "code_files_unchanged": 318,
+    "operator_verify_network_calls": 0
+  },
+  "migrations": {
+    "prior_six": "COMPLETE_ACCEPTED_NOT_REAPPLIED",
+    "acl_repair": "COMPLETE_ACCEPTED_NOT_REAPPLIED",
+    "bounded_status_rpc": "COMPLETE_ACCEPTED_NOT_REAPPLIED",
+    "new_migrations": 0
+  },
+  "candidate_replay": {
+    "receipt_id": "dc572eb9-9756-4fbb-a03b-2a9b00474893",
+    "track_id": "chopin-scherzo-op31-no2",
+    "kopis_id": "PF304387",
+    "same_receipt_id": true,
+    "same_verification_hash": true,
+    "new_business_writes": 0,
+    "confirmation_posts": 1,
+    "policy_enabled": true
+  },
+  "search": {
+    "current": {
+      "track_id": "chopin-scherzo-op31-no2",
+      "kopis_id": "PF304387",
+      "relation": "EXACT",
+      "status": "CONFIRMED",
+      "from": "2026-10-28",
+      "to": "2026-11-27"
+    },
+    "legacy_regression": [
+      {
+        "track_id": "chopin-ballade-op52-no4",
+        "kopis_id": "PF295548",
+        "relation": "EXACT",
+        "status": "CONFIRMED",
+        "asOfKst": "2026-10-27"
+      },
+      {
+        "track_id": "liszt-liebestraum-s541-no3",
+        "kopis_id": "PF295548",
+        "relation": "EXACT",
+        "status": "CONFIRMED",
+        "asOfKst": "2026-10-27"
+      },
+      {
+        "track_id": "brahms-intermezzo-op118-no2",
+        "kopis_id": "PF295548",
+        "relation": "EXACT",
+        "status": "CONFIRMED",
+        "asOfKst": "2026-10-27"
+      }
+    ],
+    "legacy_excluded_from_current_search_because_ended": "2026-10-27",
+    "production": {
+      "kopis_id": "PF304387",
+      "track_id": "chopin-scherzo-op31-no2",
+      "relation": "EXACT",
+      "status": "CONFIRMED",
+      "version": "stored-program-4"
+    }
+  },
+  "schedule": {
+    "name": "ClassicAtlas-LocalPipeline",
+    "enabled": true,
+    "state": "Ready",
+    "timezone": "Asia/Seoul",
+    "daily": "08:40",
+    "next_run_kst": "2026-10-29 08:40:00",
+    "start_boundary": "2026-10-29T08:40:00+09:00",
+    "multiple_instances": "IgnoreNew",
+    "execution_time_limit": "PT32M",
+    "batch_seconds": 1800,
+    "restart_count": 0,
+    "collection": true,
+    "official_program": true,
+    "ocr": false,
+    "image_download": false,
+    "legacy_analysis_and_decisions": false,
+    "cleanup": false,
+    "concert_limit": 1,
+    "new_confirmation_limit": 1,
+    "forced_run": false,
+    "last_run_unchanged": true,
+    "principal_and_power_settings_preserved": true,
+    "first_normal_run_observed": false
+  },
+  "release": {
+    "tracked_file_hashes_verified": 320,
+    "root_env_copied": false,
+    "root_env_modified": false,
+    "admin_database_url_forwarded_to_batch": false,
+    "runtime_config_sha256": "08d0a75750aa3591a986955a074e39b77612179e81602979ada51d1a720868a1"
+  },
+  "rollback": {
+    "ready": true,
+    "order": [
+      "DISABLE_TASK",
+      "DISABLE_V4_POLICY",
+      "RESTORE_PREVIOUS_ACTION"
+    ],
+    "source_backup_local_only": true,
+    "delete_migrations_or_receipts": false
+  },
+  "operator_sources": [
+    {
+      "path": "Invoke-OfficialProgramRelease.ps1",
+      "sha256": "df5f130396412557a78cded4f0434c6b541d82073d099e631274720b7b90038f"
+    },
+    {
+      "path": "launch-release.mjs",
+      "sha256": "a0951609a3c8b77cd9735f2f66a677f84a348a2a838802fcb99cfac906cf8136"
+    },
+    {
+      "path": "Manage-OfficialProgramRelease.ps1",
+      "sha256": "653ddf12337a98e06df8abe791ab39066ce27d9ae66fa0cfe7123f2b44943cd4"
+    },
+    {
+      "path": "disable-policy.mjs",
+      "sha256": "be00701c1f6984f3ce4b9c1d39e44cb0aad4fcc7f6d8b2e42f2598a11d37f370"
+    }
+  ]
+}
