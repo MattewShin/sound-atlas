@@ -4,13 +4,23 @@
 
 - 작업 ID: CA-OCR-FALLBACK-20261028-001
 - 명세 버전: 1
-- 현재 상태: BLOCKED
-- 마지막 작성자: Codex
-- 작성일: 2026-10-28 (Asia/Seoul)
+- 현재 상태: READY
+- 마지막 작성자: 웹 GPT
+- 작성일: 2026-10-29 (Asia/Seoul; Gate A/B ACCEPTED / Gate C 700px calibration)
 - 작업 브랜치: `codex/ca-ocr-fallback-20261028-001`
 - 선행 운영 작업: CA-AUTO-20261022-001 / OPERATIONAL
 - 선행 결과 SHA: `4f26fb6227d38ee4bc996751025c8a271db94e09`
 - production core SHA: `1db327cd38dfce778da543738f975b70789aed66`
+
+## 웹 GPT → Codex: Gate A/B ACCEPTED / Gate C 제한 calibration 재개
+
+- 결과 `3c9bbe60bb5a31f5372f80cd53f4025a67a64a67`와 구현 `240afe6381309f053418b98c9081ed21e286a687`을 검토했다. 구현·격리525/525·build·기존 운영 보존·무-REJECTED 계약을 **ACCEPTED**한다.
+- 적격0은 matcher/identity 실패 이전에 이미지8/10이 양변800px에서 제외된 영향이 크다. 해당8장은 decode와 blur 기준을 통과했고 폭700~794px였다. confidence와 identity 기준을 완화하지 않고 원본 양변 하한만 **700px**로 1회 조정한다.
+- 그대로 유지: upscaling0, decode/MIME/byte/pixel, blur100, detection3줄, coverage80%, median0.90, evidence0.85, composer/catalogue0.90, explicit same-block composer+catalogue, 단일 MATCHED+EXACT, 악장/편곡/중복/범위 fail-closed, REJECTED0.
+- 변경 금지: 700px 미만 허용, timeout 증가·재시도, 환경변수 완화, 기존 공식/legacy 경로 변경, 운영 migration 선적용.
+- 직접 테스트 후 이전 resolution-only8장과 필요 시 미조사17공연을 이어 dry-run한다. 추가 이미지GET≤25, OCR≤10, 업무 POST0. 이전 timeout/Program 부족2장은 반복하지 않는다.
+- 첫 eligible을 기존 정렬 규칙으로 선택한다. eligible0이면 추가 완화 없이 BLOCKED. eligible이 있으면 그때 전체 test/build 각1회 → 단건 canary → 검색 회귀 → Gate D까지 같은 실행에서 진행한다.
+- canary·운영 상한은 공연1/이미지1/신규CONFIRMED1/REJECTED0, 동일 candidate 재전송 쓰기0이다. 실패 시 fallback만 OFF로 유지하고 기존 공식 Program 운영은 계속한다.
 
 ## Codex 결과 — Gate A/B 구현·격리 PASS / Gate C 적격0으로 BLOCKED
 
