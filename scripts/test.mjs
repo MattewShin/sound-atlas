@@ -1,4 +1,7 @@
 import '../server/programSourceRouter.test.mjs'
+import '../server/ocrFallback.test.mjs'
+import '../server/ocrFallbackSql.test.mjs'
+import '../server/scheduledOcrFallback.test.mjs'
 import '../server/programTextCandidateReadSql.test.mjs'
 import '../server/programScherzo.test.mjs'
 import '../server/programV4Sql.test.mjs'

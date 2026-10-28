@@ -12,6 +12,7 @@ import { getOcrImageConfig } from './ocrImageConfig.mjs'
 import { terminateOwnedProcess } from './pipelineProcess.mjs'
 import {getProgramRollout} from './programRollout.mjs'
 import {getOfficialProgramScheduleEnabled,createScheduledProgramText} from './scheduledProgramText.mjs'
+import {getOcrFallbackScheduleEnabled,createScheduledOfficialWithOcr} from './scheduledOcrFallback.mjs'
 
 const probePython = (config,signal) => new Promise((resolve,reject)=>{
   if(signal?.aborted){reject(pipelineError('BATCH_INTERRUPTED'));return}
@@ -31,6 +32,8 @@ const probePython = (config,signal) => new Promise((resolve,reject)=>{
 export const createPipelineRuntime = ({env=process.env,signal,fetchImpl=fetch}={})=>{
   const stageSettings=getPipelineStageSettings(env)
   const officialText=getOfficialProgramScheduleEnabled(env)
+  const ocrFallback=getOcrFallbackScheduleEnabled(env)
+  if(ocrFallback&&!officialText)throw pipelineError('OCR_FALLBACK_REQUIRES_OFFICIAL_PRIORITY')
   if(officialText&&(stageSettings.cleanup||stageSettings.ocr||stageSettings.analysis))throw pipelineError('PROGRAM_TEXT_SCHEDULE_UNSAFE_STAGE_SETTINGS')
   const config=stageSettings.ocr?getEasyOcrConfig(env):stageSettings.analysis?getOcrImageConfig(env):null
   const options={env,signal,fetchImpl,stageSettings}
@@ -40,7 +43,7 @@ export const createPipelineRuntime = ({env=process.env,signal,fetchImpl=fetch}={
   return {
     rollout:getProgramRollout(env),
     stageSettings,repository,client,worker,imageValidationKey:config?imageValidationKey(config):undefined,
-    ...(officialText?{programText:createScheduledProgramText({env,fetchImpl,signal})}:{}),
+    ...(officialText?{programText:ocrFallback?createScheduledOfficialWithOcr({env,fetchImpl,signal}):createScheduledProgramText({env,fetchImpl,signal})}:{}),
     namespace:createHash('sha256').update(new URL(env.SUPABASE_URL).origin).digest('hex').slice(0,16),
     async preflight({plan,deferPython=false,stageSettings:requested=stageSettings}){
       if(Object.keys(stageSettings).some(key=>requested[key]!==stageSettings[key]))throw pipelineError('PIPELINE_STAGE_SETTINGS_MISMATCH')
