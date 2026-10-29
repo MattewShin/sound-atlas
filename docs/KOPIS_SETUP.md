@@ -1,64 +1,9 @@
-# KOPIS 공연 검색 설정
+# KOPIS 공연 탐색 서버 설정
 
-현재 검색 기준·정확성 검증·실제 KOPIS/OCR 결과·미검증 사항·사용자 확인 순서는 [곡별 공연 검색 v1.0](KOPIS_SEARCH_V1.md)에 정리했습니다.
+공연 찾기는 서버 전용 KOPIS_SERVICE_KEY와 GET 전용 프록시를 사용한다. 키를 VITE_ 환경변수에 넣거나 브라우저 코드에 전달하지 않는다. .env.example을 참고하고 실제 .env는 Git에서 제외한다.
 
-현재 앱은 사용자가 기존 곡 DB에서 곡을 선택한 뒤 **공연 찾기**를 누를 때 클래식 공연을 조회합니다. 곡을 고르기 전에는 목록·상세·OCR 요청을 보내지 않습니다. 정기 수집이나 예약 실행은 없습니다. 로컬 Node 서버와 Vercel 함수용 진입점을 제공합니다. 순수 정적 파일 배포만으로는 서버 API와 OCR이 작동하지 않습니다.
+개발: npm install 후 npm run dev. Node 운영: npm run build 후 npm start. Vite/Node/Vercel은 server/concertSearchService.mjs의 동일 KOPIS 경로를 사용한다. Vercel 프로젝트에도 KOPIS_SERVICE_KEY를 서버 환경변수로 설정한다. CONCERT_CACHE_TTL_MS는 기본21600000(6시간)이다.
 
-1. [KOPIS OpenAPI 안내](https://kopis.or.kr/por/cs/openapi/openApiInfo.do?menuId=MNU_00074)에서 서비스키를 발급받습니다.
-2. 프로젝트 루트의 `.env.example`을 `.env`로 복사하고 `KOPIS_SERVICE_KEY`에 키를 넣습니다. `.env`는 Git에서 제외됩니다. 공개 `VITE_` 환경변수나 브라우저 코드에는 입력하지 않습니다.
-3. 개발은 Node.js 22.18 이상에서 `npm ci`, `npm run dev`로 실행합니다. 운영은 `npm run build` 뒤 `npm start`로 실행합니다. `.env` 또는 서버 전용 환경변수를 바꾼 뒤에는 Node 서버를 다시 시작합니다.
+GET /api/concerts/status에서 configured/genre/pageSize를 확인하고 GET /api/concerts에 region/from/to/page/q를 전달한다. 상세는 GET /api/concerts/PF번호다. 키·연결정보·upstream URL/본문을 로그에 출력하지 않는다. 실제 호출 검증은 GET만 수행하며 테스트용 DB 쓰기를 하지 않는다.
 
-| 설정 | 기본값 | 설명 |
-| --- | --- | --- |
-| `KOPIS_SERVICE_KEY` | 없음 | 서버 전용 서비스키 |
-| `CONCERT_CACHE_TTL_MS` | `21600000` | 목록·상세 캐시 6시간 |
-| `PORT` | `3000` | 운영 서버 포트 |
-| `HOST` | `0.0.0.0` | 운영 서버 바인딩 주소 |
-
-서비스키가 없어도 기존 곡과 악장 상세·보관함은 볼 수 있습니다. 검색 화면은 **공연 검색 연동 설정 필요**를 표시합니다. 조회 오류를 0건으로 표시하거나 가짜 공연으로 대체하지 않습니다. 현재 직접 등록된 공연은 없습니다. 프로그램 이미지 OCR의 추가 설정·실행·캐시 한계는 [프로그램 OCR 안내](PROGRAM_OCR.md)에 있습니다.
-
-## Vercel 배포
-
-1. Vercel 프로젝트의 **Settings → Environment Variables**에서 이름을 `KOPIS_SERVICE_KEY`, 값을 발급받은 실제 키로 등록합니다. **Production**을 선택하고, 미리보기에서도 검색하려면 **Preview**도 선택합니다. 로컬 `.env`는 업로드하지 않으며 `VITE_` 접두사를 붙이지 않습니다.
-2. 수정한 프로젝트를 Git에 커밋하고 Vercel에 연결된 배포 브랜치로 push합니다. 이 새 코드가 포함된 배포가 필요합니다. 이전 커밋을 Redeploy하는 것만으로는 추가한 API가 반영되지 않습니다. Git 연동이 없는 경우 프로젝트 루트에서 Vercel CLI로 배포합니다.
-3. Framework는 **Vite**, Build Command는 `npm run build`, Output Directory는 `dist`입니다. 저장소의 `vercel.json`에 지정되어 있습니다. Node.js는 `package.json`의 `22.x`를 사용합니다. **Settings → Functions**에서 Fluid compute가 활성화되어 있는지 확인합니다. 함수 실행 한도는 300초로 지정되어 있습니다.
-4. 배포 완료 후 `https://배포주소/api/concerts/status`에 접속합니다. JSON에 `"configured": true`가 나오면 서버가 키를 인식한 것입니다. `false`면 해당 배포 환경의 키를 확인하고 새로 배포합니다. 404나 앱 HTML이면 새 API 코드가 배포되지 않았거나 Root Directory가 프로젝트 루트와 다릅니다. `true`는 인증 성공 확인이 아니므로 실제 공연 검색도 확인합니다.
-5. 모바일에서 곡·지역·기간을 선택하고 **공연 찾기**를 실행합니다. 오류가 있으면 Vercel 함수 로그에서 검색 요청의 상태를 확인합니다. 키나 키가 들어간 KOPIS URL은 로그에 출력하지 않습니다.
-
-`api/index.js`가 Vercel 함수 진입점이며, `vercel.json`은 `/api/*`를 그 함수로 전달합니다. `server/vercel.mjs`는 원래 API 경로와 검색 조건을 복원하여 기존 KOPIS·작품 확인 API를 실행합니다. 화면과 API가 같은 출처이므로 별도 API 주소나 CORS 설정이 필요하지 않습니다. Vercel에서 `npm start`로 상시 서버를 띄울 필요도 없습니다.
-
-OCR worker와 WASM 파일은 함수에 포함하며, 언어 모델은 최초 OCR 시 내려받습니다. 언어 모델·OCR 결과·공연 분석은 임시 디렉터리(`tmpdir()/sound-atlas-ocr`)에 저장합니다. 같은 인스턴스의 캐시는 재사용하지만 재배포·인스턴스 교체·다른 인스턴스에서는 재사용을 보장하지 않습니다. 여러 이미지의 OCR이 300초를 넘으면 Vercel이 요청을 종료할 수 있습니다. 지속 캐시나 더 긴 처리 시간이 필요하면 지속 볼륨이 있는 Node 서버를 사용합니다.
-
-로컬 자동 테스트는 rewrite 경로·상태·목록·상세·POST 작품 확인·캐시·JSON 오류를 검증합니다. 실제 Vercel 배포와 모바일 OCR 실행은 배포 후 확인해야 합니다. 참고: [Vercel Node 함수](https://vercel.com/docs/functions/runtimes/node-js), [함수 실행 시간](https://vercel.com/docs/functions/configuring-functions/duration), [환경변수 등록과 재배포](https://vercel.com/docs/environment-variables/managing-environment-variables).
-
-## 검색 동작
-
-- 보관함·곡 상세 또는 공연 화면의 곡 검색에서 대상 곡을 고릅니다. 지역과 관람 시작·종료일을 선택하고 **공연 찾기**를 누르면 KOPIS의 클래식 코드 `CCCA`와 지역 코드를 사용합니다. 기간은 양 끝 날짜를 포함하며 최대 31일입니다. 목록을 100건씩 모든 페이지에서 조회하고 공연 ID로 중복을 제거합니다. 페이지 제한에 걸리면 일부만 전체처럼 표시하지 않고 조건을 좁히도록 안내합니다.
-- 같은 지역·기간은 6시간 동안 서버와 브라우저의 최근 목록을 재사용합니다. **최신 정보로 새로고침**은 캐시를 건너뜁니다. 화면에는 마지막 조회 시각을 한국 시간으로 표시합니다. 곡 변경 시 이전 검색 결과는 지우고 자동으로 새 검색을 시작하지 않습니다. 공연 화면은 감정·보관함 모드를 검색 조건으로 사용하지 않습니다.
-- 기본 목록 조회와 상세·프로그램 확보는 별도 단계입니다. 보관함에서 특정 곡을 선택하면 실제 곡 ID가 서버에 전달됩니다. 검색 단계에서 프로그램 텍스트를 먼저 읽고, 필요한 이미지에 OCR을 적용합니다. 첫 검색은 신규 후보 최대 10개, **더 찾아보기** 한 번은 다음 최대 10개를 작은 묶음으로 처리합니다. 확인된 작품 포함 공연만 곡별 검색의 주 결과에 표시합니다.
-- 작품 식별은 작곡가·작품번호·곡번호와 작품/악장 관계를 우선합니다. 작품명만 안내하는 공연을 특정 악장 연주 확정으로 표현하지 않습니다. 프로그램의 범위·출처가 모호하거나 일부 이미지를 읽지 못하면 추가 확인 상태로 둡니다. 현재 공연 화면은 작품 포함 근거로만 일치 결과를 표시하고 감정 점수를 적용하지 않습니다.
-- 황제의 곡·악장 ID는 곡 데이터에 남아 있어 KOPIS 프로그램에서 해당 작품이 확인되면 연결할 수 있습니다. 공연은 KOPIS ID로 중복을 제거하며, 특정 곡 검색에서는 작품·지역·기간 조건에 맞는 결과만 표시합니다.
-- KOPIS의 공연 기간은 회차별 시작 시각이 아닙니다. 기간만 있는 공연의 시각·잔여 좌석·예매 가능 상태를 추정하지 않습니다. 종료된 공연은 예정·진행 목록에서 제외합니다.
-
-## 같은 출처 API
-
-| 경로 | 용도 |
-| --- | --- |
-| `GET /api/concerts/status` | 서비스키 설정 여부, 캐시·처리 한도 확인. KOPIS 호출 없음 |
-| `GET /api/concerts?targetTrackId=chopin-ballade-op23-no1&region=서울&from=2026-10-14&to=2026-10-31` | 사용자 요청 예정·진행 클래식 목록 검색 |
-| `GET /api/concerts/{KOPIS_ID}/program` | 별도 공연 상세·소개 자료 |
-| `POST /api/concerts/match-batch` | 실제 `targetTrackId`, KOPIS ID 최대 5개, 필수 `query: { region, from, to }`, 선택적 `cacheOnly`·`refresh`로 작품 비교. 캐시 전용 요청은 최대 500개 ID |
-
-목록·프로그램 GET 경로의 `refresh=1`과 POST의 `refresh`는 캐시를 건너뜁니다. 정상 0건은 HTTP 200과 빈 `concerts` 배열입니다. 미설정은 503 `KOPIS_NOT_CONFIGURED`, 인증 오류는 `KOPIS_AUTH_ERROR`, 조회 오류는 별도 오류 코드와 메시지입니다. 서버는 서비스키가 포함된 요청 URL·원문 오류·스택을 브라우저로 전달하지 않습니다. 로컬 운영에서는 API와 앱을 같은 Node 서버에서 제공하고, Vercel에서는 같은 출처의 함수로 API를 제공합니다. 다른 정적 호스팅을 쓰려면 별도의 Node API를 운영하고 `/api/*`를 같은 출처로 프록시해야 합니다.
-
-## 실제 KOPIS 검증 이력과 현재 범위
-
-2026-10-14에 PF302595의 KOPIS 상세와 소개 이미지 3장을 새 OCR 버전으로 다시 조회했습니다. 프로그램 이미지의 `F. Schubert / Two Impromptus, Op.90 / No.3 in G flat major / No.2 in E flat major`를 읽어 `schubert-impromptu-d899-op90-no3`과 `schubert-impromptu-d899-op90-no2`에 각각 연결했고, 기존 `chopin-ballade-op23-no1` 연결도 유지했습니다. 슈베르트 즉흥곡 3번 검색에서는 이 KOPIS 후보를 첫 자동 확인 묶음으로 우선 검증하며, 실제 상세·OCR 검증을 통과한 경우에만 확정 카드와 KOPIS 링크를 표시합니다.
-
-2026-10-13에 서버 전용 서비스키로 서울 2026-10-13~31 클래식 공연 목록을 강제 새로 조회해 222건을 받았습니다. PF302595가 이 목록에 포함됐고, 해당 공연을 실제 상세·이미지 분석 경로로 확인했을 때 기존 `chopin-ballade-op23-no1` 작품과 OCR 근거로 연결됐습니다. 별도 Node 프로세스의 저장 캐시 조회에서도 같은 일치 상태를 확인했습니다. 이 검증은 서버 경로와 실제 자료의 연결을 확인한 것이며 전체 222건의 프로그램을 모두 확인한 결과는 아닙니다.
-
-2026-10-12에 서울 2026-10-01~31 클래식 **352건**을 실제 조회했습니다. 100건 페이지는 100·100·100·52건으로 나뉘었고, 50건 페이지 재조회 및 기간을 1~15일·16~31일로 나눈 합집합도 고유 ID 352개로 같았습니다. 이 비교에서 기간·페이지 처리로 빠진 ID는 없었습니다. 제주 당일 조회에서 정상 HTTP 200·0건을 확인했고, 잘못된 키에는 KOPIS가 HTTP 200 안에 `returncode=02` 인증 오류를 보내는 것을 확인했습니다. 이는 KOPIS에 등록되지 않은 공연까지 검증했다는 뜻은 아닙니다.
-
-당시 상세 10건 중 5건의 `sty`에 프로그램 텍스트가 있었고, 나머지 5건은 이미지에 프로그램이 있었습니다. 자료가 전혀 없는 사례는 0건이었습니다. 텍스트 사례의 작품은 당시 곡 DB와 정확히 연결되지 않았습니다. 이미지 사례는 PF302595, PF301052, PF301874, PF300769, PF301803입니다. OCR 이전에는 PF302595를 수동으로만 확인했으며, **이번 OCR 추가 후 실제 프로그램 이미지를 읽어 쇼팽 발라드 1번 Op.23과 자동 연결했습니다.** PF300769는 실제 이미지의 시리즈 번호가 공연명과 달라 지금도 연결 확인 필요로 남겼습니다. 원문·처리 시간·캐시 검증과 자동 테스트의 구분은 [프로그램 OCR 안내](PROGRAM_OCR.md)에 기록했습니다.
-
-서울 2026-10-12~31, 쇼팽 발라드 1번을 대상으로 했던 OCR 이전 실조회에는 클래식 후보 **214건**이 있었습니다. 그때 첫 10건에는 명시적인 텍스트 일치가 없었고 미확인 후보가 남아 있었습니다. 이는 전체 214건의 불일치 결론이 아닙니다. 현재의 이미지 OCR 검증 대상 PF302595는 별도로 실제 KOPIS 상세와 이미지의 대응까지 확인했습니다.
+기존 OCR·Program 분석·곡 매칭·Supabase 검색 설정과 실행 명령은 종료했다. 과거 DB와 migration은 보존한다. 새 기능 배포 확인 후 기존 ClassicAtlas-LocalPipeline 예약을 Disabled하며 대체 배치를 두지 않는다. [현재 설계](CONCERT_BROWSER.md), 실제 전환 결과는 [HANDOFF](../HANDOFF.md)를 참조한다.

@@ -1,2 +1,0 @@
-# CPU PyTorch is installed first from the official CPU wheel index; see README.
-easyocr==1.7.2

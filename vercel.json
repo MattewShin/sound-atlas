@@ -5,11 +5,13 @@
   "outputDirectory": "dist",
   "functions": {
     "api/index.js": {
-      "maxDuration": 300,
-      "includeFiles": "node_modules/{tesseract.js,tesseract.js-core,bmp-js,is-url,regenerator-runtime,wasm-feature-detect,node-fetch,whatwg-url,tr46,webidl-conversions}/**"
+      "maxDuration": 300
     }
   },
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/index?__concertPath=:path*" }
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index?__concertPath=:path*"
+    }
   ]
 }

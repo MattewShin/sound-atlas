@@ -85,6 +85,6 @@ Codex는 HANDOFF의 구현자 의견과 질문에 문제·근거·권장안·영
 - GitHub에 접근할 수 없으면 그 사실과 미반영 내용을 알린다. 접근하지 못한 결과를 확인했다고 표현하지 않는다.
 - 자동 감시·실행은 이번 구성에 포함되지 않는다. 양쪽에 작업 시작·검토를 요청하는 짧은 지시는 필요하다.
 
-## 현재 작업 위치 (2026-10-22)
+## 현재 작업 위치 (2026-10-29)
 
-현재 작업은 `CA-AUTO-20261022-001`이며 명세 브랜치는 `codex/ca-auto-20261022-001`다. 이 브랜치의 CURRENT_TASK와 HANDOFF를 읽는다. CA-SEARCH-20261022-001은 ACCEPTED로 보관됐으며 다시 실행하지 않는다. 운영 쓰기 허용 범위는 CURRENT_TASK의 지정 migration과 PF295548 제한 canary뿐이다.
+현재 작업은 CA-CONCERT-BROWSER-20261029-001 / 명세1, 브랜치는 codex/ca-concert-browser-20261029-001이다. 사용자 직접 명세를 CURRENT_TASK에 기록했다. 이전 CA-AUTO 기록은 archive/CA-AUTO-20261022-001에 보관하며 OCR fallback 브랜치는 병합하지 않는다. 이번 작업은 DB 업무 쓰기0이고, 새 기능 검증·배포 확인 후에만 기존 OCR/Program 예약을 Disabled한다.
