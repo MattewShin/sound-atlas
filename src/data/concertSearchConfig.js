@@ -13,12 +13,14 @@ export const getInitialConcertPeriod = (now = Date.now()) => {
   const from = koreaDate(now)
   return { from, to: new Date(Date.parse(`${from}T00:00:00Z`) + 30 * 86400000).toISOString().slice(0, 10) }
 }
-export const validateConcertQuery = ({ region, from, to }) => {
+export const validateConcertQuery = ({ region, from, to, q = '', page = 1 }) => {
   const isDate = (value) => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
     && Number.isFinite(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value
   if (!Object.hasOwn(KOPIS_REGION_CODES, region)) throw new Error('공연 지역을 선택해주세요.')
   if (!isDate(from) || !isDate(to) || from > to) throw new Error('시작일과 종료일을 올바르게 선택해주세요.')
   if ((Date.parse(to) - Date.parse(from)) / 86400000 >= MAX_CONCERT_SEARCH_DAYS) throw new Error(`관람 기간은 최대 ${MAX_CONCERT_SEARCH_DAYS}일까지 선택해주세요.`)
-  return { region, from, to }
+  if (typeof q !== 'string' || q.length > 100) throw new Error('공연명·공연장 검색어는 100자 이내로 입력해주세요.')
+  if (!/^[1-9]\d{0,2}$/.test(String(page)) || Number(page) > 500) throw new Error('공연 목록 페이지가 올바르지 않습니다.')
+  return { region, from, to, q: q.trim(), page: Number(page) }
 }
 export const concertQueryKey = (query) => JSON.stringify(validateConcertQuery(query))

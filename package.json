@@ -10,19 +10,6 @@
     "dev": "vite",
     "build": "vite build",
     "test": "node scripts/test.mjs",
-    "collect:concerts": "node --env-file-if-exists=.env scripts/collectConcerts.mjs",
-    "test:collection": "node scripts/testConcertCollection.mjs",
-    "ocr:batch": "node --env-file-if-exists=.env scripts/runEasyOcrBatch.mjs",
-    "test:easyocr": "node scripts/testEasyOcr.mjs",
-    "program:analyze": "node --env-file-if-exists=.env scripts/runProgramAnalysis.mjs",
-    "program:auto": "node --env-file-if-exists=.env scripts/runProgramAutomation.mjs",
-    "verify:program-auto": "node --env-file-if-exists=.env scripts/verifyProgramAutomation.mjs",
-    "diagnose:concert-coverage": "node --env-file-if-exists=.env scripts/diagnoseConcertSearchCoverage.mjs",
-    "test:program": "node scripts/testProgramAnalysis.mjs",
-    "pipeline": "node --env-file-if-exists=.env scripts/runConcertPipeline.mjs",
-    "verify:ocr": "node --env-file-if-exists=.env scripts/verifyProgramOcrLive.mjs",
-    "verify:ocr-cache": "node scripts/verifyOcrCacheRestart.mjs",
-    "verify:concerts": "node --env-file-if-exists=.env scripts/verifyConcertSearchV1.mjs",
     "import:emma": "node scripts/emma/importEmma.js",
     "diagnose:recommendations": "node scripts/diagnoseRecommendations.js",
     "preview": "vite preview",
@@ -31,12 +18,9 @@
   "dependencies": {
     "fast-xml-parser": "^5.11.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "sharp": "^0.35.5",
-    "tesseract.js": "^7.0.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.5.9",
     "jsdom": "^27.4.0",
     "vite": "^6.0.0"
   }

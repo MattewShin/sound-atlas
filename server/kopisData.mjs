@@ -52,8 +52,14 @@ export const normalizeKopisConcert = (row, fetchedAt) => {
     id: `kopis-${kopisId}`, kopisId, title: text(row.prfnm), dateFrom, dateTo,
     venue: text(row.fcltynm), region, genre: text(row.genrenm), performanceStatus: text(row.prfstate),
     sourceUrl: `https://kopis.or.kr/por/db/pblprfr/pblprfrView.do?mt20id=${kopisId}`,
-    sourceLabel: 'KOPIS 공연 정보', fetchedAt,
-    programStatus: 'unavailable', programWorkIds: [],
+    sourceLabel: 'KOPIS 공연 정보', fetchedAt, posterUrl: safeUrl(row.poster),
   }
 }
+
+export const normalizeKopisDetail=(row,fetchedAt)=>({
+ ...normalizeKopisConcert(row,fetchedAt),scheduleText:text(row.dtguidance),runtime:text(row.prfruntime),age:text(row.prfage),ticketPrice:text(row.pcseguidance),performers:text(row.prfcast),
+ organizations:[['기획·제작',row.entrpsnm],['제작',row.entrpsnmP],['기획',row.entrpsnmA],['주최',row.entrpsnmH],['주관',row.entrpsnmS]].filter(([,v])=>text(v)).map(([label,v])=>({label,name:text(v)})),
+ introductionImages:[...new Set(asArray(row.styurls?.styurl).map(safeUrl).filter(Boolean))],
+ bookingLinks:asArray(row.relates?.relate).map(link=>({name:text(link?.relatenm),url:safeUrl(link?.relateurl)})).filter(link=>link.url&&link.name),
+})
 

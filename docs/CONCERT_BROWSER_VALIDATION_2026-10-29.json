@@ -1,0 +1,182 @@
+{
+  "task": "CA-CONCERT-BROWSER-20261029-001",
+  "specification": 1,
+  "status": "IMPLEMENTED",
+  "baseSha": "1db327cd38dfce778da543738f975b70789aed66",
+  "branch": "codex/ca-concert-browser-20261029-001",
+  "oldFallbackBranchMerged": false,
+  "tests": {
+    "direct": {
+      "pass": 23,
+      "fail": 0,
+      "skip": 0
+    },
+    "full": {
+      "runs": 1,
+      "pass": 93,
+      "fail": 0,
+      "skip": 0,
+      "durationMs": 23360.7246
+    },
+    "build": {
+      "runs": 1,
+      "pass": true,
+      "durationSeconds": 3.38,
+      "modules": 48,
+      "jsBytes": 579830,
+      "existingLargeChunkWarning": true
+    }
+  },
+  "mobile": {
+    "viewport": {
+      "width": 375,
+      "height": 812
+    },
+    "apiPost": 0,
+    "detailGet": 1,
+    "listGet": 2,
+    "list": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": []
+    },
+    "more": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": []
+    },
+    "detail": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": []
+    },
+    "regionDialog": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": []
+    },
+    "musicLibraryTaste": true,
+    "pass": true
+  },
+  "live": {
+    "task": "CA-CONCERT-BROWSER-20261029-001",
+    "keyPresent": true,
+    "query": {
+      "region": "서울",
+      "from": "2026-10-29",
+      "to": "2026-11-28"
+    },
+    "genre": "CCCA",
+    "listGet": 4,
+    "detailGet": 1,
+    "post": 0,
+    "dbCalls": 0,
+    "httpResponses": [
+      {
+        "kind": "list",
+        "status": 200,
+        "contentType": "application/xml"
+      },
+      {
+        "kind": "list",
+        "status": 200,
+        "contentType": "application/xml"
+      },
+      {
+        "kind": "list",
+        "status": 200,
+        "contentType": "application/xml"
+      },
+      {
+        "kind": "list",
+        "status": 200,
+        "contentType": "application/xml"
+      },
+      {
+        "kind": "detail",
+        "status": 200,
+        "contentType": "application/xml"
+      }
+    ],
+    "total": 303,
+    "displayed": 20,
+    "hasMore": true,
+    "selectedId": "PF281769",
+    "detail": {
+      "kopisId": "PF281769",
+      "posterPresent": true,
+      "introductionImageCount": 1,
+      "bookingLinkCount": 4,
+      "namedSafeLinks": true,
+      "schedulePresent": true,
+      "pricePresent": true,
+      "organizations": 4
+    },
+    "checkedAtKst": "2026-10-29 10:31:07",
+    "pass": true
+  },
+  "initialLiveFailure": {
+    "task": "CA-CONCERT-BROWSER-20261029-001",
+    "keyPresent": true,
+    "query": {
+      "region": "서울",
+      "from": "2026-10-29",
+      "to": "2026-11-28"
+    },
+    "genre": "CCCA",
+    "listGet": 4,
+    "detailGet": 1,
+    "post": 0,
+    "dbCalls": 0,
+    "total": 303,
+    "displayed": 20,
+    "hasMore": true,
+    "pass": false,
+    "code": "KOPIS_UNAVAILABLE"
+  },
+  "upstreamRootCause": "Initial detail request failed; a separate manual verification succeeded without code/timeout/automatic-retry changes. Root cause not established.",
+  "liveTotals": {
+    "listGet": 8,
+    "detailGet": 2,
+    "imageGet": 0,
+    "ocr": 0,
+    "dbCalls": 0,
+    "post": 0
+  },
+  "db": {
+    "readOnly": true,
+    "urlPresent": true,
+    "connected": true,
+    "allTableDigestsPreserved": true,
+    "tables": 13,
+    "rows": 866,
+    "reviews": 65,
+    "officialReceipts": 2,
+    "status": "PASS"
+  },
+  "operations": {
+    "dbDdlDml": 0,
+    "migrationsChanged": 0,
+    "migrationsApplied": 0,
+    "ocrCalls": 0,
+    "analysisSaves": 0,
+    "newConfirmed": 0,
+    "newRejected": 0,
+    "cleanup": 0,
+    "scheduleBeforeDeployment": "Ready/Enabled; unchanged",
+    "productionDeployment": "PENDING",
+    "scheduleTransition": "PENDING_AFTER_PRODUCTION"
+  },
+  "localPreservation": {
+    "branch": "main",
+    "head": "1607ca201c3a559bc7f28aabe998ef062db02ef9",
+    "changedFiles": 40,
+    "index": true,
+    "env": true
+  },
+  "notes": [
+    "Old SQL/migrations/data retained; browser has no database adapter.",
+    "sharp/tesseract.js used only by removed image/OCR paths; PGlite only by removed SQL tests.",
+    "A newline error in the adjusted 2026-10-21 catalog test was corrected before the single full test run."
+  ]
+}

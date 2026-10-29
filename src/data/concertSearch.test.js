@@ -1,103 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { createConcertSearchClient, mergeSearchConcerts, isSameConfirmedConcert } from './concertSearch.js'
-import { analyzeConcert } from './concertRecommendations.js'
-import { tracks } from './musicData.js'
-
-const query = { region: '서울', from: '2026-12-01', to: '2026-12-31' }
-const known = { id: 'known-test-concert', title: '테스트 등록 공연', startsAt: '2026-12-24T20:00:00+09:00',
-  region: '서울', venue: '테스트홀', sourceUrl: 'https://www.sac.or.kr/site/main/show/show_view?SN=999999',
-  kopisHallId: 'TEST-HALL', verifiedOn: '2026-10-12', programStatus: 'verified', programWorkIds: ['beethoven-piano-concerto-op73-no5'] }
-const apiConcert = { id: 'kopis-PF999001', kopisId: 'PF999001', title: known.title,
-  dateFrom: '2026-12-24', dateTo: '2026-12-24', region: '서울', venue: known.venue,
-  fetchedAt: '2026-10-12T00:00:00Z', programStatus: 'unavailable', programWorkIds: [], sourceUrl: 'https://kopis.or.kr/por/db/pblprfr/pblprfrView.do?mt20id=PF999001' }
-
-test('DB preview bypasses legacy browser cache and reads each track and changed decision without fallback', async()=>{
-  const calls=[],targetTrackId='schubert-impromptu-d899-op90-no2'
-  let count=0,fail=false
-  const client=createConcertSearchClient({storage:{getItem:()=>JSON.stringify({query,concerts:[apiConcert],fetchedAt:new Date().toISOString()})},fetchImpl:async(url,options)=>{
-    calls.push([url,options.method||'GET'])
-    if(url.endsWith('/status'))return {ok:true,json:async()=>({backend:'supabase',configured:true,cacheTtlMs:0})}
-    return {ok:!fail,json:async()=>fail?{code:'DB_SEARCH_UNAVAILABLE',message:'확인된 공연 조회 오류'}:{backend:'supabase',targetTrackId:new URL(url,'http://localhost').searchParams.get('targetTrackId'),query,concerts:Array.from({length:count},()=>apiConcert),fetchedAt:new Date().toISOString(),cacheTtlMs:0}}
-  }})
-  await client.status()
-  assert.equal((await client.search({...query,targetTrackId})).concerts.length,0)
-  count=1
-  assert.equal((await client.search({...query,targetTrackId})).concerts.length,1)
-  assert.equal((await client.search({...query,targetTrackId:'schubert-impromptu-d899-op90-no3'})).concerts.length,1)
-  fail=true
-  await assert.rejects(client.search({...query,targetTrackId}),e=>e.code==='DB_SEARCH_UNAVAILABLE')
-  assert.equal(calls.length,5)
-  assert.ok(calls.every(([url,method])=>method==='GET'&&!url.includes('program')&&!url.includes('match-batch')))
+import {createConcertSearchClient} from './concertSearch.js'
+const query={region:'서울',from:'2026-10-29',to:'2026-11-28'},stamp='2026-10-29T00:00:00Z'
+test('browser client uses GET and page/query cache keys, deduplicates mt20id and fetches detail only on demand',async()=>{
+ const calls=[],client=createConcertSearchClient({now:()=>Date.parse(stamp),fetchImpl:async(url,init)=>{assert.equal(init.method,'GET');calls.push(url);const u=new URL(url,'https://example.com');return {ok:true,json:async()=>u.pathname==='/api/concerts'?{query:{...query,q:u.searchParams.get('q'),page:Number(u.searchParams.get('page'))},concerts:[{kopisId:'PF1'},{kopisId:'PF1'}],total:25,page:Number(u.searchParams.get('page')),pageSize:20,hasMore:true,fetchedAt:stamp}:{concert:{kopisId:'PF1'},fetchedAt:stamp}}}})
+ assert.equal((await client.search(query)).concerts.length,1);await client.search(query);assert.equal(calls.length,1);await client.search({...query,page:2});assert.equal(calls.length,2);await client.search({...query,q:'hall'});assert.equal(calls.length,3);assert.ok(calls.every(u=>u.startsWith('/api/concerts?')));await client.detail('PF1');assert.equal(calls[3],'/api/concerts/PF1');assert.ok(calls.every(u=>!u.includes('targetTrackId')))
 })
-
-test('브라우저 캐시는 같은 조건·페이지 재진입에 재사용하고 만료·강제 새로고침만 API를 재호출한다', async () => {
-  let now = Date.parse(apiConcert.fetchedAt), calls = 0
-  const values = new Map()
-  const storage = { getItem: (key) => values.get(key), setItem: (key, value) => values.set(key, value) }
-  const fetchImpl = async (url) => {
-    calls += 1
-    if (url.includes('refresh')) assert.ok(url.includes('refresh=1'))
-    return { ok: true, json: async () => ({ query, concerts: [apiConcert], fetchedAt: new Date(now).toISOString(), cacheTtlMs: 21600000 }) }
-  }
-  const first = createConcertSearchClient({ fetchImpl, storage, now: () => now })
-  await first.search(query)
-  for (const selectedKeys of [['power'], ['tenderness'], []]) analyzeConcert(known, tracks, { selectedKeys })
-  analyzeConcert(known, tracks, { mode: 'library', savedTrackIds: [tracks[0].id] })
-  assert.equal(calls, 1)
-  const second = createConcertSearchClient({ fetchImpl, storage, now: () => now })
-  assert.equal((await second.search(query)).fromCache, true)
-  assert.equal(calls, 1)
-  now += 21600000
-  await second.search(query)
-  assert.equal(calls, 2)
-  await second.search(query, { refresh: true })
-  assert.equal(calls, 3)
-})
-
-test('설정 상태와 조회 실패는 가짜 0건을 반환하지 않고 기존 성공 캐시를 보존한다', async () => {
-  let fail = false
-  const client = createConcertSearchClient({ fetchImpl: async (url) => ({ ok: !fail,
-    json: async () => url.endsWith('/status') ? { configured: false, cacheTtlMs: 1000 } : fail
-      ? { code: 'KOPIS_NOT_CONFIGURED', message: '공연 검색 연동 설정 필요' }
-      : { query, concerts: [], fetchedAt: new Date().toISOString() },
-  }) })
-  assert.equal((await client.status()).configured, false)
-  assert.deepEqual((await client.search(query)).concerts, [])
-  fail = true
-  await assert.rejects(client.search(query, { refresh: true }), (error) => error.code === 'KOPIS_NOT_CONFIGURED')
-  assert.deepEqual((await client.search(query)).concerts, [])
-})
-
-test('같은 KOPIS ID만 보조 링크를 결합하며 KOPIS 기본정보·자동 매칭을 수동 정보로 덮어쓰지 않는다', () => {
-  assert.equal(isSameConfirmedConcert(known, apiConcert), false)
-  assert.equal(mergeSearchConcerts([apiConcert], [known]).length, 2)
-  const proved = { ...apiConcert, relatedUrls: [known.sourceUrl], kopisHallId: known.kopisHallId }
-  assert.equal(isSameConfirmedConcert(known, proved), false)
-  const merged = mergeSearchConcerts([proved], [{ ...known, kopisId: apiConcert.kopisId }])
-  assert.equal(merged.length, 1)
-  assert.equal(merged[0].id, apiConcert.id)
-  assert.equal(merged[0].sourceUrl, apiConcert.sourceUrl)
-  assert.equal(merged[0].referenceInfo.verifiedOn, known.verifiedOn)
-  assert.equal(merged[0].startsAt, undefined)
-  assert.deepEqual(merged[0].programWorkIds, [])
-  assert.equal(merged[0].programStatus, 'unavailable')
-  assert.deepEqual(merged[0].officialUrls, [known.sourceUrl])
-  assert.equal(merged[0].kopisId, apiConcert.kopisId)
-  assert.equal(isSameConfirmedConcert(known, { ...proved, dateTo: '2026-12-25' }), false)
-  assert.equal(isSameConfirmedConcert(known, { ...proved, kopisHallId: 'FC000001-02' }), false)
-  assert.equal(isSameConfirmedConcert({ ...known, kopisId: apiConcert.kopisId }, apiConcert), true)
-})
-
-test('프로그램 미확보·연결 미확인·소개 텍스트만 있는 공연의 감정과 보관함 적합도는 계산하지 않는다', () => {
-  for (const programStatus of ['unavailable', 'needs-review']) {
-    const unverified = { ...apiConcert, programStatus, programWorkIds: known.programWorkIds, programEvidence: { text: '베토벤 황제', imageUrls: [] } }
-    for (const mode of ['keyword', 'library']) {
-      const result = analyzeConcert(unverified, tracks, { mode, selectedKeys: ['power'], savedTrackIds: ['beethoven-piano-concerto-op73-no5-m2'] })
-      assert.equal(result.isRecommended, false)
-      assert.equal(result.score, null)
-      assert.deepEqual(result.program, [])
-      assert.match(result.scope, /일반 검색 결과/)
-    }
-  }
+test('browser client propagates failures instead of returning empty success or stale fallback',async()=>{
+ let fail=false;const client=createConcertSearchClient({now:()=>Date.parse(stamp),fetchImpl:async()=>fail?{ok:false,json:async()=>({message:'upstream unavailable'})}:{ok:true,json:async()=>({query:{...query,q:'',page:1},concerts:[],total:0,page:1,pageSize:20,hasMore:false,fetchedAt:stamp})}});await client.search(query);fail=true;await assert.rejects(client.search(query,{refresh:true}),/upstream unavailable/)
 })

@@ -2,7 +2,6 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { emotionKeys, getRepresentativeEmotions, isFullyRated, isValidEmotionScore, normalizeScore } from './emotions.js'
 import { cosineSimilarity, emotionVector, getEmotionFit, getFeelingRecommendationCandidates, getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult } from './recommendations.js'
-import { analyzeConcert } from './concertRecommendations.js'
 
 const song = (id, scores = {}) => ({ id, emotionScores: { ...Object.fromEntries(emotionKeys.map((key) => [key, 1])), ...scores } })
 
@@ -74,17 +73,4 @@ test('보관함 평균·코사인·취향 정렬은 계산 결과를 0.5점 단�
   assert.ok(Math.abs(similarity - 13 / Math.sqrt(170)) < 1e-12)
   assert.ok(similarity < 1 && similarity > 0.99)
   assert.deepEqual(getLibraryRecommendations([integer, saved, same], savedProfile).map(({ id }) => id), ['same', 'integer'])
-})
-
-test('공연 감정 점수·추천 이유·작품 평균도 소수점 원점수를 유지한다', () => {
-  const half = song('half', { tenderness: 4.5 })
-  const integer = song('integer', { tenderness: 4 })
-  const work = { id: 'test-work', title: '테스트 작품', trackIds: [half.id, integer.id] }
-  const result = analyzeConcert({ id: 'test-concert', programStatus: 'verified', programWorkIds: [work.id] },
-    [integer, half], { selectedKeys: ['tenderness'] }, { [work.id]: work })
-  assert.equal(result.isRecommended, true)
-  assert.equal(result.program[0].ratedTracks.length, 2)
-  assert.equal(result.score, 0.8125)
-  assert.ok(result.reasons.some((reason) => reason.includes('부드러운 4.5/5')))
-  assert.ok(result.reasons.some((reason) => reason.includes('부드러운 4/5')))
 })
