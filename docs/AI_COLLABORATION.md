@@ -87,4 +87,4 @@ Codex는 HANDOFF의 구현자 의견과 질문에 문제·근거·권장안·영
 
 ## 현재 작업 위치 (2026-10-29)
 
-현재 작업은 CA-CONCERT-BROWSER-20261029-001 / 명세1, 브랜치는 codex/ca-concert-browser-20261029-001이다. 사용자 직접 명세를 CURRENT_TASK에 기록했다. 이전 CA-AUTO 기록은 archive/CA-AUTO-20261022-001에 보관하며 OCR fallback 브랜치는 병합하지 않는다. 이번 작업은 DB 업무 쓰기0이고, 새 기능 검증·배포 확인 후에만 기존 OCR/Program 예약을 Disabled한다.
+현재 작업은 CA-CONCERT-RELIABILITY-20261029-001 / 명세1, codex/ca-concert-reliability-20261029-001이다. 지정 main7cc7f7b88274db228748cd5aa7fa8775fd5db64a에서 시작했다. Gate A에서 과거HTTP502의 upstream 원인·실패페이지를 특정하지 못해 BLOCKED다. 기존 production과 Disabled 예약은 유지한다. 이전 main의 CURRENT_TASK/HANDOFF는 archive/CA-CONCERT-BROWSER-20261029-001에 보관한다.

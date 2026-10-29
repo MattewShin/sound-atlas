@@ -1,5 +1,11 @@
 # Classic Atlas 프로젝트 맥락
 
+## 현재 안정성 작업 — 2026-10-29
+
+CA-CONCERT-RELIABILITY-20261029-001 / 명세1, 브랜치 codex/ca-concert-reliability-20261029-001. 코드·production 기준7cc7f7b88274db228748cd5aa7fa8775fd5db64a. 두 목록 HTTP502를 확인했으나 upstream 유형/페이지/cold start 원인은 미확정이어서 Gate A BLOCKED다. 기능·DB·예약은 변경하지 않았다. 영구 캐시/새 migration은 아직 없으며 현재 운영의6시간 메모리 캐시만 유지된다. CURRENT_TASK/HANDOFF의 재개점을 따른다.
+
+## 기존 공연 브라우저 구조
+
 - 문서 버전: 5 / 2026-10-29 Asia/Seoul
 - 현재 작업: CA-CONCERT-BROWSER-20261029-001 / 명세1
 - 브랜치: codex/ca-concert-browser-20261029-001

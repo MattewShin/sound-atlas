@@ -1,31 +1,47 @@
 # 작업 인계
 
-- 작업 ID: CA-CONCERT-BROWSER-20261029-001 / 명세1
-- 상태: IMPLEMENTED (production 전환 전)
+- 작업 ID: CA-CONCERT-RELIABILITY-20261029-001 / 명세1
+- 상태: BLOCKED / Gate A
 - 작성: Codex / 2026-10-29 Asia/Seoul
-- 시작 SHA: main / 1db327cd38dfce778da543738f975b70789aed66
-- 브랜치: codex/ca-concert-browser-20261029-001
-- 기존 OCR fallback 브랜치 미병합. main의 공동 문서5개를 같은 SHA에서 읽고 이전 작업을 docs/collaboration/archive/CA-AUTO-20261022-001에 보관했다. 새 명세는 사용자 직접 지시다.
+- 읽은 공동 문서5개·코드 기준: main / 7cc7f7b88274db228748cd5aa7fa8775fd5db64a
+- 브랜치: codex/ca-concert-reliability-20261029-001
+- 사용자 실행 지시의 원인 미확정 시 중단 조건에 따라 기존 production을 변경하지 않았다.
 
-## 구현과 보존
+## 확인된 사실
 
-useConcertSearch·ConcertScreens·서버 KOPIS 프록시/메모리 캐시를 재사용해 선택곡 없는 날짜·지역 클래식 목록으로 전환했다. 최초20건/추가20건·mt20id 중복 제거·공연명/공연장 텍스트 검색·정확한 total/표시 수·정렬·로딩/오류/빈 결과/재시도를 제공한다. 목록의 상세 선조회0, 표시된 카드만 DOM에 생성하고 포스터를 lazy load한다. 독립 ConcertDetailScreen에 실제 제공 필드·포스터·순서 유지 소개 이미지·이름 있는 안전한 예매 링크/링크 없음·placeholder·KOPIS 출처를 표시한다.
+사용자가 알려준11:04:53/11:04:58 KST 화면 오류는 정확한 요청 시각이 아닌 관측 시각이며, 브라우저 확장 오류는 공연 API 근거가 아니라고 명시했다. 이를 기준으로 Vercel production 요청 로그10:55~11:15를 읽었다.
 
-곡 상세와 보관함의 공연 찾기 버튼, 선택곡 검색, Tesseract/EasyOCR/Python worker·OCR 저장·Program 분석·곡 매칭·자동 판정·Supabase 곡 검색·수집/통합배치/검증 스크립트·관련 미사용 테스트를 제거했다. 참조를 확인해 OCR 전용 sharp/tesseract.js와 SQL 테스트 전용 PGlite를 제거했다. 음악 데이터291곡·점수2619개·기존ID·저장키·추천/보관/취향/주간소개 코드는 보존했다. 적용 migration 파일과 DB 이력은 수정/삭제0이다. 과거 SQL·기술 보고서는 이력으로 보존한다.
+| 실제 요청 시각 KST | 목록 GET HTTP | requestId |
+| --- | --- | --- |
+| 11:04:53.479 | 502 | 7zzsg-1793239493479-5b85ca858b77 |
+| 11:04:58.388 | 502 | w2dgb-1793239498388-dd2a9714d2a5 |
 
-공개 API는 GET 목록/선택 상세/status만 제공한다. 옛 POST match-batch는405, program 경로404, targetTrackId 검색400이다. 기존 CONCERT_SEARCH_BACKEND=supabase 환경값도 DB 검색을 선택하지 않는다. KOPIS key는 서버 closure에만 있고 브라우저에 전달하지 않는다.
+두 요청은 동일 production deployment에서 확인됐고, 앱 내부 목록 실패를 검증했다. Vercel CDN cacheResult=MISS도 있었으나 이것은 서버 Map 캐시의 hit/miss나 cold start 증거가 아니다. 당시 runtime 로그는 보존기간 제한으로 조회가 거절됐다. 현재30분 runtime 조회는 성공했지만 로그0건이며 start type·duration 등 필요한 invocation 자료가 없다. **HTTP502는 확인했으나 KOPIS HTTP 오류/timeout/connect/XML 실패 중 원인, 실패 state/page, cold start 여부는 확인하지 못했다.**
 
-## 실제 검증
+기존 server/kopis.mjs는 fetch/network·timeout·non-2xx 등을 공통 오류로 바꾸고 page/HTTP/duration/cause를 보존하지 않는다. 과거 502의 upstream 상태나 실패 페이지를 현재 코드만으로 복원할 수 없다. 메모리 Map만 존재하고 만료 후 실패 시 과거 성공을 반환하는 경로도 없다. 이 구조적 취약점은 확인했지만 이를 이번 두 실패의 트리거 원인으로 단정하지 않는다.
 
-- 직접23/23 PASS(신규서버6·클라이언트2·UI2·등록곡/소수점/모바일13), fail0/skip0. 조정한 카탈로그 테스트의 줄바꿈 오류1개를 직접 단계에서 수정한 뒤 통과했다.
-- **최종 npm test93/93 PASS, fail0/skip0,23.3607초; production build PASS3.38초**. 각각1회 실행했다. 제거한 기능 테스트를 통과 수에 포함하지 않는다. 기존500kB chunk 경고는 유지(JS579.83kB)된다.
-- **375px 실제 headless Chrome PASS**: 목록20/추가40·상세·지역 dialog scrollWidth375, 가로 overflow0/잘린 버튼0. 상세 포스터/소개2장/새 창 링크와 목록 복귀·region 저장, 추천→보관→취향9축 클릭을 확인했다. 합성 API POST0이며 실제 KOPIS 데이터 검증과 구분한다.
-- **실제 KOPIS10:31:07 KST**: 서울10/29~11/28·CCCA·상태01/02·rows100·cpage 끝까지 목록303건/최초20건. PF281769 상세200/XML·정규화, 포스터/소개1장/안전한 이름 있는 예매처4개·시간/가격/주최정보를 확인했다. 최초 시도는 목록 통과 후 상세KOPIS_UNAVAILABLE이었다. 코드/timeout/자동재시도 변경 없이 별도 수동 확인에서 통과했으며 최초 근본 원인은 미확정이다. 누적 목록GET8·상세GET2·OCR/서버 이미지GET/DB 업무POST0. 실제 이미지URL·원문·키·연결정보를 게시하지 않았다.
-- **관리자 READ ONLY SQL PASS**: 시작/최종13개 base table866행과 모든 digest 불변. review65행/공식receipt2행을 포함해 OCR/분석/후보/CONFIRMED/REJECTED 이력을 보존했다. 이번 DBDDL/DML·migration 적용·cleanup0. 예약은 배포 전 Ready/Enabled 유지다.
-- 원본 local main/1607ca201c3a559bc7f28aabe998ef062db02ef9의40개 변경·index·.env hash 보존. 격리clone만 변경했다.
+## 이번 실제 호출과 검증
 
-## 기술 의견과 다음 단계
+- production 앱 **GET4/업무POST0**: status200/690ms, 서울10/29~11/28·CCCA 목록200/303건/cache334ms, refresh200/4028ms·303건, PF281769 상세200/cache227ms·예매링크4/소개1장. 원문/실제 URL은 기록하지 않았다.
+- 직접 KOPIS **GET13**: 목록3회×각4페이지(01:100/100/84행,02:19행), 상세PF2817691회. 전부200/XML 정상,208~414ms. 키·전체 query·본문·예매 URL 대신 kind/state/page/HTTP/행 수/시간만 저장했다. 고정3개 독립 검증이며 한 요청 내 자동 재시도0이다. 이번에는 실패 재현0이다.
+- production 내부 KOPIS 호출 수는 기존 계측 부재로 **미확정**이다. 위4 앱 GET과13 직접 GET을 내부 호출까지 포함한 upstream 전체 수로 보고하지 않는다.
+- Vercel CLI 로그 읽기 조회9회(최신/retention 범위 보정/과거 구간). 최근 요청 로그에는 공연 API9건 모두200, 사용자 시각의 과거 구간에는 위502 두 건이 있었다. raw log/메시지/클라이언트 정보/예매URL/전체 query는 저장0이다. CLI 내부 HTTP method 수는 계측하지 않았으며 앱/DB 업무POST 수와 구분한다.
+- **DB GET0/업무POST0·DDL/DML0, OCR/Program/자동판정 요청·쓰기0.** 실제 장애 주입0, migration 작성/적용0, 정책 변경0, 새 예약0이다.
+- 격리 fixture5/5 PASS: fresh 메모리 재사용, 새instance에서 이전 성공 재사용 불가,7시간 전 성공에 대한 장애 fallback 부재, 부분페이지 실패 시 기존 정상 Map 불변, HTTP/timeout/connect 예외 분류 합침. 이 결과는 현재 취약점 진단이며 fallback 구현 성공이 아니다.
+- 변경하지 않은 main baseline **npm test93/93 PASS·fail0/skip0·24.169초**, production build PASS 각1회. 이 통과를 아직 만들지 않은 영구 캐시/24시간 stale/cold start 내구성 검증으로 표현하지 않는다. 기존500kB chunk 경고 유지다.
 
-KOPIS 목록 응답에는 total이 없어 날짜·지역의 upstream 페이지를 서버에서 끝까지 조회·중복 제거한 성공 목록으로 count를 산출한다. 브라우저에는20개씩만 보내고 목록에서 상세를 호출하지 않는다. 상태당50페이지 상한 도달/HTTP/XML 실패는 부분 성공으로 위장하지 않는다. 새 배치를 둘 필요가 없다.
+## 보존·미완료·정확한 재개점
 
-검토 ACCEPTED는 자체 선언하지 않는다. 다음 단계는 이 검증 코드의 main 병합·production 배포 확인 후 기존 ClassicAtlas-LocalPipeline Disabled, production 목록·상세·예매 링크와 실제 SHA를 기록하는 것이다. [설계](docs/CONCERT_BROWSER.md), [실제 검증 JSON](docs/CONCERT_BROWSER_VALIDATION_2026-10-29.json).
+기능 코드·음악 추천/보관/취향/주간UI·기존 DB 이력/적용 migration은 수정0. main/production SHA 7cc7f7b88274db228748cd5aa7fa8775fd5db64a 유지, main 병합/배포0. ClassicAtlas-LocalPipeline Disabled/Enabled=false를 읽기 전용 확인했고 action·trigger 변경0이다. 원본 local main/1607ca201c3a559bc7f28aabe998ef062db02ef9의40개 파일/index/.env hash를 시작/종료 대조해 보존했다.
+
+**Gate A / ROOT_CAUSE_UNDETERMINED**에서 중단한다. Gate B의 별도 영구 cache table·fresh6h/stale24h·업데이트 시각 안내·fallback 상세/20건·375px 검증은 미구현/미검증이다. 원인 미확정 상태로 migration이나 캐시 업무POST를 먼저 수행하지 않았다. [안전한 증거 JSON](docs/CONCERT_RELIABILITY_DIAGNOSIS_2026-10-29.json).
+
+재개에는 보존기간 내 실패 요청의 upstream 단계·state/page·시간·HTTP/XML 결과와 cold start 정보를 묶을 수 있는 관측 근거가 필요하다. requestId 두 개는 확보했지만 이미 지워진 함수 로그를 제공된 것처럼 취급하지 않는다.
+
+## 구현자 기술 의견 — 아직 실행하지 않은 권장안
+
+1. 기존 오류를 유지한 채 추정으로 원인을 정하지 말고,5개 허용 단계 코드와 안전한 숫자 metadata만 남기는 최소 진단 계측을 격리/preview에서 검증해 관측 방법을 먼저 정한다. HTTP 상태·page/state·duration·correlation은 원문/query 없이 연결해야 한다. 이번에는 진단 코드를 production에 배포하지 않았다.
+2. Map은 instance-local이므로 Gate B의 cold start 내구성을 만족하지 못한다. Gate A 재개 후 별도 kopis browser cache table만 사용하고 기존 OCR/Program/receipt 테이블·정책은 건드리지 않는 설계가 적합하다.
+3. 동일 지역/날짜 key의 전체01/02 페이지 검증 성공만 atomic 저장하고 상세는mt20id key로 저장한다.6h fresh/실패 시24h 이내 stale, source/fetchedAt/stale를 분리하며 부분 성공·다른 날짜 캐시로 덮어쓰지 않는다. 브라우저가 stale를 새 성공 시각으로 캐시하지 않도록 원래 fetchedAt을 유지해야 한다. 이 항목은 구현/검증 결과가 아닌 다음 단계 의견이다.
+
+새 명세·결과 문서만 작업 브랜치에 게시한다. 최종 상태를 OPERATIONAL이나 ACCEPTED로 표시하지 않는다. 이전 main 인계는 docs/collaboration/archive/CA-CONCERT-BROWSER-20261029-001에 보관했다.
