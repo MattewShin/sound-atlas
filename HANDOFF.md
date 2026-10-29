@@ -1,5 +1,51 @@
 # 작업 인계
 
+- 작업 ID: CA-CONCERT-RELIABILITY-20261029-001 / 명세2
+- 상태: BLOCKED / Gate B / SERVER_CACHE_STORAGE_REQUIRED
+- 작성: Codex / 2026-10-29 14:58~15:00 KST / Asia/Seoul
+- 읽은 브랜치: codex/ca-concert-reliability-20261029-001
+- 읽은 공동 문서·코드 SHA: 3e7222c25143356dae9f32c421ebab6b36c1b2fc
+- main·production 코드 SHA 유지: 7cc7f7b88274db228748cd5aa7fa8775fd5db64a
+
+## 재개 결과
+
+최신 사용자 지시를 명세2로 반영했다. 과거502 원인 미확정 중단 조건을 해제했고, 과거 로그·KOPIS 조사·Gate A를 반복하지 않았다. 이번 blocker는 **새 migration 없이 사용할 서버 영구 저장소 부재**이다.
+
+격리 clone에서 최신 공동 문서5개를 읽고 기존 server/kopis.mjs, server/api.mjs, src/data/concertSearch.js와 저장소 참조를 확인했다. 서비스의 cache/pending은 instance-local Map이며, 클라이언트도 page별 Map뿐이다. 다른 instance·cold start·함수 자체 실패 시 기존 성공 전체 목록을 제공하는 저장소가 없다.
+
+운영 관리자 SQL은 default_transaction_read_only=on 및 BEGIN READ ONLY로 실행했다. 업무 데이터 행을 읽지 않고 public 테이블 목록과 cache/kopis 이름 관계만 조회했다. public 기본 테이블13개는 기존 공연·OCR·Program 이력용이고 cache 테이블은0개다. kopis 이름의 기존 unique index는 저장소가 아니다. Vercel production 환경변수도 이름만 메모리에서 분류해 별도 저장소 설정0개를 확인했다. 키·토큰·연결문자열·KOPIS원문·이미지/예매URL은 출력/공동문서/Git 기록0이다.
+
+## 실제 실행·미실행 구분
+
+| 항목 | 이번 재개 결과 |
+| --- | --- |
+| DB | 연결 성공, 카탈로그 SELECT2회, 읽기 전용 transaction, 업무POST0/DDL0/DML0 |
+| Vercel | 팀·프로젝트·production 환경 metadata GET3회, 환경변수 값 출력/저장0 |
+| KOPIS·production 공연API | GET0/POST0, 과거 로그 추가 조회0 |
+| OCR·Program·matcher·판정 | 요청0/쓰기0 |
+| 새 migration·영구저장소 | 작성0/적용0/생성0 |
+| 기능 코드·화면·계측 | 변경0, 구현/배포 완료로 보고하지 않음 |
+| test/build·모바일·격리 fallback | 미실행. 코드 변경 전 저장소 선행조건에서 중단 |
+| main 병합·production 배포 | 0, 기존7cc7f7b88274db228748cd5aa7fa8775fd5db64a 유지 |
+| 예약 | ClassicAtlas-LocalPipeline Disabled/Enabled=false 읽기 전용 확인, 변경0 |
+| 로컬 보존 | 원본 branch/HEAD·40개 파일·index·.env 해시 동일 |
+
+이전 baseline test93/93와 build PASS는 명세1 당시 변경하지 않은 main의 결과다. 이번 fallback,24시간 경계,모바일 표시 또는 cold start 성공 증거로 재사용하지 않는다. 이번 변경은 공동 문서와 안전한 저장소 점검 결과 JSON뿐이며 링크/상태/차이를 확인했다.
+
+## 구현자 기술 의견과 정확한 재개점
+
+완전한 목록과 상세를 지역/기간·mt20id로 저장하는 독립 서버 캐시가 필요하다. 기존13개 이력 테이블을 재사용하면 보존 조건에 어긋난다. instance Map이나 임시 파일은 cold start 내구성을 보장하지 못한다. 브라우저20건 캐시는 다른 페이지와 새 브라우저의 서버 장애를 해결하지 못하며, 완전한 목록의 서버 캐시를 대신했다고 보고할 수 없다.
+
+현재 구성에서는 독립 캐시 테이블용 새 migration 또는 별도 영구 저장소 도입이 필요하다. 최신 지시의 “새 migration이 필요하면 적용하지 말고 BLOCKED” 조건에 따라 작성/적용과 production 변경을 하지 않았다. **독립 서버 캐시 저장소가 제공되거나 이를 도입할 수 있는 범위가 정해진 지점**에서 Gate B를 재개한다. 과거502 세부 원인 확보를 재개 요건으로 삼지 않는다.
+
+재개 후에는 전체 pagination 성공만 원자 저장,6시간 fresh/실패 시24시간 이내 stale, 원래 fetchedAt 보존, 응답 source/stale와 지정 안내문구를 구현하고 timeout/HTTP5xx/XML/부분페이지/cold start/24시간 경계·모바일·상세를 격리 검증해야 한다. 함수 전체 실패에 대한 fallback 위치도 검증 대상이다. 이는 미실행 후속 범위이며 이번 성공 결과가 아니다.
+
+[저장소 점검 근거](docs/CONCERT_RELIABILITY_STORAGE_2026-10-29.json). 아래 이전 명세1 인계는 이력으로 보존한다. 과거 원인 추적 중단 조건은 현재 유효하지 않다.
+
+## 이전 명세1 인계 — 보존 기록
+
+# 작업 인계
+
 - 작업 ID: CA-CONCERT-RELIABILITY-20261029-001 / 명세1
 - 상태: BLOCKED / Gate A
 - 작성: Codex / 2026-10-29 Asia/Seoul

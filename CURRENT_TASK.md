@@ -1,6 +1,38 @@
 # 현재 작업
 
 - 작업 ID: CA-CONCERT-RELIABILITY-20261029-001
+- 명세 버전: 2 / 사용자 Gate A 이후 재개 지시
+- 상태: BLOCKED / Gate B / SERVER_CACHE_STORAGE_REQUIRED
+- 브랜치: codex/ca-concert-reliability-20261029-001
+- 읽은 공동 문서 5개: 3e7222c25143356dae9f32c421ebab6b36c1b2fc
+- main·production 코드 기준: 7cc7f7b88274db228748cd5aa7fa8775fd5db64a
+- 확인 시각: 2026-10-29 14:58~15:00 KST / Asia/Seoul
+
+## 현재 유효한 명세
+
+사용자 최신 지시로 과거 11:04 HTTP502 원인 추적은 종료한다. 로그 보존기간 만료와 원인 미확정은 더 이상 중단 조건이 아니다. Gate A를 반복하지 않고 마지막 정상 데이터 fallback만 진행한다.
+
+전체 페이지가 검증된 성공 목록만 저장한다. 정상 캐시는6시간, KOPIS 또는 서버 함수 실패 시 마지막 성공24시간 이내만 stale fallback으로 반환한다.24시간 초과는 기존 오류 화면이다. stale/fetchedAt/source를 제공하고 화면에는 “KOPIS 연결이 지연되어 마지막으로 확인된 정보를 표시합니다”와 갱신 시각을 표시한다. HTTP상태·실패단계·upstream유형·처리시간·요청ID는 비밀값 없이 계측한다.
+
+무제한 재시도·OCR·곡매칭·DB이력 변경·예약 재활성화를 금지한다. 기존 OCR/Program/receipt 테이블은 캐시에 재사용하지 않는다. 감정추천·보관함·취향·주간UI는 유지한다. 정상/timeout/HTTP5xx/XML오류/부분페이지/cold start/24시간 초과와 모바일 목록·상세를 검증하고, 직접 테스트 후 전체 test/build가 통과하면 배포·production 정상 조회·격리 fallback을 검증한다.
+
+**범위 확대 또는 새 migration이 필요하면 적용하지 않고 BLOCKED로 보고한다.** 이전 명세의 additive migration 허용은 최신 지시로 대체됐다.
+
+## Gate B 확인 결과와 재개점
+
+서버와 브라우저 공연 캐시는 Map뿐이다. 서버 영구 캐시 adapter가 없으며 브라우저는20건 응답만 보유한다. 운영 DB 카탈로그 SELECT2회에서 public 기본 테이블13개가 모두 기존 공연/Program/OCR 이력용임을 확인했다. 이름에 cache/kopis가 있는 관계는 기존 unique index 하나뿐이며 캐시 테이블은 없다. Vercel GET3회로 production 환경변수 이름만 확인했으며 별도 KV/Redis/Blob/S3 등 저장소 설정0개다. 연결정보·환경변수 값은 출력/기록하지 않았다.
+
+따라서 새 instance가 기존 완전한 성공 목록을 읽을 서버 영구 저장소가 현재 없다. 이를 충족하려면 독립 캐시 테이블을 위한 새 migration 또는 별도 저장소 도입이 필요하다. 기존 DB 이력 재사용이나 브라우저 일부 페이지 캐시를 서버 전체목록/cold start fallback으로 취급하지 않는다.
+
+**BLOCKED / SERVER_CACHE_STORAGE_REQUIRED**: 독립 서버 캐시 저장소를 사용할 수 있는 지점에서 재개한다. 새 migration 작성/적용0, 기능 코드 변경0, 업무POST0, main 병합/배포0이다. 과거502 재조사0, KOPIS 호출0이다. 새 기능 테스트/build·모바일·fallback 검증은 미실행이며 이전 baseline 통과를 이번 보완의 검증으로 보고하지 않는다.
+
+ClassicAtlas-LocalPipeline은 읽기 전용 확인 결과 Disabled/Enabled=false이다. 원본 local main/1607ca201c3a559bc7f28aabe998ef062db02ef9의40개 변경 파일/index/.env hash 보존을 확인했다. [근거](docs/CONCERT_RELIABILITY_STORAGE_2026-10-29.json), [인계](HANDOFF.md).
+
+## 이전 명세1 기록 — 아래 중단 조건은 현재 적용하지 않음
+
+# 현재 작업
+
+- 작업 ID: CA-CONCERT-RELIABILITY-20261029-001
 - 명세 버전: 1
 - 상태: BLOCKED
 - 요청자: Theo / 실행: Codex / 후속 검토: 웹 GPT

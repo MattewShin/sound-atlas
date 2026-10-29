@@ -87,4 +87,4 @@ Codex는 HANDOFF의 구현자 의견과 질문에 문제·근거·권장안·영
 
 ## 현재 작업 위치 (2026-10-29)
 
-현재 작업은 CA-CONCERT-RELIABILITY-20261029-001 / 명세1, codex/ca-concert-reliability-20261029-001이다. 지정 main7cc7f7b88274db228748cd5aa7fa8775fd5db64a에서 시작했다. Gate A에서 과거HTTP502의 upstream 원인·실패페이지를 특정하지 못해 BLOCKED다. 기존 production과 Disabled 예약은 유지한다. 이전 main의 CURRENT_TASK/HANDOFF는 archive/CA-CONCERT-BROWSER-20261029-001에 보관한다.
+CA-CONCERT-RELIABILITY-20261029-001 / 명세2, codex/ca-concert-reliability-20261029-001. 사용자는 Gate A의 과거 원인 추적을 종료하고 fallback 범위만 재개했다. 현재 Gate B / SERVER_CACHE_STORAGE_REQUIRED로 BLOCKED다. 운영에 독립 서버 캐시 저장소가 없고 새 migration 또는 별도 저장소 도입이 필요해 적용하지 않았다. 이전 Gate A 원인 미확정은 현재 중단 조건이 아니다. main·production7cc7f7b88274db228748cd5aa7fa8775fd5db64a와 Disabled 예약을 유지한다. 세부 근거·재개점은 CURRENT_TASK/HANDOFF 명세2를 따른다.

@@ -1,6 +1,14 @@
+# 현재 안정성 작업 — 명세2 / 2026-10-29
+
+CA-CONCERT-RELIABILITY-20261029-001, codex/ca-concert-reliability-20261029-001. 읽은 SHA3e7222c25143356dae9f32c421ebab6b36c1b2fc, main·production7cc7f7b88274db228748cd5aa7fa8775fd5db64a 유지. 사용자 지시로 과거502 추가 추적과 원인 미확정 중단 조건을 해제했다.
+
+Gate B에서 서버 영구 캐시 부재를 확인했다. 운영 DB13개 기존 테이블에는 별도 cache가 없고 Vercel에도 별도 저장소 설정이 없다. 새 migration 또는 별도 저장소 도입이 필요하므로 최신 금지조건에 따라 BLOCKED / SERVER_CACHE_STORAGE_REQUIRED다. 기능코드·운영DB·예약·production 변경0이며 Disabled 예약을 유지한다. CURRENT_TASK/HANDOFF의 명세2 재개점을 따른다.
+
+## 이전 맥락 — 이력
+
 # Classic Atlas 프로젝트 맥락
 
-## 현재 안정성 작업 — 2026-10-29
+## 명세1 안정성 작업 기록 — 당시 상태 (최신 지시로 대체됨)
 
 CA-CONCERT-RELIABILITY-20261029-001 / 명세1, 브랜치 codex/ca-concert-reliability-20261029-001. 코드·production 기준7cc7f7b88274db228748cd5aa7fa8775fd5db64a. 두 목록 HTTP502를 확인했으나 upstream 유형/페이지/cold start 원인은 미확정이어서 Gate A BLOCKED다. 기능·DB·예약은 변경하지 않았다. 영구 캐시/새 migration은 아직 없으며 현재 운영의6시간 메모리 캐시만 유지된다. CURRENT_TASK/HANDOFF의 재개점을 따른다.
 
