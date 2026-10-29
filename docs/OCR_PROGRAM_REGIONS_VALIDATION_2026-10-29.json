@@ -1,0 +1,255 @@
+{
+  "task": "CA-OCR-FALLBACK-20261028-001",
+  "specification": 1,
+  "work": "OCR_PROGRAM_REGION_DISCOVERY",
+  "status": "BLOCKED",
+  "implementation_status": "IMPLEMENTED",
+  "read_documents_sha": "68e1fd1ceebdd7192053449aebcfa9468350ec7b",
+  "implementation_sha": "7f0b834f44dcd34c24e5f19637b7d7114451742c",
+  "user_scope": "OCR-only heading variants and bbox logical blocks; no quality relaxation",
+  "tests": {
+    "direct": {
+      "pass": 22,
+      "fail": 0,
+      "skip": 0,
+      "groups": {
+        "program_regions": 6,
+        "fallback": 10,
+        "isolated_sql": 4,
+        "schedule_wrapper": 2
+      }
+    },
+    "full_test": "NOT_RUN_NO_ELIGIBLE",
+    "build": "NOT_RUN_NO_ELIGIBLE"
+  },
+  "conditions": {
+    "region": "서울",
+    "regionCode": "11",
+    "genreCode": "CCCA",
+    "states": [
+      "02",
+      "01"
+    ],
+    "timeZone": "Asia/Seoul",
+    "from": "2026-10-29",
+    "to": "2026-11-28"
+  },
+  "source_gate": {
+    "scanned": 28,
+    "official": 1,
+    "absent": 27,
+    "hold": 0
+  },
+  "dry_run": {
+    "status": "BLOCKED",
+    "blocker": "SUPABASE_REQUEST_FAILED",
+    "selected": [
+      "PF296289",
+      "PF300258",
+      "PF296224",
+      "PF298506",
+      "PF293668"
+    ],
+    "completed_successfully": 2,
+    "ocr_timeout": 1,
+    "not_attempted": [
+      "PF298506",
+      "PF293668"
+    ],
+    "timeout_sources_excluded": [
+      "PF281769",
+      "PF281822"
+    ],
+    "image_get": 3,
+    "ocr_calls": 3,
+    "ocr_retries": 0,
+    "image_retries": 0,
+    "db_get": 13,
+    "db_post": 0,
+    "kopis_detail_get": 0,
+    "transport_deviation": {
+      "request": "FOURTH_SAMPLE_IMAGE_METADATA_GET",
+      "default_attempts": 3,
+      "additional_get_attempts": 2,
+      "post_attempts": 0,
+      "manual_reexecution": 0
+    },
+    "total_completed_detections": 98,
+    "totals": {
+      "program_lines": 0,
+      "explicit_composer_catalogue": 0,
+      "matched_exact": 0,
+      "eligible": 0
+    },
+    "metrics_scope": "Two completed OCR samples only; timeout has no derived analysis metrics",
+    "items": [
+      {
+        "kopis_id": "PF296289",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "image_quality": {
+          "original_width": 794,
+          "original_height": 1123,
+          "laplacian_variance": 1263.9709444600783
+        },
+        "total_detections": 26,
+        "region_counts": {
+          "heading": 0,
+          "spatial": 0
+        },
+        "program_lines": 0,
+        "explicit_composer_catalogue": 0,
+        "matched_exact": 0,
+        "eligible": 0,
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        }
+      },
+      {
+        "kopis_id": "PF300258",
+        "status": "DRY_RUN",
+        "reason": "UNPERSISTED_PREVIEW_ONLY",
+        "image_quality": {
+          "original_width": 750,
+          "original_height": 3571,
+          "laplacian_variance": 3592.2522833794696
+        },
+        "total_detections": 72,
+        "region_counts": {
+          "heading": 0,
+          "spatial": 0
+        },
+        "program_lines": 0,
+        "explicit_composer_catalogue": 0,
+        "matched_exact": 0,
+        "eligible": 0,
+        "quality": {
+          "eligible": false,
+          "reason": "SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT"
+        }
+      },
+      {
+        "kopis_id": "PF296224",
+        "status": "FAILED",
+        "reason": "EASYOCR_TIMEOUT",
+        "image_quality": {
+          "original_width": 700,
+          "original_height": 8198,
+          "laplacian_variance": 2434.648780025636
+        },
+        "total_detections": null,
+        "region_counts": null,
+        "program_lines": null,
+        "explicit_composer_catalogue": null,
+        "matched_exact": null,
+        "eligible": null,
+        "quality": null
+      }
+    ],
+    "new_confirmed": 0,
+    "new_rejected": 0
+  },
+  "production_readonly": {
+    "read_only": true,
+    "business_post": 0,
+    "connected": true,
+    "checked_at_kst": "2026-10-29 09:49:34",
+    "policy": [
+      {
+        "matcher_version": "stored-program-4",
+        "enabled": true
+      }
+    ],
+    "fallback_rpc_installed": false,
+    "unchanged_base_tables": 13,
+    "unchanged_base_rows": 866,
+    "official_receipts": [
+      {
+        "id": "88b88f30-de19-4b44-9022-762264ec4526",
+        "track_id": "chopin-scherzo-op54-no4",
+        "status": "CONFIRMED",
+        "relation": "EXACT",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      },
+      {
+        "id": "dc572eb9-9756-4fbb-a03b-2a9b00474893",
+        "track_id": "chopin-scherzo-op31-no2",
+        "status": "CONFIRMED",
+        "relation": "EXACT",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      }
+    ],
+    "legacy": [
+      {
+        "track_id": "brahms-intermezzo-op118-no2",
+        "matcher_version": "stored-program-3",
+        "review_status": "CONFIRMED",
+        "effective_status": "CONFIRMED",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      },
+      {
+        "track_id": "chopin-ballade-op52-no4",
+        "matcher_version": "stored-program-3",
+        "review_status": "CONFIRMED",
+        "effective_status": "CONFIRMED",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      },
+      {
+        "track_id": "liszt-liebestraum-s541-no3",
+        "matcher_version": "stored-program-3",
+        "review_status": "CONFIRMED",
+        "effective_status": "CONFIRMED",
+        "is_effectively_confirmed": true,
+        "stale_reason": null
+      }
+    ],
+    "status": "PASS"
+  },
+  "production_search": {
+    "pass": true,
+    "GET": 1,
+    "POST": 0,
+    "kopis_id": "PF304387",
+    "track_id": "chopin-scherzo-op31-no2",
+    "relation": "EXACT",
+    "status": "CONFIRMED",
+    "programAnalysisVersion": "stored-program-4",
+    "origin": "https://sound-atlas.vercel.app"
+  },
+  "schedule": {
+    "state": "Ready",
+    "enabled": true,
+    "originalAction": true,
+    "coreSha": "1db327cd38dfce778da543738f975b70789aed66",
+    "restartCount": 0,
+    "dailyTime": "08:40",
+    "nextRunKst": "2026-10-30 08:40:00",
+    "lastRunKst": "2026-10-29 08:40:00",
+    "lastResult": 0,
+    "forcedRun": false,
+    "modified": false
+  },
+  "local_preservation": {
+    "pass": true,
+    "branch": "main",
+    "head": "1607ca201c3a559bc7f28aabe998ef062db02ef9",
+    "preserved_files": 40,
+    "dirty_files": 40,
+    "index_unchanged": true,
+    "env_unchanged": true
+  },
+  "operations": {
+    "migration_applied": false,
+    "fallback_policy_enabled": false,
+    "fallback_schedule_enabled": false,
+    "canary": false,
+    "main_merge": false,
+    "deployment": false
+  },
+  "resume_point": "Gate C: single-attempt GET transport must be used before any newly authorized bounded dry-run; PF296224 joins timeout exclusions. Current samples do not establish real-poster ROI efficacy."
+}

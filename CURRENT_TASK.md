@@ -13,6 +13,35 @@
 - 기준 결과 문서: `4f26fb6227d38ee4bc996751025c8a271db94e09`
 - main·production·예약 core SHA: `1db327cd38dfce778da543738f975b70789aed66`
 
+## Codex 결과 — Program 영역 탐지 구현 / Gate C BLOCKED (2026-10-29 KST)
+
+- 읽은 공동 문서5개: `68e1fd1ceebdd7192053449aebcfa9468350ec7b` / `codex/ca-ocr-fallback-20261028-001`, CA-OCR-FALLBACK-20261028-001 / 명세1. 이번 사용자 실행 지시에 따라 이전 문서의 해상도-only calibration 범위를 **OCR 전용 Program 영역 탐지**로 대체했다. Gate A/B ACCEPTED는 유지한다. [구현 SHA `7f0b834f44dcd34c24e5f19637b7d7114451742c`](https://github.com/MattewShin/sound-atlas/commit/7f0b834f44dcd34c24e5f19637b7d7114451742c). 영역 탐지 구현은 IMPLEMENTED이며 운영 Gate C는 BLOCKED다.
+- `ocrProgramRegions.mjs`: 기존 명확한 제목 탐지에 PROGRAM/PROGRAMME/프로그램/곡목/연주곡/연주곡목/REPERTOIRE/레퍼토리와 공백·구두점 변형을 지원한다. 제목 없는 부분은 bbox 인접 graph로 묶되, 메타데이터를 제외하고 같은 block의 명시적 composer+catalogue만 후보로 전달한다. 각 후보 자신의 evidence도 연결되어야 하며 다른 열·곡·연주자에서 composer를 차용하지 않는다. 원문·offset·bbox를 보존한다.
+- OCR 영역 proof가 확인된 구간의 불확실 section 분류만 대체했다. 원문 전체의 날짜·회차·범위, 악장·편곡·발췌·중복·unknown reason fail-closed는 유지한다. **700px/no-upscaling·blur100·detection3줄·coverage80%·median0.90·evidence0.85·identity0.90·단일 MATCHED+EXACT·무-REJECTED 기준은 불변**이다. 공식 router/matcher/search와 pipeline/예약 코드는 수정0이다. 아직 미적용인 fallback SQL만 bbox/영역 proof 검증을 맞췄고 운영 migration은 적용0이다.
+- 직접 fixture/단위 **22/22 PASS, fail0/skip0**: 새 영역6·기존 fallback10·격리SQL4·예약 wrapper2. 제목 변형, headless split composer/title/catalogue, 메타데이터/먼 열/누락 bbox 차단, 낮은 confidence·중복·편곡·전체 source 날짜 충돌, JS/SQL 품질·멱등·무-REJECTED·ACL을 검증했다. 적격0으로 **전체 npm test/build는 이번에 실행하지 않았다**.
+
+### Gate C 제한 dry-run의 실제 결과
+
+- 서울10/29~11/28의28공연을 GET으로 분류: 공식1/부재27/HOLD0. 이전 OCR 성공5개만 고정 선택(이전 후보 보유3개+앞선 성공 대조군2개), 시작일→KOPIS ID→image sort 순. 기존 timeout `PF281769`/`PF281822`은 호출0이다. 추가 표본/timeout 증가/upscaling0이다.
+- 실제 **이미지 GET3/5·OCR3/5**, 성공2·신규 timeout1(`PF296224`,180초,재시도0). 성공2개 detection98개에서 아래 단계별 결과는 모두0이다. bbox 명시 곡목 영역이 없어 `SKIPPED_PROGRAM_DETECTIONS_INSUFFICIENT`이며 coverage/median을 통과했다고 보고하지 않는다.
+
+| 완료 OCR 표본 | program_lines | explicit composer+catalogue | MATCHED+EXACT | eligible |
+| --- | ---: | ---: | ---: | ---: |
+| PF296289 (detection26) | 0 | 0 | 0 | 0 |
+| PF300258 (detection72) | 0 | 0 | 0 | 0 |
+| 완료2건 합계 | 0 | 0 | 0 | 0 |
+
+- `PF296224`는 timeout으로 분석 수치 미산출이다(기본0을 실제 분석 결과로 합산하지 않음). 다음 `PF298506`의 이미지 메타데이터 GET에서 `SUPABASE_REQUEST_FAILED`로 중단했다. `PF298506`/`PF293668`의 이미지 GET/OCR은0이다. 5건 모두 조사했다고 보고하거나 미조사2건의 적격0을 단정하지 않는다. 실제 포스터에서의 탐지 개선 효과는 아직 입증되지 않았다.
+- **운영 제한 편차:** DB REST GET13/POST0. 실패 GET에 공유 REST transport 기본3 attempts가 적용되어 **추가 자동 GET2회가 발생했다**. 이는 재시도0 지시를 충족하지 못한 실행기 결함이다. 수동 재실행·이미지/OCR 재시도는0이며 실패 뒤 호출을 중단했다. 다음 별도 재개 시 GET도 single-attempt guard를 먼저 적용해야 한다. 현재 실패 GET이나 timeout 표본을 다시 호출하지 않았다.
+- OCR/분석 저장·review·confirmation **0**, 신규 CONFIRMED0/REJECTED0, KOPIS 상세GET0. 적격 및 canary 미통과로 fallback migration/policy 활성화·전체 test/build·main 병합/배포·OCR 예약 연결은 모두 미실행이다. fallback RPC/policy행 미설치·기본OFF 유지다.
+
+### 기존 운영·로컬 보존 및 재개점
+
+- **09:49:34 KST 관리자 READ ONLY SQL PASS:** 시작 시점과 최종13개 base table **866행 및 전체 digest 불변**. stored-program-4 policy=true, PF304387의 기존 두 공식 receipt effective CONFIRMED/EXACT, PF295548 legacy3곡 effective CONFIRMED/stale=null 유지. 오늘 기존08:40 정상 예약에서 생긴 공식 추가1건은 이번 작업 시작 전 baseline에 포함되어 있다.
+- production **GET1/POST0**에서 PF304387/`chopin-scherzo-op31-no2` EXACT·CONFIRMED·stored-program-4 노출 PASS. 기존 예약 Ready/Enabled·daily08:40 KST·RestartCount0·lastResult0, 다음10/30 08:40, 기존 core `1db327cd38dfce778da543738f975b70789aed66`/action 유지. 강제실행·공식 스위치 변경0이다.
+- 원본 local main/HEAD `1607ca201c3a559bc7f28aabe998ef062db02ef9`, 변경40파일·index·.env hash 전부 보존. 격리 cache에서만 구현했다. OCR 원문·이미지URL·evidence·연결정보 게시0이다.
+- **중단 Gate/재개점:** Gate C / OCR timeout + DB 읽기 실패 / completed eligible0. 추가 완화·표본 확대 없이 BLOCKED로 중단한다. fixture 양성 결과를 운영 적격 성공으로 해석하지 않는다. 새 검증은 single-attempt GET을 먼저 보장하고 새 timeout `PF296224`도 제외해야 한다. [안전한 검증 JSON](docs/OCR_PROGRAM_REGIONS_VALIDATION_2026-10-29.json), [영역·품질 설계](docs/OCR_FALLBACK.md)를 함께 게시한다.
+
 ## Codex calibration 결과 — 700px 적용 / Gate C BLOCKED (2026-10-29 KST)
 
 - 읽은 공동 문서5개 SHA `4ea0c535b5ce97882e1d0a52d0f5cace398139ed`. Gate A/B ACCEPTED를 유지하며 [calibration 구현 `d23eed19a54a67cd15ef0faaabc6a82514279b6f`](https://github.com/MattewShin/sound-atlas/commit/d23eed19a54a67cd15ef0faaabc6a82514279b6f)만 추가했다.
