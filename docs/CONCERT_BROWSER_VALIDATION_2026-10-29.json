@@ -1,7 +1,7 @@
 {
   "task": "CA-CONCERT-BROWSER-20261029-001",
   "specification": 1,
-  "status": "IMPLEMENTED",
+  "status": "OPERATIONAL",
   "baseSha": "1db327cd38dfce778da543738f975b70789aed66",
   "branch": "codex/ca-concert-browser-20261029-001",
   "oldFallbackBranchMerged": false,
@@ -164,8 +164,12 @@
     "newRejected": 0,
     "cleanup": 0,
     "scheduleBeforeDeployment": "Ready/Enabled; unchanged",
-    "productionDeployment": "PENDING",
-    "scheduleTransition": "PENDING_AFTER_PRODUCTION"
+    "productionDeployment": {
+      "sha": "7cc7f7b88274db228748cd5aa7fa8775fd5db64a",
+      "ready": true,
+      "url": "https://sound-atlas.vercel.app"
+    },
+    "scheduleTransition": "Disabled after production verification"
   },
   "localPreservation": {
     "branch": "main",
@@ -178,5 +182,140 @@
     "Old SQL/migrations/data retained; browser has no database adapter.",
     "sharp/tesseract.js used only by removed image/OCR paths; PGlite only by removed SQL tests.",
     "A newline error in the adjusted 2026-10-21 catalog test was corrected before the single full test run."
-  ]
+  ],
+  "finishedAtKst": "2026-10-29 10:49:04",
+  "codeSha": "965a55daa4c6e04cb57a43e87730e3f2c729a6c5",
+  "production": {
+    "productionSha": "7cc7f7b88274db228748cd5aa7fa8775fd5db64a",
+    "codeSha": "965a55daa4c6e04cb57a43e87730e3f2c729a6c5",
+    "origin": "https://sound-atlas.vercel.app",
+    "get": 6,
+    "post": 0,
+    "query": {
+      "region": "서울",
+      "from": "2026-10-29",
+      "to": "2026-11-28"
+    },
+    "config": {
+      "configured": true,
+      "backend": "kopis",
+      "genre": "CCCA",
+      "cacheTtlMs": 21600000,
+      "maxSearchDays": 31,
+      "pageSize": 20
+    },
+    "list": {
+      "total": 303,
+      "displayed": 20,
+      "hasMore": true
+    },
+    "more": {
+      "displayed": 40,
+      "deduplicated": true
+    },
+    "detail": {
+      "id": "PF281769",
+      "posterPresent": true,
+      "introductionImages": 1,
+      "bookingLinks": 4,
+      "namedSafeBookingLinks": true
+    },
+    "assetMatchesTestedBuild": true,
+    "asset": "/assets/index-DZDQjlzn.js",
+    "checkedAtKst": "2026-10-29 10:43:54",
+    "pass": true
+  },
+  "productionUi": {
+    "origin": "https://sound-atlas.vercel.app",
+    "viewport": {
+      "width": 375,
+      "height": 812
+    },
+    "apiGet": 3,
+    "apiPost": 0,
+    "forbiddenApi": 0,
+    "pageErrors": 0,
+    "list": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": 0
+    },
+    "firstDisplay": 20,
+    "more": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": 0
+    },
+    "moreDisplay": 40,
+    "detail": {
+      "posterElements": 1,
+      "introductionImages": 1,
+      "bookingLinks": 4
+    },
+    "safeLinks": true,
+    "pass": true,
+    "checkedAtKst": "2026-10-29 10:45:56"
+  },
+  "productionDeployments": [
+    {
+      "id": 7401814862,
+      "sha": "7cc7f7b88274db228748cd5aa7fa8775fd5db64a",
+      "environment": "Production",
+      "production": false,
+      "statuses": [
+        {
+          "state": "success",
+          "environment": "Production",
+          "environment_url": "https://sound-atlas-4v5sk51mm-yhshin.vercel.app",
+          "created_at": "2026-10-29T01:42:20Z"
+        }
+      ]
+    }
+  ],
+  "scheduler": {
+    "taskName": "ClassicAtlas-LocalPipeline",
+    "beforeState": "Ready",
+    "beforeEnabled": true,
+    "state": "Disabled",
+    "enabled": false,
+    "actionsPreserved": true,
+    "triggersPreserved": true,
+    "forcedRun": false,
+    "replacementBatch": false,
+    "lastRunKst": "2026-10-29 08:40:00",
+    "lastResult": 0,
+    "disabledAtKst": "2026-10-29 10:45:00",
+    "productionVerifiedBeforeDisable": true,
+    "productionSha": "7cc7f7b88274db228748cd5aa7fa8775fd5db64a"
+  },
+  "removals": {
+    "files": 152,
+    "packages": [
+      "tesseract.js",
+      "sharp",
+      "@electric-sql/pglite"
+    ],
+    "scripts": [
+      "collect:concerts",
+      "test:collection",
+      "ocr:batch",
+      "test:easyocr",
+      "program:analyze",
+      "program:auto",
+      "verify:program-auto",
+      "diagnose:concert-coverage",
+      "test:program",
+      "pipeline",
+      "verify:ocr",
+      "verify:ocr-cache",
+      "verify:concerts"
+    ],
+    "oldApiRoutes": [
+      "POST /api/concerts/match-batch",
+      "GET /api/concerts/PF*/program",
+      "targetTrackId query"
+    ],
+    "preservedMigrationFiles": 14
+  },
+  "pr": "https://github.com/MattewShin/sound-atlas/pull/3"
 }
