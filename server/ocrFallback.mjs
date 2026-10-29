@@ -1,10 +1,11 @@
 import {createHash} from 'node:crypto'
 import {routeProgramSource} from './programSourceRouter.mjs'
-import {analyzeStoredProgram,extractIdentity,CATALOG_HASH} from './programAnalysis.mjs'
+import {extractIdentity,CATALOG_HASH} from './programAnalysis.mjs'
 import {matchNormalizedProgramWork} from './programMatchingNormalization.mjs'
 import {canonicalIdentityJson} from './programWorkIdentity.mjs'
 import {getTrackTarget} from '../src/data/workCatalog.js'
 import {checkProgramContext} from './programContext.mjs'
+import {analyzeOcrFallbackProgram,OCR_REGION_REASONS,ocrProgramHeading,ocrCandidateExplicitPair} from './ocrProgramRegions.mjs'
 
 export const OCR_FALLBACK_RULE='program-ocr-fallback-1'
 export const OCR_FALLBACK_QUALITY=Object.freeze({minDimension:700,minLines:3,minCoverage:.8,minMedian:.9,minEvidence:.85,minIdentity:.9,minLaplacianVariance:100,maxBytes:6_000_000,maxPixels:12_000_000,maxDimension:20000})
@@ -29,7 +30,7 @@ export function fallbackQuality(target,analysis){
   if(q.laplacian_variance<t.minLaplacianVariance)return fail('BLURRED_IMAGE')
   const lines=ocr.raw_text.split('\n'),program=new Set()
   let offset=0
-  for(let i=0;i<lines.length;i++){const end=offset+[...lines[i]].length;if(lines[i].trim()&&!/^(program(me)?|프로그램|연주곡목?|곡목)$/i.test(lines[i].replace(/[\s.\[\]【】()「」『』〈〉《》:：·•\-–—]/gu,''))&&analysis.sections.some(s=>s.classification==='PROGRAM'&&s.reason==='EXPLICIT_PROGRAM_HEADING'&&offset>=s.start&&end<=s.end))program.add(i);offset=end+1}
+  for(let i=0;i<lines.length;i++){const end=offset+[...lines[i]].length;if(lines[i].trim()&&!ocrProgramHeading(lines[i])&&analysis.sections.some(s=>s.classification==='PROGRAM'&&OCR_REGION_REASONS.includes(s.reason)&&offset>=s.start&&end<=s.end&&(!s.line_indices||s.line_indices.includes(i))))program.add(i);offset=end+1}
   if(!Array.isArray(ocr.detections)||ocr.detections.some(d=>!detectionValid(d,ocr.width,ocr.height)))return fail('DETECTION_INVALID')
   const detections=[...program].map(i=>ocr.detections[i]).filter((d,j)=>detectionValid(d,ocr.width,ocr.height)&&d.text===lines[[...program][j]])
   const coverage=program.size?detections.length/program.size:0
@@ -44,16 +45,17 @@ const safeReasons=new Set(['COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY','TITLE_OR_RE
 export function fallbackCandidate(candidate,analysis,target,quality=fallbackQuality(target,analysis)){
   if(!quality.eligible)return quality
   const section=analysis.sections[candidate.section_index],evidence=candidate.evidence||[],t=OCR_FALLBACK_QUALITY
-  if(section?.classification!=='PROGRAM'||section.reason!=='EXPLICIT_PROGRAM_HEADING')return fail('PROGRAM_SECTION_UNPROVEN')
+  if(section?.classification!=='PROGRAM'||!OCR_REGION_REASONS.includes(section.reason))return fail('PROGRAM_SECTION_UNPROVEN')
   if(candidate.outcome!=='MATCHED'||candidate.relation!=='EXACT')return fail('NOT_MATCHED_EXACT')
   if(!Array.isArray(candidate.review_reasons)||candidate.review_reasons.some(r=>!safeReasons.has(r)))return fail('UNRESOLVED_REVIEW_REASON')
   const chars=[...target.ocr.raw_text],lines=target.ocr.raw_text.split('\n')
   if(!evidence.length||evidence.some(e=>!Number.isInteger(e.start)||!Number.isInteger(e.end)||e.start<section.start||e.end>section.end||e.end<=e.start||chars.slice(e.start,e.end).join('')!==e.quote
-    ||!Number.isInteger(e.line_index)||lines[e.line_index]!==e.quote||!detectionValid(target.ocr.detections[e.line_index],target.ocr.width,target.ocr.height)
+    ||!Number.isInteger(e.line_index)||(section.line_indices&&!section.line_indices.includes(e.line_index))||lines[e.line_index]!==e.quote||!detectionValid(target.ocr.detections[e.line_index],target.ocr.width,target.ocr.height)
     ||canonicalIdentityJson(e.bbox)!==canonicalIdentityJson(target.ocr.detections[e.line_index].bbox)||e.confidence!==target.ocr.detections[e.line_index].confidence||e.confidence<t.minEvidence))return fail('EVIDENCE_INVALID_OR_LOW_CONFIDENCE')
   // Only explicit evidence within THIS work block; inherited headings are never accepted.
   const relation=candidate.identity?.composer_relation
-  if(!relation||relation.status!=='SOURCE_IDENTIFIED'||!['INLINE','BBOX_PAIRED_ROW','BBOX_BILINGUAL_BLOCK'].includes(relation.association))return fail('EXPLICIT_BLOCK_COMPOSER_REQUIRED')
+  if(!relation||relation.status!=='SOURCE_IDENTIFIED'||!['INLINE','BBOX_PAIRED_ROW','BBOX_BILINGUAL_BLOCK','OCR_SPATIAL_WORK_BLOCK'].includes(relation.association))return fail('EXPLICIT_BLOCK_COMPOSER_REQUIRED')
+  if(relation.association==='OCR_SPATIAL_WORK_BLOCK'&&(section.region_version!=='ocr-program-regions-1'||candidate.ocr_region_version!=='ocr-program-regions-1'||!ocrCandidateExplicitPair(candidate,candidate.evidence.map(e=>({...e,text:e.quote})))))return fail('EXPLICIT_BLOCK_COMPOSER_REQUIRED')
   const composer=evidence.filter(e=>extractIdentity(e.quote).composers.includes(candidate.identity.composer))
   const catalogue=evidence.filter(e=>e.role!=='COMPOSER'&&extractIdentity(e.quote).catalogues.length)
   if(!composer.length||composer.some(e=>e.confidence<t.minIdentity))return fail('COMPOSER_CONFIDENCE_OR_EXPLICIT_EVIDENCE')
@@ -73,7 +75,7 @@ export function fallbackCandidate(candidate,analysis,target,quality=fallbackQual
 export function planOcrFallback(target){
   const source=fallbackSource(target.concert)
   if(source.status!=='OCR')return {status:source.status,reason:source.reason,eligible:[],skipped:[]}
-  const analysis=analyzeStoredProgram(target),quality=fallbackQuality(target,analysis)
+  const analysis=analyzeOcrFallbackProgram(target),quality=fallbackQuality(target,analysis)
   const decisions=analysis.candidates.map(candidate=>({candidate,...fallbackCandidate(candidate,analysis,target,quality)}))
   return {status:'PLANNED',reason:quality.reason,analysis,quality,eligible:decisions.filter(d=>d.eligible),skipped:decisions.filter(d=>!d.eligible),catalog_hash:CATALOG_HASH}
 }

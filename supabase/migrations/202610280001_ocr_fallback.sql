@@ -35,9 +35,22 @@ begin
 end;$$;
 
 -- Recompute from immutable persisted OCR and analysis sections, not caller metrics.
+create function public.ocr_fallback_bbox_adjacent(p_first jsonb,p_second jsonb)
+returns boolean language plpgsql immutable security invoker set search_path='' as $$
+declare al numeric;ar numeric;atop numeric;ab numeric;bl numeric;br numeric;btop numeric;bb numeric;ah numeric;bh numeric;h numeric;
+begin
+ if jsonb_typeof(p_first) is distinct from 'array' or jsonb_array_length(p_first)<>4 or jsonb_typeof(p_second) is distinct from 'array' or jsonb_array_length(p_second)<>4 then return false;end if;
+ select min((p->>0)::numeric),max((p->>0)::numeric),min((p->>1)::numeric),max((p->>1)::numeric) into al,ar,atop,ab from jsonb_array_elements(p_first) p;
+ select min((p->>0)::numeric),max((p->>0)::numeric),min((p->>1)::numeric),max((p->>1)::numeric) into bl,br,btop,bb from jsonb_array_elements(p_second) p;
+ ah:=ab-atop;bh:=bb-btop;h:=greatest(ah,bh);if ah<=0 or bh<=0 or ar<=al or br<=bl then return false;end if;
+ return (least(ab,bb)-greatest(atop,btop)>=least(ah,bh)*0.5 and greatest(al-br,bl-ar,0)<=h*2)
+  or (least(ar,br)-greatest(al,bl)>=least(ar-al,br-bl)*0.3 and greatest(atop-bb,btop-ab,0)<=h*1.8);
+exception when others then return false;
+end;$$;
+
 create function public.ocr_fallback_quality(p_ocr uuid,p_sections jsonb)
 returns jsonb language plpgsql stable security invoker set search_path='' as $$
-declare o public.concert_image_ocr_results%rowtype; q jsonb; d jsonb; point jsonb; line text; idx int:=0; offset_start int:=0; indices jsonb:='[]'; n int:=0; matched int:=0; confidences double precision[]:='{}'; med double precision; coverage double precision; w int; h int; field text;
+declare o public.concert_image_ocr_results%rowtype; q jsonb; d jsonb; point jsonb; section jsonb; heading_text text; line text; idx int:=0; offset_start int:=0; indices jsonb:='[]'; n int:=0; matched int:=0; confidences double precision[]:='{}'; med double precision; coverage double precision; w int; h int; field text;
 begin
  select * into o from public.concert_image_ocr_results where id=p_ocr;
  q:=o.settings->'ocr_fallback_quality';
@@ -61,9 +74,20 @@ begin
   if (select max((p->>0)::numeric)-min((p->>0)::numeric) from jsonb_array_elements(d->'bbox') p)<=0
    or (select max((p->>1)::numeric)-min((p->>1)::numeric) from jsonb_array_elements(d->'bbox') p)<=0 then return null;end if;
  end loop;
+ for section in select value from jsonb_array_elements(p_sections) loop
+  if section->>'reason' in ('OCR_EXPLICIT_PROGRAM_HEADING','OCR_SPATIAL_PROGRAM_BLOCK') then
+   if section->>'region_version' is distinct from 'ocr-program-regions-1' or jsonb_typeof(section->'line_indices') is distinct from 'array' or jsonb_array_length(section->'line_indices')=0 then return null;end if;
+   if section->>'reason'='OCR_EXPLICIT_PROGRAM_HEADING' then
+    if jsonb_typeof(section->'heading_line_index') is distinct from 'number' then return null;end if;
+    heading_text:=(string_to_array(o.raw_text,E'\n'))[(section->>'heading_line_index')::int+1];
+    if heading_text is null or regexp_replace(normalize(heading_text,NFKC),'[\s.\[\]【】()「」『』〈〉《》:：·•–—-]','','g') !~* '^(program(me)?|프로그램|연주곡목?|곡목|repertoire|레퍼토리)$' then return null;end if;
+   end if;
+  end if;
+ end loop;
  foreach line in array string_to_array(o.raw_text,E'\n') loop
-  if btrim(line,E' \t\r')<>'' and regexp_replace(line,'[\s.\[\]【】()「」『』〈〉《》:：·•–—-]','','g') !~* '^(program(me)?|프로그램|연주곡목?|곡목)$' and exists(select 1 from jsonb_array_elements(p_sections) s where s->>'classification'='PROGRAM' and s->>'reason'='EXPLICIT_PROGRAM_HEADING'
-    and offset_start>=(s->>'start')::int and offset_start+length(line)<=(s->>'end')::int) then
+  if btrim(line,E' \t\r')<>'' and regexp_replace(normalize(line,NFKC),'[\s.\[\]【】()「」『』〈〉《》:：·•–—-]','','g') !~* '^(program(me)?|프로그램|연주곡목?|곡목|repertoire|레퍼토리)$' and exists(select 1 from jsonb_array_elements(p_sections) s where s->>'classification'='PROGRAM' and s->>'reason' in ('EXPLICIT_PROGRAM_HEADING','OCR_EXPLICIT_PROGRAM_HEADING','OCR_SPATIAL_PROGRAM_BLOCK')
+    and offset_start>=(s->>'start')::int and offset_start+length(line)<=(s->>'end')::int
+    and (s->>'reason'='EXPLICIT_PROGRAM_HEADING' or (s->>'region_version'='ocr-program-regions-1' and s->'line_indices' @> jsonb_build_array(idx)))) then
    n:=n+1;indices:=indices||to_jsonb(idx);d:=o.detections->idx;
    if d->>'text'=line then matched:=matched+1;confidences:=array_append(confidences,(d->>'confidence')::double precision);end if;
   end if;
@@ -82,7 +106,7 @@ create function public.confirm_concert_ocr_fallback_v1(p_expected jsonb,p_catalo
 returns uuid language plpgsql security invoker set search_path='' as $$
 declare a public.concert_program_analyses%rowtype;c public.concert_program_candidates%rowtype;k public.concerts%rowtype;i public.concert_program_images%rowtype;o public.concert_image_ocr_results%rowtype;
  prior public.concert_program_ocr_fallback_receipts%rowtype;cat jsonb:=p_catalog_json::jsonb;saved jsonb;snap jsonb;quality jsonb;ev jsonb;d jsonb;composer_pattern text;composer_ok boolean:=false;catalogue_ok boolean:=false;
- field text;ch text:=encode(sha256(convert_to(p_catalog_json,'UTF8')),'hex');wh text;eh text;rh text;at_time timestamptz;rid uuid;receipt uuid;note text;movement int;
+ field text;connected boolean;ch text:=encode(sha256(convert_to(p_catalog_json,'UTF8')),'hex');wh text;eh text;rh text;at_time timestamptz;rid uuid;receipt uuid;note text;movement int;
 begin
  if jsonb_typeof(p_expected) is distinct from 'object' or p_expected->>'rule' is distinct from 'program-ocr-fallback-1' then raise exception 'OCR_FALLBACK_INPUT_INVALID';end if;
  perform 1 from public.concert_program_version_policy where matcher_version='program-ocr-fallback-1' and enabled for share;
@@ -108,10 +132,11 @@ begin
  quality:=public.ocr_fallback_quality(o.id,a.sections);
  if quality is null or quality is distinct from p_expected->'quality' or encode(sha256(convert_to(public.program_identity_canonical(quality),'UTF8')),'hex') is distinct from p_expected->>'quality_hash' then raise exception 'OCR_FALLBACK_QUALITY_FAILED';end if;
  select value into snap from jsonb_array_elements(a.snapshot->'candidates') where value->>'candidate_key'=c.candidate_key;
- if snap is null or snap->>'generation_version' is distinct from 'stored-program-4' or c.outcome<>'MATCHED' or c.relation<>'EXACT' or a.sections->c.section_index->>'reason' is distinct from 'EXPLICIT_PROGRAM_HEADING'
+ if c.identity#>>'{composer_relation,association}'='OCR_SPATIAL_WORK_BLOCK' and (a.sections->c.section_index->>'region_version' is distinct from 'ocr-program-regions-1' or snap->>'ocr_region_version' is distinct from 'ocr-program-regions-1') then raise exception 'OCR_FALLBACK_REGION_PROOF_REQUIRED';end if;
+ if snap is null or snap->>'generation_version' is distinct from 'stored-program-4' or c.outcome<>'MATCHED' or c.relation<>'EXACT' or coalesce(a.sections->c.section_index->>'reason','') not in ('EXPLICIT_PROGRAM_HEADING','OCR_EXPLICIT_PROGRAM_HEADING','OCR_SPATIAL_PROGRAM_BLOCK')
   or snap#>>'{scope,kind}' is distinct from 'EXACT' or c.identity->'arrangement_or_excerpt' is distinct from 'false'::jsonb
   or c.identity#>>'{composer_relation,status}' is distinct from 'SOURCE_IDENTIFIED' or c.identity#>>'{composer_relation,association}' is null
-  or c.identity#>>'{composer_relation,association}' not in ('INLINE','BBOX_PAIRED_ROW','BBOX_BILINGUAL_BLOCK')
+  or c.identity#>>'{composer_relation,association}' not in ('INLINE','BBOX_PAIRED_ROW','BBOX_BILINGUAL_BLOCK','OCR_SPATIAL_WORK_BLOCK')
   or exists(select 1 from jsonb_array_elements_text(c.review_reasons) r where r not in ('COMPOSER_AND_EXPLICIT_CATALOG_IDENTITY','TITLE_OR_REGISTERED_ALIAS_AGREES','KEY_CORROBORATES_IDENTITY','ABSENT_ORDINAL_NOT_INVENTED'))
   or coalesce(snap#>'{matching,issues}','[]')<>'[]'::jsonb
   or exists(select 1 from jsonb_array_elements_text(coalesce(snap#>'{matching,arrangement_features}','[]')) f where f ~ 'hands:|pianos:2|style:|method:|arranger:|ensemble:(?!solo)')
@@ -126,11 +151,20 @@ begin
  for ev in select value from jsonb_array_elements(c.evidence) loop
   d:=o.detections->((ev->>'line_index')::int);
   if d->>'text' is distinct from ev->>'quote' or d->'bbox' is distinct from ev->'bbox' or d->'confidence' is distinct from ev->'confidence'
-   or (ev->>'confidence')::numeric<0.85 or (ev->>'start')::int<(a.sections->c.section_index->>'start')::int or (ev->>'end')::int>(a.sections->c.section_index->>'end')::int then raise exception 'OCR_FALLBACK_EVIDENCE_FAILED';end if;
+   or (ev->>'confidence')::numeric<0.85 or (ev->>'start')::int<(a.sections->c.section_index->>'start')::int or (ev->>'end')::int>(a.sections->c.section_index->>'end')::int
+   or ((a.sections->c.section_index->>'reason')<>'EXPLICIT_PROGRAM_HEADING' and (a.sections->c.section_index->>'region_version' is distinct from 'ocr-program-regions-1' or not (a.sections->c.section_index->'line_indices' @> jsonb_build_array((ev->>'line_index')::int)))) then raise exception 'OCR_FALLBACK_EVIDENCE_FAILED';end if;
+  if (a.sections->c.section_index->>'reason')<>'EXPLICIT_PROGRAM_HEADING' and ev->>'quote' ~* '티켓|예매|입장|관람|문의|후원|주최|주관|협찬|프로필|출연진|연주자|공연장|공연명|일시|장소|졸업|학사|석사|박사|수상|경력|리사이틀|연주회|독주회|음악회|마스터클래스|피아니스트|바이올리니스트|\m(tickets?|admission|booking|venue|location|sponsor|profile|biography|information|intermission|recital|concert|performers?|artists?|pianist|violinist|masterclass|workshop|graduat\w*|university|conservatory)\M|20[0-9]{2}\s*[.\-/년]\s*[0-9]{1,2}|[0-9]{1,2}:[0-9]{2}' then raise exception 'OCR_FALLBACK_METADATA_EVIDENCE';end if;
   if ev->>'quote' ~* composer_pattern and (ev->>'confidence')::numeric>=0.9 and c.identity#>'{composer_relation,source_line_indices}' @> jsonb_build_array((ev->>'line_index')::int) then composer_ok:=true;end if;
   if ev->>'role'<>'COMPOSER' and ev->>'quote' ~* '\m(Op|BWV|KV|K|D|S|R|Hob)[.:]?\s*[0-9]+' and (ev->>'confidence')::numeric>=0.9 then catalogue_ok:=true;end if;
  end loop;
  if not composer_ok or not catalogue_ok then raise exception 'OCR_FALLBACK_EXPLICIT_IDENTITY_REQUIRED';end if;
+ if (a.sections->c.section_index->>'reason')<>'EXPLICIT_PROGRAM_HEADING' then
+  with recursive elements as (select value ev,ordinality n from jsonb_array_elements(c.evidence) with ordinality),reachable(n) as (
+   select n from elements e where e.ev->>'quote' ~* composer_pattern and (e.ev->>'confidence')::numeric>=0.9 and c.identity#>'{composer_relation,source_line_indices}' @> jsonb_build_array((e.ev->>'line_index')::int)
+   union select b.n from reachable r join elements x on x.n=r.n join elements b on public.ocr_fallback_bbox_adjacent(x.ev->'bbox',b.ev->'bbox')
+  ) select exists(select 1 from reachable r join elements e on e.n=r.n where e.ev->>'role'<>'COMPOSER' and e.ev->>'quote' ~* '\m(Op|BWV|KV|K|D|S|R|Hob)[.:]?\s*[0-9]+' and (e.ev->>'confidence')::numeric>=0.9) into connected;
+  if connected is distinct from true then raise exception 'OCR_FALLBACK_BLOCK_NOT_CONNECTED';end if;
+ end if;
  select (t->>'movementNumber')::int into movement from jsonb_array_elements(cat->'targets') t where t->>'trackId'=c.track_id;
  if movement is not null and (not (c.identity->'movement_numbers' @> jsonb_build_array(movement)) or not exists(select 1 from jsonb_array_elements(c.evidence) evidence_line where evidence_line->>'role'<>'COMPOSER' and evidence_line->>'quote' ~* '(악장|movement|mov\.|(^|[;:])[[:space:]]*[IVX]+[.)])')) then raise exception 'OCR_FALLBACK_EXPLICIT_MOVEMENT_REQUIRED';end if;
  -- Context conflicts/unknown scope are included in review_reasons by the v4 snapshot.
@@ -150,7 +184,7 @@ begin
  insert into public.concert_program_ocr_fallback_receipts(candidate_id,review_id,rule,expected,expected_hash) values(c.id,rid,'program-ocr-fallback-1',p_expected,rh) returning id into receipt;
  return receipt;
 end;$$;
-revoke all on function public.ocr_fallback_official_reason(text,text),public.ocr_fallback_quality(uuid,jsonb),public.confirm_concert_ocr_fallback_v1(jsonb,text) from public,anon,authenticated,service_role;
-grant execute on function public.ocr_fallback_official_reason(text,text),public.ocr_fallback_quality(uuid,jsonb),public.confirm_concert_ocr_fallback_v1(jsonb,text) to service_role;
+revoke all on function public.ocr_fallback_official_reason(text,text),public.ocr_fallback_bbox_adjacent(jsonb,jsonb),public.ocr_fallback_quality(uuid,jsonb),public.confirm_concert_ocr_fallback_v1(jsonb,text) from public,anon,authenticated,service_role;
+grant execute on function public.ocr_fallback_official_reason(text,text),public.ocr_fallback_bbox_adjacent(jsonb,jsonb),public.ocr_fallback_quality(uuid,jsonb),public.confirm_concert_ocr_fallback_v1(jsonb,text) to service_role;
 notify pgrst,'reload schema';
 commit;

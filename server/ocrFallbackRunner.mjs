@@ -7,7 +7,7 @@ import {collectionConditions} from './concertCollectionConfig.mjs'
 // One target, one physical image GET, one recognition and at most one confirmation.
 // Selection is separate so a multi-concert dry-run can account for every source gate.
 export async function runOcrFallbackOne({store,concert,image,download,worker,save=false,signal,now=Date.now}){
-  const report={rule:OCR_FALLBACK_RULE,kopis_id:concert.kopis_id,status:'SKIPPED',reason:null,downloads:0,ocr_calls:0,new_confirmation_limit:1,confirmation_posts:0,rejected:0,eligible:0,skipped:{}}
+  const report={rule:OCR_FALLBACK_RULE,kopis_id:concert.kopis_id,status:'SKIPPED',reason:null,downloads:0,ocr_calls:0,new_confirmation_limit:1,confirmation_posts:0,rejected:0,program_lines:0,explicit_composer_catalogue:0,matched_exact:0,eligible:0,skipped:{}}
   const source=fallbackSource(concert)
   if(source.status!=='OCR')return {...report,status:source.status,reason:source.reason}
   const conditions=collectionConditions(now())
@@ -26,7 +26,7 @@ export async function runOcrFallbackOne({store,concert,image,download,worker,sav
     const started=now(),attempt={id:randomUUID(),image_id:image.id,source_url:image.source_url,content_sha256:decoded.contentHash,pipeline_version:EASYOCR_PIPELINE_VERSION,status:'SUCCEEDED',started_at:new Date(started).toISOString(),finished_at:new Date(started).toISOString(),duration_ms:0}
     const ocr={...result,id:randomUUID(),image_id:image.id,content_sha256:decoded.contentHash,pipeline_version:EASYOCR_PIPELINE_VERSION,settings:{...EASYOCR_SETTINGS,ocr_fallback_quality:q}}
     let target={concert,image,ocr,attempt},plan=planOcrFallback(target)
-    const summarize=()=>{report.eligible=plan.eligible.length;report.quality=plan.quality?{eligible:plan.quality.eligible,reason:plan.quality.reason,coverage:plan.quality.snapshot?.coverage,median:plan.quality.snapshot?.median}:null;report.candidates=plan.analysis?.candidates.length||0;for(const d of plan.skipped)report.skipped[d.reason]=(report.skipped[d.reason]||0)+1}
+    const summarize=()=>{report.eligible=plan.eligible.length;report.program_lines=new Set((plan.analysis?.sections||[]).flatMap(s=>s.line_indices||[])).size;report.explicit_composer_catalogue=plan.analysis?.candidates.length||0;report.matched_exact=plan.analysis?.candidates.filter(c=>c.outcome==='MATCHED'&&c.relation==='EXACT').length||0;report.quality=plan.quality?{eligible:plan.quality.eligible,reason:plan.quality.reason,coverage:plan.quality.snapshot?.coverage,median:plan.quality.snapshot?.median}:null;report.candidates=plan.analysis?.candidates.length||0;for(const d of plan.skipped)report.skipped[d.reason]=(report.skipped[d.reason]||0)+1}
     summarize()
     if(!save)return {...report,status:'DRY_RUN',reason:'UNPERSISTED_PREVIEW_ONLY'}
     // Never store a review or confirmation for skipped candidates.

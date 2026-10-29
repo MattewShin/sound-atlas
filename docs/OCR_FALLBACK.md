@@ -8,7 +8,11 @@ CA-OCR-FALLBACK-20261028-001 / 명세1. 기존 공식 Program v4 router/matcher/
 
 OCR 결과의 기존 immutable `settings`에 `ocr_fallback_quality`를 포함한다. 원본 크기·byte 수·MIME·content hash·decode·blur 측정값이 없는 기존 결과는 사용할 수 없다. 같은 content/pipeline 결과가 이미 존재해 기존 immutable 결과가 재사용되더라도 필수 품질값이 없으면 SKIPPED이며 덮어쓰지 않는다.
 
-Program heading을 제외한 본문에서 bbox/confidence 유효 detection3줄, 대응률80%, confidence 중앙값0.90을 요구한다. evidence 전부0.85 이상, 동일 work block의 명시적 composer와 catalogue evidence 각각0.90 이상이어야 한다. inherited composer heading은 허용하지 않는다. 단일 MATCHED/EXACT 등록 track/work, 명시적 악장, 무편곡·무발췌·무scope/date/session 충돌, 알려진 corroboration reason만 허용한다.
+`ocrProgramRegions.mjs`는 OCR 전용 영역 탐지기다. 원문을 고치거나 가상 제목을 삽입하지 않고 PROGRAM/PROGRAMME/프로그램/곡목/연주곡/연주곡목/REPERTOIRE/레퍼토리 제목과 원래 line index를 사용한다. 제목이 없는 부분은 bbox의 행 겹침·열 겹침과 글자 높이 비례 간격으로 연결한 block 중 명시적 composer와 catalogue가 함께 있는 block만 전달한다. 공연명·연주자·장소·날짜·티켓·프로필은 제외하고 메타데이터 사이를 연결하지 않는다. 후보 자신의 evidence 안에서도 composer와 작품번호가 연결되어야 하므로 다른 열이나 다른 곡의 작곡가를 차용할 수 없다. bbox가 없으면 spatial block을 만들지 않는다.
+
+공유 v4 analyzer는 수정하지 않는다. OCR 영역이 증명된 경우 `UNCERTAIN_PROGRAM_SECTION` 분류만 대체하며 원문 전체의 날짜·회차·범위 충돌은 유지한다. 별도 composer 행도 같은 후보의 연속 evidence로 증명되는 경우에만 `OCR_SPATIAL_WORK_BLOCK`으로 표기한다. 일반적인 inherited composer는 계속 거부한다. 원문·offset·bbox와 영역 proof를 보존하고 SQL도 같은 영역 소속·연결 그래프·작곡가/작품번호 confidence를 재검증한다.
+
+Program heading을 제외한 본문에서 bbox/confidence 유효 detection3줄, 대응률80%, confidence 중앙값0.90을 요구한다. evidence 전부0.85 이상, 동일 work block의 명시적 composer와 catalogue evidence 각각0.90 이상이어야 한다. 단일 MATCHED/EXACT 등록 track/work, 명시적 악장, 무편곡·무발췌·무scope/date/session 충돌, 알려진 corroboration reason만 허용한다. 영역 탐지가 성공해도 이 품질·identity 조건을 우회하지 않는다.
 
 `runOcrFallbackOne`은 공연1·이미지GET1·OCR1·confirmationPOST1 상한이다. dry-run은 OCR 결과를 메모리에서만 분석하며 DB POST가 없다. SAVE는 eligible인 경우에만 OCR/분석 snapshot을 저장하고 current source를 다시 조회해 계획과 비교한다. SKIPPED는 보고서 reason만 남기고 review/confirmation RPC를 호출하지 않는다.
 
