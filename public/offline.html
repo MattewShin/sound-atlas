@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10172b" />
+    <title>오프라인 · MY PIANO MOOD</title>
+    <style>
+      :root { color-scheme: light; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f7f3eb; color: #10172b; }
+      body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; box-sizing: border-box; }
+      main { max-width: 380px; text-align: center; }
+      img { width: 96px; height: 96px; border-radius: 24px; }
+      h1 { margin: 24px 0 12px; font-size: 24px; }
+      p { margin: 0 0 24px; line-height: 1.7; color: #4f5566; }
+      button { border: 0; border-radius: 999px; background: #10172b; color: white; padding: 12px 20px; font: inherit; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/icons/icon-192.png" alt="" />
+      <h1>인터넷 연결을 확인해주세요</h1>
+      <p>연결이 복구되면 음악 추천과 최신 공연 정보를 다시 불러올 수 있어요.</p>
+      <button type="button" onclick="location.reload()">다시 시도</button>
+    </main>
+  </body>
+</html>

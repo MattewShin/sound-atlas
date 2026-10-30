@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Sound Atlas</title>
+  <desc id="desc">A musical note inside a compass rose</desc>
+  <rect width="512" height="512" rx="112" fill="#10172b"/>
+  <circle cx="256" cy="256" r="170" fill="#f7f3eb"/>
+  <circle cx="256" cy="256" r="142" fill="none" stroke="#c9a86a" stroke-width="9"/>
+  <path d="M256 116 278 202 364 224 278 246 256 332 234 246 148 224 234 202Z" fill="#d5b878" opacity=".9"/>
+  <circle cx="256" cy="224" r="92" fill="#10172b"/>
+  <path d="M282 158v118.5c-9.4-4.8-21.8-5.3-33.1-1.1-18.1 6.7-28.5 23.8-23.3 38.1 5.3 14.3 24.2 20.4 42.3 13.7 14.1-5.2 23.5-16.7 24.4-28.4h.2v-89.2l58.5-12.7v71.6c-9.4-4.8-21.8-5.3-33.1-1.1-18.1 6.7-28.5 23.8-23.3 38.1 5.3 14.3 24.2 20.4 42.3 13.7 14.1-5.2 23.5-16.7 24.4-28.4h.2V143Z" fill="#f7f3eb"/>
+  <circle cx="256" cy="386" r="12" fill="#8c382b"/>
+</svg>

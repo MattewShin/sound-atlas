@@ -1,4 +1,8 @@
-# 현재 안정성 작업 — 명세3 / 2026-10-30
+# 현재 PWA 작업 — 2026-10-30
+
+CA-PWA-20261030-001, 브랜치 codex/ca-pwa-20261030-001. MY PIANO MOOD를 모바일 홈 화면에 설치하고 standalone으로 실행할 수 있도록 Manifest, Service Worker, iOS metadata와 전용 아이콘을 추가한다. Service Worker는 정적 자산과 offline 안내만 캐시하고 /api/를 제외해 Supabase 공연 캐시와 충돌하지 않는다. DB·KOPIS·OCR·예약은 변경하지 않는다. 최신 CURRENT_TASK/HANDOFF를 따른다.
+
+# 이전 안정성 작업 — 명세3 / 2026-10-30
 
 CA-CONCERT-RELIABILITY-20261029-001, codex/ca-concert-reliability-20261029-001. 최신 사용자 지시로 기존 Supabase의 캐시 전용 additive table1개를 허용했다. server/concertCache.mjs/202610300001_concert_browser_cache.sql로 목록·상세를 분리 저장하며 기존13개 이력 table과 분리했다. fresh6h/갱신 실패 시24h 이내 stale, 원래시각·안내문구·안전metadata계측·cold start 재사용을 구현했다. 운영migration1회 적용·최종test109PASS/buildPASS·모바일375px통과, production 배포 검증 대기다. 이전 명세2 저장소 blocker는 해제됐다. 예약은 Disabled다. 아래는 이전 기록이다.
 

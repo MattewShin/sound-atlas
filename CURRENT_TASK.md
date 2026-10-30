@@ -1,30 +1,31 @@
 # 현재 작업
 
-- 작업 ID: CA-CONCERT-RELIABILITY-20261029-001
-- 명세 버전: 3 / 2026-10-30 사용자 Gate B 재개 지시
-- 상태: IMPLEMENTED / 운영 migration 완료, main 병합·production 배포 검증 대기
-- 브랜치: codex/ca-concert-reliability-20261029-001
-- 읽은 공동 문서5개·코드 SHA: bd76fb23766c10a8be903a8a579036f2ef8ea424
-- 기존 main·production 기준: 7cc7f7b88274db228748cd5aa7fa8775fd5db64a
+- 작업 ID: CA-PWA-20261030-001
+- 명세 버전: 1
+- 상태: IMPLEMENTED / preview·설치 검증 대기
+- 브랜치: codex/ca-pwa-20261030-001
+- 시작 main SHA: 18bb76573609e8c60229f847d437e74eff20ba9e
+- 요청: 모바일 브라우저에서 홈 화면에 설치하고 앱 아이콘으로 standalone 실행할 수 있는 PWA 적용
 
-## 유효 범위
+## 범위
 
-과거502 원인 조사/Gate A와 저장소 선택 검토는 반복하지 않는다. 기존 Supabase에 독립 공연 브라우저 cache table 하나만 추가하는 최소 additive migration을 허용한다. Redis/KV/Blob 등 신규 서비스는 만들지 않는다. 이전 명세2의 새 migration 금지와 저장소 blocker는 이번 사용자 지시로 대체됐다.
+1. 기존 React19/Vite6 앱에 표준 Web App Manifest와 production Service Worker를 추가한다.
+2. 앱 이름은 현재 화면 제목인 MY PIANO MOOD, 짧은 이름은 Piano Mood로 사용한다.
+3. 아이콘은 기존 네이비·크림·골드 색상에 음표와 나침반을 결합한 새 자산으로 제공한다.
+4. Android/Chromium용 192·512·maskable 512 PNG와 iOS용 180 PNG, SVG favicon을 제공한다.
+5. display=standalone, start_url/scope=/, 기존 theme color를 사용한다.
+6. Service Worker는 동일 origin의 정적 빌드 자산·작곡가 이미지·아이콘만 runtime cache하고 /api/와 외부 이미지·예매 링크는 캐시하지 않는다.
+7. navigation network 실패에는 전용 offline 화면만 제공한다. 공연·추천 데이터를 오프라인 성공으로 위장하지 않는다.
+8. sw.js는 Vercel에서 항상 재검증하고 Manifest MIME을 명시한다.
+9. DB·Supabase migration·KOPIS 캐시·OCR/Program·예약 상태는 변경하지 않는다.
 
-목록/상세 구분, 고유 key, 공개 payload, fetched_at/updated_at을 저장한다. 서버 service_role에 SELECT·INSERT·UPDATE만 허용하고 anon/authenticated/PUBLIC은 접근하지 못한다. 키·전체 upstream query·인증정보·XML/로그 원문은 저장하지 않는다. 목록은01/02의 모든 pagination/XML 검증 성공 후 단일 원자 upsert로 저장한다. 일부 성공으로 마지막 정상 결과를 덮어쓰지 않는다.
+## 구현·검증
 
-age<6h는 fresh, age>=6h는 먼저 KOPIS 갱신, 실패 시0<=age<=24h만 stale다.24h 초과·미래 timestamp는 반환하지 않는다. 원래 fetchedAt,stale,source를 응답하며 stale를 새 성공 시각으로 바꾸지 않는다. stale일 때만 “KOPIS 연결이 지연되어 마지막으로 확인된 정보를 표시합니다”와 실제 갱신 시각(KST)을 안내한다. cold start는 Supabase 캐시를 읽는다. 안전한 HTTP상태·실패단계·페이지·upstream유형·시간·requestID만 로그에 남긴다.
+- index.html에 manifest, SVG favicon, apple-touch-icon, iOS standalone metadata, 설명을 연결했다.
+- src/main.jsx는 production에서만 /sw.js를 scope=/로 등록한다.
+- public/manifest.webmanifest, sw.js, offline.html과 5개 아이콘 자산을 추가했다.
+- 전용 PWA 테스트 4/4, 전체 npm test 113/113 fail0/skip0, production build PASS.
+- build 결과에 manifest, sw, offline, PNG/SVG 자산이 포함되고 로컬 preview에서 manifest standalone/아이콘3개와 sw·512 PNG HTTP200을 확인했다.
+- Service Worker 실제 등록·설치 UI·iOS/Android 홈 화면 추가는 HTTPS preview 또는 production 실기기 검증 후 OPERATIONAL로 전환한다.
 
-기존 OCR/Program/receipt/곡매칭 데이터·migration과 추천·보관함·취향 UI는 유지한다. OCR·자동판정 복구/새 예약/무제한 retry0, ClassicAtlas-LocalPipeline Disabled 유지. 배포 rollback에도 additive table은 삭제하지 않고 비사용 상태로 남긴다.
-
-## 검증·적용 결과
-
-- 최종 직접 관련26/26 PASS, 전체 npm test109/109 PASS·fail0/skip0(25.316초), production build PASS(5.17초).
-- 격리 SQL: 새 table 한 개, 기본 권한이 넓은 환경에서도 revoke/최소 grant·RLS·anon/authenticated 차단·upsert·제약·기존 history 보존을 확인했다.
-- fresh/timeout/HTTP503/잘못된XML/network/부분페이지/cold start/정확한6h·24h/24h+1ms/미래시각/대기 중24h 만료/복구와 목록·상세 분리를 검증했다.
-- 375px 목록20→40/상세/지역선택 overflow0·잘린버튼0, stale 원래시각·포스터/소개/예매·보관/취향 통과.
-- migration **202610300001_concert_browser_cache.sql 적용1회 완료**, RLS·ACL 검증, 기존13개 테이블866행 hash 보존. Supabase migration ledger는 원래 없었고 별도 ledger table을 만들지 않았다.
-- 실제 정상 GET: 서울2026-10-30~11-29·CCCA305건,20→40/중복0, PF281769 포스터·소개1·예매4. KOPIS GET5, cache REST GET4/POST2(전용 cache만), 기존 업무POST/쓰기0. 새instance의 목록/상세는 Supabase에서 fresh 재사용, 추가KOPIS GET0.
-- production 장애주입0. main 병합·배포 확인 뒤 실제SHA와 최종결과를 갱신한다. 상세 실행 횟수와 초도 격리 실패 보정은 HANDOFF에 구분했다.
-
-이전 명세2 CURRENT_TASK/HANDOFF는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/spec2/CURRENT_TASK.md)에 함께 보존했다.
+이전 안정성 작업의 main 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/CURRENT_TASK.md)에 보존했다.
