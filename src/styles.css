@@ -168,13 +168,13 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-detail-header h1 { font-size: 26px; line-height: 1.5; overflow-wrap: anywhere; }
 .concert-details-panel > p { color: #53685a; font-size: 13px; line-height: 1.8; }
 .concert-preview button:not(:disabled) { min-height: 44px; color: #31594e; border-color: #b7c9bb; background: #eaf0e5; cursor: pointer; }
-.concert-search-panel { margin-bottom: 26px; border: 1px solid #d5ddcf; border-radius: 18px; padding: 18px 14px; background: #fbf8f1; }
+.concert-search-panel { min-width: 0; margin-bottom: 26px; border: 1px solid #d5ddcf; border-radius: 18px; padding: 18px 14px; overflow: hidden; background: #fbf8f1; }
 .concert-search-panel h2 { margin: 0 0 12px; color: #31594e; font-size: 21px; }
 .concert-search-panel p, .concert-search-feedback > p { color: #65756b; font-size: 12px; line-height: 1.8; }
 .concert-search-panel small { display: block; font-size: 10px; }
-.concert-period { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
-.concert-period label { min-width: 0; color: #456757; font-size: 11px; }
-.concert-period input { display: block; min-width: 0; width: 100%; max-width: 100%; min-height: 44px; margin-top: 8px; border: 1px solid #c3d0bc; border-radius: 9px; padding: 8px 5px; color: #365d4b; background: #f5f7ed; font: inherit; }
+.concert-period { width: 100%; min-width: 0; max-width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
+.concert-period label { display: grid; width: 100%; min-width: 0; max-width: 100%; color: #456757; font-size: 11px; }
+.concert-period input { display: block; inline-size: 100%; min-inline-size: 0; max-inline-size: 100%; width: 100%; min-width: 0; max-width: 100%; min-height: 44px; margin-top: 8px; border: 1px solid #c3d0bc; border-radius: 9px; padding: 8px 5px; color: #365d4b; background: #f5f7ed; font: inherit; }
 .concert-search-actions { display: grid; gap: 10px; }
 .concert-search-actions button:disabled { cursor: wait; opacity: .65; }
 .concert-search-panel .concert-search-setup { border-radius: 10px; padding: 12px; background: #f0e7d8; color: #715b3d; }
@@ -325,6 +325,16 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
   .nav-item svg { width: 21px; height: 21px; }
 }
 
+/* iPhone 홈 화면 실행에서는 브라우저 하단 툴바가 사라지므로 홈 인디케이터 여백을 내비게이션 자체 높이에 포함합니다. */
+@media (display-mode: standalone) and (max-width: 679px) {
+  .app-shell { padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
+  .bottom-nav {
+    padding-top: 10px;
+    padding-bottom: calc(10px + max(10px, env(safe-area-inset-bottom)));
+  }
+  .nav-item { min-height: 60px; }
+}
+
 @media (max-width: 355px) {
   .keyword-choice-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .track-copy { max-width: calc(100% - 102px); }
@@ -387,7 +397,7 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-poster-thumb { display: block; width: 96px; height: 136px; object-fit: cover; border-radius: 10px; }
 .concert-image-placeholder { display: grid; place-items: center; min-height: 100px; padding: 12px; box-sizing: border-box; background: #e9e9de; color: #53635b; text-align: center; font-size: 14px; border-radius: 10px; }
 .concert-browser-card p { font-size: 14px; line-height: 1.65; margin: 7px 0; }
-.concert-search-panel form, .concert-keyword { display: grid; gap: 12px; }
+.concert-search-panel form, .concert-keyword { width: 100%; min-width: 0; max-width: 100%; display: grid; gap: 12px; }
 .concert-keyword { margin-top: 4px; color: #263b36; font-size: 14px; }
 .concert-keyword input, .concert-period input { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; min-height: 46px; border: 1px solid #bdc9bd; border-radius: 9px; padding: 10px; color: #263b36; background: #fffdf7; font: inherit; font-size: 16px; }
 .concert-search-panel p, .concert-result-count, .concert-empty, .concert-search-time { color: #53635b; font-size: 14px; line-height: 1.7; }
