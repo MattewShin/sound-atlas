@@ -87,4 +87,4 @@ Codex는 HANDOFF의 구현자 의견과 질문에 문제·근거·권장안·영
 
 ## 현재 작업 위치 (2026-10-30)
 
-CA-CONCERT-RELIABILITY-20261029-001 / 명세3, codex/ca-concert-reliability-20261029-001. Supabase 독립 cache table1개가 승인돼 migration1회 적용과 구현·검증을 완료했다. 최종test109PASS/buildPASS, production 배포 검증 대기(IMPLEMENTED). 과거 Gate A 추적·저장소 재검토는 반복하지 않으며 예약Disabled/기존DB이력을 보존한다. 최신 CURRENT_TASK/HANDOFF를 따른다.
+CA-PWA-20261030-001 / 명세1, codex/ca-pwa-20261030-001. Manifest·Service Worker·iOS metadata·전용 아이콘을 구현했고 직접4/4·전체113/113·build가 통과했다. HTTPS preview와 실기기 설치 검증 후 병합·production 전환한다. 기존 공연 영구 캐시와 예약Disabled 상태는 변경하지 않는다. 최신 CURRENT_TASK/HANDOFF를 따른다.

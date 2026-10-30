@@ -1,48 +1,41 @@
 # 작업 인계
 
-- 작업 ID: CA-CONCERT-RELIABILITY-20261029-001 / 명세3
-- 상태: IMPLEMENTED / production 배포 검증 대기
-- 작성: Codex / 2026-10-30 Asia/Seoul
-- 읽은 브랜치: codex/ca-concert-reliability-20261029-001
-- 읽은 공동 문서·코드 SHA: bd76fb23766c10a8be903a8a579036f2ef8ea424
-- 기존 main·production: 7cc7f7b88274db228748cd5aa7fa8775fd5db64a
+- 작업 ID: CA-PWA-20261030-001 / 명세1
+- 상태: IMPLEMENTED / HTTPS preview·실기기 설치 검증 대기
+- 작성: 웹 GPT / 2026-10-30 KST
+- 브랜치: codex/ca-pwa-20261030-001
+- 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
 
-## 구현
+## 구현 결과
 
-server/concertCache.mjs의 서버 전용 Supabase REST adapter가 별도 concert_browser_cache 테이블만 읽고 쓴다. list key는 지역/기간/CCCA/상태의 SHA256, detail key는mt20id다. 저장 payload는 공개 필드만 양의 목록으로 추출한다. 원문/XML·upstream query·인증정보를 저장하지 않는다. 단일 목록은 전체01/02 pagination이 끝나야 한 번 POST upsert한다. 페이지별 저장·기존 OCR/Program 테이블 재사용은 없다.
+MY PIANO MOOD를 홈 화면에 설치할 수 있도록 Manifest, production Service Worker, iOS 메타태그와 앱 아이콘을 추가했다. 아이콘은 텍스트 없이 음표와 나침반을 조합하고 기존 네이비·크림·골드 및 포인트 브라운 색을 사용했다. Android/Chromium any 192·512, maskable 512, iOS 180, SVG favicon을 제공한다.
 
-server/kopis.mjs는 memory→Supabase→KOPIS 순서로 캐시를 읽는다.6h 미만 fresh, 정확한6h부터 갱신을 시도하고 실패 시24h 이내(정확한24h 포함) stale를 원래 timestamp로 반환한다.24h+1ms와 미래 timestamp는 거부한다. 복구 시 새 완전한 응답으로 갱신한다. 상세 캐시는 별도 key다. 같은 instance의 진행 중 조회를 합치고 자동 retry는 하지 않는다.
+Service Worker는 /api/ 요청과 외부 origin을 즉시 제외한다. navigation은 network-first이며 실패할 때만 offline.html을 표시한다. 해시된 /assets/, /composers/, /icons/, manifest만 cache-first로 재사용한다. 따라서 Supabase 6시간 fresh/24시간 stale 공연 캐시, 최신 추천·보관 데이터와 충돌하지 않는다.
 
-src/data/concertSearch.js도 stale를 fresh로 재사용하거나 새 시각으로 바꾸지 않는다. 알고 있는 page/상세에 대한 서버 함수 실패는24h 이내만 browser-cache로 명시하며, 응답을 기다리다 만료된 경우도 다시 검사한다. 목록의 기존 KST 날짜별 key를 유지해 날짜가 바뀐 브라우저 페이지를 새 날짜의 정상 결과로 취급하지 않는다. 서버는 영구 전체목록에서 종료 공연을 재필터한다. hook이 상세 metadata를 보존하고 ConcertScreens는 stale일 때만 지정 문구·실제KST시각을 표시한다.
+Vercel은 /sw.js를 max-age=0/must-revalidate로 제공하고 Service-Worker-Allowed=/를 설정한다. Manifest는 application/manifest+json MIME을 사용한다. production에서만 등록하므로 개발 서버에는 Service Worker가 남지 않는다.
 
-API X-Request-ID와 upstream 로그의 requestId를 연결한다. 로그 필드는 httpStatus/stage/page/upstreamType/durationMs/requestId뿐이다. timeout/connect/HTTP/XML/부분페이지 및 cache read/write 단계를 구분하며 URL/query/예외본문/예매URL은 로그에 없다. 함수가 실행되지 못한 플랫폼 실패는 앱 로그가 생길 수 없고 플랫폼 로그 및 client 오류와 구분한다.
+## 검증
 
-## 실제 검증
-
-| 검증 | 결과 |
+| 항목 | 결과 |
 | --- | --- |
-| 직접 관련 최종 |26/26 PASS·fail0/skip0 |
-| 전체 npm test 최종 |109/109 PASS·fail0/skip0·25.316초 |
-| production build 최종 |PASS·5.17초, 기존 큰 bundle 경고 유지 |
-| SQL 격리 |PGlite0.3.14, table1개·RLS·최소권한·기존 history·원자 upsert·제약 통과 |
-| 장애 fixture |timeout/HTTP503/XML/network/부분페이지 실패에서 원래 snapshot 불변, DB갱신0 |
-| 경계·복구 |6h-1ms fresh/6h exact 갱신/24h exact stale/24h+1ms 거부/미래시각 거부/대기 중 만료/복구 정상 |
-| cold start |격리 목록·상세 통과, 실제 Supabase 새instance 재사용도 통과 |
-| 모바일375px |목록20→40·상세·지역선택 모두 overflow0/잘린버튼0, stale 원래시각 유지 |
-| 음악 회귀 |전체 추천·보관·취향·주간 테스트 통과, 모바일 보관/취향 직접 통과 |
+| PWA 직접 테스트 | 4/4 PASS |
+| 전체 npm test | 113/113 PASS, fail0/skip0, 약9.18초 |
+| production build | PASS, 약1.11초 |
+| manifest | standalone, start/scope=/, any·maskable 아이콘3개 |
+| 아이콘 | PNG signature와 192/512/512/180 실제 크기 PASS, SVG 포함 |
+| Service Worker | node syntax PASS, /api/ 제외·offline navigation fixture PASS |
+| 로컬 preview | manifest·sw.js·512 PNG HTTP200 |
+| 기존 기능 | 음악·보관·취향·공연 안정성 전체 회귀 통과 |
 
-실행 횟수를 구분한다. 첫 직접25개 중 신규 SQL의 자동 생성 constraint 이름과 명시적 이름이 충돌해24PASS/1FAIL이었다. 운영 적용 전에 신규 migration의 constraint 이름을 보정했고25PASS를 확인했다. 이후 대기 중24h 만료 검증을 추가해 최종26PASS다. 전체 test/build는 만료 보정 전108PASS/build PASS 각각1회, 최종109PASS/build PASS 각각1회로 **총각2회**다. 최종 변경 뒤 통과한 결과만 배포 기준으로 사용한다. 첫 실패를 성공으로 감추지 않는다.
+실행 환경 Node24에서 package engine Node22 경고가 있었지만 테스트와 build는 통과했다. Vercel production은 Node22 설정을 유지한다. 기존 500kB 초과 bundle 경고는 유지되며 이번 PWA 변경에서 번들 의존성을 추가하지 않았다.
 
-## 운영 migration과 정상 GET
+로컬 Playwright 설치에 브라우저 바이너리가 없어 실제 Service Worker controller 검증은 실행하지 못했다. HTTPS Vercel preview에서 Manifest·Service Worker·375px 화면과 설치 가능 상태를 확인한 뒤 병합한다.
 
-**202610300001_concert_browser_cache.sql을2026-10-30 09:22:24 KST에1회 commit 적용**했다. 파일SHA256: 545bd5d5f9e8d226380996dc58ec7cad265093ef7008dd6d3deaebcb38e71964. 신규table 미존재·CREATE권한 확인 후 transaction 안에서 기존13개 테이블 hash, RLS, service_role SELECT/INSERT/UPDATE만 허용, anon/authenticated 접근0을 검증했다. 기존866행 내용 hash가 동일하다. 과거 migration 재적용0, 기존업무 DML0, 새RPC0, 새서비스0다. 원래 Supabase migration ledger는 없었고 새 ledger table도 만들지 않았다.
+DB DDL/DML·migration·KOPIS/공연API 호출·예약 변경은 0이다. 이전 CA-CONCERT-RELIABILITY 작업 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/HANDOFF.md)에 보존했다.
 
-적용 도구의 첫 호출은 PowerShell UTF16 로그를 UTF8로 읽어 테스트 결과 확인 단계에서 중단됐고 DDL 실행0/rollback이었다. 도구의 판독만 고친 뒤 적용했다. 실제 migration SQL 실행·commit은1회다. rollback 시 table 삭제를 하지 않는다.
+## 검토 요청
 
-정상 KOPIS GET만 실행했다. 서울2026-10-30~11-29·CCCA305건, 최초20/추가40/중복0. PF281769 상세 포스터·소개1장·예매링크4개다. 실제 이미지/예매URL과 XML은 저장/게시하지 않았다. KOPIS GET5(목록4페이지+상세1), Supabase cache GET4/POST2, 기존 업무POST0/기존13개table쓰기0/OCR·Program·자동판정 요청·쓰기0. 새instance가 Supabase의 목록/상세를 fresh로 읽었고 추가upstream GET0, 원래timestamp 유지다. 실패 주입은 격리 fixture에서만 수행했다.
-
-## 보존·배포 상태
-
-원본 local main/1607ca201c3a559bc7f28aabe998ef062db02ef9의40개 변경 파일/index/.env hash를 대조해 보존했다. ClassicAtlas-LocalPipeline은 Disabled/Enabled=false이며 변경0/새예약0이다. 추천·보관·취향·주간UI 코드는 수정하지 않았다.
-
-이 커밋은 구현·운영cache migration 완료 결과다. main 병합·production 배포는 이어서 진행하고 실제SHA/상태를 최종추가한다. self-review ACCEPTED로 표시하지 않는다. [이전 명세2 인계](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/spec2/HANDOFF.md), [안전한 검증 요약](docs/CONCERT_RELIABILITY_RESULT_2026-10-30.json).
+1. Vercel preview에서 manifest와 sw.js가 200이며 Service Worker가 activated인지 확인한다.
+2. 375px에서 기존 화면이 유지되는지 확인한다.
+3. 가능하면 iPhone Safari의 공유 > 홈 화면에 추가 또는 Android Chrome 설치에서 아이콘·이름·standalone 실행을 확인한다.
+4. 통과하면 main 병합·production 배포 후 OPERATIONAL로 갱신한다.
