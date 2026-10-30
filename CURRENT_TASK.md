@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-PWA-20261030-001
 - 명세 버전: 2 / iPhone standalone 하단 내비게이션 보정
-- 상태: IMPLEMENTED / production 배포 검증 대기
+- 상태: OPERATIONAL / production 배포 완료
 - 브랜치: codex/ca-pwa-20261030-001-safe-area
 - 시작 main SHA: 18bb76573609e8c60229f847d437e74eff20ba9e
 - 요청: 모바일 브라우저에서 홈 화면에 설치하고 앱 아이콘으로 standalone 실행할 수 있는 PWA 적용
@@ -45,5 +45,7 @@
 - 679px 이하 standalone에만 하단 내비게이션 최소 여백과 60px 버튼 높이, 콘텐츠 겹침 방지 여백을 적용했다.
 - PWA·모바일 직접 테스트 8/8, 전체 테스트 114/114 fail0/skip0, production build가 통과했다. 날짜 입력 overflow 회귀도 포함한다.
 - 기존 bundle 크기 경고 외 신규 오류는 없다. 실제 iPhone 표시 높이와 날짜 박스는 production 배포 후 사용자 기기에서 재확인한다.
+- PR #6을 main에 병합했으며 production SHA `3244388d7aada347d1603702c011b557666abaa6`의 Vercel 배포 성공을 확인했다.
+- production HTML의 `viewport-fit=cover`와 새 CSS의 standalone·date input 제한 규칙 반영을 확인했다. 실제 iPhone 육안 재확인만 남는다.
 
 이전 안정성 작업의 main 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/CURRENT_TASK.md)에 보존했다.
