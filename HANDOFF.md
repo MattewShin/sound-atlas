@@ -1,7 +1,7 @@
 # 작업 인계
 
 - 작업 ID: CA-PWA-20261030-001 / 명세2
-- 상태: IMPLEMENTED / production 배포 검증 대기
+- 상태: OPERATIONAL / main 병합·production 배포 완료
 - 작성: 웹 GPT / 2026-10-30 KST
 - 브랜치: codex/ca-pwa-20261030-001-safe-area
 - 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
@@ -58,3 +58,5 @@ DB DDL/DML·migration·KOPIS/공연API 호출·예약 변경은 0이다. 이전 
 | 비변경 | 일반 Safari·Android/desktop 규칙, DB·API·예약·Service Worker |
 
 production 배포 후 기존 홈 화면 아이콘으로 앱을 완전히 종료·재실행해 하단 네 메뉴의 높이·홈 인디케이터 간격과 공연 찾기 날짜 입력이 패널 내부에 들어오는지 확인한다. CSS/HTML 갱신이 보이지 않으면 iOS 캐시 반영을 위해 앱을 종료한 뒤 다시 열고, 그래도 동일하면 홈 화면 아이콘을 한 번 제거·재추가한다.
+
+PR #6을 main에 병합했고 production SHA는 `3244388d7aada347d1603702c011b557666abaa6`다. Vercel status success 후 production HTML에서 `viewport-fit=cover`, 배포 CSS에서 standalone media와 날짜 input 논리 너비 제한을 확인했다. DB·API·예약 변경은 0이다.
