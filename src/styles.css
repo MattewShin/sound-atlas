@@ -408,3 +408,6 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-search-error { color: #8c382b; line-height: 1.7; }
 .concert-main button:disabled { cursor: wait; }
 @media (max-width: 375px) { .concert-main { padding-left: 16px; padding-right: 16px; } .concert-browser-card { gap: 10px; grid-template-columns: 82px minmax(0, 1fr); padding: 12px; } .concert-poster-thumb { width: 82px; height: 116px; } }
+
+.concert-cache-notice { padding: 12px; margin: 12px 0; border: 1px solid #d9c994; border-radius: 10px; background: #fff9e8; color: #5b4b23; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.concert-cache-notice p { margin: 0; }

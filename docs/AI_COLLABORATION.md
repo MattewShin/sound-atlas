@@ -85,6 +85,6 @@ Codex는 HANDOFF의 구현자 의견과 질문에 문제·근거·권장안·영
 - GitHub에 접근할 수 없으면 그 사실과 미반영 내용을 알린다. 접근하지 못한 결과를 확인했다고 표현하지 않는다.
 - 자동 감시·실행은 이번 구성에 포함되지 않는다. 양쪽에 작업 시작·검토를 요청하는 짧은 지시는 필요하다.
 
-## 현재 작업 위치 (2026-10-29)
+## 현재 작업 위치 (2026-10-30)
 
-CA-CONCERT-RELIABILITY-20261029-001 / 명세2, codex/ca-concert-reliability-20261029-001. 사용자는 Gate A의 과거 원인 추적을 종료하고 fallback 범위만 재개했다. 현재 Gate B / SERVER_CACHE_STORAGE_REQUIRED로 BLOCKED다. 운영에 독립 서버 캐시 저장소가 없고 새 migration 또는 별도 저장소 도입이 필요해 적용하지 않았다. 이전 Gate A 원인 미확정은 현재 중단 조건이 아니다. main·production7cc7f7b88274db228748cd5aa7fa8775fd5db64a와 Disabled 예약을 유지한다. 세부 근거·재개점은 CURRENT_TASK/HANDOFF 명세2를 따른다.
+CA-CONCERT-RELIABILITY-20261029-001 / 명세3, codex/ca-concert-reliability-20261029-001. Supabase 독립 cache table1개가 승인돼 migration1회 적용과 구현·검증을 완료했다. 최종test109PASS/buildPASS, production 배포 검증 대기(IMPLEMENTED). 과거 Gate A 추적·저장소 재검토는 반복하지 않으며 예약Disabled/기존DB이력을 보존한다. 최신 CURRENT_TASK/HANDOFF를 따른다.

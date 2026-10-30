@@ -27,9 +27,9 @@ test('detail normalizes only provided KOPIS fields, images in source order and s
  const empty=normalizeKopisDetail(row(2),new Date(now()).toISOString());assert.deepEqual(empty.bookingLinks,[]);assert.deepEqual(empty.introductionImages,[])
  let calls=0;const service=createKopisService({env:{KOPIS_SERVICE_KEY:'synthetic'},now,delay:async()=>{},fetchImpl:async url=>{calls++;assert.equal(url.pathname,'/openApi/restful/pblprfr/PF1');return response([row(1)])}});assert.equal((await service.detail('PF1')).concert.kopisId,'PF1');await service.detail('PF1');assert.equal(calls,1);await assert.rejects(service.detail('../invalid'));assert.equal(calls,1)
 })
-test('upstream error/invalid XML is an error; refresh never disguises failure as cached/empty success',async()=>{
+test('upstream error/invalid XML is an error without cache; refresh fallback is explicitly stale',async()=>{
  for(const body of ['<html>error</html>','<dbs><db><returncode>02</returncode><errmsg>AUTH</errmsg></db></dbs>','<!DOCTYPE dbs><dbs/>','<dbs><db><mt20id>bad</mt20id></db></dbs>'])assert.throws(()=>parseKopisXml(body))
- let failing=false,calls=0;const service=createKopisService({env:{KOPIS_SERVICE_KEY:'synthetic-secret'},now,delay:async()=>{},fetchImpl:async()=>{calls++;if(failing)throw Error('sensitive internal URL');return response([])}});await service.search(query);failing=true;await assert.rejects(service.search(query,true),e=>e.code==='KOPIS_UNAVAILABLE'&&!/sensitive|synthetic-secret/.test(e.message));assert.equal(calls,3)
+ let failing=false,calls=0;const service=createKopisService({env:{KOPIS_SERVICE_KEY:'synthetic-secret'},now,delay:async()=>{},logger(){},fetchImpl:async()=>{calls++;if(failing)throw Error('sensitive internal URL');return response([])}});const good=await service.search(query);failing=true;const fallback=await service.search(query,true);assert.equal(fallback.stale,true);assert.equal(fallback.fetchedAt,good.fetchedAt);assert.equal(calls,3)
  await assert.rejects(createKopisService({env:{},now}).search(query),e=>e.code==='KOPIS_NOT_CONFIGURED')
 })
 test('API is GET-only, retires song/program/match routes and preserves real error status',async()=>{
