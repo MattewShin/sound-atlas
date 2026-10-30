@@ -26,12 +26,15 @@ test('PWA manifest는 standalone 설치 정보와 any·maskable 아이콘을 제
 })
 
 test('HTML과 앱 진입점은 manifest·iOS 아이콘·production service worker를 연결한다', async () => {
-  const [html, main] = await Promise.all([text('index.html'), text('src/main.jsx')])
+  const [html, main, css] = await Promise.all([text('index.html'), text('src/main.jsx'), text('src/styles.css')])
+  assert.match(html, /name="viewport" content="[^"]*viewport-fit=cover[^"]*"/)
   assert.match(html, /rel="manifest" href="\/manifest\.webmanifest"/)
   assert.match(html, /rel="apple-touch-icon" href="\/icons\/apple-touch-icon\.png"/)
   assert.match(html, /apple-mobile-web-app-capable/)
   assert.match(main, /import\.meta\.env\.PROD/)
   assert.match(main, /serviceWorker\.register\('\/sw\.js', \{ scope: '\/' \}\)/)
+  assert.match(css, /@media \(display-mode: standalone\) and \(max-width: 679px\)/)
+  assert.match(css, /padding-bottom:\s*calc\(10px \+ max\(10px, env\(safe-area-inset-bottom\)\)\)/)
 })
 
 test('service worker는 API를 캐시하지 않고 navigation 실패에만 offline 화면을 사용한다', async () => {

@@ -1,9 +1,9 @@
 # 작업 인계
 
-- 작업 ID: CA-PWA-20261030-001 / 명세1
-- 상태: IMPLEMENTED / HTTPS preview·실기기 설치 검증 대기
+- 작업 ID: CA-PWA-20261030-001 / 명세2
+- 상태: IMPLEMENTED / production 배포 검증 대기
 - 작성: 웹 GPT / 2026-10-30 KST
-- 브랜치: codex/ca-pwa-20261030-001
+- 브랜치: codex/ca-pwa-20261030-001-safe-area
 - 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
 
 ## 구현 결과
@@ -29,13 +29,32 @@ Vercel은 /sw.js를 max-age=0/must-revalidate로 제공하고 Service-Worker-All
 
 실행 환경 Node24에서 package engine Node22 경고가 있었지만 테스트와 build는 통과했다. Vercel production은 Node22 설정을 유지한다. 기존 500kB 초과 bundle 경고는 유지되며 이번 PWA 변경에서 번들 의존성을 추가하지 않았다.
 
-로컬 Playwright 설치에 브라우저 바이너리가 없어 실제 Service Worker controller 검증은 실행하지 못했다. HTTPS Vercel preview에서 Manifest·Service Worker·375px 화면과 설치 가능 상태를 확인한 뒤 병합한다.
+로컬 Playwright 설치에 브라우저 바이너리가 없어 실제 Service Worker controller 검증은 실행하지 못했다. 대신 HTTPS production에서 Manifest·Service Worker·아이콘 HTTP 200, Manifest MIME, sw.js 재검증 및 허용 scope 헤더, HTML 연결 메타데이터를 확인했다. cloud browser는 Service Worker API를 노출하지 않아 controller 값만 직접 읽지 못했다.
+
+PR #5를 main에 병합했고 production SHA는 `b2f6b5033c7b7dbdefd734544a352e3df82ee70f`다. Vercel 배포 상태는 success이며 production 공연 화면에서 서울 305건 중 첫 20건이 정상 표시됐다. 실제 iPhone/Android 홈 화면 추가는 사용자 기기의 최종 smoke test로 남지만 코드·배포 기준 상태는 OPERATIONAL이다.
 
 DB DDL/DML·migration·KOPIS/공연API 호출·예약 변경은 0이다. 이전 CA-CONCERT-RELIABILITY 작업 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/HANDOFF.md)에 보존했다.
 
-## 검토 요청
+## 사용자 최종 확인
 
-1. Vercel preview에서 manifest와 sw.js가 200이며 Service Worker가 activated인지 확인한다.
-2. 375px에서 기존 화면이 유지되는지 확인한다.
-3. 가능하면 iPhone Safari의 공유 > 홈 화면에 추가 또는 Android Chrome 설치에서 아이콘·이름·standalone 실행을 확인한다.
-4. 통과하면 main 병합·production 배포 후 OPERATIONAL로 갱신한다.
+1. iPhone은 Safari에서 공유 > 홈 화면에 추가를 선택한다.
+2. Android는 Chrome 메뉴에서 앱 설치 또는 홈 화면에 추가를 선택한다.
+3. `Piano Mood` 아이콘으로 실행했을 때 브라우저 주소창 없는 standalone 화면인지 확인한다.
+
+## 명세 2 사용자 확인과 수정
+
+사용자가 iPhone 홈 화면 추가와 앱 아이콘 생성을 확인했다. standalone 실행에서 하단 내비게이션이 Safari보다 낮아 보이는 현상은 iOS 홈 인디케이터 영역을 위한 viewport 선언과 standalone 전용 최소 높이 보정으로 수정한다. 일반 브라우저 모드에는 전용 규칙을 적용하지 않는다.
+
+추가로 공연 찾기의 시작일·종료일 date input이 검색 패널 오른쪽을 넘는 현상을 수정한다. 패널·form·날짜 grid·label에 `min-width: 0`과 100% 최대 너비를 적용하고, iOS date input에는 물리 너비와 논리 너비를 함께 제한한다. 패널은 최종 안전장치로 넘친 native input 영역을 자른다.
+
+`viewport-fit=cover`를 추가했고 679px 이하 `display-mode: standalone`에서만 하단 내비게이션의 위쪽 10px, 아래쪽 `10px + max(10px, safe-area)`, 버튼 최소 높이 60px을 사용한다. 앱 본문 하단 여백도 132px+safe-area로 맞춰 마지막 콘텐츠가 내비게이션에 가려지지 않게 했다.
+
+| 명세 2 검증 | 결과 |
+| --- | --- |
+| PWA·모바일 직접 테스트 | 8/8 PASS |
+| 전체 `npm test` | 114/114 PASS, fail0/skip0, 약 9.67초 |
+| production build | PASS, 약 1.27초 |
+| 영향 범위 | index viewport, standalone 모바일 CSS, 회귀 테스트 |
+| 비변경 | 일반 Safari·Android/desktop 규칙, DB·API·예약·Service Worker |
+
+production 배포 후 기존 홈 화면 아이콘으로 앱을 완전히 종료·재실행해 하단 네 메뉴의 높이·홈 인디케이터 간격과 공연 찾기 날짜 입력이 패널 내부에 들어오는지 확인한다. CSS/HTML 갱신이 보이지 않으면 iOS 캐시 반영을 위해 앱을 종료한 뒤 다시 열고, 그래도 동일하면 홈 화면 아이콘을 한 번 제거·재추가한다.
