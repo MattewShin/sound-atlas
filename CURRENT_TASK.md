@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-PWA-20261030-001
 - 명세 버전: 1
-- 상태: IMPLEMENTED / preview·설치 검증 대기
+- 상태: OPERATIONAL / production 배포 완료
 - 브랜치: codex/ca-pwa-20261030-001
 - 시작 main SHA: 18bb76573609e8c60229f847d437e74eff20ba9e
 - 요청: 모바일 브라우저에서 홈 화면에 설치하고 앱 아이콘으로 standalone 실행할 수 있는 PWA 적용
@@ -26,6 +26,9 @@
 - public/manifest.webmanifest, sw.js, offline.html과 5개 아이콘 자산을 추가했다.
 - 전용 PWA 테스트 4/4, 전체 npm test 113/113 fail0/skip0, production build PASS.
 - build 결과에 manifest, sw, offline, PNG/SVG 자산이 포함되고 로컬 preview에서 manifest standalone/아이콘3개와 sw·512 PNG HTTP200을 확인했다.
-- Service Worker 실제 등록·설치 UI·iOS/Android 홈 화면 추가는 HTTPS preview 또는 production 실기기 검증 후 OPERATIONAL로 전환한다.
+- PR #5를 main에 병합하고 production SHA b2f6b5033c7b7dbdefd734544a352e3df82ee70f로 배포했다.
+- production에서 manifest·sw.js·아이콘이 HTTP 200이고 전용 MIME·cache/service-worker 헤더가 적용된 것을 확인했다.
+- production 공연 화면에서 서울 305건·첫 20건 표시를 확인해 기존 목록 기능 회귀가 없음을 확인했다.
+- 실제 iOS/Android 홈 화면 추가는 사용자 기기의 최종 smoke test로 남긴다. 코드·배포 기준 PWA 상태는 OPERATIONAL이다.
 
 이전 안정성 작업의 main 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/CURRENT_TASK.md)에 보존했다.
