@@ -1,7 +1,7 @@
 {
   "task": "CA-CONCERT-RELIABILITY-20261029-001",
   "spec": 3,
-  "status": "IMPLEMENTED",
+  "status": "OPERATIONAL",
   "readSha": "bd76fb23766c10a8be903a8a579036f2ef8ea424",
   "migration": {
     "mode": "apply",
@@ -49,7 +49,7 @@
       }
     ],
     "success": true,
-    "at": "2026-10-30T00:25:11.022Z"
+    "at": "2026-10-30T00:30:16.518Z"
   },
   "normalLive": {
     "at": "2026-10-30T00:23:03.600Z",
@@ -184,7 +184,99 @@
     "changes": 0
   },
   "production": {
-    "deploymentPending": true
+    "sha": "18bb76573609e8c60229f847d437e74eff20ba9e",
+    "codeSha": "05a62ab04f098f110d21cf06753a1c1c2359e9bd",
+    "pr": 4,
+    "deployment": 7427562404,
+    "environment": "Production",
+    "state": "success",
+    "apiAndAssetVerification": {
+      "productionSha": "18bb76573609e8c60229f847d437e74eff20ba9e",
+      "codeSha": "05a62ab04f098f110d21cf06753a1c1c2359e9bd",
+      "origin": "https://sound-atlas.vercel.app",
+      "get": 6,
+      "post": 0,
+      "query": {
+        "region": "서울",
+        "from": "2026-10-30",
+        "to": "2026-11-29"
+      },
+      "config": {
+        "configured": true,
+        "backend": "kopis",
+        "genre": "CCCA",
+        "cacheTtlMs": 21600000,
+        "staleMaxAgeMs": 86400000,
+        "persistentCacheConfigured": true,
+        "maxSearchDays": 31,
+        "pageSize": 20
+      },
+      "list": {
+        "total": 305,
+        "displayed": 20,
+        "hasMore": true,
+        "stale": false,
+        "source": "supabase-cache",
+        "fetchedAt": "2026-10-30T00:23:07.781Z"
+      },
+      "more": {
+        "displayed": 40,
+        "deduplicated": true
+      },
+      "detailMetadata": {
+        "stale": false,
+        "source": "supabase-cache",
+        "fetchedAt": "2026-10-30T00:23:09.192Z"
+      },
+      "detail": {
+        "id": "PF281769",
+        "posterPresent": true,
+        "introductionImages": 1,
+        "bookingLinks": 4,
+        "namedSafeBookingLinks": true
+      },
+      "assetMatchesTestedBuild": true,
+      "asset": "/assets/index-uv-Xhpeg.js",
+      "checkedAtKst": "2026-10-30 09:29:24",
+      "pass": true
+    },
+    "mobile": {
+      "origin": "https://sound-atlas.vercel.app",
+      "viewport": {
+        "width": 375,
+        "height": 812
+      },
+      "apiGet": 3,
+      "apiPost": 0,
+      "forbiddenApi": 0,
+      "pageErrors": 0,
+      "list": {
+        "width": 375,
+        "scroll": 375,
+        "clipped": 0
+      },
+      "firstDisplay": 20,
+      "more": {
+        "width": 375,
+        "scroll": 375,
+        "clipped": 0
+      },
+      "moreDisplay": 40,
+      "detail": {
+        "posterElements": 1,
+        "introductionImages": 1,
+        "bookingLinks": 4
+      },
+      "safeLinks": true,
+      "pass": true,
+      "checkedAtKst": "2026-10-30 09:29:40"
+    }
   },
-  "faultInjectionInProduction": false
+  "faultInjectionInProduction": false,
+  "local": {
+    "dirtyFiles": 40,
+    "preserved": true,
+    "indexPreserved": true,
+    "envPreserved": true
+  }
 }

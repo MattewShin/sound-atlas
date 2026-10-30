@@ -2,10 +2,13 @@
 
 - 작업 ID: CA-CONCERT-RELIABILITY-20261029-001
 - 명세 버전: 3 / 2026-10-30 사용자 Gate B 재개 지시
-- 상태: IMPLEMENTED / 운영 migration 완료, main 병합·production 배포 검증 대기
+- 상태: OPERATIONAL / main 병합·production 정상 조회 완료
 - 브랜치: codex/ca-concert-reliability-20261029-001
 - 읽은 공동 문서5개·코드 SHA: bd76fb23766c10a8be903a8a579036f2ef8ea424
-- 기존 main·production 기준: 7cc7f7b88274db228748cd5aa7fa8775fd5db64a
+- 시작 main·production 기준: 7cc7f7b88274db228748cd5aa7fa8775fd5db64a
+- 실제 production·main SHA: 18bb76573609e8c60229f847d437e74eff20ba9e
+- 구현 코드 SHA: 05a62ab04f098f110d21cf06753a1c1c2359e9bd
+- PR: https://github.com/MattewShin/sound-atlas/pull/4 (merged)
 
 ## 유효 범위
 
@@ -25,6 +28,10 @@ age<6h는 fresh, age>=6h는 먼저 KOPIS 갱신, 실패 시0<=age<=24h만 stale�
 - 375px 목록20→40/상세/지역선택 overflow0·잘린버튼0, stale 원래시각·포스터/소개/예매·보관/취향 통과.
 - migration **202610300001_concert_browser_cache.sql 적용1회 완료**, RLS·ACL 검증, 기존13개 테이블866행 hash 보존. Supabase migration ledger는 원래 없었고 별도 ledger table을 만들지 않았다.
 - 실제 정상 GET: 서울2026-10-30~11-29·CCCA305건,20→40/중복0, PF281769 포스터·소개1·예매4. KOPIS GET5, cache REST GET4/POST2(전용 cache만), 기존 업무POST/쓰기0. 새instance의 목록/상세는 Supabase에서 fresh 재사용, 추가KOPIS GET0.
-- production 장애주입0. main 병합·배포 확인 뒤 실제SHA와 최종결과를 갱신한다. 상세 실행 횟수와 초도 격리 실패 보정은 HANDOFF에 구분했다.
+- production 장애주입0. PR4 main 병합·production 배포 완료, 실제SHA 18bb76573609e8c60229f847d437e74eff20ba9e를 확인했다. 상세 실행 횟수와 초도 격리 실패 보정은 HANDOFF에 구분했다.
 
 이전 명세2 CURRENT_TASK/HANDOFF는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/spec2/CURRENT_TASK.md)에 함께 보존했다.
+
+## 최종 production 확인 — 2026-10-30 09:29~09:31 KST
+
+Vercel Production deployment7427562404 success, 실제 alias의 자산 SHA256이 최종 검증 build와 일치한다. production API4GET(status/목록/추가/상세)+HTML/JS2GET=6GET·POST0이다. 서울305건20→40/중복0, 목록·PF281769 상세 모두 stale=false/source=supabase-cache, 원래 fetchedAt 유지다. 포스터·소개1·예매4를 확인했다. 별도 실제 Chrome375px는 API3GET/POST0, 목록20→40·상세·예매링크·overflow0/잘린버튼0/pageError0/OCR·Program요청0이다. 격리 fallback26/26 및 실제 정상 조회를 혼동하지 않았다. 최종DB13개table hash 보존·RLS/ACL 통과·예약Disabled 유지·원본40파일/index/.env 보존이다.

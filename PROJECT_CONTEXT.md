@@ -1,6 +1,6 @@
 # 현재 안정성 작업 — 명세3 / 2026-10-30
 
-CA-CONCERT-RELIABILITY-20261029-001, codex/ca-concert-reliability-20261029-001. 최신 사용자 지시로 기존 Supabase의 캐시 전용 additive table1개를 허용했다. server/concertCache.mjs/202610300001_concert_browser_cache.sql로 목록·상세를 분리 저장하며 기존13개 이력 table과 분리했다. fresh6h/갱신 실패 시24h 이내 stale, 원래시각·안내문구·안전metadata계측·cold start 재사용을 구현했다. 운영migration1회 적용·최종test109PASS/buildPASS·모바일375px통과, production 배포 검증 대기다. 이전 명세2 저장소 blocker는 해제됐다. 예약은 Disabled다. 아래는 이전 기록이다.
+CA-CONCERT-RELIABILITY-20261029-001, codex/ca-concert-reliability-20261029-001. 최신 사용자 지시로 기존 Supabase의 캐시 전용 additive table1개를 허용했다. server/concertCache.mjs/202610300001_concert_browser_cache.sql로 목록·상세를 분리 저장하며 기존13개 이력 table과 분리했다. fresh6h/갱신 실패 시24h 이내 stale, 원래시각·안내문구·안전metadata계측·cold start 재사용을 구현했다. 운영migration1회 적용·최종test109PASS/buildPASS·모바일375px통과, main/production 18bb76573609e8c60229f847d437e74eff20ba9e 배포·정상조회완료(OPERATIONAL)다. 이전 명세2 저장소 blocker는 해제됐다. 예약은 Disabled다. 아래는 이전 기록이다.
 
 # 현재 안정성 작업 — 명세2 / 2026-10-29
 

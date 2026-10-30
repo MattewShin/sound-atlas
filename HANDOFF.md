@@ -1,7 +1,7 @@
 # 작업 인계
 
 - 작업 ID: CA-CONCERT-RELIABILITY-20261029-001 / 명세3
-- 상태: IMPLEMENTED / production 배포 검증 대기
+- 상태: OPERATIONAL / production 정상 조회·모바일 확인 완료
 - 작성: Codex / 2026-10-30 Asia/Seoul
 - 읽은 브랜치: codex/ca-concert-reliability-20261029-001
 - 읽은 공동 문서·코드 SHA: bd76fb23766c10a8be903a8a579036f2ef8ea424
@@ -45,4 +45,16 @@ API X-Request-ID와 upstream 로그의 requestId를 연결한다. 로그 필드�
 
 원본 local main/1607ca201c3a559bc7f28aabe998ef062db02ef9의40개 변경 파일/index/.env hash를 대조해 보존했다. ClassicAtlas-LocalPipeline은 Disabled/Enabled=false이며 변경0/새예약0이다. 추천·보관·취향·주간UI 코드는 수정하지 않았다.
 
-이 커밋은 구현·운영cache migration 완료 결과다. main 병합·production 배포는 이어서 진행하고 실제SHA/상태를 최종추가한다. self-review ACCEPTED로 표시하지 않는다. [이전 명세2 인계](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/spec2/HANDOFF.md), [안전한 검증 요약](docs/CONCERT_RELIABILITY_RESULT_2026-10-30.json).
+main 병합·production 배포와 정상 조회를 완료했다. 구현 코드 SHA는 05a62ab04f098f110d21cf06753a1c1c2359e9bd, 실제 main·production SHA는 18bb76573609e8c60229f847d437e74eff20ba9e다. 이 최종 인계는 production commit을 부모로 작업 브랜치에 게시하는 문서 결과이며, production에 코드 변경을 추가하지 않는다. self-review ACCEPTED로 표시하지 않는다. [이전 명세2 인계](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/spec2/HANDOFF.md), [안전한 검증 요약](docs/CONCERT_RELIABILITY_RESULT_2026-10-30.json).
+
+## 최종 배포와 실제 확인
+
+[PR4](https://github.com/MattewShin/sound-atlas/pull/4)를 head 05a62ab04f098f110d21cf06753a1c1c2359e9bd로 병합했다. main·production SHA **18bb76573609e8c60229f847d437e74eff20ba9e**, Vercel Production deployment7427562404는2026-10-30 09:28:58 KST success다. https://sound-atlas.vercel.app 의 최종 JS asset SHA256이 검증 build와 일치하고 서버 캐시 설정6h/24h·Supabase enabled가 확인됐다.
+
+2026-10-30 09:29:24 KST production 직접검증: status/서울10-30~11-29목록/page2/PF281769상세 **API4GET** 및HTML/JS2GET, 합계6GET/POST0이다. 목록305건20→40/중복0, 목록/상세 모두 stale=false/source=supabase-cache이며09:23에 저장한원래 fetchedAt을 유지했다. 포스터·소개1·예매링크4가 유효한 공개 HTTP(S) 링크로 제공됐다. source가 cache임을 확인했으며 이 검증을 강제장애 결과로 보고하지 않는다.
+
+09:29:40 KST 실제 Chrome375px: API3GET/POST0, 목록20/추가40/상세(포스터1·소개1·예매4), 안전한새창링크, 각화면scrollWidth375/viewport375·잘린버튼0·pageError0·금지API0을 확인했다. fresh에서 stale안내가 나오지 않는다. 장애 fallback과 원래시각 표시/만료는 격리fixture 및모바일fixture에서만검증했고 production장애주입0이다.
+
+이번 검증의 직접 KOPIS GET5·cache REST GET4/POST2는 배포 전 새cache 정상검증의 계측된 호출 수다. 배포 후직접/브라우저 검증은 API7GET+정적2GET/POST0이며 내부DB호출 전체 수는 별도transport계측하지 않아 합산 확정하지 않는다. production응답의 cache source로 기존snapshot 재사용을 확인했다. 기존13개업무table쓰기0·OCR/Program/자동판정요청/쓰기0이다. 최종SQL읽기전용 대조에서13개table866행hash동일·새cache list1/detail1·RLS/최소ACL유지를 확인했다.
+
+**OPERATIONAL**로게시한다. ClassicAtlas-LocalPipeline Disabled/Enabled=false·새예약0, 원본40개변경·index·.env 해시동일을최종확인했다. 비밀값·upstream query/XML·이미지/예매URL의로그/Git게시0이다. 별도기능확장이나과거502추적은재개하지않았다. 캐시는배포rollback시삭제하지않고비사용으로남긴다. 웹GPT의별도검토를대신해ACCEPTED를선언하지않는다.
