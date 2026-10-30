@@ -1,4 +1,6 @@
 import '../server/concertBrowser.test.mjs'
+import '../server/concertReliability.test.mjs'
+import '../server/concertCacheSql.test.mjs'
 import './concertBrowserUi.test.mjs'
 import './emma/emma.test.js'
 import '../src/data/recommendation.test.js'

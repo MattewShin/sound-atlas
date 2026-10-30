@@ -1,0 +1,190 @@
+{
+  "task": "CA-CONCERT-RELIABILITY-20261029-001",
+  "spec": 3,
+  "status": "IMPLEMENTED",
+  "readSha": "bd76fb23766c10a8be903a8a579036f2ef8ea424",
+  "migration": {
+    "mode": "apply",
+    "migration": "202610300001_concert_browser_cache.sql",
+    "sha256": "545bd5d5f9e8d226380996dc58ec7cad265093ef7008dd6d3deaebcb38e71964",
+    "connected": true,
+    "applied": true,
+    "legacyWrites": 0,
+    "previousStoppedBeforeDdl": true,
+    "preflight": {
+      "cache_exists": false,
+      "can_create": true,
+      "ledger_exists": false
+    },
+    "legacyDigestsPreserved": true,
+    "rls": true,
+    "aclVerified": true,
+    "cacheKinds": [],
+    "success": true,
+    "at": "2026-10-30T00:22:24.075Z"
+  },
+  "dbVerification": {
+    "mode": "verify",
+    "migration": "202610300001_concert_browser_cache.sql",
+    "sha256": "545bd5d5f9e8d226380996dc58ec7cad265093ef7008dd6d3deaebcb38e71964",
+    "connected": true,
+    "applied": false,
+    "legacyWrites": 0,
+    "preflight": {
+      "cache_exists": true,
+      "can_create": true,
+      "ledger_exists": false
+    },
+    "legacyDigestsPreserved": true,
+    "rls": true,
+    "aclVerified": true,
+    "cacheKinds": [
+      {
+        "cache_kind": "detail",
+        "rows": 1
+      },
+      {
+        "cache_kind": "list",
+        "rows": 1
+      }
+    ],
+    "success": true,
+    "at": "2026-10-30T00:25:11.022Z"
+  },
+  "normalLive": {
+    "at": "2026-10-30T00:23:03.600Z",
+    "mode": "normal-upstream-only",
+    "faultInjection": false,
+    "legacyBusinessPosts": 0,
+    "ocrProgramRequests": 0,
+    "success": true,
+    "query": {
+      "region": "서울",
+      "from": "2026-10-30",
+      "to": "2026-11-29",
+      "genre": "CCCA"
+    },
+    "total": 305,
+    "first": 20,
+    "more": 40,
+    "duplicates": 0,
+    "detail": {
+      "id": "PF281769",
+      "poster": true,
+      "introductionImages": 1,
+      "bookingLinks": 4
+    },
+    "coldStart": {
+      "list": true,
+      "detail": true,
+      "additionalKopisGets": 0,
+      "originalTimestampsPreserved": true
+    },
+    "telemetry": [
+      {
+        "httpStatus": 200,
+        "stage": null,
+        "page": 1,
+        "upstreamType": "XML",
+        "durationMs": 369,
+        "requestId": "36158f49-b18a-49fd-86b9-7014d9d11493"
+      },
+      {
+        "httpStatus": 200,
+        "stage": null,
+        "page": 2,
+        "upstreamType": "XML",
+        "durationMs": 350,
+        "requestId": "36158f49-b18a-49fd-86b9-7014d9d11493"
+      },
+      {
+        "httpStatus": 200,
+        "stage": null,
+        "page": 3,
+        "upstreamType": "XML",
+        "durationMs": 362,
+        "requestId": "36158f49-b18a-49fd-86b9-7014d9d11493"
+      },
+      {
+        "httpStatus": 200,
+        "stage": null,
+        "page": 1,
+        "upstreamType": "XML",
+        "durationMs": 297,
+        "requestId": "36158f49-b18a-49fd-86b9-7014d9d11493"
+      },
+      {
+        "httpStatus": 200,
+        "stage": null,
+        "page": null,
+        "upstreamType": "XML",
+        "durationMs": 305,
+        "requestId": "9c2cb4ac-fb2b-4e03-8cd0-683b43a03703"
+      }
+    ],
+    "counts": {
+      "kopisGet": 5,
+      "cacheGet": 4,
+      "cachePost": 2,
+      "other": 0
+    }
+  },
+  "mobile": {
+    "viewport": {
+      "width": 375,
+      "height": 812
+    },
+    "apiPost": 0,
+    "detailGet": 1,
+    "listGet": 2,
+    "list": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": []
+    },
+    "more": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": []
+    },
+    "detail": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": []
+    },
+    "regionDialog": {
+      "width": 375,
+      "scroll": 375,
+      "clipped": []
+    },
+    "staleNoticeOriginalTimestamp": true,
+    "musicLibraryTaste": true,
+    "pass": true
+  },
+  "tests": {
+    "direct": {
+      "pass": 26,
+      "fail": 0,
+      "skip": 0
+    },
+    "full": {
+      "pass": 109,
+      "fail": 0,
+      "skip": 0,
+      "seconds": 25.316
+    },
+    "fullRuns": 2,
+    "buildRuns": 2,
+    "buildSeconds": 5.17,
+    "initialIsolatedConstraintFailureFixedBeforeProduction": true
+  },
+  "scheduler": {
+    "state": "Disabled",
+    "enabled": false,
+    "changes": 0
+  },
+  "production": {
+    "deploymentPending": true
+  },
+  "faultInjectionInProduction": false
+}

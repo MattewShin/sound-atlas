@@ -1,4 +1,5 @@
 import {CONCERT_CACHE_TTL_MS,concertQueryKey,koreaDate} from './concertSearchConfig.js'
+const MAX_STALE_MS=24*60*60*1000
 export const uniqueConcerts=concerts=>[...new Map(concerts.filter(c=>/^PF\d+$/.test(c.kopisId)).map(c=>[c.kopisId,c])).values()]
 export const createConcertSearchClient=({fetchImpl=(...args)=>fetch(...args),now=Date.now}={})=>{
  const cache=new Map()
@@ -11,8 +12,13 @@ export const createConcertSearchClient=({fetchImpl=(...args)=>fetch(...args),now
  }
  const cached=async(key,refresh,load)=>{
   const entry=cache.get(key),age=now()-Date.parse(entry?.fetchedAt),ttl=entry?.cacheTtlMs??CONCERT_CACHE_TTL_MS
-  if(!refresh&&entry&&age>=0&&age<ttl)return {...entry,fromCache:true}
-  const data=await load();cache.delete(key);cache.set(key,data);if(cache.size>100)cache.delete(cache.keys().next().value);return data
+  if(!refresh&&entry&&!entry.stale&&age>=0&&age<Math.min(ttl,CONCERT_CACHE_TTL_MS))return {...entry,fromCache:true}
+  try{
+   const data=await load(),dataAge=now()-Date.parse(data.fetchedAt)
+   if(dataAge<0||dataAge>MAX_STALE_MS)throw Error('공연 정보가 만료됐어요. 다시 조회해주세요.')
+   // Keep the server's original timestamp, including for a stale response.
+   cache.delete(key);cache.set(key,data);if(cache.size>100)cache.delete(cache.keys().next().value);return data
+  }catch(e){const fallbackAge=now()-Date.parse(entry?.fetchedAt);if(e.code!=='ABORTED'&&entry&&fallbackAge>=0&&fallbackAge<=MAX_STALE_MS)return {...entry,stale:true,source:'browser-cache',fromCache:true};throw e}
  }
  return {
   status:()=>request('/api/concerts/status'),

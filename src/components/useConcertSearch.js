@@ -15,7 +15,7 @@ export default function useConcertSearch(){
  const loadMore=useCallback(()=>{const data=snapshot.current;if(data?.hasMore)return runSearch({...data.query,page:data.page+1},false,true)},[runSearch])
  const loadDetail=useCallback(async(id,refresh=false)=>{
   detailAbort.current?.abort();const controller=new AbortController();detailAbort.current=controller;const token=++detailId.current;setDetail({status:'loading',data:null,error:null,kopisId:id})
-  try{const data=await client.detail(id,{refresh,signal:controller.signal});if(token===detailId.current&&!controller.signal.aborted)setDetail({status:'success',data:data.concert,error:null,kopisId:id})}
+  try{const data=await client.detail(id,{refresh,signal:controller.signal});if(token===detailId.current&&!controller.signal.aborted)setDetail({status:'success',data:data.concert,stale:data.stale,fetchedAt:data.fetchedAt,source:data.source,error:null,kopisId:id})}
   catch(e){if(token===detailId.current&&!controller.signal.aborted)setDetail({status:'error',data:null,error:e.message,kopisId:id})}
  },[client])
  useEffect(()=>()=>{listId.current++;detailId.current++;listAbort.current?.abort();detailAbort.current?.abort()},[])

@@ -1,0 +1,451 @@
+{
+  "task": "CA-CONCERT-RELIABILITY-20261029-001",
+  "specification": 1,
+  "status": "BLOCKED",
+  "baseSha": "7cc7f7b88274db228748cd5aa7fa8775fd5db64a",
+  "branch": "codex/ca-concert-reliability-20261029-001",
+  "blockedGate": "A",
+  "rootCauseConfirmed": false,
+  "confirmedIncident": {
+    "observedByUser": "11:04:53/11:04:58 KST app error state; extension metadata error excluded",
+    "serverRequests": [
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T02:04:58.388Z",
+        "requestId": "w2dgb-1793239498388-dd2a9714d2a5",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "list",
+        "requestMethod": "GET",
+        "httpStatus": 502,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      },
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T02:04:53.479Z",
+        "requestId": "7zzsg-1793239493479-5b85ca858b77",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "list",
+        "requestMethod": "GET",
+        "httpStatus": 502,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      }
+    ],
+    "serverHttpFailureConfirmed": true,
+    "upstreamFailureType": "UNDETERMINED",
+    "failingPage": "UNDETERMINED",
+    "coldStart": "UNDETERMINED",
+    "cdnCacheMissIsNotApplicationMemoryCacheMiss": true
+  },
+  "diagnostics": {
+    "query": {
+      "region": "서울",
+      "from": "2026-10-29",
+      "to": "2026-11-28"
+    },
+    "genre": "CCCA",
+    "production": [
+      {
+        "kind": "status",
+        "http": 200,
+        "durationMs": 690,
+        "vercelRequestId": "icn1::iad1::9gcvj-1793251738578-531e02261a15",
+        "configured": true
+      },
+      {
+        "kind": "list",
+        "http": 200,
+        "durationMs": 334,
+        "vercelRequestId": "icn1::iad1::fbqkv-1793251738936-6d6bca01b3ac",
+        "fetchedAt": "2026-10-29T05:23:57.160Z",
+        "fromCache": true,
+        "total": 303
+      },
+      {
+        "kind": "list-refresh",
+        "http": 200,
+        "durationMs": 4028,
+        "vercelRequestId": "icn1::iad1::9gcvj-1793251739221-96b18d71b3f8",
+        "fetchedAt": "2026-10-29T05:29:03.087Z",
+        "fromCache": false,
+        "total": 303
+      },
+      {
+        "kind": "detail",
+        "http": 200,
+        "durationMs": 227,
+        "vercelRequestId": "icn1::iad1::c9sxk-1793251743245-dc08b13ed404",
+        "fetchedAt": "2026-10-29T05:24:08.911Z",
+        "fromCache": true,
+        "detailFound": true
+      }
+    ],
+    "upstream": [
+      {
+        "round": 1,
+        "kind": "list",
+        "state": "01",
+        "page": "1",
+        "http": 200,
+        "rows": 100,
+        "xmlValid": true,
+        "durationMs": 414
+      },
+      {
+        "round": 1,
+        "kind": "list",
+        "state": "01",
+        "page": "2",
+        "http": 200,
+        "rows": 100,
+        "xmlValid": true,
+        "durationMs": 281
+      },
+      {
+        "round": 1,
+        "kind": "list",
+        "state": "01",
+        "page": "3",
+        "http": 200,
+        "rows": 84,
+        "xmlValid": true,
+        "durationMs": 292
+      },
+      {
+        "round": 1,
+        "kind": "list",
+        "state": "02",
+        "page": "1",
+        "http": 200,
+        "rows": 19,
+        "xmlValid": true,
+        "durationMs": 219
+      },
+      {
+        "round": 2,
+        "kind": "list",
+        "state": "01",
+        "page": "1",
+        "http": 200,
+        "rows": 100,
+        "xmlValid": true,
+        "durationMs": 252
+      },
+      {
+        "round": 2,
+        "kind": "list",
+        "state": "01",
+        "page": "2",
+        "http": 200,
+        "rows": 100,
+        "xmlValid": true,
+        "durationMs": 267
+      },
+      {
+        "round": 2,
+        "kind": "list",
+        "state": "01",
+        "page": "3",
+        "http": 200,
+        "rows": 84,
+        "xmlValid": true,
+        "durationMs": 276
+      },
+      {
+        "round": 2,
+        "kind": "list",
+        "state": "02",
+        "page": "1",
+        "http": 200,
+        "rows": 19,
+        "xmlValid": true,
+        "durationMs": 229
+      },
+      {
+        "round": 3,
+        "kind": "list",
+        "state": "01",
+        "page": "1",
+        "http": 200,
+        "rows": 100,
+        "xmlValid": true,
+        "durationMs": 280
+      },
+      {
+        "round": 3,
+        "kind": "list",
+        "state": "01",
+        "page": "2",
+        "http": 200,
+        "rows": 100,
+        "xmlValid": true,
+        "durationMs": 262
+      },
+      {
+        "round": 3,
+        "kind": "list",
+        "state": "01",
+        "page": "3",
+        "http": 200,
+        "rows": 84,
+        "xmlValid": true,
+        "durationMs": 305
+      },
+      {
+        "round": 3,
+        "kind": "list",
+        "state": "02",
+        "page": "1",
+        "http": 200,
+        "rows": 19,
+        "xmlValid": true,
+        "durationMs": 237
+      },
+      {
+        "round": 4,
+        "kind": "detail",
+        "state": null,
+        "page": null,
+        "http": 200,
+        "rows": 1,
+        "xmlValid": true,
+        "durationMs": 208
+      }
+    ],
+    "directRuns": [
+      {
+        "round": 1,
+        "pass": true,
+        "total": 303,
+        "pages": 4
+      },
+      {
+        "round": 2,
+        "pass": true,
+        "total": 303,
+        "pages": 4
+      },
+      {
+        "round": 3,
+        "pass": true,
+        "total": 303,
+        "pages": 4
+      }
+    ],
+    "productionGet": 4,
+    "upstreamGet": 13,
+    "apiPost": 0,
+    "dbPost": 0,
+    "ocr": 0,
+    "checkedAtKst": "2026-10-29 14:28:58",
+    "directDetail": {
+      "pass": true,
+      "bookingLinks": 4,
+      "introductionImages": 1
+    },
+    "finished": true
+  },
+  "vercel": {
+    "readOnlyCliQueries": 9,
+    "historicalWindowKst": "2026-10-29 10:55~11:15",
+    "currentApiRequests": [
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T05:29:03.245Z",
+        "requestId": "c9sxk-1793251743245-dc08b13ed404",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "detail",
+        "requestMethod": "GET",
+        "httpStatus": 200,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      },
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T05:28:59.221Z",
+        "requestId": "9gcvj-1793251739221-96b18d71b3f8",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "list",
+        "requestMethod": "GET",
+        "httpStatus": 200,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      },
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T05:28:58.936Z",
+        "requestId": "fbqkv-1793251738936-6d6bca01b3ac",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "list",
+        "requestMethod": "GET",
+        "httpStatus": 200,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      },
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T05:28:58.578Z",
+        "requestId": "9gcvj-1793251738578-531e02261a15",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "status",
+        "requestMethod": "GET",
+        "httpStatus": 200,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      },
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T05:26:27.230Z",
+        "requestId": "2phbv-1793251587230-e2f9afdd45f5",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "detail",
+        "requestMethod": "GET",
+        "httpStatus": 200,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      },
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T05:26:21.911Z",
+        "requestId": "vmlj8-1793251581911-38286bdccf0d",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "list",
+        "requestMethod": "GET",
+        "httpStatus": 200,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      },
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T05:25:59.364Z",
+        "requestId": "p5vcd-1793251559364-84282000b1de",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "list",
+        "requestMethod": "GET",
+        "httpStatus": 200,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      },
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T05:24:08.117Z",
+        "requestId": "bkk2l-1793251448117-820e1d9ffded",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "detail",
+        "requestMethod": "GET",
+        "httpStatus": 200,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      },
+      {
+        "type": "request",
+        "timestamp": "2026-10-29T05:23:52.559Z",
+        "requestId": "tf5wq-1793251432559-80922bb9e12b",
+        "deploymentId": "dpl_LC4xt7KrY1qcb2hxHkP2hCfdgioM",
+        "environment": "production",
+        "requestPathKind": "list",
+        "requestMethod": "GET",
+        "httpStatus": 200,
+        "routeKind": "other",
+        "cacheResult": "MISS"
+      }
+    ],
+    "historicalRuntimeRetentionRejected": true,
+    "recentRuntimeQuerySucceeded": true,
+    "recentRuntimeLogEntries": 0,
+    "startTypeMetadataAvailable": false,
+    "rawLogsSaved": false
+  },
+  "baselineFixtures": {
+    "productionCalls": 0,
+    "upstreamCalls": 0,
+    "dbPost": 0,
+    "fixtures": [
+      {
+        "name": "memory-fresh-reuse",
+        "pass": true
+      },
+      {
+        "name": "new-instance-cannot-reuse-previous-instance-success",
+        "pass": true
+      },
+      {
+        "name": "seven-hour-success-does-not-fallback-on-failure",
+        "pass": true
+      },
+      {
+        "name": "partial-page-failure-does-not-overwrite-complete-memory-cache",
+        "pass": true
+      },
+      {
+        "name": "HTTP-timeout-connect-failures-are-collapsed-in-current-code",
+        "pass": true
+      }
+    ],
+    "currentErrorsDistinguishable": false,
+    "pass": true
+  },
+  "checks": {
+    "direct": {
+      "pass": 5,
+      "fail": 0,
+      "skip": 0
+    },
+    "fullBaseline": {
+      "runs": 1,
+      "pass": 93,
+      "fail": 0,
+      "skip": 0,
+      "durationMs": 24169.1624
+    },
+    "buildBaseline": {
+      "runs": 1,
+      "pass": true,
+      "durationSeconds": 4.02
+    },
+    "fallbackContract": "NOT_IMPLEMENTED_OR_VERIFIED"
+  },
+  "gateB": {
+    "status": "NOT_STARTED_GATE_A_ROOT_CAUSE_UNKNOWN",
+    "persistentCacheAdded": false,
+    "migrationAdded": false,
+    "migrationApplied": false,
+    "productionChanged": false
+  },
+  "counts": {
+    "productionAppGet": 4,
+    "directKopisGet": 13,
+    "productionInternalKopisCalls": "NOT_INSTRUMENTED_UNKNOWN",
+    "appBusinessPost": 0,
+    "dbGet": 0,
+    "dbBusinessPost": 0,
+    "ocr": 0,
+    "programAnalysis": 0,
+    "newConfirmed": 0,
+    "newRejected": 0
+  },
+  "preservation": {
+    "mainAndProductionSha": "7cc7f7b88274db228748cd5aa7fa8775fd5db64a",
+    "scheduler": "ClassicAtlas-LocalPipeline Disabled / Enabled=false",
+    "schedulerModified": false,
+    "newSchedule": false,
+    "dbDdlDml": 0,
+    "existingMigrationsModified": 0,
+    "localBranch": "main",
+    "localHead": "1607ca201c3a559bc7f28aabe998ef062db02ef9",
+    "localChangedFiles": 40,
+    "indexAndEnvPreserved": true
+  },
+  "resumePoint": "Gate A: obtain a retained/reproduced failed request with sanitized upstream stage/page/duration/HTTP evidence and cold-start metadata; distinguish HTTP, timeout, connect and XML before authorizing operational cache rollout."
+}

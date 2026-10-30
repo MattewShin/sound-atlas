@@ -1,0 +1,59 @@
+{
+  "task": "CA-CONCERT-RELIABILITY-20261029-001",
+  "spec": 2,
+  "status": "BLOCKED",
+  "gate": "B",
+  "blocker": "SERVER_CACHE_STORAGE_REQUIRED",
+  "checkedAt": "2026-10-29T05:58:09.572Z",
+  "documentsSha": "3e7222c25143356dae9f32c421ebab6b36c1b2fc",
+  "productionCodeSha": "7cc7f7b88274db228748cd5aa7fa8775fd5db64a",
+  "historicalRootCauseNoLongerBlocking": true,
+  "db": {
+    "readOnly": true,
+    "connected": true,
+    "catalogSelects": 2,
+    "publicBaseTables": 13,
+    "cacheTables": 0,
+    "matchingRelationKinds": [
+      "i"
+    ]
+  },
+  "vercel": {
+    "metadataGets": 3,
+    "productionEnvNamesRead": true,
+    "durableStorageConfigurationNames": 0,
+    "valuesPrintedOrSaved": false
+  },
+  "changes": {
+    "sourceFiles": 0,
+    "migrationsWritten": 0,
+    "migrationsApplied": 0,
+    "dbBusinessPosts": 0,
+    "ddl": 0,
+    "dml": 0,
+    "kopisGets": 0,
+    "productionConcertApiGets": 0,
+    "ocrProgramRequests": 0,
+    "confirmationWrites": 0,
+    "mainMerges": 0,
+    "deployments": 0,
+    "schedulerChanges": 0
+  },
+  "scheduler": {
+    "task": "ClassicAtlas-LocalPipeline",
+    "state": "Disabled",
+    "enabled": false
+  },
+  "local": {
+    "dirtyFiles": 40,
+    "indexPreserved": true,
+    "envPreserved": true
+  },
+  "checks": {
+    "newFallbackTests": "NOT_RUN",
+    "fullTest": "NOT_RUN",
+    "build": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "resume": "Provide an independent server cache store without repurposing historical tables; do not repeat historical Gate A tracing."
+}

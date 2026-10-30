@@ -30,3 +30,12 @@ test('browser UI enters without selected song, paginates/deduplicates, filters a
 test('independent detail supports missing booking/images and safe mobile image attributes',()=>{
  const render=c=>renderToStaticMarkup(React.createElement(components.ConcertDetailScreen,{detail:{status:'success',data:c},onBack(){}}));const html=render(concert(1));assert.ok(html.includes('loading="lazy"'));assert.ok(html.includes('noopener noreferrer'));assert.ok(html.includes('공연예술통합전산망(KOPIS)'));const empty=render({...concert(1),posterUrl:null,introductionImages:[],bookingLinks:[]});assert.ok(empty.includes('등록된 예매 링크가 없어요.'));assert.ok(empty.includes('등록된 소개 이미지가 없어요.'));assert.ok(!empty.includes('<img'));assert.ok(!/CONFIRMED|REJECTED|OCR|작품 매칭/.test(empty))
 })
+
+test('stale notice shows exact message and original update time only for stale list/detail',()=>{
+ const fetchedAt='2026-10-30T00:00:00.000Z',message='KOPIS 연결이 지연되어 마지막으로 확인된 정보를 표시합니다'
+ for(const stale of [false,true]){
+  const detail=renderToStaticMarkup(React.createElement(components.ConcertDetailScreen,{detail:{status:'success',data:concert(1),stale,fetchedAt},onBack(){}}))
+  const list=renderToStaticMarkup(React.createElement(components.ConcertScreen,{search:{status:'success',data:{query:{region:'서울',from:'2099-10-29',to:'2099-11-28',q:''},concerts:[concert(1)],total:1,hasMore:false,stale,fetchedAt}},region:'서울',period:{from:'2099-10-29',to:'2099-11-28'},keyword:'',onSelectRegion(){},onChangePeriod(){},onChangeKeyword(){},onSearch(){}}))
+  for(const html of [list,detail]){assert.equal(html.includes(message),stale);assert.equal(html.includes('갱신 시각:'),stale);if(stale)assert.ok(html.includes('dateTime="'+fetchedAt+'"'))}
+ }
+})

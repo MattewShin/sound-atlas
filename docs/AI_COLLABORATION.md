@@ -85,6 +85,6 @@ Codex는 HANDOFF의 구현자 의견과 질문에 문제·근거·권장안·영
 - GitHub에 접근할 수 없으면 그 사실과 미반영 내용을 알린다. 접근하지 못한 결과를 확인했다고 표현하지 않는다.
 - 자동 감시·실행은 이번 구성에 포함되지 않는다. 양쪽에 작업 시작·검토를 요청하는 짧은 지시는 필요하다.
 
-## 현재 작업 위치 (2026-10-29)
+## 현재 작업 위치 (2026-10-30)
 
-현재 작업은 CA-CONCERT-BROWSER-20261029-001 / 명세1, 브랜치는 codex/ca-concert-browser-20261029-001이다. 사용자 직접 명세를 CURRENT_TASK에 기록했다. 이전 CA-AUTO 기록은 archive/CA-AUTO-20261022-001에 보관하며 OCR fallback 브랜치는 병합하지 않는다. 이번 작업은 DB 업무 쓰기0이고, 새 기능 검증·배포 확인 후에만 기존 OCR/Program 예약을 Disabled한다.
+CA-CONCERT-RELIABILITY-20261029-001 / 명세3, codex/ca-concert-reliability-20261029-001. Supabase 독립 cache table1개가 승인돼 migration1회 적용과 구현·검증을 완료했다. 최종test109PASS/buildPASS, production 배포 검증 대기(IMPLEMENTED). 과거 Gate A 추적·저장소 재검토는 반복하지 않으며 예약Disabled/기존DB이력을 보존한다. 최신 CURRENT_TASK/HANDOFF를 따른다.

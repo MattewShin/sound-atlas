@@ -1,36 +1,30 @@
 # 현재 작업
 
-- 작업 ID: CA-CONCERT-BROWSER-20261029-001
-- 명세 버전: 1
-- 상태: IMPLEMENTED
-- 요청자: Theo / 실행: Codex / 검토: 웹 GPT
-- 작성일: 2026-10-29 Asia/Seoul
-- 작업 브랜치: codex/ca-concert-browser-20261029-001
-- 시작 SHA: main / 1db327cd38dfce778da543738f975b70789aed66
-- 명세 근거: 사용자 직접 실행 지시. 기존 OCR fallback 브랜치 미병합.
+- 작업 ID: CA-CONCERT-RELIABILITY-20261029-001
+- 명세 버전: 3 / 2026-10-30 사용자 Gate B 재개 지시
+- 상태: IMPLEMENTED / 운영 migration 완료, main 병합·production 배포 검증 대기
+- 브랜치: codex/ca-concert-reliability-20261029-001
+- 읽은 공동 문서5개·코드 SHA: bd76fb23766c10a8be903a8a579036f2ef8ea424
+- 기존 main·production 기준: 7cc7f7b88274db228748cd5aa7fa8775fd5db64a
 
-## 목표와 범위
+## 유효 범위
 
-기존 선택곡 공연 검색·OCR·Program 곡 매칭 자동화를 종료하고, 공연 찾기를 KOPIS 서양음악(클래식) 날짜·지역 탐색으로 전환한다. 감정·기분 추천, 음악 탐색, 보관함·나의 취향은 보존한다.
+과거502 원인 조사/Gate A와 저장소 선택 검토는 반복하지 않는다. 기존 Supabase에 독립 공연 브라우저 cache table 하나만 추가하는 최소 additive migration을 허용한다. Redis/KV/Blob 등 신규 서비스는 만들지 않는다. 이전 명세2의 새 migration 금지와 저장소 blocker는 이번 사용자 지시로 대체됐다.
 
-1. 화면의 선택곡/보관곡 공연 검색과 곡 상세/보관함의 공연 찾기 버튼, OCR·분석·자동 판정 코드/패키지/실행 스크립트/사용하지 않는 테스트를 참조 확인 후 제거한다. 기존 DB 테이블·적용 migration·receipt·CONFIRMED/REJECTED 이력은 삭제/수정하지 않는다. 운영 DROP/대량 DELETE/과거 데이터 정리/테스트 DB 쓰기0.
-2. KOPIS 서버 프록시·캐시와 useConcertSearch/ConcertScreens를 재사용한다. 키는 서버 전용이다. 기본 CCCA·오늘~30일 후·공연예정/공연중·마지막 지역 또는 서울·가까운 시작일순. 피아노/작곡가/등록곡 분석·필터0.
-3. 최초20건, 더 불러오기20건, mt20id 중복 제거, 지역·날짜·공연명/공연장 검색, 전체/표시 수, 로딩/오류/빈 결과/재시도, lazy poster. 종료 공연 제외.
-4. 독립 ConcertDetailScreen은 선택 공연만 조회한다. KOPIS 제공 공연명·기간/시간·공연장/지역·연령·가격·출연·주최/주관/기획·포스터·세로 소개 이미지·예매처명/URL·출처만 표시한다. 이미지 placeholder, 안전한 새 창 링크와 예매 링크 없음 상태를 제공한다.
-5. upstream 범위 최대31일/페이지100건 이하. 브라우저 DOM은 표시된 페이지만 생성한다. 목록 조회의 상세 API 선호출0. API 실패는 정상 빈 배열/캐시로 위장하지 않는다. OCR/matcher/confirmation/review RPC0.
+목록/상세 구분, 고유 key, 공개 payload, fetched_at/updated_at을 저장한다. 서버 service_role에 SELECT·INSERT·UPDATE만 허용하고 anon/authenticated/PUBLIC은 접근하지 못한다. 키·전체 upstream query·인증정보·XML/로그 원문은 저장하지 않는다. 목록은01/02의 모든 pagination/XML 검증 성공 후 단일 원자 upsert로 저장한다. 일부 성공으로 마지막 정상 결과를 덮어쓰지 않는다.
 
-## 검증·전환 Gate
+age<6h는 fresh, age>=6h는 먼저 KOPIS 갱신, 실패 시0<=age<=24h만 stale다.24h 초과·미래 timestamp는 반환하지 않는다. 원래 fetchedAt,stale,source를 응답하며 stale를 새 성공 시각으로 바꾸지 않는다. stale일 때만 “KOPIS 연결이 지연되어 마지막으로 확인된 정보를 표시합니다”와 실제 갱신 시각(KST)을 안내한다. cold start는 Supabase 캐시를 읽는다. 안전한 HTTP상태·실패단계·페이지·upstream유형·시간·requestID만 로그에 남긴다.
 
-직접 fixture/단위·UI 테스트 → 전체 npm test와 production build 각1회 → 실제 KOPIS 서울/30일/CCCA 목록·상세1건 GET, DB 쓰기0 확인. 곡 상세/보관함 버튼 제거·선택곡 없는 진입·20건/중복·이미지/예매 링크(없음 포함)·추천/보관/취향 회귀·375px overflow/버튼·비밀정보 미기록을 확인한다.
+기존 OCR/Program/receipt/곡매칭 데이터·migration과 추천·보관함·취향 UI는 유지한다. OCR·자동판정 복구/새 예약/무제한 retry0, ClassicAtlas-LocalPipeline Disabled 유지. 배포 rollback에도 additive table은 삭제하지 않고 비사용 상태로 남긴다.
 
-모두 통과하면 main 병합·production 배포를 확인한 뒤 기존 ClassicAtlas-LocalPipeline을 Disabled한다. 다른 배치로 대체하지 않는다. production 목록/상세/예매 링크·실제 SHA·예약·보존 이력을 기록해 OPERATIONAL로 종료한다. 실패가 남으면 병합/배포/예약 변경 없이 정확한 재개점을 BLOCKED로 게시한다.
+## 검증·적용 결과
 
-## 이력
+- 최종 직접 관련26/26 PASS, 전체 npm test109/109 PASS·fail0/skip0(25.316초), production build PASS(5.17초).
+- 격리 SQL: 새 table 한 개, 기본 권한이 넓은 환경에서도 revoke/최소 grant·RLS·anon/authenticated 차단·upsert·제약·기존 history 보존을 확인했다.
+- fresh/timeout/HTTP503/잘못된XML/network/부분페이지/cold start/정확한6h·24h/24h+1ms/미래시각/대기 중24h 만료/복구와 목록·상세 분리를 검증했다.
+- 375px 목록20→40/상세/지역선택 overflow0·잘린버튼0, stale 원래시각·포스터/소개/예매·보관/취향 통과.
+- migration **202610300001_concert_browser_cache.sql 적용1회 완료**, RLS·ACL 검증, 기존13개 테이블866행 hash 보존. Supabase migration ledger는 원래 없었고 별도 ledger table을 만들지 않았다.
+- 실제 정상 GET: 서울2026-10-30~11-29·CCCA305건,20→40/중복0, PF281769 포스터·소개1·예매4. KOPIS GET5, cache REST GET4/POST2(전용 cache만), 기존 업무POST/쓰기0. 새instance의 목록/상세는 Supabase에서 fresh 재사용, 추가KOPIS GET0.
+- production 장애주입0. main 병합·배포 확인 뒤 실제SHA와 최종결과를 갱신한다. 상세 실행 횟수와 초도 격리 실패 보정은 HANDOFF에 구분했다.
 
-main의 이전 CURRENT_TASK/HANDOFF/PROJECT_CONTEXT는 docs/collaboration/archive/CA-AUTO-20261022-001에 함께 보관했다. 과거 조건을 이번 작업으로 재실행하지 않는다.
-
-## 배포 전 검증 결과 — IMPLEMENTED
-
-직접23/23 PASS, 최종 npm test93/93 fail0/skip0(23.36초), production build PASS(3.38초)를 확인했다. 전체 test/build는 각각1회 실행했다.375px Chrome의 목록/40건/상세/지역 창은 scrollWidth375·가로 overflow0·잘린 버튼0이고 추천/보관/취향 클릭 회귀를 통과했다. 실제 KOPIS 서울10/29~11/28·CCCA 목록303건/최초20건, PF281769 상세의 포스터·소개1장·예매처4개를 검증했다. 최초 상세 실패 후 별도 수동 검증은200이었으며 근본 원인은 미확정이다. 실제 누적 목록GET8/상세GET2, DB 업무POST0이다.13개 테이블866행 및 전체 digest 불변, review65/공식receipt2 보존. 적용 migration 변경/DBDDL/DML0. 기존 예약은 배포 전 Ready/Enabled 유지다.
-
-[검증 JSON](docs/CONCERT_BROWSER_VALIDATION_2026-10-29.json). 다음은 동일 검증 코드를 main에 병합·production 배포 확인하고 예약을 Disabled한 뒤 production 목록/상세/링크를 다시 확인하는 단계다.
+이전 명세2 CURRENT_TASK/HANDOFF는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/spec2/CURRENT_TASK.md)에 함께 보존했다.
