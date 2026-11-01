@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-PWA-20261030-001
 - 명세 버전: 3 / iPhone date input 시각 크기 통일
-- 상태: IMPLEMENTED / production 배포 검증 대기
+- 상태: OPERATIONAL / production 배포 완료
 - 브랜치: codex/ca-pwa-20261030-001-field-size
 - 시작 main SHA: 18bb76573609e8c60229f847d437e74eff20ba9e
 - 요청: 모바일 브라우저에서 홈 화면에 설치하고 앱 아이콘으로 standalone 실행할 수 있는 PWA 적용
@@ -60,5 +60,7 @@
 - iOS date input의 기본 appearance를 제거하고 내부 날짜 값과 달력 표시 여백을 별도로 정렬했다.
 - PWA·모바일 직접 테스트 8/8, 전체 테스트 114/114 fail0/skip0, production build가 통과했다.
 - 첨부 실기기 화면으로 기존 날짜 입력의 오른쪽 테두리가 패널 밖에서 잘린 것을 확인했으며, 보정 기준은 공연명 입력과 같은 좌우 끝·높이다.
+- PR #7을 main에 병합했으며 production SHA `cd012347a6b501bfbc679d28bc69c0c3108bccc1`의 Vercel 배포 성공을 확인했다.
+- production CSS에서 46px 높이·appearance 제거·date 내부 값 정렬 규칙을 확인했다. 실제 iPhone 육안 재확인만 남는다.
 
 이전 안정성 작업의 main 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/CURRENT_TASK.md)에 보존했다.
