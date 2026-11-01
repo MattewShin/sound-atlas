@@ -30,11 +30,14 @@ test('긴 곡명·공연명은 모바일에서 말줄임 없이 줄바꿈하고 
   assert.match(css, /\.nav-item \{[^}]*min-height:\s*58px/s)
 })
 
-test('공연 검색 날짜 입력은 iPhone에서도 검색 패널 너비를 넘지 않는다', () => {
+test('공연 검색 날짜 입력은 iPhone에서도 패널을 넘지 않고 공연명 입력과 같은 크기를 사용한다', () => {
   assert.match(css, /\.concert-search-panel \{[^}]*min-width:\s*0[^}]*overflow:\s*hidden/s)
   assert.match(css, /\.concert-search-panel form,[^\{]*\{[^}]*width:\s*100%[^}]*min-width:\s*0[^}]*max-width:\s*100%/s)
   assert.match(css, /\.concert-period \{[^}]*width:\s*100%[^}]*min-width:\s*0[^}]*max-width:\s*100%/s)
   assert.match(css, /\.concert-period input \{[^}]*inline-size:\s*100%[^}]*min-inline-size:\s*0[^}]*max-inline-size:\s*100%/s)
+  assert.match(css, /\.concert-keyword input, \.concert-period input \{[^}]*block-size:\s*46px[^}]*height:\s*46px[^}]*min-height:\s*46px/s)
+  assert.match(css, /\.concert-keyword input, \.concert-period input \{[^}]*-webkit-appearance:\s*none[^}]*appearance:\s*none/s)
+  assert.match(css, /\.concert-period input::\-webkit-date-and-time-value \{[^}]*min-height:\s*24px[^}]*text-align:\s*left/s)
 })
 
 test('주요 모바일 텍스트 색상은 밝은 기본 배경에서 WCAG AA 4.5:1 이상이다', () => {
