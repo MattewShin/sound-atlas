@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-PWA-20261030-001
 - 명세 버전: 4 / 느낌·기분 키워드 중앙 정렬
-- 상태: IMPLEMENTED / production 배포 검증 대기
+- 상태: OPERATIONAL
 - 브랜치: codex/ca-pwa-20261030-001-keyword-center
 - 시작 main SHA: 18bb76573609e8c60229f847d437e74eff20ba9e
 - 요청: 모바일 브라우저에서 홈 화면에 설치하고 앱 아이콘으로 standalone 실행할 수 있는 PWA 적용
@@ -70,5 +70,7 @@
 - 공연 지역 선택에도 공유되는 키워드 버튼의 중앙 정렬을 일관되게 유지한다.
 - 키워드 버튼의 좌우 padding을 22px로 통일하고 grid 중앙 정렬을 적용했다.
 - 직접 테스트 5/5, 전체 테스트 115/115 fail0/skip0, production build가 통과했다.
+- PR #8을 main에 병합했고 production SHA `22f22c5078a111ba62adffccc5ff1464b1c2a1c4`의 Vercel 배포 성공을 확인했다.
+- production CSS `index-DQu4ZdAI.css`에서 중앙 정렬과 대칭 22px 여백 규칙을 확인했다.
 
 이전 안정성 작업의 main 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/CURRENT_TASK.md)에 보존했다.
