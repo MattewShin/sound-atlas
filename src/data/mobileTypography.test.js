@@ -40,6 +40,12 @@ test('공연 검색 날짜 입력은 iPhone에서도 패널을 넘지 않고 공
   assert.match(css, /\.concert-period input::\-webkit-date-and-time-value \{[^}]*min-height:\s*24px[^}]*text-align:\s*left/s)
 })
 
+test('느낌·기분 키워드는 선택 체크와 무관하게 박스 정중앙에 배치된다', () => {
+  assert.match(css, /\.keyword-choice-list button \{[^}]*display:\s*grid[^}]*place-items:\s*center[^}]*padding:\s*8px 22px/s)
+  assert.match(css, /\.feeling-choice-list button,[^\{]*\{[^}]*display:\s*grid[^}]*place-items:\s*center[^}]*padding:\s*8px 22px/s)
+  assert.match(css, /\.keyword-choice-list button\.selected::after \{[^}]*position:\s*absolute[^}]*right:\s*7px/s)
+})
+
 test('주요 모바일 텍스트 색상은 밝은 기본 배경에서 WCAG AA 4.5:1 이상이다', () => {
   for (const color of ['#263b36', '#53635b', '#667269']) {
     assert.ok(contrast(color, '#f7f3eb') >= 4.5, `${color}: ${contrast(color, '#f7f3eb').toFixed(2)}`)
