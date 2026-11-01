@@ -1,9 +1,9 @@
 # 작업 인계
 
-- 작업 ID: CA-PWA-20261030-001 / 명세3
+- 작업 ID: CA-PWA-20261030-001 / 명세4
 - 상태: IMPLEMENTED / production 배포 검증 대기
 - 작성: 웹 GPT / 2026-10-30 KST
-- 브랜치: codex/ca-pwa-20261030-001-field-size
+- 브랜치: codex/ca-pwa-20261030-001-keyword-center
 - 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
 
 ## 구현 결과
@@ -77,3 +77,16 @@ PR #6을 main에 병합했고 production SHA는 `3244388d7aada347d1603702c011b55
 | 비변경 | React 동작·KOPIS API·DB·Service Worker·예약 |
 
 production 배포 후 홈 화면 PWA를 완전히 종료·재실행하고 시작일·종료일·공연명 입력의 좌우 끝과 높이가 같은지 확인한다.
+
+PR #7을 main에 병합했고 production SHA는 `cd012347a6b501bfbc679d28bc69c0c3108bccc1`다. Vercel status success 후 production CSS `index-BYRLGxPp.css`에서 46px block/height, WebKit appearance 제거, date 내부 값 정렬 규칙을 확인했다. DB·API·예약 변경은 0이다.
+
+## 명세 4 수정
+
+느낌·기분 키워드 버튼의 기존 좌우 padding이 `9px/18px`로 비대칭이라 `text-align:center`가 있어도 단어가 왼쪽으로 치우쳐 보였다. 버튼을 grid 중앙 정렬로 바꾸고 좌우 padding을 22px로 통일한다. 선택 체크는 오른쪽 절대 위치를 유지하므로 선택 전후에도 단어 중심은 변하지 않는다.
+
+| 검증 | 결과 |
+|---|---|
+| 모바일 타이포그래피 직접 테스트 | 5/5 PASS |
+| 전체 테스트 | 115/115 PASS, fail 0, skip 0 |
+| production build | PASS |
+| 비변경 | React 동작·KOPIS API·DB·Service Worker·예약 |
