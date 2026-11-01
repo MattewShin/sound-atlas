@@ -1,7 +1,7 @@
 # 작업 인계
 
 - 작업 ID: CA-PWA-20261030-001 / 명세4
-- 상태: IMPLEMENTED / production 배포 검증 대기
+- 상태: OPERATIONAL
 - 작성: 웹 GPT / 2026-10-30 KST
 - 브랜치: codex/ca-pwa-20261030-001-keyword-center
 - 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
@@ -75,6 +75,8 @@ PR #6을 main에 병합했고 production SHA는 `3244388d7aada347d1603702c011b55
 | 전체 `npm test` | 114/114 PASS, fail0/skip0, 약 9.68초 |
 | production build | PASS, 약 2.00초 |
 | 비변경 | React 동작·KOPIS API·DB·Service Worker·예약 |
+
+PR #8을 main에 병합했다. production SHA `22f22c5078a111ba62adffccc5ff1464b1c2a1c4`의 Vercel status success와 production CSS `index-DQu4ZdAI.css`의 `place-items:center`, 대칭 `padding:8px 22px` 반영을 확인했다.
 
 production 배포 후 홈 화면 PWA를 완전히 종료·재실행하고 시작일·종료일·공연명 입력의 좌우 끝과 높이가 같은지 확인한다.
 
