@@ -173,8 +173,8 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-search-panel p, .concert-search-feedback > p { color: #65756b; font-size: 12px; line-height: 1.8; }
 .concert-search-panel small { display: block; font-size: 10px; }
 .concert-period { width: 100%; min-width: 0; max-width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
-.concert-period label { display: grid; width: 100%; min-width: 0; max-width: 100%; color: #456757; font-size: 11px; }
-.concert-period input { display: block; inline-size: 100%; min-inline-size: 0; max-inline-size: 100%; width: 100%; min-width: 0; max-width: 100%; min-height: 44px; margin-top: 8px; border: 1px solid #c3d0bc; border-radius: 9px; padding: 8px 5px; color: #365d4b; background: #f5f7ed; font: inherit; }
+.concert-period label { display: grid; width: 100%; min-width: 0; max-width: 100%; gap: 12px; color: #456757; font-size: 11px; }
+.concert-period input { display: block; inline-size: 100%; min-inline-size: 0; max-inline-size: 100%; width: 100%; min-width: 0; max-width: 100%; margin: 0; font: inherit; }
 .concert-search-actions { display: grid; gap: 10px; }
 .concert-search-actions button:disabled { cursor: wait; opacity: .65; }
 .concert-search-panel .concert-search-setup { border-radius: 10px; padding: 12px; background: #f0e7d8; color: #715b3d; }
@@ -399,7 +399,9 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .concert-browser-card p { font-size: 14px; line-height: 1.65; margin: 7px 0; }
 .concert-search-panel form, .concert-keyword { width: 100%; min-width: 0; max-width: 100%; display: grid; gap: 12px; }
 .concert-keyword { margin-top: 4px; color: #263b36; font-size: 14px; }
-.concert-keyword input, .concert-period input { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; min-height: 46px; border: 1px solid #bdc9bd; border-radius: 9px; padding: 10px; color: #263b36; background: #fffdf7; font: inherit; font-size: 16px; }
+.concert-keyword input, .concert-period input { box-sizing: border-box; display: block; inline-size: 100%; block-size: 46px; width: 100%; min-width: 0; max-width: 100%; height: 46px; min-height: 46px; border: 1px solid #bdc9bd; border-radius: 9px; padding: 10px; color: #263b36; background: #fffdf7; -webkit-appearance: none; appearance: none; font: inherit; font-size: 16px; line-height: 24px; }
+.concert-period input::-webkit-date-and-time-value { min-height: 24px; padding: 0; text-align: left; }
+.concert-period input::-webkit-calendar-picker-indicator { margin: 0 0 0 8px; padding: 0; }
 .concert-search-panel p, .concert-result-count, .concert-empty, .concert-search-time { color: #53635b; font-size: 14px; line-height: 1.7; }
 .concert-result-count { margin-top: 24px; font-weight: 700; }
 .concert-detail-button, .concert-load-more, .concert-search-error button { min-height: 46px; max-width: 100%; border: 1px solid #245a53; border-radius: 10px; padding: 10px 12px; color: #fffaf0; background: #245a53; font-size: 15px; line-height: 1.45; white-space: normal; overflow-wrap: anywhere; cursor: pointer; }

@@ -1,9 +1,9 @@
 # 작업 인계
 
-- 작업 ID: CA-PWA-20261030-001 / 명세2
+- 작업 ID: CA-PWA-20261030-001 / 명세3
 - 상태: IMPLEMENTED / production 배포 검증 대기
 - 작성: 웹 GPT / 2026-10-30 KST
-- 브랜치: codex/ca-pwa-20261030-001-safe-area
+- 브랜치: codex/ca-pwa-20261030-001-field-size
 - 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
 
 ## 구현 결과
@@ -58,3 +58,22 @@ DB DDL/DML·migration·KOPIS/공연API 호출·예약 변경은 0이다. 이전 
 | 비변경 | 일반 Safari·Android/desktop 규칙, DB·API·예약·Service Worker |
 
 production 배포 후 기존 홈 화면 아이콘으로 앱을 완전히 종료·재실행해 하단 네 메뉴의 높이·홈 인디케이터 간격과 공연 찾기 날짜 입력이 패널 내부에 들어오는지 확인한다. CSS/HTML 갱신이 보이지 않으면 iOS 캐시 반영을 위해 앱을 종료한 뒤 다시 열고, 그래도 동일하면 홈 화면 아이콘을 한 번 제거·재추가한다.
+
+PR #6을 main에 병합했고 production SHA는 `3244388d7aada347d1603702c011b557666abaa6`다. Vercel status success 후 production HTML에서 `viewport-fit=cover`, 배포 CSS에서 standalone media와 날짜 input 논리 너비 제한을 확인했다. DB·API·예약 변경은 0이다.
+
+## 명세 3 수정
+
+사용자 실기기 확인에서 date input이 패널 안에는 들어오지만 공연명 입력창과 크기가 다르게 보이는 후속 현상을 확인했다. 세 입력에 동일한 46px 물리·논리 높이와 시각 속성을 적용하고, iOS WebKit date control의 기본 appearance 및 내부 값 여백을 정규화한다. `type=date`와 날짜 선택 동작은 변경하지 않는다.
+
+첨부된 iPhone PWA 화면에서는 날짜 입력의 오른쪽 테두리가 카드 경계에서 잘리고 공연명 입력보다 약 70px 넓게 렌더링된 상태였다. `width/max-width`만으로 iOS native control의 intrinsic size를 줄이지 못한 것이 원인이다.
+
+날짜·공연명 입력에 `inline-size/block-size/width/height`와 46px 높이, 동일 padding·border·배경·line-height를 하나의 규칙으로 적용했다. 날짜 입력에는 `-webkit-appearance: none`을 적용하고 `::-webkit-date-and-time-value`와 달력 indicator 여백을 정렬했다. 날짜 picker 기능과 값 형식은 유지한다.
+
+| 명세 3 검증 | 결과 |
+| --- | --- |
+| PWA·모바일 직접 테스트 | 8/8 PASS |
+| 전체 `npm test` | 114/114 PASS, fail0/skip0, 약 9.68초 |
+| production build | PASS, 약 2.00초 |
+| 비변경 | React 동작·KOPIS API·DB·Service Worker·예약 |
+
+production 배포 후 홈 화면 PWA를 완전히 종료·재실행하고 시작일·종료일·공연명 입력의 좌우 끝과 높이가 같은지 확인한다.
