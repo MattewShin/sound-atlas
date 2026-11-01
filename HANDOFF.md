@@ -1,7 +1,7 @@
 # 작업 인계
 
 - 작업 ID: CA-PWA-20261030-001 / 명세3
-- 상태: IMPLEMENTED / production 배포 검증 대기
+- 상태: OPERATIONAL / main 병합·production 배포 완료
 - 작성: 웹 GPT / 2026-10-30 KST
 - 브랜치: codex/ca-pwa-20261030-001-field-size
 - 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
@@ -77,3 +77,5 @@ PR #6을 main에 병합했고 production SHA는 `3244388d7aada347d1603702c011b55
 | 비변경 | React 동작·KOPIS API·DB·Service Worker·예약 |
 
 production 배포 후 홈 화면 PWA를 완전히 종료·재실행하고 시작일·종료일·공연명 입력의 좌우 끝과 높이가 같은지 확인한다.
+
+PR #7을 main에 병합했고 production SHA는 `cd012347a6b501bfbc679d28bc69c0c3108bccc1`다. Vercel status success 후 production CSS `index-BYRLGxPp.css`에서 46px block/height, WebKit appearance 제거, date 내부 값 정렬 규칙을 확인했다. DB·API·예약 변경은 0이다.
