@@ -59,8 +59,8 @@ test('구 ID와 새 ID가 함께 있어도 보관·좋아요를 보존하고 중
   assert.deepEqual(migrateMusicStorage(storage), state)
 })
 
-test('선택 마이그레이션은 편안한만 이름을 바꾸고 새로운 평가를 추정하지 않는다', () => {
-  assert.deepEqual(migrateSelectedEmotions(['편안한', '평안한', '따뜻한', '장엄한', '힘찬', '경쾌한', '설레는']), ['peacefulness', 'power', 'joy'])
+test('선택 마이그레이션은 이전 감정명을 현재 점수 축으로 연결하고 새로운 평가를 추정하지 않는다', () => {
+  assert.deepEqual(migrateSelectedEmotions(['편안한', '평안한', '긴장감 있는', '긴박한', '따뜻한', '힘찬']), ['peacefulness', 'tension', 'power'])
   assert.deepEqual(migrateSelectedEmotions(null), [])
 })
 
