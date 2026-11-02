@@ -73,6 +73,9 @@ test('확장 카탈로그의 구성, 제목·별칭, 전체 점수, 평가 출�
     assert.match(track.id, /^(chopin|brahms|mozart|rachmaninoff|satie|liszt|beethoven|schubert|schumann|tchaikovsky)-/)
   })
   assert.equal(emotions.find(({ key }) => key === 'peacefulness').label, '평안한')
+  assert.deepEqual(emotions.find(({ key }) => key === 'tension'), {
+    key: 'tension', label: '긴박한', definition: '긴박감과 극적 긴장',
+  })
 })
 
 test('단일 감정의 높은 원점수는 항상 먼저 추천된다', () => {
