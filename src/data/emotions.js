@@ -9,7 +9,7 @@ export const emotions = [
   { key: 'peacefulness', label: '평안한', definition: '평온함과 안정감' },
   { key: 'joy', label: '경쾌한', definition: '기쁨과 경쾌함' },
   { key: 'power', label: '힘찬', definition: '힘과 추진력' },
-  { key: 'tension', label: '긴장감 있는', definition: '긴장과 불안감' },
+  { key: 'tension', label: '긴박한', definition: '긴박감과 극적 긴장' },
   { key: 'sadness', label: '애잔한', definition: '슬픔과 애잔함' },
 ]
 export const emotionKeys = emotions.map(({ key }) => key)
