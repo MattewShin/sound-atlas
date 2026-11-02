@@ -65,6 +65,6 @@ test('숙련자 모바일 검색은 축소 가능한 폭·16px 입력·44px 터�
   const css = readFileSync(new URL('../styles.css', import.meta.url), 'utf8')
   assert.match(css, /\.exploration-level-switch \{[^}]*repeat\(2, minmax\(0, 1fr\)\)/)
   assert.match(css, /\.reference-search \{[^}]*width: 100%[^}]*min-width: 0[^}]*font-size: 16px/)
-  assert.match(css, /\.reference-explorer li \{[^}]*overflow-wrap: anywhere/)
+  assert.match(css, /\.reference-suggestions li \{[^}]*overflow-wrap: anywhere/)
   assert.match(css, /\.reference-actions button,[^}]*min-height: 44px/)
 })

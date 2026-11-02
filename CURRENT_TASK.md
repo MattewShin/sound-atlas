@@ -1,29 +1,30 @@
 # 현재 작업
 
-- 작업 ID: CA-EXPLORER-UI-20261102-001
-- 명세 버전: 1 / 초보자·숙련자 UI 정리
-- 상태: IMPLEMENTED / main 병합·production 배포·운영 화면 확인 완료
-- 브랜치: codex/ca-explorer-ui-20261102-001
-- 시작 main SHA: `5c5336563f892f3e0ee4457d1854fabb5e0ac87b`
+- 작업 ID: CA-REFERENCE-SEARCH-UX-20261102-001
+- 명세 버전: 1 / 숙련자 텍스트 자동완성 및 공통 추천 섹션
+- 상태: IMPLEMENTED / 사용자 배포 승인 확인, 게시·배포 진행 중
+- 브랜치: codex/ca-reference-search-ux-20261102-001
+- 시작 main SHA: `4d81fd466c3f300465b10ee4df388374f5b8bb96`
 - 기록일: 2026-11-02 Asia/Seoul
 
 ## 사용자 요청 및 구현 기준
 
-1. 초보자·숙련자 선택을 공연 지역 선택에 준하는 작은 토글로 변경한다. 한 개의 네이티브 button/switch로 전환하며 44px 터치 영역과 키보드 접근성을 유지한다.
-2. 숙련자 검색의 ‘예를 들어’ 이하 예시 영역과 입력 placeholder를 제거한다. 입력 label과 한·영 검색은 유지한다.
-3. 검색 전 숙련자 홈에는 START HERE / ‘오늘은 이런곡이 어떤가요?’와 기존 스타일의 랜덤 카드 4곡을 표시한다. 음악 키워드/내 취향 전환은 이 영역에 표시하지 않는다.
-4. 검색 후보에서 곡을 명시적으로 선택하면 FOR YOU 대표 카드에 검색한 곡을 표시한다. ‘검색 음악 / 내 취향’ 전환을 제공하고, 내 취향은 기존 보관함 기반 추천을 사용한다. 숙련자 안에서 전환하고 검색 기준곡과 초보자 입력을 보존한다.
-5. 기준곡의 유사곡 추천·곡 상세·보관·미리듣기·기록 연결은 유지한다. 취향이 형성되지 않은 상태는 내 취향 버튼을 비활성화한다.
-6. DB/SQL·공연 API·예약·곡 ID·기존 평가를 변경하지 않는다. 커뮤니티 확장은 이번 범위가 아니다.
+1. 숙련자 검색 입력 중에는 이미지·곡별 카드·상세 보기 버튼 없이 텍스트 자동완성 목록만 표시한다. 기존 대표 카드·랜덤 카드·유사곡 카드도 입력 중에는 숨긴다.
+2. 곡명 클릭 또는 단일 결과의 Enter로 검색을 확정하면 FOR YOU 검색 음악 대표 카드로 연결한다. 여러 결과는 직접 선택하며 한글 IME 조합 Enter는 확정하지 않는다.
+3. 상세는 대표 카드에서 연다. 초기 랜덤 카드·자동완성·유사곡·전체 추천 목록 선택은 대표 카드에 곡을 올리는 동작으로 통일한다.
+4. ‘이 곡과 비슷한 감정의 음악’ 세로 목록을 제거하고 초보자와 같은 RelatedRecommendations 컴포넌트의 MORE TO EXPLORE / 비슷한 결의 음악 / 가로 카드 / 추천곡 더 보기를 사용한다.
+5. 검색 음악/내 취향 전환, 보관·미리듣기·기존 기록 연결, 초보자 입력과 검색 기준곡을 보존한다.
+6. DB·SQL·개인 기록·공개 글·공연·예약·곡 ID·평가는 변경하지 않는다.
 
 ## 완료 기준
 
-- 한·영 검색·페이지 추가·명시적 선택·모드 전환·랜덤 재진입·대표 카드 저장/미리듣기·취향/기준곡 복원·기존 기능 회귀 테스트.
-- 전체 테스트 140/140 PASS (fail 0·skip 0), production build PASS. 변경 파일만 게시한다.
-- [PR #18](https://github.com/MattewShin/sound-atlas/pull/18) 병합 SHA `bfec1d6261035c01f29dea38e9802c7713850760`, Vercel success 확인.
-- 운영 화면에서 토글 168×44px/키보드 Space 전환, placeholder·예시 없음, 랜덤 4곡·추천 방식 버튼 없음, 검색 후보 직접 선택 후 FOR YOU 대표 카드와 검색 음악/내 취향 전환·기준곡 복원을 확인했다.
-- 실제 사용자 보관함·개인 기록·공개 글의 운영 쓰기는 수행하지 않는다.
+- 텍스트 목록·기존 카드 숨김·한영 검색·다중 결과·단건 Enter·후보 클릭·방향키/Enter·Escape 복원·IME·후보 없는 상태 검증.
+- 대표 카드에서만 상세·미리듣기·보관 연결, 공통 MORE TO EXPLORE 및 전체 추천 목록, 취향/기준곡 복원, 초보자 회귀 검증.
+- 전체 테스트 140/140 PASS (fail 0·skip 0), build PASS, git diff --check PASS.
+- 이전 GitHub 공개 업로드 자동 검토 차단은 사용자의 ‘배포해줘’ 명시적 승인으로 재개한다. PR/main 배포·운영 화면 확인 진행 중.
+- 기존 공개 저장소 MattewShin/sound-atlas와 push/admin 권한·동일 origin·민감 파일 제외를 확인했지만 검토기는 이번 코드/작업 문서의 정확한 공개 업로드에 명시적 사용자 승인이 필요하다고 판단했다. 우회하지 않는다.
+- 재개 시 main과 원격 작업 브랜치는 시작 SHA와 동일함을 확인했다. 운영 사용자 데이터 쓰기는 하지 않는다.
 
 ## 이전 작업
 
-[기준곡 검색 작업 CURRENT_TASK](docs/collaboration/archive/CA-REFERENCE-TRACK-SEARCH-20261102-001/CURRENT_TASK.md)와 [HANDOFF](docs/collaboration/archive/CA-REFERENCE-TRACK-SEARCH-20261102-001/HANDOFF.md)를 함께 보존했다.
+[초보자·숙련자 UI 작업 CURRENT_TASK](docs/collaboration/archive/CA-EXPLORER-UI-20261102-001/CURRENT_TASK.md)와 [HANDOFF](docs/collaboration/archive/CA-EXPLORER-UI-20261102-001/HANDOFF.md)를 함께 보존했다.
