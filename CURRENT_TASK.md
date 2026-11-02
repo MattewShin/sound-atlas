@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-PRIVACY-SECURITY-20261102-001
 - 명세 버전: 1 / 사용자 보관함 개인정보·보안 보강
-- 상태: BLOCKED / 구현·격리 검증 완료, 운영 입력·migration 적용 대기
+- 상태: IN_PROGRESS / 운영 migration 사용자 적용 완료, production 배포 검증 대기
 - 브랜치: codex/ca-privacy-security-20261102-001
 - 시작 main SHA: `97785fa`
 - 요청: 실제 로그인·보관함 동기화 검증 후 개인정보·보안 보강을 별도 작업으로 진행
@@ -42,13 +42,14 @@
 - Google 프로필 사진 URL 렌더링을 제거했다.
 - 격리 SQL을 포함한 전체 테스트 124/124, fail 0·skip 0, production build 통과.
 - `npm audit --omit=dev`: 취약점 0건.
-- 신규 migration `202611020002_user_account_security.sql`은 운영 미적용이다.
+- 개인정보 문의처 `ybshin09@gmail.com`과 핵심 데이터 저장 지역 `Oceania (Sydney), Australia`를 안내문에 반영했다.
+- 사용자가 2026-11-02 KST에 신규 migration `202611020002_user_account_security.sql` 적용 완료를 보고했다. 현재 실행 환경에서 관리자 연결로 적용 횟수를 독립 확인하지는 않았다.
 - main 병합·production 배포는 수행하지 않았다.
 
-## 운영 전 필수 입력
+## 운영 적용 기록
 
-1. 공개 가능한 개인정보 문의 이메일
-2. Supabase Dashboard에 표시된 프로젝트 처리 지역/국가
-3. 신규 migration 사용자 적용 완료 확인
+1. 개인정보 문의 이메일: `ybshin09@gmail.com`
+2. Supabase 핵심 데이터 저장 지역: `Oceania (Sydney), Australia`
+3. 신규 migration: 사용자 적용 완료 보고 / 독립 확인 대기
 
 이전 Google 개인화 작업은 [보관본](docs/collaboration/archive/CA-GOOGLE-PERSONALIZATION-20261102-001/CURRENT_TASK.md)에 보존했다.
