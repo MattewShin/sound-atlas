@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-REFERENCE-SEARCH-UX-20261102-001
 - 명세 버전: 1 / 숙련자 텍스트 자동완성 및 공통 추천 섹션
-- 상태: IMPLEMENTED / 사용자 배포 승인 확인, 게시·배포 진행 중
+- 상태: IMPLEMENTED / main 병합·production 배포·운영 화면 확인 완료
 - 브랜치: codex/ca-reference-search-ux-20261102-001
 - 시작 main SHA: `4d81fd466c3f300465b10ee4df388374f5b8bb96`
 - 기록일: 2026-11-02 Asia/Seoul
@@ -21,9 +21,9 @@
 - 텍스트 목록·기존 카드 숨김·한영 검색·다중 결과·단건 Enter·후보 클릭·방향키/Enter·Escape 복원·IME·후보 없는 상태 검증.
 - 대표 카드에서만 상세·미리듣기·보관 연결, 공통 MORE TO EXPLORE 및 전체 추천 목록, 취향/기준곡 복원, 초보자 회귀 검증.
 - 전체 테스트 140/140 PASS (fail 0·skip 0), build PASS, git diff --check PASS.
-- 이전 GitHub 공개 업로드 자동 검토 차단은 사용자의 ‘배포해줘’ 명시적 승인으로 재개한다. PR/main 배포·운영 화면 확인 진행 중.
+- 이전 GitHub 공개 업로드 자동 검토 차단은 사용자의 ‘배포해줘’ 명시적 승인으로 재개한다. PR #19 main 병합·Vercel success·운영 화면 확인 완료.
 - 기존 공개 저장소 MattewShin/sound-atlas와 push/admin 권한·동일 origin·민감 파일 제외를 확인했지만 검토기는 이번 코드/작업 문서의 정확한 공개 업로드에 명시적 사용자 승인이 필요하다고 판단했다. 우회하지 않는다.
-- 재개 시 main과 원격 작업 브랜치는 시작 SHA와 동일함을 확인했다. 운영 사용자 데이터 쓰기는 하지 않는다.
+- [PR #19](https://github.com/MattewShin/sound-atlas/pull/19) production SHA `bb797f40b23b6184f81428e9e07f904d5c91b970`. 운영에서 텍스트 자동완성 → Enter 대표 카드 → 공통 가로 추천 → 추천 선택은 대표 카드 교체 → 대표 카드 클릭은 상세 열림을 확인했다. 실제 사용자 데이터 쓰기는 하지 않았다.
 
 ## 이전 작업
 
