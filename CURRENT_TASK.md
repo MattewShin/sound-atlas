@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-MUSIC-RECORD-SHARING-20261102-001
 - 명세 버전: 1 / 내 음악 기록 목록·선택한 기록 공유
-- 상태: IMPLEMENTED / 운영 004 SQL 적용 대기, main 미병합·배포 미실행
+- 상태: IMPLEMENTED / production 배포·목록/공유 미리보기 검증 완료, 실제 공개 미실행
 - 브랜치: codex/ca-music-record-sharing-20261102-001
 - 시작 main SHA: `a20d419c6fc37a07d6c27e262bea382044b83f0a`
 
@@ -29,10 +29,14 @@
 - production build PASS, 기존 500kB 번들 warning만 유지.
 - 001~004 격리 migration chain에서 공개 snapshot/본인 전용 쓰기/개인정보 열 차단/삭제 cascade를 검증했다.
 - DOM에서 전체 내 기록 목록·미리보기 무쓰기·공개 동의·동의 초기화·실패 재시도·중복 클릭·공유 취소 원본 보존·계정 격리를 확인했다.
-- 운영 SQL 적용·실제 기록 게시·main 병합·production 배포는 수행하지 않았다.
+- 사용자가 2026-11-02 KST에 004 SQL 적용 완료를 보고했다. 에이전트는 migration을 재실행하지 않았다.
+- PR #16 병합·production SHA: `27dda4f971d5ccb54d97fbcaadd01f5338e8dc68`. Vercel success 확인.
+- production 로그인 후 보관한 3곡과 별도로, 보관 해제된 쇼팽 발라드 4번의 본인 기록 1건이 ‘내 음악 기록’에 표시되는 것을 확인했다.
+- 미게시 검증용 닉네임/문구로 미리보기와 공개 동의 전 버튼 비활성화를 확인하고, 최종 게시 없이 닫았다. 원본 내용은 변경하지 않았다.
+- 곡 상세의 ‘이 곡의 이야기’가 공개 0건으로 조회되는 것을 확인했다. 실제 닉네임 등록·게시·공유 취소는 0회다.
 
 ## 재개점
 
-사용자가 `supabase/migrations/202611020004_music_record_sharing.sql`만 Supabase SQL Editor에서 1회 적용한다. 기존 001~003은 재실행하지 않는다. 이후 PR 병합·배포·실기기 확인을 수행한다. 실제 개인 일지를 임의로 공개하지 않으며, production 공개 canary는 테스트 문구·닉네임·공개 범위를 사용자에게 확인받은 뒤 수행한다.
+기능은 production에 배포됐다. 기존 001~004 migration과 PR 병합·배포를 반복하지 않는다. 실제 개인 일지는 사용자가 직접 선택·미리보기·동의 후 게시한다. 에이전트의 production 공개 canary가 필요하면 테스트 문구·닉네임·공개 범위를 사용자에게 확인받은 뒤 수행한다. 실제 게시·공유 취소는 격리 검증만 완료했으며 운영에서 실행하지 않았다.
 
 이전 비공개 기록 작업은 [보관본](docs/collaboration/archive/CA-PRIVATE-MUSIC-JOURNAL-20261102-001/CURRENT_TASK.md)에 종료 상태를 보존했다.

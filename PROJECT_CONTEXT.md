@@ -1,6 +1,6 @@
 # 현재 기록 목록·선택 공유 작업 — 2026-11-02
 
-CA-MUSIC-RECORD-SHARING-20261102-001, codex/ca-music-record-sharing-20261102-001. 보관함의 내 음악 기록 전체 목록과 공개용 닉네임·미리보기·명시적 공개·공유 취소를 구현했다. 원본은 비공개로 유지하며 공개본은 별도 snapshot이다. 공개본의 계정/원본 식별 열은 column privileges로 차단하고, 게시/취소는 본인 RPC만 허용한다. 원본 수정은 공개본을 바꾸지 않고 원본/계정 삭제는 공유본도 삭제한다. 전체 132개 테스트/build PASS. 004 SQL 운영 적용 전이라 production 배포는 하지 않는다. CURRENT_TASK/HANDOFF를 따른다.
+CA-MUSIC-RECORD-SHARING-20261102-001, PR #16, production SHA `27dda4f971d5ccb54d97fbcaadd01f5338e8dc68`. 사용자 004 SQL 적용 보고 후 내 음악 기록 목록·선택 공유를 배포했다. 전체 132개 테스트/build PASS. production에서 보관 해제 곡의 기록 조회·닉네임/공유 상태 읽기·미게시 미리보기·공개 0건 목록을 확인했다. 실제 게시/공유 취소는 개인정보 보호를 위해 미실행이며 격리 SQL/DOM으로만 검증했다. 원본은 비공개 유지, 공개본은 별도 snapshot이며 원본/계정 삭제 시 공유본도 삭제한다. CURRENT_TASK/HANDOFF를 따른다.
 
 # 완료된 비공개 음악 기록 작업 — 2026-11-02
 
