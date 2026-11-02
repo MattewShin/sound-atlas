@@ -16,8 +16,9 @@ const readJson = (storage, key, fallback) => {
 }
 const activeIds = new Set(tracks.map(({ id }) => id))
 const currentId = (id) => activeIds.has(id) ? id : Object.hasOwn(legacyTrackIdMap, id) ? legacyTrackIdMap[id] : undefined
+const legacyEmotionLabels = { '편안한': 'peacefulness', '긴장감 있는': 'tension' }
 export const migrateSelectedEmotions = (values) => [...new Set((Array.isArray(values) ? values : []).map((value) => {
-  if (value === '편안한') return 'peacefulness'
+  if (Object.hasOwn(legacyEmotionLabels, value)) return legacyEmotionLabels[value]
   return emotionKeys.includes(value) ? value : emotions.find(({ label }) => label === value)?.key
 }).filter(Boolean))].slice(0, 3)
 
