@@ -38,3 +38,12 @@ export function FeaturedTrackCard({ track, basis, kicker = '오늘의 대표 곡
     {trackDetails[track.id]?.shortPreview ? <button className="play-button" type="button" aria-label="미리듣기" onClick={(event) => { event.stopPropagation(); onOpenShort(track) }}><CardIcon play /></button> : <p className="preview-pending">미리듣기 준비 중</p>}
   </article>
 }
+
+export function RelatedRecommendations({ relatedTracks, onOpenTrack, onSeeAll }) {
+  if (!relatedTracks.length) return null
+  return <section className="similar-section" aria-labelledby="similar-title">
+    <div className="section-heading inline-heading"><div><p>MORE TO EXPLORE</p><h2 id="similar-title">비슷한 결의 음악</h2></div><span>옆으로 넘겨보세요</span></div>
+    <div className="similar-list">{relatedTracks.slice(0, 8).map((track) => <MiniTrackCard key={track.id} track={track} onOpenTrack={onOpenTrack} />)}</div>
+    <button className="recommendations-see-all" type="button" onClick={onSeeAll}>추천곡 더 보기 <span aria-hidden="true">→</span></button>
+  </section>
+}

@@ -16,7 +16,8 @@ import { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } fr
 import useHomeDiscovery from './components/useHomeDiscovery.js'
 import ComposerPicker from './components/ComposerPicker.jsx'
 import ReferenceTrackExplorer from './components/ReferenceTrackExplorer.jsx'
-import { FeaturedTrackCard, MiniArtwork, MiniTrackCard, TrackAlias } from './components/TrackCards.jsx'
+import { FeaturedTrackCard, MiniArtwork, MiniTrackCard, RelatedRecommendations, TrackAlias } from './components/TrackCards.jsx'
+export { RelatedRecommendations } from './components/TrackCards.jsx'
 export { default as ReferenceTrackExplorer } from './components/ReferenceTrackExplorer.jsx'
 import { describeComposerConditions, filterTracksByComposers, getComposerOptions } from './data/composerSelection.js'
 import useGoogleAuth from './components/useGoogleAuth.js'
@@ -52,16 +53,7 @@ const describeRecommendationMatch = (track, selectedKeys) => {
   return matched.length ? `${matched.map(emotionLabel).join(' · ')} 감정과 잘 맞는 곡` : '보관한 곡과 감정 성향이 비슷한 곡'
 }
 
-export function RelatedRecommendations({ relatedTracks, onOpenTrack, onSeeAll }) {
-  if (!relatedTracks.length) return null
-  return <section className="similar-section" aria-labelledby="similar-title">
-    <div className="section-heading inline-heading"><div><p>MORE TO EXPLORE</p><h2 id="similar-title">비슷한 결의 음악</h2></div><span>옆으로 넘겨보세요</span></div>
-    <div className="similar-list">{relatedTracks.slice(0, 8).map((track) => <MiniTrackCard key={track.id} track={track} onOpenTrack={onOpenTrack} />)}</div>
-    <button className="recommendations-see-all" type="button" onClick={onSeeAll}>추천곡 더 보기 <span aria-hidden="true">→</span></button>
-  </section>
-}
-
-export function RecommendationListScreen({ recommendedTracks, selectedKeys = [], selectedComposers = [], onExpandComposers, isLibraryMode = false, visibleCount = 20, onLoadMore, onBack, onOpenTrack, isTrackSaved, onToggleSave }) {
+export function RecommendationListScreen({ recommendedTracks, selectedKeys = [], selectedComposers = [], onExpandComposers, isLibraryMode = false, description, visibleCount = 20, onLoadMore, onBack, onOpenTrack, isTrackSaved, onToggleSave }) {
   const headingRef = useRef(null)
   useEffect(() => { headingRef.current?.focus({ preventScroll: true }) }, [])
   const visibleTracks = recommendedTracks.slice(0, visibleCount)
@@ -70,7 +62,7 @@ export function RecommendationListScreen({ recommendedTracks, selectedKeys = [],
     <header className="library-header recommendation-list-header">
       <button className="recommendation-back" type="button" onClick={onBack}>← 음악 탐색으로</button>
       <p>FOR YOU</p><h1 ref={headingRef} tabIndex={-1}>전체 추천곡</h1>
-      <span>{isLibraryMode ? '보관한 곡과 비슷한 음악을 모았어요.' : selectedKeys.map(emotionLabel).join(' · ')}</span>
+      <span>{description ?? (isLibraryMode ? '보관한 곡과 비슷한 음악을 모았어요.' : selectedKeys.map(emotionLabel).join(' · '))}</span>
       {selectedComposers.length > 0 && <div className="composer-result"><p>{describeComposerConditions(selectedComposers, isLibraryMode ? [] : selectedKeys)}</p><button type="button" onClick={onExpandComposers}>전체 작곡가로 넓히기</button></div>}
       <strong>총 {recommendedTracks.length}곡</strong>
     </header>
@@ -339,6 +331,8 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   const [explorationLevel, setExplorationLevel] = useState('beginner')
   const [referenceTrackId, setReferenceTrackId] = useState(null)
   const [referenceRecommendationMode, setReferenceRecommendationMode] = useState('search')
+  const [referenceFeaturedId, setReferenceFeaturedId] = useState(null)
+  const [referenceList, setReferenceList] = useState(null)
   const [recommendationInput, setRecommendationInput] = useState('music')
   const [currentFeeling, setCurrentFeeling] = useState(null)
   const [selectedKeys, setSelectedKeys] = useState([])
@@ -503,8 +497,8 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     if (activeView !== 'concert' && recommendationMode === 'library' && !libraryPreference.isActive) setRecommendationMode('keyword')
   }, [activeView, recommendationMode, libraryPreference.isActive])
   useEffect(() => {
-    if (!libraryPreference.isActive) setReferenceRecommendationMode('search')
-  }, [libraryPreference.isActive])
+    if (!libraryPreference.isActive && referenceRecommendationMode === 'library') { setReferenceRecommendationMode('search'); setReferenceFeaturedId(null) }
+  }, [libraryPreference.isActive, referenceRecommendationMode])
   useEffect(() => {
     if (!isDetailOpen) return undefined
     const previousOverflow = document.body.style.overflow
@@ -636,7 +630,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
         <p className="date-note">오늘의 음악 탐색</p><h1>오늘은 어떤 음악을<br />만나고 싶나요?</h1><div className="header-orbit orbit-one" /><div className="header-orbit orbit-two" />
       </header>
       <main>
-        {explorationLevel === 'experienced' ? <ReferenceTrackExplorer tracks={tracks} referenceId={referenceTrackId} onSelectReference={(id) => { setReferenceTrackId(id); setReferenceRecommendationMode('search') }} onOpenTrack={openTrackDetail} onToggleSave={toggleTrackSave} isTrackSaved={isTrackSaved} onOpenShort={openHighlightShort} discovery={discovery} libraryPreference={libraryPreference} mode={referenceRecommendationMode} onChangeMode={setReferenceRecommendationMode} /> : <>
+        {explorationLevel === 'experienced' ? <ReferenceTrackExplorer tracks={tracks} referenceId={referenceTrackId} onSelectReference={(id) => { setReferenceTrackId(id); setReferenceRecommendationMode('search'); setReferenceFeaturedId(null) }} onOpenTrack={openTrackDetail} onToggleSave={toggleTrackSave} isTrackSaved={isTrackSaved} onOpenShort={openHighlightShort} discovery={discovery} libraryPreference={libraryPreference} mode={referenceRecommendationMode} onChangeMode={(mode) => { setReferenceRecommendationMode(mode); setReferenceFeaturedId(null) }} featuredId={referenceFeaturedId} onSelectFeatured={setReferenceFeaturedId} onSeeAll={(items, personal) => { setReferenceList({ tracks: items, personal, count: 20 }); setActiveView('reference-recommendations'); window.scrollTo({ top: 0 }) }} /> : <>
         <section className="mood-section" aria-labelledby="mood-title">
           <div className="section-heading"><p>MOOD</p><h2 id="mood-title">음악을 어떻게 고르고 싶나요?</h2></div>
           <ComposerPicker composers={composerOptions} selected={selectedComposers} onApply={applyComposers} />
@@ -677,12 +671,13 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
       ? <WeeklySelectionScreen key={weeklyEntry.id} entry={weeklyEntry} detail={trackDetails[weeklyEntry.trackId]} isSaved={isTrackSaved(weeklyEntry.trackId)} onBack={weeklyStory.from === 'archive' ? openWeeklyArchive : returnToExplore} onToggleSave={toggleTrackSave} onOpenTrack={openTrackDetail} saveFeedback={saveFeedback?.trackId === weeklyEntry.trackId ? saveFeedback.message : null} PreviewPlayer={YouTubeShortEmbed} />
       : <main className="weekly-screen"><h1>지금은 읽을 수 없는 소개예요</h1><button className="weekly-link" type="button" onClick={returnToExplore}>음악 탐색으로</button></main>
       : activeView === 'weekly-archive' ? <WeeklyArchiveScreen entries={weeklyState.archive} onOpen={(id) => openWeeklyStory(id, 'archive')} onBack={returnToExplore} />
+      : activeView === 'reference-recommendations' && referenceList ? <RecommendationListScreen recommendedTracks={referenceList.tracks} isLibraryMode={referenceList.personal} description={referenceList.personal ? '보관한 곡과 비슷한 음악을 모았어요.' : '검색한 곡과 감정 성향이 비슷한 음악을 모았어요.'} visibleCount={referenceList.count} onLoadMore={() => setReferenceList((list) => ({ ...list, count: list.count + 20 }))} onBack={returnToExplore} onOpenTrack={(track) => { setReferenceFeaturedId(track.id); setActiveView('explore'); window.requestAnimationFrame(() => document.querySelector('.reference-featured-section')?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })) }} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} />
       : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} selectedComposers={selectedComposers} onExpandComposers={expandComposers} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetailId
       ? <ConcertDetailScreen detail={concertSearch.detail} onBack={showConcerts} onRetry={() => concertSearch.loadDetail(concertDetailId, true)} />
       : <ConcertScreen search={concertSearch.search} region={concertRegion} onSelectRegion={changeConcertRegion} period={concertPeriod} onChangePeriod={changeConcertPeriod} keyword={concertKeyword} onChangeKeyword={setConcertKeyword} onSearch={concertSearch.runSearch} onLoadMore={concertSearch.loadMore} onOpenConcert={openConcert} onGoExplore={returnToExplore} />
       : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} auth={auth} syncStatus={librarySyncStatus} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} auth={auth} />}
     <nav className="bottom-nav" aria-label="주요 메뉴">
-      <button className={'nav-item ' + (['explore', 'recommendations', 'weekly-story', 'weekly-archive'].includes(activeView) ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
+      <button className={'nav-item ' + (['explore', 'recommendations', 'reference-recommendations', 'weekly-story', 'weekly-archive'].includes(activeView) ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
       <button className={'nav-item ' + (activeView === 'concert' ? 'active' : '')} type="button" onClick={showConcerts}><Icon name="stage" /><span>공연 찾기</span></button>
       <button className={'nav-item ' + (activeView === 'library' ? 'active' : '')} type="button" onClick={() => setActiveView('library')}><Icon name="bookmarkSmall" /><span>보관함</span></button>
       <button className={'nav-item ' + (activeView === 'taste' ? 'active' : '')} type="button" onClick={() => setActiveView('taste')}><Icon name="user" /><span>나의 취향</span></button>
