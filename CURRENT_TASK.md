@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-EXPLORER-UI-20261102-001
 - 명세 버전: 1 / 초보자·숙련자 UI 정리
-- 상태: IMPLEMENTED / 전체 테스트·build 완료, 배포 확인 대기
+- 상태: IMPLEMENTED / main 병합·production 배포·운영 화면 확인 완료
 - 브랜치: codex/ca-explorer-ui-20261102-001
 - 시작 main SHA: `5c5336563f892f3e0ee4457d1854fabb5e0ac87b`
 - 기록일: 2026-11-02 Asia/Seoul
@@ -20,7 +20,8 @@
 
 - 한·영 검색·페이지 추가·명시적 선택·모드 전환·랜덤 재진입·대표 카드 저장/미리듣기·취향/기준곡 복원·기존 기능 회귀 테스트.
 - 전체 테스트 140/140 PASS (fail 0·skip 0), production build PASS. 변경 파일만 게시한다.
-- PR 병합·Vercel 상태·운영 화면에서 토글/예시 제거/랜덤 카드/대표 카드 흐름 확인.
+- [PR #18](https://github.com/MattewShin/sound-atlas/pull/18) 병합 SHA `bfec1d6261035c01f29dea38e9802c7713850760`, Vercel success 확인.
+- 운영 화면에서 토글 168×44px/키보드 Space 전환, placeholder·예시 없음, 랜덤 4곡·추천 방식 버튼 없음, 검색 후보 직접 선택 후 FOR YOU 대표 카드와 검색 음악/내 취향 전환·기준곡 복원을 확인했다.
 - 실제 사용자 보관함·개인 기록·공개 글의 운영 쓰기는 수행하지 않는다.
 
 ## 이전 작업
