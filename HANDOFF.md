@@ -1,9 +1,9 @@
 # 작업 인계
 
-- 작업 ID: CA-PWA-20261030-001 / 명세4
+- 작업 ID: CA-PWA-20261030-001 / 명세5
 - 상태: IMPLEMENTED / production 배포 검증 대기
 - 작성: 웹 GPT / 2026-10-30 KST
-- 브랜치: codex/ca-pwa-20261030-001-keyword-center
+- 브랜치: codex/ca-pwa-20261030-001-keyword-row-height
 - 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
 
 ## 구현 결과
@@ -75,6 +75,19 @@ PR #6을 main에 병합했고 production SHA는 `3244388d7aada347d1603702c011b55
 | 전체 `npm test` | 114/114 PASS, fail0/skip0, 약 9.68초 |
 | production build | PASS, 약 2.00초 |
 | 비변경 | React 동작·KOPIS API·DB·Service Worker·예약 |
+
+## 명세 5 수정
+
+실기기 화면에서 `긴장감 있는`이 두 줄로 렌더링되자 CSS Grid의 기본 `stretch` 때문에 같은 가로줄의 `힘찬·애잔한` 버튼도 같은 높이로 늘어났다. 키워드 목록에 `align-items: start`를 적용해 긴 문구만 필요한 높이를 사용하고 나머지 버튼은 기존 최소 높이를 유지한다.
+
+| 명세 5 검증 | 결과 |
+|---|---|
+| 모바일 타이포그래피 직접 테스트 | 6/6 PASS |
+| 전체 테스트 | 116/116 PASS, fail 0, skip 0 |
+| production build | PASS |
+| 비변경 | 추천 동작·KOPIS API·DB·Service Worker·예약 |
+
+PR #8을 main에 병합했다. production SHA `22f22c5078a111ba62adffccc5ff1464b1c2a1c4`의 Vercel status success와 production CSS `index-DQu4ZdAI.css`의 `place-items:center`, 대칭 `padding:8px 22px` 반영을 확인했다.
 
 production 배포 후 홈 화면 PWA를 완전히 종료·재실행하고 시작일·종료일·공연명 입력의 좌우 끝과 높이가 같은지 확인한다.
 

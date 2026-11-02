@@ -46,6 +46,11 @@ test('느낌·기분 키워드는 선택 체크와 무관하게 박스 정중앙
   assert.match(css, /\.keyword-choice-list button\.selected::after \{[^}]*position:\s*absolute[^}]*right:\s*7px/s)
 })
 
+test('두 줄 키워드는 같은 가로줄의 다른 버튼 높이를 늘리지 않는다', () => {
+  assert.match(css, /\.keyword-choice-list \{[^}]*align-items:\s*start/s)
+  assert.match(css, /\.feeling-choice-list \{[^}]*align-items:\s*start/s)
+})
+
 test('주요 모바일 텍스트 색상은 밝은 기본 배경에서 WCAG AA 4.5:1 이상이다', () => {
   for (const color of ['#263b36', '#53635b', '#667269']) {
     assert.ok(contrast(color, '#f7f3eb') >= 4.5, `${color}: ${contrast(color, '#f7f3eb').toFixed(2)}`)
