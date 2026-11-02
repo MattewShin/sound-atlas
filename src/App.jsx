@@ -16,6 +16,7 @@ import { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } fr
 import useHomeDiscovery from './components/useHomeDiscovery.js'
 import ComposerPicker from './components/ComposerPicker.jsx'
 import ReferenceTrackExplorer from './components/ReferenceTrackExplorer.jsx'
+import { FeaturedTrackCard, MiniArtwork, MiniTrackCard, TrackAlias } from './components/TrackCards.jsx'
 export { default as ReferenceTrackExplorer } from './components/ReferenceTrackExplorer.jsx'
 import { describeComposerConditions, filterTracksByComposers, getComposerOptions } from './data/composerSelection.js'
 import useGoogleAuth from './components/useGoogleAuth.js'
@@ -49,26 +50,6 @@ const describeRecommendationMatch = (track, selectedKeys) => {
   if (selectedKeys.length > 1 && metrics?.minimum >= 3) return `${selectedKeys.map(emotionLabel).join(' · ')} 감정이 고르게 어울리는 곡`
   if (matched.length && metrics?.dominance >= 0.75) return `선택한 ${matched.map(emotionLabel).join(' · ')} 감정이 특히 두드러지는 곡`
   return matched.length ? `${matched.map(emotionLabel).join(' · ')} 감정과 잘 맞는 곡` : '보관한 곡과 감정 성향이 비슷한 곡'
-}
-
-function TrackAlias({ track }) {
-  return track.alias ? <span className="track-alias">{' '}[{track.alias}]</span> : null
-}
-
-function MiniArtwork({ track }) {
-  const imageSrc = composerImages[track.composer]
-
-  return (
-    <span className={`mini-art ${track.tone} ${imageSrc ? 'has-composer-image' : ''}`}>
-      {imageSrc ? <img src={imageSrc} alt={`${track.composer} 초상`} /> : <i />}
-    </span>
-  )
-}
-
-function MiniTrackCard({ track, onOpenTrack }) {
-  return <button className="mini-track" data-track-id={track.id} type="button" onClick={() => onOpenTrack(track)}>
-    <MiniArtwork track={track} /><span className="mini-copy"><b>{track.composer}</b><strong>{formatTrackTitle(track)}<TrackAlias track={track} /></strong><small>{track.tags.join(' · ')}</small></span>
-  </button>
 }
 
 export function RelatedRecommendations({ relatedTracks, onOpenTrack, onSeeAll }) {
@@ -357,6 +338,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   const [recommendationMode, setRecommendationMode] = useState('keyword')
   const [explorationLevel, setExplorationLevel] = useState('beginner')
   const [referenceTrackId, setReferenceTrackId] = useState(null)
+  const [referenceRecommendationMode, setReferenceRecommendationMode] = useState('search')
   const [recommendationInput, setRecommendationInput] = useState('music')
   const [currentFeeling, setCurrentFeeling] = useState(null)
   const [selectedKeys, setSelectedKeys] = useState([])
@@ -415,8 +397,8 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   [isLibraryMode, libraryPreference, candidateTracks, recommendationInput, diversifiedKeywordRecommendations, recommendation])
   const discoveryCandidates = useMemo(() => getRecommendationResult(tracks).tracks, [])
   const discovery = useHomeDiscovery({ candidates: discoveryCandidates, activeView,
-    conditionKey: JSON.stringify([recommendationInput, currentFeeling, activeKeys, selectedComposers, isLibraryMode ? 'library' : 'keyword']),
-    enabled: explorationLevel === 'beginner' && isInitialExploration, isLoggedIn })
+    conditionKey: JSON.stringify([explorationLevel, recommendationInput, currentFeeling, activeKeys, selectedComposers, isLibraryMode ? 'library' : 'keyword']),
+    enabled: explorationLevel === 'beginner' ? isInitialExploration : !referenceTrackId, isLoggedIn })
   const selectedRecommendationTrack = recommendedTracks.find((track) => track.id === selectedTrackId)
   const selectedTrack = selectedRecommendationTrack ?? (isLibraryMode || !activeKeys.length ? recommendedTracks[0]
     : featuredKeywordTrack ?? (selectedComposers.length ? recommendedTracks[0] : undefined))
@@ -521,6 +503,9 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     if (activeView !== 'concert' && recommendationMode === 'library' && !libraryPreference.isActive) setRecommendationMode('keyword')
   }, [activeView, recommendationMode, libraryPreference.isActive])
   useEffect(() => {
+    if (!libraryPreference.isActive) setReferenceRecommendationMode('search')
+  }, [libraryPreference.isActive])
+  useEffect(() => {
     if (!isDetailOpen) return undefined
     const previousOverflow = document.body.style.overflow
     const closeOnEscape = (event) => { if (event.key === 'Escape' && !isShortOpen) closeTrackDetail() }
@@ -588,7 +573,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   }
   const openTrackDetail = (track) => {
     window.clearTimeout(detailCloseTimer.current)
-    if (isLibraryMode) setSelectedTrackId(track.id)
+    if (explorationLevel === 'beginner' && isLibraryMode) setSelectedTrackId(track.id)
     setDetailTrack(track)
     window.requestAnimationFrame(() => setIsDetailOpen(true))
   }
@@ -645,14 +630,13 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     {activeView === 'explore' ? <>
       <header className="top-header" id="top">
         <div className="topbar"><a className="brand" href="#top">MY PIANO MOOD</a></div>
-        <div className="exploration-level-switch" role="group" aria-label="음악 탐색 경로">
-          <button type="button" aria-pressed={explorationLevel === 'beginner'} onClick={() => setExplorationLevel('beginner')}><strong>초보자</strong><span>느낌·기분으로 찾기</span></button>
-          <button type="button" aria-pressed={explorationLevel === 'experienced'} onClick={() => setExplorationLevel('experienced')}><strong>숙련자</strong><span>아는 곡으로 찾기</span></button>
-        </div>
+        <button className="exploration-level-switch" type="button" role="switch" aria-label="숙련자 모드" aria-checked={explorationLevel === 'experienced'} onClick={() => setExplorationLevel((level) => level === 'beginner' ? 'experienced' : 'beginner')}>
+          <span aria-hidden="true">초보자</span><span aria-hidden="true">숙련자</span>
+        </button>
         <p className="date-note">오늘의 음악 탐색</p><h1>오늘은 어떤 음악을<br />만나고 싶나요?</h1><div className="header-orbit orbit-one" /><div className="header-orbit orbit-two" />
       </header>
       <main>
-        {explorationLevel === 'experienced' ? <ReferenceTrackExplorer tracks={tracks} referenceId={referenceTrackId} onSelectReference={setReferenceTrackId} onOpenTrack={openTrackDetail} onToggleSave={toggleTrackSave} isTrackSaved={isTrackSaved} /> : <>
+        {explorationLevel === 'experienced' ? <ReferenceTrackExplorer tracks={tracks} referenceId={referenceTrackId} onSelectReference={(id) => { setReferenceTrackId(id); setReferenceRecommendationMode('search') }} onOpenTrack={openTrackDetail} onToggleSave={toggleTrackSave} isTrackSaved={isTrackSaved} onOpenShort={openHighlightShort} discovery={discovery} libraryPreference={libraryPreference} mode={referenceRecommendationMode} onChangeMode={setReferenceRecommendationMode} /> : <>
         <section className="mood-section" aria-labelledby="mood-title">
           <div className="section-heading"><p>MOOD</p><h2 id="mood-title">음악을 어떻게 고르고 싶나요?</h2></div>
           <ComposerPicker composers={composerOptions} selected={selectedComposers} onApply={applyComposers} />
@@ -679,12 +663,9 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
           {!isInitialExploration && !isLibraryMode && recommendation.hasFewCandidates && <p className="recommendation-result-notice">이 느낌의 곡은 {recommendedTracks.length}곡이에요. 다른 느낌도 골라보세요.</p>}
           {isInitialExploration ? <>
             <p className="starter-label">피아노 음악 만나기</p><div key={discovery.revision} className="similar-list starter-carousel" data-discovery-revision={discovery.revision}>{discovery.tracks.map((track) => <MiniTrackCard key={track.id} track={track} onOpenTrack={openTrackDetail} />)}</div>
-          </> : selectedTrack ? <article className={'featured-track ' + selectedTrack.tone} role="button" tabIndex="0" aria-label={formatTrackTitle(selectedTrack) + ' 상세 보기'} onClick={() => openTrackDetail(selectedTrack)} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openTrackDetail(selectedTrack) } }}>
-            <div className="track-card-top"><div className="recommendation-basis">{isLibraryMode ? <small className="library-recommendation-label">보관함 기반 추천 · 감정 성향 유사도</small> : <span>{activeKeys.length ? `선택한 음악 느낌: ${activeKeys.map(emotionLabel).join(' · ')}` : describeComposerConditions(selectedComposers)}</span>}<small>{isLibraryMode ? '보관한 곡과 비슷한 감정의 새로운 곡이에요.' : activeKeys.length ? describeRecommendationMatch(selectedTrack, activeKeys) : '선택한 작곡가의 곡을 둘러보세요.'}</small></div><button type="button" onClick={(event) => { event.stopPropagation(); toggleTrackSave(selectedTrack.id) }} aria-label={formatTrackTitle(selectedTrack) + (isTrackSaved(selectedTrack.id) ? ' 보관 해제' : ' 보관함에 담기')} aria-pressed={isTrackSaved(selectedTrack.id)}><Icon name="bookmark" filled={isTrackSaved(selectedTrack.id)} /></button></div>
-            <div className="featured-artwork"><MiniArtwork track={selectedTrack} /></div>
-            <div className="track-copy"><p className="track-kicker">{selectedRecommendationTrack ? '선택한 추천 곡' : '오늘의 대표 곡'}</p><p className="composer">{selectedTrack.composer}</p><h2>{formatTrackTitle(selectedTrack)}<TrackAlias track={selectedTrack} /></h2><p className="track-description">{selectedTrack.description}</p><div className="tag-list">{selectedTrack.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div></div>
-            {trackDetails[selectedTrack.id]?.shortPreview ? <button className="play-button" type="button" aria-label="미리듣기" onClick={(event) => { event.stopPropagation(); openHighlightShort(selectedTrack) }}><Icon name="play" /></button> : <p className="preview-pending">미리듣기 준비 중</p>}
-          </article> : <div className="library-empty"><h2>{isLibraryMode ? '모든 곡을 보관했어요' : '이 느낌에 맞는 곡이 아직 없어요'}</h2><p>{isLibraryMode ? '보관함에서 담아둔 곡을 만나보세요.' : '다른 음악 느낌을 골라보세요.'}</p><button type="button" onClick={returnToMusicKeywords}>음악 키워드로 돌아가기</button></div>}
+          </> : selectedTrack ? <FeaturedTrackCard track={selectedTrack} isSaved={isTrackSaved(selectedTrack.id)} onOpenTrack={openTrackDetail} onToggleSave={toggleTrackSave} onOpenShort={openHighlightShort}
+            kicker={selectedRecommendationTrack ? '선택한 추천 곡' : '오늘의 대표 곡'}
+            basis={<>{isLibraryMode ? <small className="library-recommendation-label">보관함 기반 추천 · 감정 성향 유사도</small> : <span>{activeKeys.length ? `선택한 음악 느낌: ${activeKeys.map(emotionLabel).join(' · ')}` : describeComposerConditions(selectedComposers)}</span>}<small>{isLibraryMode ? '보관한 곡과 비슷한 감정의 새로운 곡이에요.' : activeKeys.length ? describeRecommendationMatch(selectedTrack, activeKeys) : '선택한 작곡가의 곡을 둘러보세요.'}</small></>} /> : <div className="library-empty"><h2>{isLibraryMode ? '모든 곡을 보관했어요' : '이 느낌에 맞는 곡이 아직 없어요'}</h2><p>{isLibraryMode ? '보관함에서 담아둔 곡을 만나보세요.' : '다른 음악 느낌을 골라보세요.'}</p><button type="button" onClick={returnToMusicKeywords}>음악 키워드로 돌아가기</button></div>}
         </section>
         {!isInitialExploration && <RelatedRecommendations key={recommendationQuery} relatedTracks={relatedTracks} onOpenTrack={selectRelatedTrack} onSeeAll={openRecommendationList} />}
         {!isInitialExploration && selectedTrack && relatedTracks.length === 0 && <div className="recommendations-single-link"><button className="recommendations-see-all" type="button" onClick={openRecommendationList}>추천곡 더 보기 <span aria-hidden="true">→</span></button></div>}
