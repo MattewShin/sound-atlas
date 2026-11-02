@@ -20,6 +20,7 @@ export function ConcertScreen({search,region,onSelectRegion,period,onChangePerio
  return <><header className="concert-coming-header" id="concert-top"><div className="concert-topbar"><p>ON STAGE</p></div><h1>공연 찾기</h1><span>가까운 날, 가까운 곳에서<br/>클래식 공연을 만나보세요.</span></header>
  <main className="concert-main concert-browser-main"><ConcertSearchForm {...{region,onSelectRegion,period,onChangePeriod,keyword,onChangeKeyword,onSearch,search}}/>
   <section className="concert-search-results" aria-label="클래식 공연 목록" aria-busy={busy}>
+   {search.status==='idle'&&<p className="concert-empty">지역과 날짜를 확인한 뒤 공연 조회를 눌러주세요.</p>}
    {changed&&<p role="status">조건이 바뀌었어요. 공연 조회를 누르면 새 조건으로 찾아요. 아래는 이전 조건의 목록이에요.</p>}
    {search.status==='loading'&&<p role="status">KOPIS 공연 정보를 불러오고 있어요.</p>}
    {search.error&&<div className="concert-search-error" role="alert"><p>{search.error}</p><button type="button" onClick={()=>data?onLoadMore():onSearch({region,...period,q:keyword,page:1},true)}>다시 시도</button>{data&&<p>추가 조회에 실패했어요. 앞서 조회한 목록을 표시하고 있어요.</p>}</div>}
