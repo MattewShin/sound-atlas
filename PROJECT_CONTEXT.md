@@ -1,4 +1,8 @@
-# 현재 개인정보·보안 작업 — 2026-11-02
+# 현재 비공개 음악 기록 작업 — 2026-11-02
+
+CA-PRIVATE-MUSIC-JOURNAL-20261102-001, codex/ca-private-music-journal-20261102-001. 곡 상세의 로그인 사용자 전용 ‘나의 음악 기록’을 구현했다. 날짜·자유/연습/감상/사색·4,000자 본문, 곡별 다건 작성/수정/삭제·10건 페이지, RLS·소유자 RPC·revision 충돌 차단을 사용한다. 본문은 기기 저장·공유·추천 입력에 사용하지 않는다. 보관 해제와 독립이며 계정 삭제 시 cascade한다. 전체 128개 테스트/build 통과. 신규 003 migration 운영 적용 전이라 production 배포는 하지 않는다. CURRENT_TASK/HANDOFF를 따른다.
+
+# 완료된 개인정보·보안 작업 — 2026-11-02
 
 CA-PRIVACY-SECURITY-20261102-001, PR #12, production SHA `875a6bec7440fa34225341e9fd8024bc92c63fc9`. 로그아웃 로컬 격리, 본인 계정 삭제, 직접 DML 회수, 보안 헤더, 개인정보 안내를 배포했고 전체 124개 테스트·build·production dependency audit가 통과했다. 문의처와 Supabase Sydney 지역을 반영했으며, 기존 로그아웃 뒤 남아 있던 3곡과 취향이 production에서 0개로 정리되는 것을 확인해 OPERATIONAL로 완료했다. 최신 CURRENT_TASK/HANDOFF를 따른다.
 

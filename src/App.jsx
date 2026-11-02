@@ -17,6 +17,8 @@ import useHomeDiscovery from './components/useHomeDiscovery.js'
 import ComposerPicker from './components/ComposerPicker.jsx'
 import { describeComposerConditions, filterTracksByComposers, getComposerOptions } from './data/composerSelection.js'
 import useGoogleAuth from './components/useGoogleAuth.js'
+import MusicJournal from './components/MusicJournal.jsx'
+export { default as MusicJournal } from './components/MusicJournal.jsx'
 import { supabase } from './lib/supabaseClient.js'
 import { clearAccountLocalData, readLibraryOwner, saveLibraryOwner, syncUserLibrary } from './data/userLibrary.js'
 export { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } from './components/WeeklySelectionScreens.jsx'
@@ -103,7 +105,7 @@ export function RecommendationListScreen({ recommendedTracks, selectedKeys = [],
   </>
 }
 
-export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen, onClose, onOpenShort, onToggleSave, saveFeedback, onGoLibrary }) {
+export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen, onClose, onOpenShort, onToggleSave, saveFeedback, onGoLibrary, auth }) {
   if (!track) return null
 
   const imageSrc = detail?.composerImage || composerImages[track.composer]
@@ -135,6 +137,7 @@ export function TrackDetailSheet({ track, detail, isSaved, selectedKeys, isOpen,
           <section className="track-detail-section"><h3>이 곡은 어떤 곡인가요?</h3><p>{about}</p></section>
           <section className="track-detail-section"><h3>감상 포인트</h3><p>{listeningTip}</p></section>
           {highlight && <section className="track-detail-section track-detail-highlight"><h3>감상 하이라이트</h3><div className="track-detail-highlight-card"><strong>{highlight.title}</strong><p>{highlight.description}</p></div></section>}
+          {isOpen && <MusicJournal auth={auth} trackId={track.id} />}
           <section className="library-save-section" aria-label="보관함에 곡 저장"><p>다시 찾아 듣고 싶은 곡을 보관해보세요.</p><button className={`library-save-button ${isSaved ? 'saved' : ''}`} type="button" aria-pressed={isSaved} onClick={() => onToggleSave(track.id)}>{isSaved ? '✓ 보관됨' : '보관함에 담기'}</button>{saveFeedback && <p className="library-save-feedback" role="status">{saveFeedback}</p>}<div className="concert-preview">{isSaved && onGoLibrary && <button type="button" onClick={onGoLibrary}>보관함으로 가기</button>}<p>보관한 곡은 보관함에서 다시 확인할 수 있어요.</p></div></section>
           {canOpenShort ? <div className="highlight-short-cta"><p>이 곡을 영상으로 만나보세요.</p><button type="button" onClick={() => onOpenShort(track)}>음원 감상하기</button></div> : <div className="track-detail-coming-soon">미리듣기 준비 중</div>}
         </div>
@@ -266,8 +269,8 @@ export function LibraryScreen({ savedTracks, onOpenTrack, onRemoveTrack, onGoExp
 export function PrivacySummary() {
   return <div className="privacy-summary">
     <h3>개인정보 처리 안내</h3>
-    <p><b>수집·이용:</b> 로그인 식별자, 이메일·표시 이름, 보관한 곡과 수정 시각을 로그인·기기 간 동기화·개인화에 사용합니다.</p>
-    <p><b>보관:</b> 계정 삭제 전까지 저장하며, 로그아웃하면 이 기기의 계정 사본을 삭제합니다.</p>
+    <p><b>수집·이용:</b> 로그인 식별자, 이메일·표시 이름, 보관한 곡과 수정 시각을 로그인·기기 간 동기화·개인화에 사용합니다. 선택해 작성한 음악 기록의 내용·유형·날짜는 본인의 기록 보관과 기기 간 조회에만 사용하며, 공개하거나 추천 점수 계산에 사용하지 않습니다.</p>
+    <p><b>보관:</b> 계정 삭제 전까지 저장하며, 로그아웃하면 이 기기의 계정 사본을 삭제합니다. 음악 기록은 개별 삭제 또는 계정 삭제 시 삭제되며 기기 저장소에 별도 보관하지 않습니다.</p>
     <p><b>외부 서비스:</b> Google 로그인, Supabase 인증·데이터베이스, Vercel 호스팅을 사용합니다. Google access token과 Client Secret은 앱 DB에 저장하지 않습니다.</p>
     <p><b>핵심 데이터 저장 지역:</b> Supabase Oceania (Sydney), Australia. 서비스 운영 과정에서 Google·Supabase·Vercel의 국외 처리가 발생할 수 있습니다.</p>
     <p><b>이용자 권리:</b> 위의 ‘계정과 데이터 삭제’로 저장 자료와 계정을 삭제할 수 있습니다.</p>
@@ -678,7 +681,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
       <button className={'nav-item ' + (activeView === 'library' ? 'active' : '')} type="button" onClick={() => setActiveView('library')}><Icon name="bookmarkSmall" /><span>보관함</span></button>
       <button className={'nav-item ' + (activeView === 'taste' ? 'active' : '')} type="button" onClick={() => setActiveView('taste')}><Icon name="user" /><span>나의 취향</span></button>
     </nav>
-    <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={!isInitialExploration && recommendationMode !== 'library' ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} onGoLibrary={showLibrary} />
+    <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={!isInitialExploration && recommendationMode !== 'library' ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} onGoLibrary={showLibrary} auth={auth} />
     <HighlightShortView track={shortTrack} detail={shortTrack ? trackDetails[shortTrack.id] : null} isOpen={isShortOpen} onClose={closeHighlightShort} />
   </div>
 }
