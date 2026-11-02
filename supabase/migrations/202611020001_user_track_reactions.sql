@@ -1,4 +1,6 @@
 -- User-owned music reactions. Google provider tokens and profile data are never stored here.
+begin;
+
 create table public.user_track_reactions (
   user_id uuid not null references auth.users(id) on delete cascade,
   track_id text not null,
@@ -91,3 +93,5 @@ grant execute on function public.merge_user_track_reactions(jsonb) to authentica
 comment on table public.user_track_reactions is 'Per-user music reactions used for library sync and existing nine-axis taste calculation.';
 comment on function public.merge_user_track_reactions(jsonb) is 'Authenticated latest-updated-at merge; returns only auth.uid() rows.';
 notify pgrst, 'reload schema';
+
+commit;
