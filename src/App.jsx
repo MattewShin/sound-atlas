@@ -411,7 +411,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   const savedTracks = useMemo(() => tracks.filter((track) => trackReactions[track.id]?.listenAgain === true).sort((a, b) => (Date.parse(trackReactions[b.id]?.updatedAt) || 0) - (Date.parse(trackReactions[a.id]?.updatedAt) || 0)), [trackReactions])
   const isTrackSaved = (id) => trackReactions[id]?.listenAgain === true
   const openConcert = (id) => { setConcertDetailId(id); void concertSearch.loadDetail(id); setActiveView('concert'); window.scrollTo({ top: 0 }) }
-  const showConcerts = () => { setConcertDetailId(null); setActiveView('concert'); if (concertSearch.search.status === 'idle') void concertSearch.runSearch({ region: concertRegion, ...concertPeriod, q: concertKeyword, page: 1 }); window.scrollTo({ top: 0 }) }
+  const showConcerts = () => { setConcertDetailId(null); setActiveView('concert'); window.scrollTo({ top: 0 }) }
   const showLibrary = () => { closeTrackDetail(); setActiveView('library'); window.scrollTo({ top: 0 }) }
   const changeConcertRegion = (value) => setConcertRegion(value)
   const changeConcertPeriod = (value) => setConcertPeriod(value)
