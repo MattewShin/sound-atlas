@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-PRIVATE-MUSIC-JOURNAL-20261102-001
 - 명세 버전: 1 / 비공개 나의 음악 기록
-- 상태: IMPLEMENTED / 운영 migration 사용자 적용 대기, 배포 미실행
+- 상태: IN_PROGRESS / 운영 배포·저장/수정/복원 검증 완료, 검증용 기록 삭제 승인 대기
 - 브랜치: codex/ca-private-music-journal-20261102-001
 - 시작 main SHA: `04f1d75c73a0ae316ed336ff275007d9ffd673f6`
 
@@ -27,11 +27,14 @@
 - 계정 전환 중 지연된 쓰기가 새 계정에 저장되지 않도록 요청의 소유자와 인증 소유자를 비교한다.
 - 개인정보 안내에 기록의 수집 목적·삭제·비공개·추천 미사용을 반영했다.
 - 전체 테스트 128/128, fail 0·skip 0, production build PASS.
-- 신규 SQL은 격리 DB에서만 적용했다. 운영 migration·본문 쓰기·main 병합·배포 0회.
+- 사용자가 2026-11-02 KST에 003 migration 적용 완료를 보고했다. migration은 재실행하지 않았다.
+- PR #15 병합 SHA: `79666d9ff257118d7b47e7752f472ade0886f224`. Vercel production success 확인.
+- production에서 Google 로그인, 쇼팽 발라드 4번 검증용 기록 1건 저장·수정·새로고침 유지·로그아웃 시 비회원 안내 전환·재로그인 후 기록 복원을 확인했다.
+- 운영 기록 삭제는 승인 대기이며 기존 보관곡·개인 기록은 수정/삭제하지 않았다.
 - 운영 SQL 적용 후 production에서 로그인→곡 상세→작성→새로고침→수정→삭제와 로그아웃 격리를 확인하면 운영 완료다.
 
 ## 다음 단계
 
-사용자가 `supabase/migrations/202611020003_private_music_journal.sql`을 Supabase SQL Editor에 1회 적용한다. 이전 001·002 migration은 재실행하지 않는다. 적용 완료 보고 뒤 PR 병합·배포 및 실제 계정 canary를 진행한다.
+쇼팽 발라드 4번에 생성한 `[기능 검증용 기록]` 1건의 삭제를 사용자에게 확인받은 뒤 해당 기록만 삭제하고 목록 0건을 확인한다. 승인 없이 삭제하지 않는다. 기존 001~003 migration과 배포는 반복하지 않는다.
 
 이전 작업은 [보관본](docs/collaboration/archive/CA-PRIVACY-SECURITY-20261102-001/CURRENT_TASK.md)에 보존했다.
