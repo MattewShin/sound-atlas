@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-PRIVACY-SECURITY-20261102-001
 - 명세 버전: 1 / 사용자 보관함 개인정보·보안 보강
-- 상태: IN_PROGRESS / 운영 migration 사용자 적용 완료, production 배포 검증 대기
+- 상태: OPERATIONAL / main 병합·production 배포·로그아웃 격리 검증 완료
 - 브랜치: codex/ca-privacy-security-20261102-001
 - 시작 main SHA: `97785fa`
 - 요청: 실제 로그인·보관함 동기화 검증 후 개인정보·보안 보강을 별도 작업으로 진행
@@ -44,7 +44,10 @@
 - `npm audit --omit=dev`: 취약점 0건.
 - 개인정보 문의처 `ybshin09@gmail.com`과 핵심 데이터 저장 지역 `Oceania (Sydney), Australia`를 안내문에 반영했다.
 - 사용자가 2026-11-02 KST에 신규 migration `202611020002_user_account_security.sql` 적용 완료를 보고했다. 현재 실행 환경에서 관리자 연결로 적용 횟수를 독립 확인하지는 않았다.
-- main 병합·production 배포는 수행하지 않았다.
+- PR #12를 main에 병합했으며 production SHA는 `875a6bec7440fa34225341e9fd8024bc92c63fc9`다.
+- Vercel 배포 상태 `success`와 새 production 화면의 개인정보 안내를 확인했다.
+- 구버전 로그아웃 뒤 남아 있던 계정 보관곡 3개와 파생 취향이 새 배포 로드 후 0개로 정리되어 로그아웃 격리 경로를 production에서 확인했다.
+- 실제 주계정 삭제는 수행하지 않았다. 본인 삭제·타 사용자 보존은 격리 SQL 테스트로 확인했다.
 
 ## 운영 적용 기록
 
