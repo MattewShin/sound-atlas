@@ -1,4 +1,6 @@
 import { tracks } from './musicData.js'
+import { NOTICE_KEY, RECENT_KEY, STORAGE_KEY } from './storage.js'
+import { RECOMMENDATION_EXPOSURE_STORAGE_KEY } from './recommendationExposure.js'
 
 export const LIBRARY_OWNER_KEY = 'classic-atlas-library-owner-v1'
 const activeTrackIds = new Set(tracks.map(({ id }) => id))
@@ -49,6 +51,19 @@ export const readLibraryOwner = () => {
 
 export const saveLibraryOwner = (userId) => {
   try { window.localStorage.setItem(LIBRARY_OWNER_KEY, userId) } catch { /* 현재 세션 동기화는 계속합니다. */ }
+}
+
+// 계정에 연결된 행동 기록은 로그아웃·계정 삭제 뒤 비회원 화면에 남기지 않습니다.
+// 지역·공연 검색 설정처럼 계정과 무관한 기기 설정은 보존합니다.
+export const clearAccountLocalData = (storage) => {
+  try {
+    const target = storage ?? (typeof window === 'undefined' ? null : window.localStorage)
+    const accountKeys = [STORAGE_KEY, LIBRARY_OWNER_KEY, RECENT_KEY, RECOMMENDATION_EXPOSURE_STORAGE_KEY, NOTICE_KEY]
+    accountKeys
+      .forEach((key) => target?.removeItem(key))
+  } catch {
+    // 저장소 접근이 막혀도 호출자가 현재 React 상태를 비워 화면 노출을 중단합니다.
+  }
 }
 
 export async function syncUserLibrary(client, reactions, { includeLocal = true } = {}) {

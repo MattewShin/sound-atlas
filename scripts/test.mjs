@@ -100,6 +100,14 @@ test('계정 패널은 비로그인 안내와 로그인 계정·동기화 상태
   assert.ok(member.includes('listener@example.com'))
   assert.ok(member.includes('이 계정의 보관함과 취향이 동기화돼요.'))
   assert.ok(member.includes('로그아웃'))
+  assert.ok(member.includes('이 기기의 계정 보관함 사본은 삭제'))
+  assert.ok(member.includes('계정과 데이터 삭제'))
+  assert.ok(member.includes('개인정보 처리 안내'))
+  assert.ok(!member.includes('<img'))
+  const privacy = render(components.PrivacySummary)
+  assert.ok(!privacy.includes('공개 전 확인'))
+  assert.ok(privacy.includes('Oceania (Sydney), Australia'))
+  assert.ok(privacy.includes('mailto:ybshin09@gmail.com'))
 })
 
 test('느낌·기분의 선택 해제와 탭별 초기화·기분 후보 확대·직전 추천 제외·보관 시 대표곡 유지를 검증한다', async () => {

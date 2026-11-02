@@ -10,6 +10,7 @@ const messageForAuthError = (error) => {
 export default function useGoogleAuth(client = supabase) {
   const [session, setSession] = useState(null)
   const [isLoading, setIsLoading] = useState(Boolean(client))
+  const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -67,9 +68,29 @@ export default function useGoogleAuth(client = supabase) {
     }
   }, [client])
 
+  const deleteAccount = useCallback(async () => {
+    if (!client || !session?.user) return false
+    setError(null)
+    setIsDeleting(true)
+    const { error: deleteError } = await client.rpc('delete_current_user_account')
+    if (deleteError) {
+      setError('계정과 데이터를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.')
+      setIsDeleting(false)
+      return false
+    }
+
+    // 서버 계정이 먼저 삭제되므로 원격 로그아웃 실패와 무관하게 로컬 세션을 폐기합니다.
+    await client.auth.signOut({ scope: 'local' }).catch(() => undefined)
+    setSession(null)
+    setIsDeleting(false)
+    return true
+  }, [client, session?.user])
+
   return {
     configured: Boolean(client),
     error,
+    deleteAccount,
+    isDeleting,
     isLoading,
     session,
     signInWithGoogle,

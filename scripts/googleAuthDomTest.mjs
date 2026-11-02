@@ -12,18 +12,21 @@ export async function verifyGoogleAuthInteractions() {
   let listener
   let oauthOptions
   let signOutCount = 0
+  let deleteRpcCount = 0
+  let localSignOut = false
   const client = { auth: {
     getSession: async () => ({ data: { session: null }, error: null }),
     onAuthStateChange: (callback) => { listener = callback; return { data: { subscription: { unsubscribe() {} } } } },
     signInWithOAuth: async (options) => { oauthOptions = options; return { error: null } },
-    signOut: async () => { signOutCount += 1; listener('SIGNED_OUT', null); return { error: null } },
-  } }
+    signOut: async (options) => { signOutCount += 1; localSignOut = options?.scope === 'local'; listener('SIGNED_OUT', null); return { error: null } },
+  }, rpc: async (name) => { assert.equal(name, 'delete_current_user_account'); deleteRpcCount += 1; return { error: null } } }
   const Harness = () => {
     const auth = useGoogleAuth(client)
     return React.createElement('div', null,
       React.createElement('span', { id: 'state' }, auth.user?.email || (auth.isLoading ? 'loading' : 'guest')),
       React.createElement('button', { id: 'login', onClick: auth.signInWithGoogle }, 'login'),
-      React.createElement('button', { id: 'logout', onClick: auth.signOut }, 'logout'))
+      React.createElement('button', { id: 'logout', onClick: auth.signOut }, 'logout'),
+      React.createElement('button', { id: 'delete', onClick: auth.deleteAccount }, 'delete'))
   }
   let root
   const flush = async (action) => React.act(async () => { action?.(); await new Promise((resolve) => setTimeout(resolve, 0)) })
@@ -40,6 +43,11 @@ export async function verifyGoogleAuthInteractions() {
     assert.equal(dom.window.document.getElementById('state').textContent, 'listener@example.com')
     await flush(() => dom.window.document.getElementById('logout').click())
     assert.equal(signOutCount, 1)
+    assert.equal(dom.window.document.getElementById('state').textContent, 'guest')
+    await flush(() => listener('SIGNED_IN', { user: { id: 'user-a', email: 'listener@example.com' } }))
+    await flush(() => dom.window.document.getElementById('delete').click())
+    assert.equal(deleteRpcCount, 1)
+    assert.equal(localSignOut, true)
     assert.equal(dom.window.document.getElementById('state').textContent, 'guest')
   } finally {
     if (root) await flush(() => root.unmount())

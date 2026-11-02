@@ -48,8 +48,16 @@ test('service worker는 API를 캐시하지 않고 navigation 실패에만 offli
 
 test('Vercel은 service worker 재검증과 manifest MIME을 명시한다', async () => {
   const config = JSON.parse(await text('vercel.json'))
+  const security = config.headers.find((entry) => entry.source === '/(.*)')
   const worker = config.headers.find((entry) => entry.source === '/sw.js')
   const manifest = config.headers.find((entry) => entry.source === '/manifest.webmanifest')
+  const securityHeaders = Object.fromEntries(security.headers.map(({ key, value }) => [key, value]))
+  assert.match(securityHeaders['Content-Security-Policy'], /frame-ancestors 'none'/)
+  assert.match(securityHeaders['Content-Security-Policy'], /connect-src 'self' https:\/\/\*\.supabase\.co/)
+  assert.equal(securityHeaders['X-Content-Type-Options'], 'nosniff')
+  assert.equal(securityHeaders['Referrer-Policy'], 'strict-origin-when-cross-origin')
+  assert.match(securityHeaders['Permissions-Policy'], /camera=\(\)/)
+  assert.equal(securityHeaders['X-Frame-Options'], 'DENY')
   assert.ok(worker.headers.some(({ key, value }) => key === 'Cache-Control' && value.includes('must-revalidate')))
   assert.ok(worker.headers.some(({ key, value }) => key === 'Service-Worker-Allowed' && value === '/'))
   assert.ok(manifest.headers.some(({ key, value }) => key === 'Content-Type' && value.startsWith('application/manifest+json')))

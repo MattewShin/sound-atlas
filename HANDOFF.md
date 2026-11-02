@@ -1,44 +1,51 @@
 # 작업 인계
 
-- 작업 ID: CA-GOOGLE-PERSONALIZATION-20261102-001 / 명세1
-- 상태: IN_PROGRESS / 운영 migration 사용자 적용 완료·production 검증 대기
-- 작성: 웹 GPT / 2026-11-02 KST
-- 브랜치: codex/ca-google-personalization-20261102-001
-- 시작 기준: production / 1f138fc233b59d17ddecab5bc0a9b574a6a2cdd2
+- 작업 ID: CA-PRIVACY-SECURITY-20261102-001 / 명세1
+- 상태: IN_PROGRESS / 운영 migration 사용자 적용 완료, production 배포 검증 대기
+- 작성: 웹 GPT / 2026-11-02 13:53 KST
+- 브랜치: codex/ca-privacy-security-20261102-001
+- 시작 기준: main / `97785fa`
 
-## 현재 확인
+## 실제 production 검증
 
-- 앱에는 Supabase browser client와 인증 UI가 없다.
-- 보관 기록은 `classic-atlas-track-reactions-v1` localStorage에 있으며 `listenAgain`, `liked`, `updatedAt`을 사용한다.
-- 나의 취향은 보관한 활성곡 ID를 기존 9개 감정 점수로 재계산하므로 별도 취향 벡터 저장은 필요하지 않다.
-- 사용자 설정으로 Google OAuth Provider와 Vercel 공개 Config가 준비됐다.
+- Google 로그인 전 기기 보관곡 1개와 계정의 기존 2곡이 총 3곡으로 병합됐다.
+- 새로고침 뒤에도 3곡이 유지되어 로그인·DB 동기화·세션 복원을 확인했다.
+- 로그아웃 뒤 계정 보관함 3곡과 파생 취향이 비회원 화면에 남는 문제를 재현했다.
+- 테스트 뒤 cloud browser 세션은 로그아웃했다.
 
-## 구현 정책
+## 구현 결과
 
-- 내부 사용자 식별은 Supabase Auth UUID만 사용한다.
-- DB에는 사용자별 곡 반응만 저장하며 Google access/refresh token은 저장하지 않는다.
-- 최초 로그인은 로컬과 원격을 최신 수정시각 기준으로 병합하고, 이후에도 로컬 사본을 유지해 PWA·네트워크 장애 시 기존 화면을 보존한다.
-- 로그아웃 후에는 원격 동기화를 중단하고 현재 기기의 로컬 보관함을 비회원 상태에서 유지한다.
-- 운영 migration은 격리 테스트와 전체 회귀 통과 전에는 적용하지 않는다.
+- 인증 초기 확인이 완료된 뒤 계정 소유자가 남아 있는데 세션이 없으면 보관 반응·최근 곡·추천 노출·소유자 표식을 기기에서 삭제하고 React 상태도 비운다.
+- 로그인 전 소유자가 없는 비회원 보관함과 공연 지역 설정은 보존한다.
+- `delete_current_user_account()`는 인자 없이 `auth.uid()`의 계정만 삭제하고 FK cascade로 해당 보관 기록을 삭제한다.
+- 인증 사용자의 직접 INSERT/UPDATE/DELETE를 회수하고 `merge_user_track_reactions()`를 400행 상한의 SECURITY DEFINER RPC로 교체했다. SELECT RLS는 유지했다.
+- 계정 삭제는 2단계 확인 UI를 거치며, 성공 뒤 로컬 인증 세션을 폐기한다.
+- Google 프로필 이미지 외부 요청을 없애고 앱 내부 아이콘을 사용한다.
+- CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`를 Vercel 전체 응답에 추가했다.
+- 앱 내 개인정보 안내에 문의 이메일 `ybshin09@gmail.com`과 Supabase 핵심 데이터 저장 지역 `Oceania (Sydney), Australia`를 반영했다.
 
-## 결과
+## 검증
 
-- React에 Supabase PKCE 세션 복원과 Google 로그인·로그아웃을 연결했다.
-- 비회원 localStorage 보관함은 유지하며, 첫 로그인은 로컬·원격의 곡별 `updated_at` 최신값으로 병합한다.
-- 로그인 후 보관·해제는 화면과 로컬에 먼저 반영한 뒤 원격 RPC를 순차 호출한다. 실패해도 로컬 자료는 유지하고 화면에 동기화 오류를 표시한다.
-- 다른 사용자로 전환할 때 이전 계정 소유 로컬 자료를 새 계정에 업로드하지 않는다.
-- DB에는 Supabase Auth UUID·곡 ID·보관/좋아요·수정시각만 저장한다. Google token·secret·이메일은 저장하지 않는다.
-- `202611020001_user_track_reactions.sql` 격리 적용에서 익명 차단, 두 사용자 RLS 분리, 오래된 쓰기 차단, 본인 CRUD를 확인했다.
-- Google OAuth 시작·callback URL·세션 이벤트·로그아웃 DOM 검증을 완료했다.
-- 전체 테스트 122/122, fail 0·skip 0. production build PASS.
-- 사용자가 2026-11-02 KST에 신규 migration SQL 적용 완료를 보고했다. 현재 실행 환경에서 관리자 연결로 적용 횟수를 독립 확인하지는 않았다.
-- production 배포는 아직 0회다. 기존 production·KOPIS 캐시·예약 Disabled 상태는 변경하지 않았다.
+- 직접 테스트: 10/10 통과.
+- 전체 테스트: 124/124, fail 0·skip 0.
+- production build: PASS. 기존 번들 크기 warning만 있으며 실패가 아니다.
+- `npm audit --omit=dev --json`: production 취약점 0건.
+- 격리 SQL: 사용자 A의 직접 쓰기 차단, RPC 쓰기, 400행 초과 차단, A 계정/반응 삭제, 사용자 B 계정/반응 보존, anon 삭제 거부 확인.
 
-## 재개점
+## 운영 변경
 
-1. PR을 main에 병합해 production을 배포한다.
-2. production에서 익명 RPC 거부와 Google OAuth 시작 경로를 확인한다.
-3. production `나의 취향`에서 Google 로그인 → 기존 로컬 보관곡 병합 → 곡 1개 보관/해제 → 새로고침 유지 → 로그아웃을 확인한다.
-4. 가능하면 두 번째 계정에서 첫 계정 곡이 보이지 않는지 확인한 뒤 OPERATIONAL로 기록한다.
+- 신규 migration 적용: 사용자가 2026-11-02 KST에 1회 적용 완료를 보고했다. 관리자 연결을 통한 독립 확인은 하지 않았다.
+- main 병합·production 배포: 0회.
+- production DB 쓰기·계정 삭제 canary: 0회.
+- 기존 공연 예약: Disabled 유지, 변경 없음.
 
-이전 PWA 작업은 [보관본](docs/collaboration/archive/CA-PWA-20261030-001/HANDOFF.md)에 보존했다.
+## 차단 사유와 재개점
+
+1. PR을 main에 병합하고 production 배포를 확인한다.
+2. production에서 로그인 → 로그아웃 로컬 삭제를 확인한다.
+3. 계정 삭제는 실제 주계정 대신 별도 테스트 계정으로 canary하고, 해당 테스트 계정만 삭제됐음을 확인한다.
+
+## 구현자 의견
+
+- 사용자가 migration 적용 완료를 보고했으므로 production 배포 Gate를 재개한다. 단, 실제 주계정으로 삭제 버튼을 실행하지 않는다.
+- 개인정보 안내는 기술적 사실의 초안이며 법률 자문을 대체하지 않는다. 공개 서비스 운영 전 문의처·국외 처리 지역·미성년자 정책을 운영자가 확정해야 한다.

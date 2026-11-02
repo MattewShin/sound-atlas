@@ -1,6 +1,10 @@
-# 현재 Google 개인화 작업 — 2026-11-02
+# 현재 개인정보·보안 작업 — 2026-11-02
 
-CA-GOOGLE-PERSONALIZATION-20261102-001. Google 로그인, 사용자별 보관함 동기화, 기존 localStorage 최신값 병합, 기존 9축 취향 개인화를 구현했으며 전체 122개 테스트와 build가 통과했다. 사용자가 2026-11-02 KST에 신규 migration 적용 완료를 보고했으며 production 배포·OAuth canary를 진행한다. 비회원 로컬 기능과 기존 PWA·공연 브라우저는 유지한다. 최신 CURRENT_TASK/HANDOFF를 따른다.
+CA-PRIVACY-SECURITY-20261102-001, 브랜치 codex/ca-privacy-security-20261102-001. production 로그인·병합·새로고침은 정상이나 로그아웃 후 계정 보관함이 비회원 화면에 남는 문제를 재현했다. 로그아웃 로컬 격리, 본인 계정 삭제, 직접 DML 회수, 보안 헤더, 개인정보 안내를 구현했고 전체 124개 테스트·build·production dependency audit가 통과했다. 문의처와 Supabase Sydney 지역을 반영했으며 사용자가 신규 migration 적용 완료를 보고해 production 배포 Gate를 재개한다. 최신 CURRENT_TASK/HANDOFF를 따른다.
+
+# 완료된 Google 개인화 작업 — 2026-11-02
+
+CA-GOOGLE-PERSONALIZATION-20261102-001. Google 로그인, 사용자별 보관함 동기화, 기존 localStorage 최신값 병합, 기존 9축 취향 개인화를 구현·배포했다. production에서 비회원 1곡과 계정 2곡의 병합 및 새로고침 유지를 확인했다. 결과는 [보관본](docs/collaboration/archive/CA-GOOGLE-PERSONALIZATION-20261102-001/CURRENT_TASK.md)을 따른다.
 
 # 이전 PWA 작업 — 2026-10-30
 

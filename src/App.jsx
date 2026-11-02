@@ -18,7 +18,7 @@ import ComposerPicker from './components/ComposerPicker.jsx'
 import { describeComposerConditions, filterTracksByComposers, getComposerOptions } from './data/composerSelection.js'
 import useGoogleAuth from './components/useGoogleAuth.js'
 import { supabase } from './lib/supabaseClient.js'
-import { readLibraryOwner, saveLibraryOwner, syncUserLibrary } from './data/userLibrary.js'
+import { clearAccountLocalData, readLibraryOwner, saveLibraryOwner, syncUserLibrary } from './data/userLibrary.js'
 export { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } from './components/WeeklySelectionScreens.jsx'
 
 function Icon({ name, filled = false }) {
@@ -263,26 +263,45 @@ export function LibraryScreen({ savedTracks, onOpenTrack, onRemoveTrack, onGoExp
   )
 }
 
+export function PrivacySummary() {
+  return <div className="privacy-summary">
+    <h3>개인정보 처리 안내</h3>
+    <p><b>수집·이용:</b> 로그인 식별자, 이메일·표시 이름, 보관한 곡과 수정 시각을 로그인·기기 간 동기화·개인화에 사용합니다.</p>
+    <p><b>보관:</b> 계정 삭제 전까지 저장하며, 로그아웃하면 이 기기의 계정 사본을 삭제합니다.</p>
+    <p><b>외부 서비스:</b> Google 로그인, Supabase 인증·데이터베이스, Vercel 호스팅을 사용합니다. Google access token과 Client Secret은 앱 DB에 저장하지 않습니다.</p>
+    <p><b>핵심 데이터 저장 지역:</b> Supabase Oceania (Sydney), Australia. 서비스 운영 과정에서 Google·Supabase·Vercel의 국외 처리가 발생할 수 있습니다.</p>
+    <p><b>이용자 권리:</b> 위의 ‘계정과 데이터 삭제’로 저장 자료와 계정을 삭제할 수 있습니다.</p>
+    <p><b>개인정보 문의:</b> <a href="mailto:ybshin09@gmail.com">ybshin09@gmail.com</a></p>
+    <small>시행 예정일: 2026년 11월 2일 · 법률 자문을 대신하지 않는 서비스 안내입니다.</small>
+  </div>
+}
+
 export function AccountPanel({ auth, syncStatus = 'local' }) {
   const user = auth?.user
+  const [showPrivacy, setShowPrivacy] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const name = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || 'Google 사용자'
-  const avatarUrl = user?.user_metadata?.avatar_url
   const syncMessage = syncStatus === 'syncing' ? '보관함을 동기화하고 있어요.'
     : syncStatus === 'synced' ? '이 계정의 보관함과 취향이 동기화돼요.'
       : syncStatus === 'error' ? '동기화하지 못했어요. 기기의 보관함은 그대로 유지돼요.'
         : '이 기기에만 보관돼요.'
 
   return <section className="account-panel" aria-labelledby="account-title">
-    <div className="account-heading"><div><p>ACCOUNT</p><h2 id="account-title">계정과 개인화</h2></div>{user && avatarUrl ? <img src={avatarUrl} alt="" referrerPolicy="no-referrer" /> : <span aria-hidden="true"><Icon name="user" /></span>}</div>
+    <div className="account-heading"><div><p>ACCOUNT</p><h2 id="account-title">계정과 개인화</h2></div><span aria-hidden="true"><Icon name="user" /></span></div>
     {user ? <>
       <strong>{name}</strong>{user.email && name !== user.email && <small>{user.email}</small>}
       <p className={`account-sync-status ${syncStatus === 'error' ? 'is-error' : ''}`} role="status">{syncMessage}</p>
+      <small className="account-local-note">로그아웃하면 이 기기의 계정 보관함 사본은 삭제돼요. 서버 자료는 계정 삭제 전까지 유지됩니다.</small>
       <button className="account-secondary-button" type="button" onClick={auth.signOut} disabled={auth.isLoading}>로그아웃</button>
+      {!confirmDelete ? <button className="account-text-button account-danger-link" type="button" onClick={() => setConfirmDelete(true)}>계정과 데이터 삭제</button>
+        : <div className="account-delete-confirm" role="alert"><p>보관함과 개인화 기록을 영구 삭제하며 복구할 수 없어요.</p><div><button type="button" onClick={() => setConfirmDelete(false)} disabled={auth.isDeleting}>취소</button><button className="account-delete-button" type="button" onClick={auth.deleteAccount} disabled={auth.isDeleting}>{auth.isDeleting ? '삭제 중…' : '영구 삭제'}</button></div></div>}
     </> : <>
       <p>Google로 로그인하면 보관한 곡과 나의 취향을 다른 기기에서도 이어볼 수 있어요.</p>
       <button className="google-login-button" type="button" onClick={auth?.signInWithGoogle} disabled={auth?.isLoading || !auth?.configured}>{auth?.isLoading ? '로그인 확인 중…' : 'Google로 계속하기'}</button>
       {!auth?.configured && <small className="account-setup-message">로그인 설정이 아직 배포되지 않았어요.</small>}
     </>}
+    <button className="account-text-button" type="button" aria-expanded={showPrivacy} onClick={() => setShowPrivacy((value) => !value)}>개인정보 처리 안내 {showPrivacy ? '접기' : '보기'}</button>
+    {showPrivacy && <PrivacySummary />}
     {auth?.error && <p className="account-error" role="alert">{auth.error}</p>}
   </section>
 }
@@ -408,9 +427,15 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     if (import.meta.env?.DEV) weeklyState.diagnostics.forEach((message) => console.warn(message))
   }, [weeklyState])
   useEffect(() => {
+    if (auth.isLoading) return undefined
     const userId = auth.user?.id
     if (!userId || !supabase) {
       activeSyncUserId.current = null
+      if (readLibraryOwner()) {
+        clearAccountLocalData()
+        setTrackReactions({})
+        setRecommendationExposures([])
+      }
       setLibrarySyncStatus('local')
       return undefined
     }
@@ -438,7 +463,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
         if (activeSyncUserId.current === userId) setLibrarySyncStatus('error')
       })
     return undefined
-  }, [auth.user?.id])
+  }, [auth.isLoading, auth.user?.id])
   useEffect(() => {
     // 키워드는 현재 화면에서만 유지하며 이전 버전의 저장된 선택도 제거합니다.
     try { window.localStorage.removeItem(SELECTION_KEY) } catch { /* 저장 차단 */ }
