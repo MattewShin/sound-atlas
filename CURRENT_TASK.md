@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-PWA-20261030-001
 - 명세 버전: 6 / tension 운영 명칭·평가 기준 통일
-- 상태: IMPLEMENTED / production 배포 검증 대기
+- 상태: OPERATIONAL
 - 브랜치: codex/ca-pwa-20261030-001-tension-label
 - 시작 main SHA: 18bb76573609e8c60229f847d437e74eff20ba9e
 - 요청: 모바일 브라우저에서 홈 화면에 설치하고 앱 아이콘으로 standalone 실행할 수 있는 PWA 적용
@@ -89,5 +89,7 @@
 - 이전 한글 선택값 `긴장감 있는`은 `tension`으로 자동 변환해 사용자 선택 호환성을 보존한다.
 - 과거 EMMA 실험 보관 자료는 당시 기록이므로 변경하지 않는다.
 - 기준·추천·저장소 직접 테스트 48/48, 전체 테스트 116/116 fail0/skip0, production build가 통과했다.
+- PR #10을 main에 병합했고 production SHA `1f138fc233b59d17ddecab5bc0a9b574a6a2cdd2`의 Vercel 배포 성공을 확인했다.
+- production JS `index-BrHgeIR9.js`에서 `긴박한`과 평가 정의 `긴박감과 극적 긴장` 반영을 확인했다.
 
 이전 안정성 작업의 main 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/CURRENT_TASK.md)에 보존했다.
