@@ -2,6 +2,8 @@ import '../server/concertBrowser.test.mjs'
 import '../server/concertReliability.test.mjs'
 import '../server/concertCacheSql.test.mjs'
 import '../server/userLibrarySql.test.mjs'
+import '../server/musicJournalSql.test.mjs'
+import '../src/data/musicJournal.test.js'
 import './concertBrowserUi.test.mjs'
 import './pwa.test.mjs'
 import './emma/emma.test.js'
@@ -31,6 +33,7 @@ import { verifyComposerSelectionInteractions } from './composerSelectionDomTest.
 import { verifyWeeklySelectionInteractions } from './weeklySelectionDomTest.mjs'
 import { verifyHomeDiscoveryInteractions } from './homeDiscoveryDomTest.mjs'
 import { verifyGoogleAuthInteractions } from './googleAuthDomTest.mjs'
+import { verifyMusicJournal } from './musicJournalDomTest.mjs'
 import { weeklySelections } from '../src/data/weeklySelections.js'
 import { getWeeklySelectionState } from '../src/data/weeklySelectionHelpers.js'
 
@@ -56,6 +59,10 @@ test('홈 탐색의 재진입·로그인·조건 변경·모달·보관 상태�
 
 test('Google OAuth 시작·세션 반영·로그아웃 흐름을 검증한다', async () => {
   await verifyGoogleAuthInteractions()
+})
+
+test('음악 기록은 비공개 페이지·수정·실패 초안 보존·삭제 확인·계정 격리를 지원한다', async () => {
+  await verifyMusicJournal(components.MusicJournal)
 })
 
 test('주간 소개에서 홈·글·상세·영상·보관함·지난 글의 연결을 검증한다', async () => {
