@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-PWA-20261030-001
 - 명세 버전: 5 / 긴 키워드 선택 시 행 높이 격리
-- 상태: IMPLEMENTED / production 배포 검증 대기
+- 상태: OPERATIONAL
 - 브랜치: codex/ca-pwa-20261030-001-keyword-row-height
 - 시작 main SHA: 18bb76573609e8c60229f847d437e74eff20ba9e
 - 요청: 모바일 브라우저에서 홈 화면에 설치하고 앱 아이콘으로 standalone 실행할 수 있는 PWA 적용
@@ -79,5 +79,7 @@
 - CSS Grid의 기본 세로 늘림을 해제해 각 키워드 버튼이 자신의 내용에 필요한 높이만 사용하게 한다.
 - 중앙 정렬·선택 체크·최소 터치 높이와 기존 추천 동작은 유지한다.
 - 모바일 타이포그래피 직접 테스트 6/6, 전체 테스트 116/116 fail0/skip0, production build가 통과했다.
+- PR #9를 main에 병합했고 production SHA `0e216fa500ead6026b97059553fd3e1d94cc96dc`의 Vercel 배포 성공을 확인했다.
+- production CSS `index-9tJJqMOX.css`에서 두 키워드 목록의 `align-items:start` 반영을 확인했다.
 
 이전 안정성 작업의 main 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/CURRENT_TASK.md)에 보존했다.
