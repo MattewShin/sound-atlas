@@ -15,6 +15,8 @@ import { getKoreanDate, getWeeklySelectionState } from './data/weeklySelectionHe
 import { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } from './components/WeeklySelectionScreens.jsx'
 import useHomeDiscovery from './components/useHomeDiscovery.js'
 import ComposerPicker from './components/ComposerPicker.jsx'
+import ReferenceTrackExplorer from './components/ReferenceTrackExplorer.jsx'
+export { default as ReferenceTrackExplorer } from './components/ReferenceTrackExplorer.jsx'
 import { describeComposerConditions, filterTracksByComposers, getComposerOptions } from './data/composerSelection.js'
 import useGoogleAuth from './components/useGoogleAuth.js'
 import MusicJournal from './components/MusicJournal.jsx'
@@ -353,6 +355,8 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   const [concertKeyword, setConcertKeyword] = useState('')
   const concertSearch = useConcertSearch()
   const [recommendationMode, setRecommendationMode] = useState('keyword')
+  const [explorationLevel, setExplorationLevel] = useState('beginner')
+  const [referenceTrackId, setReferenceTrackId] = useState(null)
   const [recommendationInput, setRecommendationInput] = useState('music')
   const [currentFeeling, setCurrentFeeling] = useState(null)
   const [selectedKeys, setSelectedKeys] = useState([])
@@ -412,7 +416,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   const discoveryCandidates = useMemo(() => getRecommendationResult(tracks).tracks, [])
   const discovery = useHomeDiscovery({ candidates: discoveryCandidates, activeView,
     conditionKey: JSON.stringify([recommendationInput, currentFeeling, activeKeys, selectedComposers, isLibraryMode ? 'library' : 'keyword']),
-    enabled: isInitialExploration, isLoggedIn })
+    enabled: explorationLevel === 'beginner' && isInitialExploration, isLoggedIn })
   const selectedRecommendationTrack = recommendedTracks.find((track) => track.id === selectedTrackId)
   const selectedTrack = selectedRecommendationTrack ?? (isLibraryMode || !activeKeys.length ? recommendedTracks[0]
     : featuredKeywordTrack ?? (selectedComposers.length ? recommendedTracks[0] : undefined))
@@ -498,7 +502,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     }
   }, [recommendationInput, isLibraryMode, activeKeys, featuredKeywordTrack])
   useEffect(() => {
-    if (recommendationInput !== 'music' || isLibraryMode || !keywordConditionKey || !featuredKeywordTrack) return
+    if (explorationLevel !== 'beginner' || recommendationInput !== 'music' || isLibraryMode || !keywordConditionKey || !featuredKeywordTrack) return
     const signature = `${keywordConditionKey}|${recommendationDraw}`
     if (exposureSignature.current === signature) return
     exposureSignature.current = signature
@@ -506,7 +510,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     const shownIds = [featuredKeywordTrack, ...recommendedTracks.filter(({ id }) => id !== featuredKeywordTrack.id)]
       .slice(0, 6).map(({ id }) => id).filter((id) => !exempt.has(id))
     recordRecommendationExposures(shownIds, keywordConditionKey)
-  }, [recommendationInput, isLibraryMode, keywordConditionKey, recommendationDraw, featuredKeywordTrack, recommendedTracks, savedTrackIds, selectedTrackId])
+  }, [explorationLevel, recommendationInput, isLibraryMode, keywordConditionKey, recommendationDraw, featuredKeywordTrack, recommendedTracks, savedTrackIds, selectedTrackId])
   useEffect(() => {
     if (!initialMusicState.notice) return undefined
     try { window.localStorage.removeItem(NOTICE_KEY) } catch { /* 저장 차단 */ }
@@ -626,7 +630,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     window.clearTimeout(saveFeedbackTimer.current)
     saveFeedbackTimer.current = window.setTimeout(() => setSaveFeedback(null), 1800)
   }
-  const showTasteRecommendations = () => { setActiveView('explore'); setRecommendationMode(libraryPreference.isActive ? 'library' : 'keyword'); setSelectedTrackId(null) }
+  const showTasteRecommendations = () => { setActiveView('explore'); setExplorationLevel('beginner'); setRecommendationMode(libraryPreference.isActive ? 'library' : 'keyword'); setSelectedTrackId(null) }
   const openRecommendationList = () => {
     setRecommendationListState({ query: recommendationQuery, count: 20 })
     setActiveView('recommendations'); window.scrollTo({ top: 0 })
@@ -641,9 +645,14 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     {activeView === 'explore' ? <>
       <header className="top-header" id="top">
         <div className="topbar"><a className="brand" href="#top">MY PIANO MOOD</a></div>
+        <div className="exploration-level-switch" role="group" aria-label="음악 탐색 경로">
+          <button type="button" aria-pressed={explorationLevel === 'beginner'} onClick={() => setExplorationLevel('beginner')}><strong>초보자</strong><span>느낌·기분으로 찾기</span></button>
+          <button type="button" aria-pressed={explorationLevel === 'experienced'} onClick={() => setExplorationLevel('experienced')}><strong>숙련자</strong><span>아는 곡으로 찾기</span></button>
+        </div>
         <p className="date-note">오늘의 음악 탐색</p><h1>오늘은 어떤 음악을<br />만나고 싶나요?</h1><div className="header-orbit orbit-one" /><div className="header-orbit orbit-two" />
       </header>
       <main>
+        {explorationLevel === 'experienced' ? <ReferenceTrackExplorer tracks={tracks} referenceId={referenceTrackId} onSelectReference={setReferenceTrackId} onOpenTrack={openTrackDetail} onToggleSave={toggleTrackSave} isTrackSaved={isTrackSaved} /> : <>
         <section className="mood-section" aria-labelledby="mood-title">
           <div className="section-heading"><p>MOOD</p><h2 id="mood-title">음악을 어떻게 고르고 싶나요?</h2></div>
           <ComposerPicker composers={composerOptions} selected={selectedComposers} onApply={applyComposers} />
@@ -679,6 +688,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
         </section>
         {!isInitialExploration && <RelatedRecommendations key={recommendationQuery} relatedTracks={relatedTracks} onOpenTrack={selectRelatedTrack} onSeeAll={openRecommendationList} />}
         {!isInitialExploration && selectedTrack && relatedTracks.length === 0 && <div className="recommendations-single-link"><button className="recommendations-see-all" type="button" onClick={openRecommendationList}>추천곡 더 보기 <span aria-hidden="true">→</span></button></div>}
+        </>}
         <WeeklySelectionSection entry={weeklyState.current} onOpen={openWeeklyStory} onArchive={openWeeklyArchive} />
         {!weeklyState.current && weeklyState.archive.length > 0 && <div className="weekly-archive-entry"><button className="weekly-link" type="button" onClick={openWeeklyArchive}>지난 선정곡 →</button></div>}
       </main>
@@ -696,7 +706,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
       <button className={'nav-item ' + (activeView === 'library' ? 'active' : '')} type="button" onClick={() => setActiveView('library')}><Icon name="bookmarkSmall" /><span>보관함</span></button>
       <button className={'nav-item ' + (activeView === 'taste' ? 'active' : '')} type="button" onClick={() => setActiveView('taste')}><Icon name="user" /><span>나의 취향</span></button>
     </nav>
-    <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={!isInitialExploration && recommendationMode !== 'library' ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} onGoLibrary={showLibrary} auth={auth} />
+    <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={explorationLevel === 'beginner' && !isInitialExploration && recommendationMode !== 'library' ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} onGoLibrary={showLibrary} auth={auth} />
     <HighlightShortView track={shortTrack} detail={shortTrack ? trackDetails[shortTrack.id] : null} isOpen={isShortOpen} onClose={closeHighlightShort} />
   </div>
 }

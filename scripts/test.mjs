@@ -11,6 +11,7 @@ import './pwa.test.mjs'
 import './emma/emma.test.js'
 import '../src/data/recommendation.test.js'
 import '../src/data/composerSelection.test.js'
+import '../src/data/referenceTrackSearch.test.js'
 import '../src/data/catalogAdditions.test.js'
 import '../src/data/catalogAdditions20261020.test.js'
 import '../src/data/catalogAdditions20261021.test.js'
@@ -37,6 +38,7 @@ import { verifyHomeDiscoveryInteractions } from './homeDiscoveryDomTest.mjs'
 import { verifyGoogleAuthInteractions } from './googleAuthDomTest.mjs'
 import { verifyMusicJournal } from './musicJournalDomTest.mjs'
 import { verifyMusicSharing } from './musicSharingDomTest.mjs'
+import { verifyReferenceTrackInteractions } from './referenceTrackDomTest.mjs'
 import { weeklySelections } from '../src/data/weeklySelections.js'
 import { getWeeklySelectionState } from '../src/data/weeklySelectionHelpers.js'
 
@@ -51,6 +53,10 @@ try {
   try { unlinkSync(compiledPath) } catch { /* 컴파일 실패 시 파일 없음 */ }
 }
 const render = (component, props = {}) => renderToStaticMarkup(React.createElement(component, props))
+
+test('초보자·숙련자 전환과 한·영 기준곡 검색·명시적 선택·추천·보관·기록 연결을 검증한다', async () => {
+  await verifyReferenceTrackInteractions(components.default)
+})
 
 test('작곡가 선택·검색·임시 변경·포커스·추천 조건·보관함 전환을 검증한다', async () => {
   await verifyComposerSelectionInteractions(components.default)

@@ -506,3 +506,34 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 
 .concert-cache-notice { padding: 12px; margin: 12px 0; border: 1px solid #d9c994; border-radius: 10px; background: #fff9e8; color: #5b4b23; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
 .concert-cache-notice p { margin: 0; }
+
+/* 같은 홈에서 두 탐색 경로를 제공하며 기존 초보자 입력 상태는 유지한다. */
+.exploration-level-switch { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; margin: 22px 0; padding: 4px; border: 1px solid #c7cec0; border-radius: 16px; background: #e8e7dc; }
+.exploration-level-switch button { display: grid; justify-items: center; gap: 3px; min-width: 0; min-height: 62px; padding: 8px; border: 1px solid transparent; border-radius: 12px; color: #53635b; background: transparent; }
+.exploration-level-switch button[aria-pressed="true"] { border-color: #31534d; color: #1d514b; background: #fffdf7; box-shadow: 0 2px 6px #272d2810; }
+.exploration-level-switch strong { font-size: 17px; }
+.exploration-level-switch span { font-size: 13px; }
+.reference-explorer { min-width: 0; margin: 26px 20px; }
+.reference-guide, .reference-explorer p { color: #53635b; font-size: 14px; line-height: 1.75; }
+.reference-search-label { display: block; margin: 20px 0 8px; color: #31534d; font-size: 14px; }
+.reference-search { display: block; box-sizing: border-box; width: 100%; min-width: 0; min-height: 48px; padding: 12px; border: 1px solid #bdc9bd; border-radius: 12px; color: #263b36; background: #fffdf7; font: inherit; font-size: 16px; }
+.reference-explorer ul { list-style: none; padding: 0; margin: 16px 0; }
+.reference-explorer li { min-width: 0; margin: 12px 0; padding: 16px; border: 1px solid #d4dccf; border-radius: 16px; background: #fcfaf4; overflow-wrap: anywhere; }
+.reference-explorer strong { font-size: 17px; line-height: 1.6; }
+.reference-search-results small { display: block; margin-top: 6px; color: #667269; font-size: 13px; line-height: 1.6; }
+.reference-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.reference-actions button, .reference-save, .reference-more, .reference-examples button { min-height: 44px; padding: 8px 12px; border: 1px solid #bdc9bd; border-radius: 10px; color: #245a53; background: #fffdf7; font-size: 14px; }
+.reference-actions button[aria-pressed], .reference-save[aria-pressed="true"] { border-color: #245a53; background: #e4eee5; }
+.reference-more { width: 100%; }
+.reference-selected { margin-top: 24px; padding: 18px; border: 1px solid #bdc9bd; border-radius: 18px; background: #e4eee5; overflow-wrap: anywhere; }
+.reference-explorer .reference-eyebrow { margin: 0 0 8px; color: #31534d; font-size: 13px; }
+.reference-selected h3 { margin: 0; font-size: 19px; line-height: 1.6; }
+.reference-results-heading { margin-top: 28px; color: #263b36; font-size: 21px; }
+.reference-track-link { display: grid; width: 100%; min-width: 0; gap: 10px; padding: 0; border: 0; color: #263b36; background: transparent; text-align: left; overflow-wrap: anywhere; }
+.reference-track-link span, .reference-track-link small { font-size: 14px; line-height: 1.7; color: #53635b; }
+.reference-track-link small { color: #245a53; }
+.reference-save { display: block; margin-top: 14px; margin-left: auto; }
+.reference-empty { margin-top: 24px; }
+.reference-examples { display: flex; flex-wrap: wrap; gap: 8px; }
+.reference-explorer button:focus-visible, .reference-search:focus-visible, .exploration-level-switch button:focus-visible { outline: 2px solid #245a53; outline-offset: 3px; }
+@media (max-width: 375px) { .reference-explorer { margin-right: 16px; margin-left: 16px; } }
