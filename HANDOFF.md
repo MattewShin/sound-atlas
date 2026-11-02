@@ -1,9 +1,9 @@
 # 작업 인계
 
-- 작업 ID: CA-PWA-20261030-001 / 명세5
+- 작업 ID: CA-PWA-20261030-001 / 명세6
 - 상태: IMPLEMENTED / production 배포 검증 대기
 - 작성: 웹 GPT / 2026-10-30 KST
-- 브랜치: codex/ca-pwa-20261030-001-keyword-row-height
+- 브랜치: codex/ca-pwa-20261030-001-tension-label
 - 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
 
 ## 구현 결과
@@ -86,6 +86,19 @@ PR #6을 main에 병합했고 production SHA는 `3244388d7aada347d1603702c011b55
 | 전체 테스트 | 116/116 PASS, fail 0, skip 0 |
 | production build | PASS |
 | 비변경 | 추천 동작·KOPIS API·DB·Service Worker·예약 |
+
+PR #9를 main에 병합했다. production SHA `0e216fa500ead6026b97059553fd3e1d94cc96dc`의 Vercel status success와 production CSS `index-9tJJqMOX.css`의 두 키워드 목록 `align-items:start` 반영을 확인했다.
+
+## 명세 6 수정
+
+화면 버튼만 축약하지 않고 감정 단일 기준인 `src/data/emotions.js`와 수동 평가 지침의 `tension` 운영 명칭을 `긴박한`, 정의를 `긴박감과 극적 긴장`으로 변경한다. 점수 데이터의 내부 키 `tension`과 기존 291곡의 수치는 그대로 유지하므로 추천 순위·취향 벡터는 달라지지 않는다. 이전 한글 선택값은 저장소 호환 규칙으로 같은 `tension` 축에 연결한다.
+
+| 명세 6 검증 | 결과 |
+|---|---|
+| 기준·추천·저장소 직접 테스트 | 48/48 PASS |
+| 전체 테스트 | 116/116 PASS, fail 0, skip 0 |
+| production build | PASS |
+| 비변경 | 기존 291곡 점수·추천 수식·KOPIS API·DB·Service Worker·예약 |
 
 PR #8을 main에 병합했다. production SHA `22f22c5078a111ba62adffccc5ff1464b1c2a1c4`의 Vercel status success와 production CSS `index-DQu4ZdAI.css`의 `place-items:center`, 대칭 `padding:8px 22px` 반영을 확인했다.
 
