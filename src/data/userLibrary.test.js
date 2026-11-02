@@ -1,7 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { tracks } from './musicData.js'
-import { mergeReactions, reactionsToPayload, rowsToReactions, syncUserLibrary } from './userLibrary.js'
+import { clearAccountLocalData, LIBRARY_OWNER_KEY, mergeReactions, reactionsToPayload, rowsToReactions, syncUserLibrary } from './userLibrary.js'
+import { NOTICE_KEY, RECENT_KEY, STORAGE_KEY } from './storage.js'
+import { RECOMMENDATION_EXPOSURE_STORAGE_KEY } from './recommendationExposure.js'
 
 const [first, second] = tracks
 
@@ -46,4 +48,15 @@ test('동기화 adapter는 한 RPC로 병합하고 서버 최신 결과를 반�
   assert.equal(calls[0][1].p_reactions[0].track_id, first.id)
   assert.equal(result[first.id].listenAgain, false)
   await assert.rejects(syncUserLibrary({ rpc: async () => ({ error: new Error('denied') }) }, local), /denied/)
+})
+
+test('로그아웃용 정리는 계정 행동 기록만 기기에서 제거한다', () => {
+  const values = new Map([
+    [STORAGE_KEY, '{}'], [LIBRARY_OWNER_KEY, 'user-a'], [RECENT_KEY, '[]'],
+    [RECOMMENDATION_EXPOSURE_STORAGE_KEY, '[]'], [NOTICE_KEY, 'notice'],
+    ['classic-atlas-concert-region-v1', '서울'],
+  ])
+  const storage = { removeItem: (key) => values.delete(key) }
+  clearAccountLocalData(storage)
+  assert.deepEqual([...values], [['classic-atlas-concert-region-v1', '서울']])
 })

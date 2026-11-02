@@ -52,3 +52,51 @@ test('사용자 보관함 migration은 auth UUID·RLS·최신값 병합으로 �
     await db.close()
   }
 })
+
+test('보안 migration은 직접 쓰기를 차단하고 현재 계정만 연쇄 삭제한다', async () => {
+  const db = new PGlite()
+  const [baseMigration, securityMigration] = await Promise.all([
+    readFile(new URL('../supabase/migrations/202611020001_user_track_reactions.sql', import.meta.url), 'utf8'),
+    readFile(new URL('../supabase/migrations/202611020002_user_account_security.sql', import.meta.url), 'utf8'),
+  ])
+  const asUser = async (userId) => {
+    await db.exec('reset role')
+    await db.query("select set_config('request.jwt.claim.sub',$1,false)", [userId])
+    await db.exec('set role authenticated')
+  }
+  const merge = (rows) => db.query('select * from public.merge_user_track_reactions($1::jsonb)', [JSON.stringify(rows)])
+  try {
+    await db.exec(`
+      create role anon;
+      create role authenticated;
+      create schema auth;
+      create table auth.users(id uuid primary key);
+      create function auth.uid() returns uuid language sql stable as $$
+        select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid
+      $$;
+      insert into auth.users values ('${userA}'), ('${userB}');
+      grant usage on schema public, auth to anon, authenticated;
+      grant execute on function auth.uid() to anon, authenticated;
+    `)
+    await db.exec(baseMigration)
+    await db.exec(securityMigration)
+
+    await asUser(userA)
+    await merge([{ track_id: 'private-a', listen_again: true, liked: false, updated_at: '2026-11-01T00:00:00Z' }])
+    await assert.rejects(db.query('insert into public.user_track_reactions(user_id,track_id) values($1,$2)', [userA, 'direct-write']), (error) => error.code === '42501')
+    await assert.rejects(merge(Array.from({ length: 401 }, (_, index) => ({ track_id: `track-${index}`, updated_at: '2026-11-01T00:00:00Z' }))), (error) => error.code === '22023')
+
+    await asUser(userB)
+    await merge([{ track_id: 'private-b', listen_again: true, liked: true, updated_at: '2026-11-01T00:00:00Z' }])
+    await asUser(userA)
+    assert.equal((await db.query('select public.delete_current_user_account() deleted')).rows[0].deleted, true)
+
+    await db.exec('reset role')
+    assert.deepEqual((await db.query('select id from auth.users order by id')).rows, [{ id: userB }])
+    assert.deepEqual((await db.query('select user_id,track_id from public.user_track_reactions')).rows, [{ user_id: userB, track_id: 'private-b' }])
+    await db.exec('set role anon')
+    await assert.rejects(db.query('select public.delete_current_user_account()'), (error) => error.code === '42501')
+  } finally {
+    await db.close()
+  }
+})
