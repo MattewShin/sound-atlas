@@ -1,7 +1,7 @@
 # 작업 인계
 
 - 작업 ID: CA-PRIVACY-SECURITY-20261102-001 / 명세1
-- 상태: BLOCKED / 코드 구현·격리 검증 완료, 운영 적용 대기
+- 상태: IN_PROGRESS / 운영 migration 사용자 적용 완료, production 배포 검증 대기
 - 작성: 웹 GPT / 2026-11-02 13:53 KST
 - 브랜치: codex/ca-privacy-security-20261102-001
 - 시작 기준: main / `97785fa`
@@ -22,7 +22,7 @@
 - 계정 삭제는 2단계 확인 UI를 거치며, 성공 뒤 로컬 인증 세션을 폐기한다.
 - Google 프로필 이미지 외부 요청을 없애고 앱 내부 아이콘을 사용한다.
 - CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`를 Vercel 전체 응답에 추가했다.
-- 앱 내 개인정보 안내 초안을 추가했으나 운영 문의처와 Supabase 처리 지역은 확인 전이라 명시적으로 미확정 표시했다.
+- 앱 내 개인정보 안내에 문의 이메일 `ybshin09@gmail.com`과 Supabase 핵심 데이터 저장 지역 `Oceania (Sydney), Australia`를 반영했다.
 
 ## 검증
 
@@ -34,21 +34,18 @@
 
 ## 운영 변경
 
-- 신규 migration 적용: 0회.
+- 신규 migration 적용: 사용자가 2026-11-02 KST에 1회 적용 완료를 보고했다. 관리자 연결을 통한 독립 확인은 하지 않았다.
 - main 병합·production 배포: 0회.
 - production DB 쓰기·계정 삭제 canary: 0회.
 - 기존 공연 예약: Disabled 유지, 변경 없음.
 
 ## 차단 사유와 재개점
 
-1. 사용자가 공개 가능한 개인정보 문의 이메일을 알려준다.
-2. 사용자가 Supabase Dashboard의 프로젝트 지역/국가를 알려준다.
-3. 두 값을 개인정보 안내에 반영하고 전체 테스트/build를 재확인한다.
-4. 사용자가 `202611020002_user_account_security.sql`을 Supabase SQL Editor에 1회 적용한다.
-5. main 병합·production 배포 후 로그인 → 로그아웃 로컬 삭제를 확인한다.
-6. 계정 삭제는 실제 주계정 대신 별도 테스트 계정으로 canary하고, 해당 테스트 계정만 삭제됐음을 확인한다.
+1. PR을 main에 병합하고 production 배포를 확인한다.
+2. production에서 로그인 → 로그아웃 로컬 삭제를 확인한다.
+3. 계정 삭제는 실제 주계정 대신 별도 테스트 계정으로 canary하고, 해당 테스트 계정만 삭제됐음을 확인한다.
 
 ## 구현자 의견
 
-- 현재 브랜치를 migration보다 먼저 production에 배포하면 계정 삭제 버튼이 RPC 부재 오류를 내므로, migration 적용 전 병합·배포하지 않는 것이 안전하다.
+- 사용자가 migration 적용 완료를 보고했으므로 production 배포 Gate를 재개한다. 단, 실제 주계정으로 삭제 버튼을 실행하지 않는다.
 - 개인정보 안내는 기술적 사실의 초안이며 법률 자문을 대체하지 않는다. 공개 서비스 운영 전 문의처·국외 처리 지역·미성년자 정책을 운영자가 확정해야 한다.
