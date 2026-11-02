@@ -24,9 +24,11 @@ export const journalErrorMessage = (error) => error?.code === '40001'
     : '기록을 처리하지 못했어요. 연결을 확인하고 다시 시도해 주세요.'
 
 export async function listMusicRecords(client, userId, trackId, page = 0) {
-  const { data, error, count } = await client.from('user_music_journal')
+  let query = client.from('user_music_journal')
     .select('id,track_id,kind,body,recorded_on,revision,created_at,updated_at', { count: 'exact' })
-    .eq('user_id', userId).eq('track_id', trackId)
+    .eq('user_id', userId)
+  if (trackId) query = query.eq('track_id', trackId)
+  const { data, error, count } = await query
     .order('recorded_on', { ascending: false }).order('created_at', { ascending: false }).order('id', { ascending: false })
     .range(page * JOURNAL_PAGE_SIZE, (page + 1) * JOURNAL_PAGE_SIZE - 1)
   if (error) throw error

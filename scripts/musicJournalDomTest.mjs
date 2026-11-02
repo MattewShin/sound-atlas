@@ -27,6 +27,7 @@ export async function verifyMusicJournal(MusicJournal) {
       return query
     },
     async rpc(name, args) {
+      if (name === 'list_my_music_shares') return { data: [] }
       writes += 1
       if (fail) return { error: { code: 'NETWORK' } }
       if (name === 'delete_private_music_record') { rows.splice(rows.findIndex((row) => row.id === args.p_id), 1); return { data: true } }
