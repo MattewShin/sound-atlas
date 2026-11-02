@@ -1,6 +1,7 @@
 import '../server/concertBrowser.test.mjs'
 import '../server/concertReliability.test.mjs'
 import '../server/concertCacheSql.test.mjs'
+import '../server/userLibrarySql.test.mjs'
 import './concertBrowserUi.test.mjs'
 import './pwa.test.mjs'
 import './emma/emma.test.js'
@@ -12,6 +13,7 @@ import '../src/data/catalogAdditions20261021.test.js'
 import '../src/data/mobileTypography.test.js'
 import '../src/data/halfPointRatings.test.js'
 import '../src/data/storage.test.js'
+import '../src/data/userLibrary.test.js'
 import '../src/data/weeklySelections.test.js'
 import '../src/data/homeDiscovery.test.js'
 import '../src/data/concertSearch.test.js'
@@ -28,6 +30,7 @@ import { verifyMusicSelectionInteractions } from './musicSelectionDomTest.mjs'
 import { verifyComposerSelectionInteractions } from './composerSelectionDomTest.mjs'
 import { verifyWeeklySelectionInteractions } from './weeklySelectionDomTest.mjs'
 import { verifyHomeDiscoveryInteractions } from './homeDiscoveryDomTest.mjs'
+import { verifyGoogleAuthInteractions } from './googleAuthDomTest.mjs'
 import { weeklySelections } from '../src/data/weeklySelections.js'
 import { getWeeklySelectionState } from '../src/data/weeklySelectionHelpers.js'
 
@@ -49,6 +52,10 @@ test('작곡가 선택·검색·임시 변경·포커스·추천 조건·보관�
 
 test('홈 탐색의 재진입·로그인·조건 변경·모달·보관 상태와 주간 소개 제목을 검증한다', async () => {
   await verifyHomeDiscoveryInteractions(components.default)
+})
+
+test('Google OAuth 시작·세션 반영·로그아웃 흐름을 검증한다', async () => {
+  await verifyGoogleAuthInteractions()
 })
 
 test('주간 소개에서 홈·글·상세·영상·보관함·지난 글의 연결을 검증한다', async () => {
@@ -82,6 +89,17 @@ test('취향 차트는 4점·4.5점·두 점수 평균의 차이를 막대 값�
     assert.ok(html.includes(`<strong>${label}</strong>`))
     assert.equal(profile.emotionProfile.tenderness * 100, value)
   }
+})
+
+test('계정 패널은 비로그인 안내와 로그인 계정·동기화 상태를 구분한다', () => {
+  const guest = render(components.AccountPanel, { auth: { configured: true, isLoading: false } })
+  assert.ok(guest.includes('Google로 계속하기'))
+  assert.ok(guest.includes('다른 기기에서도 이어볼 수 있어요'))
+  const member = render(components.AccountPanel, { auth: { user: { email: 'listener@example.com', user_metadata: { full_name: '피아노 애호가' } }, isLoading: false }, syncStatus: 'synced' })
+  assert.ok(member.includes('피아노 애호가'))
+  assert.ok(member.includes('listener@example.com'))
+  assert.ok(member.includes('이 계정의 보관함과 취향이 동기화돼요.'))
+  assert.ok(member.includes('로그아웃'))
 })
 
 test('느낌·기분의 선택 해제와 탭별 초기화·기분 후보 확대·직전 추천 제외·보관 시 대표곡 유지를 검증한다', async () => {

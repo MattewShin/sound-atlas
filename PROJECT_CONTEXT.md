@@ -1,4 +1,8 @@
-# 현재 PWA 작업 — 2026-10-30
+# 현재 Google 개인화 작업 — 2026-11-02
+
+CA-GOOGLE-PERSONALIZATION-20261102-001. Google 로그인, 사용자별 보관함 동기화, 기존 localStorage 최신값 병합, 기존 9축 취향 개인화를 구현했으며 전체 122개 테스트와 build가 통과했다. 사용자가 2026-11-02 KST에 신규 migration 적용 완료를 보고했으며 production 배포·OAuth canary를 진행한다. 비회원 로컬 기능과 기존 PWA·공연 브라우저는 유지한다. 최신 CURRENT_TASK/HANDOFF를 따른다.
+
+# 이전 PWA 작업 — 2026-10-30
 
 CA-PWA-20261030-001, 브랜치 codex/ca-pwa-20261030-001. MY PIANO MOOD를 모바일 홈 화면에 설치하고 standalone으로 실행할 수 있도록 Manifest, Service Worker, iOS metadata와 전용 아이콘을 추가한다. Service Worker는 정적 자산과 offline 안내만 캐시하고 /api/를 제외해 Supabase 공연 캐시와 충돌하지 않는다. DB·KOPIS·OCR·예약은 변경하지 않는다. 최신 CURRENT_TASK/HANDOFF를 따른다.
 

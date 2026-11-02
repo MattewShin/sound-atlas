@@ -16,6 +16,9 @@ import { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } fr
 import useHomeDiscovery from './components/useHomeDiscovery.js'
 import ComposerPicker from './components/ComposerPicker.jsx'
 import { describeComposerConditions, filterTracksByComposers, getComposerOptions } from './data/composerSelection.js'
+import useGoogleAuth from './components/useGoogleAuth.js'
+import { supabase } from './lib/supabaseClient.js'
+import { readLibraryOwner, saveLibraryOwner, syncUserLibrary } from './data/userLibrary.js'
 export { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } from './components/WeeklySelectionScreens.jsx'
 
 function Icon({ name, filled = false }) {
@@ -260,10 +263,35 @@ export function LibraryScreen({ savedTracks, onOpenTrack, onRemoveTrack, onGoExp
   )
 }
 
-export function PreferenceScreen({ profile, onGoExplore }) {
+export function AccountPanel({ auth, syncStatus = 'local' }) {
+  const user = auth?.user
+  const name = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || 'Google 사용자'
+  const avatarUrl = user?.user_metadata?.avatar_url
+  const syncMessage = syncStatus === 'syncing' ? '보관함을 동기화하고 있어요.'
+    : syncStatus === 'synced' ? '이 계정의 보관함과 취향이 동기화돼요.'
+      : syncStatus === 'error' ? '동기화하지 못했어요. 기기의 보관함은 그대로 유지돼요.'
+        : '이 기기에만 보관돼요.'
+
+  return <section className="account-panel" aria-labelledby="account-title">
+    <div className="account-heading"><div><p>ACCOUNT</p><h2 id="account-title">계정과 개인화</h2></div>{user && avatarUrl ? <img src={avatarUrl} alt="" referrerPolicy="no-referrer" /> : <span aria-hidden="true"><Icon name="user" /></span>}</div>
+    {user ? <>
+      <strong>{name}</strong>{user.email && name !== user.email && <small>{user.email}</small>}
+      <p className={`account-sync-status ${syncStatus === 'error' ? 'is-error' : ''}`} role="status">{syncMessage}</p>
+      <button className="account-secondary-button" type="button" onClick={auth.signOut} disabled={auth.isLoading}>로그아웃</button>
+    </> : <>
+      <p>Google로 로그인하면 보관한 곡과 나의 취향을 다른 기기에서도 이어볼 수 있어요.</p>
+      <button className="google-login-button" type="button" onClick={auth?.signInWithGoogle} disabled={auth?.isLoading || !auth?.configured}>{auth?.isLoading ? '로그인 확인 중…' : 'Google로 계속하기'}</button>
+      {!auth?.configured && <small className="account-setup-message">로그인 설정이 아직 배포되지 않았어요.</small>}
+    </>}
+    {auth?.error && <p className="account-error" role="alert">{auth.error}</p>}
+  </section>
+}
+
+export function PreferenceScreen({ profile, onGoExplore, auth, syncStatus }) {
   return <>
     <header className="library-header"><p>MY TASTE</p><h1>나의 취향</h1><span>보관한 곡의 감정을 함께 살펴봐요.</span><strong>{profile.count}곡 기준</strong></header>
     <main className="library-main">
+      {auth && <AccountPanel auth={auth} syncStatus={syncStatus} />}
       {profile.isActive ? <section className="preference-panel" aria-label="보관함 감정 성향">
         <h2>감정 성향 지수</h2>
         <p>{profile.count < 3 ? '현재 보관곡을 기준으로 한 초기 취향이에요.' : '현재 보관한 곡들의 감정 평가를 평균했어요.'}</p>
@@ -284,8 +312,9 @@ export function PreferenceScreen({ profile, onGoExplore }) {
   </>
 }
 
-// 현재 인증 기능은 없습니다. 인증 연동 시 로그인 완료 여부를 이 prop으로 전달하세요.
-function App({ isLoggedIn = false } = {}) {
+function App({ isLoggedIn: isLoggedInOverride } = {}) {
+  const auth = useGoogleAuth()
+  const isLoggedIn = typeof isLoggedInOverride === 'boolean' ? isLoggedInOverride : Boolean(auth.user)
   const [initialMusicState] = useState(getInitialMusicState)
   const [activeView, setActiveView] = useState('explore')
   const [concertRegion, setConcertRegion] = useState(readConcertRegion)
@@ -317,11 +346,14 @@ function App({ isLoggedIn = false } = {}) {
   const [shortTrack, setShortTrack] = useState(null)
   const [isShortOpen, setIsShortOpen] = useState(false)
   const [trackReactions, setTrackReactions] = useState(initialMusicState.reactions)
+  const [librarySyncStatus, setLibrarySyncStatus] = useState('local')
   const [migrationNotice, setMigrationNotice] = useState(initialMusicState.notice)
   const [saveFeedback, setSaveFeedback] = useState(null)
   const detailCloseTimer = useRef(null)
   const shortCloseTimer = useRef(null)
   const saveFeedbackTimer = useRef(null)
+  const activeSyncUserId = useRef(null)
+  const syncQueue = useRef(Promise.resolve())
   const activeKeys = useMemo(() => recommendationInput === 'feeling' ? getSuggestedEmotions(currentFeeling) : selectedKeys, [recommendationInput, currentFeeling, selectedKeys])
   const savedTrackIds = useMemo(() => Object.keys(trackReactions).filter((id) => trackReactions[id]?.listenAgain === true), [trackReactions])
   const libraryPreference = useMemo(() => getLibraryPreferenceProfile(tracks, savedTrackIds), [savedTrackIds])
@@ -375,6 +407,38 @@ function App({ isLoggedIn = false } = {}) {
   useEffect(() => {
     if (import.meta.env?.DEV) weeklyState.diagnostics.forEach((message) => console.warn(message))
   }, [weeklyState])
+  useEffect(() => {
+    const userId = auth.user?.id
+    if (!userId || !supabase) {
+      activeSyncUserId.current = null
+      setLibrarySyncStatus('local')
+      return undefined
+    }
+    if (activeSyncUserId.current === userId) return undefined
+
+    activeSyncUserId.current = userId
+    const owner = readLibraryOwner()
+    const includeLocal = !owner || owner === userId
+    const localSnapshot = includeLocal ? trackReactions : {}
+    if (!includeLocal) {
+      setTrackReactions({})
+      saveMusicValue(STORAGE_KEY, {})
+    }
+    setLibrarySyncStatus('syncing')
+    syncQueue.current = syncQueue.current.catch(() => undefined)
+      .then(() => syncUserLibrary(supabase, localSnapshot, { includeLocal }))
+      .then((synced) => {
+        if (activeSyncUserId.current !== userId) return
+        setTrackReactions(synced)
+        saveMusicValue(STORAGE_KEY, synced)
+        saveLibraryOwner(userId)
+        setLibrarySyncStatus('synced')
+      })
+      .catch(() => {
+        if (activeSyncUserId.current === userId) setLibrarySyncStatus('error')
+      })
+    return undefined
+  }, [auth.user?.id])
   useEffect(() => {
     // 키워드는 현재 화면에서만 유지하며 이전 버전의 저장된 선택도 제거합니다.
     try { window.localStorage.removeItem(SELECTION_KEY) } catch { /* 저장 차단 */ }
@@ -500,6 +564,22 @@ function App({ isLoggedIn = false } = {}) {
     const isSaved = !isTrackSaved(id)
     const next = { ...trackReactions, [id]: { ...trackReactions[id], listenAgain: isSaved, updatedAt: new Date().toISOString() } }
     setTrackReactions(next); saveMusicValue(STORAGE_KEY, next)
+    const userId = auth.user?.id
+    if (userId && supabase) {
+      setLibrarySyncStatus('syncing')
+      syncQueue.current = syncQueue.current.catch(() => undefined)
+        .then(() => syncUserLibrary(supabase, next))
+        .then((synced) => {
+          if (activeSyncUserId.current !== userId) return
+          setTrackReactions(synced)
+          saveMusicValue(STORAGE_KEY, synced)
+          saveLibraryOwner(userId)
+          setLibrarySyncStatus('synced')
+        })
+        .catch(() => {
+          if (activeSyncUserId.current === userId) setLibrarySyncStatus('error')
+        })
+    }
     setSaveFeedback({ trackId: id, message: isSaved ? '보관함에 담았어요.' : '보관을 해제했어요.' })
     window.clearTimeout(saveFeedbackTimer.current)
     saveFeedbackTimer.current = window.setTimeout(() => setSaveFeedback(null), 1800)
@@ -567,7 +647,7 @@ function App({ isLoggedIn = false } = {}) {
       : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} selectedComposers={selectedComposers} onExpandComposers={expandComposers} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetailId
       ? <ConcertDetailScreen detail={concertSearch.detail} onBack={showConcerts} onRetry={() => concertSearch.loadDetail(concertDetailId, true)} />
       : <ConcertScreen search={concertSearch.search} region={concertRegion} onSelectRegion={changeConcertRegion} period={concertPeriod} onChangePeriod={changeConcertPeriod} keyword={concertKeyword} onChangeKeyword={setConcertKeyword} onSearch={concertSearch.runSearch} onLoadMore={concertSearch.loadMore} onOpenConcert={openConcert} onGoExplore={returnToExplore} />
-      : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} />}
+      : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} auth={auth} syncStatus={librarySyncStatus} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} />}
     <nav className="bottom-nav" aria-label="주요 메뉴">
       <button className={'nav-item ' + (['explore', 'recommendations', 'weekly-story', 'weekly-archive'].includes(activeView) ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
       <button className={'nav-item ' + (activeView === 'concert' ? 'active' : '')} type="button" onClick={showConcerts}><Icon name="stage" /><span>공연 찾기</span></button>

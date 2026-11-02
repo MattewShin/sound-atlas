@@ -146,6 +146,23 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .preference-row meter::-webkit-meter-bar { background: #e0e6db; border: 0; }
 .preference-row meter::-webkit-meter-optimum-value { background: #315e56; }
 .preference-axis { display: flex; justify-content: space-between; margin-left: 93px; margin-right: 48px; color: #7a837b; font-size: 10px; }
+.account-panel { margin: 0 0 20px; border: 1px solid #d3ddd1; border-radius: 18px; padding: 18px; color: #31534d; background: #f8f7ef; box-shadow: 0 5px 15px rgba(77,69,52,.05); }
+.account-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.account-heading p { margin: 0; color: #7a837b; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1.1px; }
+.account-heading h2 { margin: 3px 0 0; color: #31534d; font-size: 20px; }
+.account-heading > span, .account-heading img { display: grid; flex: 0 0 44px; width: 44px; height: 44px; place-items: center; border-radius: 50%; color: #31534d; background: #e4eee2; object-fit: cover; }
+.account-heading svg { width: 23px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
+.account-panel > strong, .account-panel > small { display: block; overflow-wrap: anywhere; }
+.account-panel > strong { margin-top: 15px; color: #263b36; font-size: 16px; }
+.account-panel > small { margin-top: 3px; color: #64756a; font-size: 12px; }
+.account-panel > p { margin: 14px 0; color: #64756a; font-size: 14px; line-height: 1.65; }
+.account-panel .account-sync-status { margin: 10px 0 14px; }
+.account-sync-status.is-error, .account-panel .account-error { color: #8c382b; }
+.google-login-button, .account-secondary-button { width: 100%; min-height: 46px; border-radius: 12px; padding: 9px 14px; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+.google-login-button { border: 1px solid #245a53; color: #fffaf0; background: #245a53; }
+.account-secondary-button { border: 1px solid #b9c7ba; color: #31534d; background: #fffdf7; }
+.google-login-button:disabled, .account-secondary-button:disabled { cursor: wait; opacity: .62; }
+.account-panel .account-setup-message { margin-top: 9px; color: #8c6342; }
 .migration-notice { position: fixed; z-index: 50; top: 14px; left: 50%; width: min(calc(100% - 28px), 480px); transform: translateX(-50%); border: 1px solid #bbcdbb; border-radius: 12px; padding: 12px 35px 12px 12px; background: #edf2ea; box-shadow: 0 4px 18px #203b3322; color: #31534d; font-size: 11px; line-height: 1.5; }
 .migration-notice button { position: absolute; right: 8px; top: 8px; border: 0; background: transparent; color: #31534d; font-size: 20px; }
 

@@ -1,93 +1,49 @@
 # 현재 작업
 
-- 작업 ID: CA-PWA-20261030-001
-- 명세 버전: 6 / tension 운영 명칭·평가 기준 통일
-- 상태: IMPLEMENTED / production 배포 검증 대기
-- 브랜치: codex/ca-pwa-20261030-001-tension-label
-- 시작 main SHA: 18bb76573609e8c60229f847d437e74eff20ba9e
-- 요청: 모바일 브라우저에서 홈 화면에 설치하고 앱 아이콘으로 standalone 실행할 수 있는 PWA 적용
+- 작업 ID: CA-GOOGLE-PERSONALIZATION-20261102-001
+- 명세 버전: 1 / Google 로그인·사용자별 보관함·개인화 동기화
+- 상태: IN_PROGRESS / 운영 migration 사용자 적용 완료·production 검증 대기
+- 브랜치: codex/ca-google-personalization-20261102-001
+- 시작 production SHA: 1f138fc233b59d17ddecab5bc0a9b574a6a2cdd2
+- 요청: Google 로그인과 사용자별 보관함·개인화 연동
 
-## 범위
+## 사용자 완료 설정
 
-1. 기존 React19/Vite6 앱에 표준 Web App Manifest와 production Service Worker를 추가한다.
-2. 앱 이름은 현재 화면 제목인 MY PIANO MOOD, 짧은 이름은 Piano Mood로 사용한다.
-3. 아이콘은 기존 네이비·크림·골드 색상에 음표와 나침반을 결합한 새 자산으로 제공한다.
-4. Android/Chromium용 192·512·maskable 512 PNG와 iOS용 180 PNG, SVG favicon을 제공한다.
-5. display=standalone, start_url/scope=/, 기존 theme color를 사용한다.
-6. Service Worker는 동일 origin의 정적 빌드 자산·작곡가 이미지·아이콘만 runtime cache하고 /api/와 외부 이미지·예매 링크는 캐시하지 않는다.
-7. navigation network 실패에는 전용 offline 화면만 제공한다. 공연·추천 데이터를 오프라인 성공으로 위장하지 않는다.
-8. sw.js는 Vercel에서 항상 재검증하고 Manifest MIME을 명시한다.
-9. DB·Supabase migration·KOPIS 캐시·OCR/Program·예약 상태는 변경하지 않는다.
+- Google Cloud OAuth Web Client 생성
+- Supabase Google Provider Client ID·Secret 저장 및 Enabled
+- Supabase Site URL·redirect allow list 설정
+- Vercel `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` Config 등록 및 production 재배포
 
-## 구현·검증
+## 구현 범위
 
-- index.html에 manifest, SVG favicon, apple-touch-icon, iOS standalone metadata, 설명을 연결했다.
-- src/main.jsx는 production에서만 /sw.js를 scope=/로 등록한다.
-- public/manifest.webmanifest, sw.js, offline.html과 5개 아이콘 자산을 추가했다.
-- 전용 PWA 테스트 4/4, 전체 npm test 113/113 fail0/skip0, production build PASS.
-- build 결과에 manifest, sw, offline, PNG/SVG 자산이 포함되고 로컬 preview에서 manifest standalone/아이콘3개와 sw·512 PNG HTTP200을 확인했다.
-- PR #5를 main에 병합하고 production SHA b2f6b5033c7b7dbdefd734544a352e3df82ee70f로 배포했다.
-- production에서 manifest·sw.js·아이콘이 HTTP 200이고 전용 MIME·cache/service-worker 헤더가 적용된 것을 확인했다.
-- production 공연 화면에서 서울 305건·첫 20건 표시를 확인해 기존 목록 기능 회귀가 없음을 확인했다.
-- 실제 iOS/Android 홈 화면 추가는 사용자 기기의 최종 smoke test로 남긴다. 코드·배포 기준 PWA 상태는 OPERATIONAL이다.
+1. React 앱에 Supabase browser client와 Google OAuth 로그인·로그아웃을 추가한다.
+2. 비회원은 기존 localStorage 보관함과 취향 기능을 계속 사용할 수 있다.
+3. 로그인 시 로컬 보관 기록과 사용자 DB 기록을 `updated_at` 최신값 기준으로 병합한다.
+4. 로그인 후 보관·해제는 로컬에 즉시 반영하고 사용자 DB에 동기화한다.
+5. 사용자별 DB 테이블은 auth.users와 연결하고 RLS로 본인 행만 읽기·쓰기 가능하게 한다.
+6. 기존 291곡 ID·점수·추천 계산을 변경하지 않고 동기화된 보관곡으로 기존 9축 취향을 계산한다.
+7. Google provider token·Client Secret·service_role key는 브라우저나 DB에 저장하지 않는다.
+8. KOPIS 공연 캐시·OCR 이력·Service Worker·예약 Disabled 상태는 변경하지 않는다.
 
-## 명세 2 추가 범위
+## 완료 기준
 
-- 사용자가 iPhone 홈 화면 설치와 아이콘 생성을 확인했다.
-- standalone 실행 시 하단 `음악 탐색/공연 찾기/보관함/나의 취향` 영역이 Safari보다 낮아 보이는 현상을 보정한다.
-- viewport에 `viewport-fit=cover`를 선언하고 standalone 모바일에서만 홈 인디케이터 최소 여백·내비게이션 높이를 추가한다.
-- 일반 Safari·Android·데스크톱 레이아웃과 기존 기능은 변경하지 않는다.
-- 공연 찾기의 시작일·종료일 입력이 iPhone에서 검색 패널 오른쪽을 넘지 않도록 입력과 grid의 논리 너비를 제한한다.
+- 비로그인·환경변수 미설정 상태가 기존 기능을 중단하지 않는다.
+- Google OAuth 시작·세션 복원·로그아웃 UI와 오류 안내가 동작한다.
+- 첫 로그인에서 기존 로컬 보관곡을 잃지 않고 서버 기록과 병합한다.
+- 두 사용자 간 데이터가 RLS로 분리되고 익명 접근이 차단된다.
+- 직접 테스트·전체 테스트·production build가 통과한다.
+- 격리 migration 검증 후 운영 적용 여부와 횟수를 HANDOFF에 기록한다.
+- production에서는 실제 Google 로그인과 계정별 보관함 재접속을 확인한다.
 
-## 명세 2 구현·검증
+## 현재 결과
 
-- viewport에 `viewport-fit=cover`를 추가해 iOS standalone의 실제 safe-area 값을 사용한다.
-- 679px 이하 standalone에만 하단 내비게이션 최소 여백과 60px 버튼 높이, 콘텐츠 겹침 방지 여백을 적용했다.
-- PWA·모바일 직접 테스트 8/8, 전체 테스트 114/114 fail0/skip0, production build가 통과했다. 날짜 입력 overflow 회귀도 포함한다.
-- 기존 bundle 크기 경고 외 신규 오류는 없다. 실제 iPhone 표시 높이와 날짜 박스는 production 배포 후 사용자 기기에서 재확인한다.
-- PR #6을 main에 병합했으며 production SHA `3244388d7aada347d1603702c011b557666abaa6`의 Vercel 배포 성공을 확인했다.
-- production HTML의 `viewport-fit=cover`와 새 CSS의 standalone·date input 제한 규칙 반영을 확인했다. 실제 iPhone 육안 재확인만 남는다.
+- Google OAuth 세션 복원·로그인·로그아웃 UI 구현 완료
+- 기존 localStorage와 사용자별 DB 최신값 병합 구현 완료
+- 사용자 변경 시 이전 계정의 로컬 보관함을 새 계정에 전송하지 않도록 소유자 분리
+- 사용자별 테이블·RLS·병합 RPC migration과 격리 검증 완료
+- 직접·전체 테스트 122/122, fail 0·skip 0
+- production build 통과
+- 사용자가 2026-11-02 KST에 신규 migration SQL 적용 완료를 보고했다. 현재 실행 환경의 관리자 연결로 독립 적용 횟수는 확인하지 않았다.
+- PR 병합·production 배포 후 익명 접근 차단과 실제 Google OAuth canary를 확인한다.
 
-## 명세 3 추가 범위
-
-- 사용자의 iPhone 확인 결과 날짜 입력이 여전히 공연명 입력창과 다른 크기로 보인다.
-- 시작일·종료일과 공연명 입력에 동일한 46px 고정 높이·padding·border·배경·글자 line-height를 적용한다.
-- iOS WebKit 기본 date input appearance와 내부 날짜 값 여백을 정규화하되 날짜 선택 기능은 유지한다.
-
-## 명세 3 구현·검증
-
-- 날짜·공연명 입력 모두 물리·논리 높이 46px, 동일 padding·border·배경·font line-height를 사용한다.
-- iOS date input의 기본 appearance를 제거하고 내부 날짜 값과 달력 표시 여백을 별도로 정렬했다.
-- PWA·모바일 직접 테스트 8/8, 전체 테스트 114/114 fail0/skip0, production build가 통과했다.
-- 첨부 실기기 화면으로 기존 날짜 입력의 오른쪽 테두리가 패널 밖에서 잘린 것을 확인했으며, 보정 기준은 공연명 입력과 같은 좌우 끝·높이다.
-- PR #7을 main에 병합했으며 production SHA `cd012347a6b501bfbc679d28bc69c0c3108bccc1`의 Vercel 배포 성공을 확인했다.
-- production CSS에서 46px 높이·appearance 제거·date 내부 값 정렬 규칙을 확인했다. 실제 iPhone 육안 재확인만 남는다.
-
-## 명세 4 추가 범위
-
-- 느낌·기분 키워드 버튼의 단어를 가로·세로 정중앙에 배치한다.
-- 기존 오른쪽 선택 체크는 절대 위치를 유지해 단어 중앙 정렬에 영향을 주지 않게 한다.
-- 공연 지역 선택에도 공유되는 키워드 버튼의 중앙 정렬을 일관되게 유지한다.
-- 키워드 버튼의 좌우 padding을 22px로 통일하고 grid 중앙 정렬을 적용했다.
-- 직접 테스트 5/5, 전체 테스트 115/115 fail0/skip0, production build가 통과했다.
-- PR #8을 main에 병합했고 production SHA `22f22c5078a111ba62adffccc5ff1464b1c2a1c4`의 Vercel 배포 성공을 확인했다.
-- production CSS `index-DQu4ZdAI.css`에서 중앙 정렬과 대칭 22px 여백 규칙을 확인했다.
-
-## 명세 5 추가 범위
-
-- iPhone PWA에서 `긴장감 있는`이 두 줄이 될 때 같은 가로줄의 `힘찬·애잔한` 버튼까지 늘어나는 현상을 수정한다.
-- CSS Grid의 기본 세로 늘림을 해제해 각 키워드 버튼이 자신의 내용에 필요한 높이만 사용하게 한다.
-- 중앙 정렬·선택 체크·최소 터치 높이와 기존 추천 동작은 유지한다.
-- 모바일 타이포그래피 직접 테스트 6/6, 전체 테스트 116/116 fail0/skip0, production build가 통과했다.
-- PR #9를 main에 병합했고 production SHA `0e216fa500ead6026b97059553fd3e1d94cc96dc`의 Vercel 배포 성공을 확인했다.
-- production CSS `index-9tJJqMOX.css`에서 두 키워드 목록의 `align-items:start` 반영을 확인했다.
-
-## 명세 6 추가 범위
-
-- `tension` 감정의 화면 표시와 수동 점수 평가 기준 명칭을 `긴장감 있는`에서 `긴박한`으로 통일한다.
-- 평가 정의를 `긴박감과 극적 긴장`으로 명시하며 기존 1~5 점수와 추천 계산 축 `tension`은 유지한다.
-- 이전 한글 선택값 `긴장감 있는`은 `tension`으로 자동 변환해 사용자 선택 호환성을 보존한다.
-- 과거 EMMA 실험 보관 자료는 당시 기록이므로 변경하지 않는다.
-- 기준·추천·저장소 직접 테스트 48/48, 전체 테스트 116/116 fail0/skip0, production build가 통과했다.
-
-이전 안정성 작업의 main 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/CURRENT_TASK.md)에 보존했다.
+이전 PWA 작업은 [보관본](docs/collaboration/archive/CA-PWA-20261030-001/CURRENT_TASK.md)에 보존했다.
