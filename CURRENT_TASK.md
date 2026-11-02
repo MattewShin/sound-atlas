@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-GOOGLE-PERSONALIZATION-20261102-001
 - 명세 버전: 1 / Google 로그인·사용자별 보관함·개인화 동기화
-- 상태: BLOCKED / 운영 migration 적용 전
+- 상태: IN_PROGRESS / 운영 migration 사용자 적용 완료·production 검증 대기
 - 브랜치: codex/ca-google-personalization-20261102-001
 - 시작 production SHA: 1f138fc233b59d17ddecab5bc0a9b574a6a2cdd2
 - 요청: Google 로그인과 사용자별 보관함·개인화 연동
@@ -43,7 +43,7 @@
 - 사용자별 테이블·RLS·병합 RPC migration과 격리 검증 완료
 - 직접·전체 테스트 122/122, fail 0·skip 0
 - production build 통과
-- 현재 실행 환경에는 운영 DB 관리자 연결이 없어 migration 적용 0회
-- 운영 migration 적용 전에는 main 병합·production 배포·실계정 OAuth canary를 진행하지 않는다.
+- 사용자가 2026-11-02 KST에 신규 migration SQL 적용 완료를 보고했다. 현재 실행 환경의 관리자 연결로 독립 적용 횟수는 확인하지 않았다.
+- PR 병합·production 배포 후 익명 접근 차단과 실제 Google OAuth canary를 확인한다.
 
 이전 PWA 작업은 [보관본](docs/collaboration/archive/CA-PWA-20261030-001/CURRENT_TASK.md)에 보존했다.

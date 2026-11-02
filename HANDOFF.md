@@ -1,7 +1,7 @@
 # 작업 인계
 
 - 작업 ID: CA-GOOGLE-PERSONALIZATION-20261102-001 / 명세1
-- 상태: BLOCKED / 운영 migration 적용 전
+- 상태: IN_PROGRESS / 운영 migration 사용자 적용 완료·production 검증 대기
 - 작성: 웹 GPT / 2026-11-02 KST
 - 브랜치: codex/ca-google-personalization-20261102-001
 - 시작 기준: production / 1f138fc233b59d17ddecab5bc0a9b574a6a2cdd2
@@ -31,14 +31,14 @@
 - `202611020001_user_track_reactions.sql` 격리 적용에서 익명 차단, 두 사용자 RLS 분리, 오래된 쓰기 차단, 본인 CRUD를 확인했다.
 - Google OAuth 시작·callback URL·세션 이벤트·로그아웃 DOM 검증을 완료했다.
 - 전체 테스트 122/122, fail 0·skip 0. production build PASS.
-- 운영 migration 적용 0회, production 배포 0회. 기존 production·KOPIS 캐시·예약 Disabled 상태는 변경하지 않았다.
+- 사용자가 2026-11-02 KST에 신규 migration SQL 적용 완료를 보고했다. 현재 실행 환경에서 관리자 연결로 적용 횟수를 독립 확인하지는 않았다.
+- production 배포는 아직 0회다. 기존 production·KOPIS 캐시·예약 Disabled 상태는 변경하지 않았다.
 
 ## 재개점
 
-1. Supabase SQL Editor 또는 `CLASSIC_ATLAS_DATABASE_URL` 관리자 연결에서 신규 파일 `supabase/migrations/202611020001_user_track_reactions.sql`만 1회 적용한다.
-2. 적용 후 `user_track_reactions` RLS와 `merge_user_track_reactions(jsonb)`의 authenticated 실행 권한을 확인한다.
-3. PR을 main에 병합해 production을 배포한다.
-4. production `나의 취향`에서 Google 로그인 → 기존 로컬 보관곡 병합 → 곡 1개 보관/해제 → 새로고침 유지 → 로그아웃을 확인한다.
-5. 가능하면 두 번째 계정에서 첫 계정 곡이 보이지 않는지 확인한 뒤 OPERATIONAL로 기록한다.
+1. PR을 main에 병합해 production을 배포한다.
+2. production에서 익명 RPC 거부와 Google OAuth 시작 경로를 확인한다.
+3. production `나의 취향`에서 Google 로그인 → 기존 로컬 보관곡 병합 → 곡 1개 보관/해제 → 새로고침 유지 → 로그아웃을 확인한다.
+4. 가능하면 두 번째 계정에서 첫 계정 곡이 보이지 않는지 확인한 뒤 OPERATIONAL로 기록한다.
 
 이전 PWA 작업은 [보관본](docs/collaboration/archive/CA-PWA-20261030-001/HANDOFF.md)에 보존했다.

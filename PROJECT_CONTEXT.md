@@ -1,6 +1,6 @@
 # 현재 Google 개인화 작업 — 2026-11-02
 
-CA-GOOGLE-PERSONALIZATION-20261102-001. Google 로그인, 사용자별 보관함 동기화, 기존 localStorage 최신값 병합, 기존 9축 취향 개인화를 구현했으며 전체 122개 테스트와 build가 통과했다. 현재 환경에 운영 DB 관리자 연결이 없어 신규 migration 적용 전 BLOCKED다. 적용 전 main 병합·production 배포는 하지 않으며 비회원 로컬 기능과 기존 PWA·공연 브라우저는 유지한다. 최신 CURRENT_TASK/HANDOFF를 따른다.
+CA-GOOGLE-PERSONALIZATION-20261102-001. Google 로그인, 사용자별 보관함 동기화, 기존 localStorage 최신값 병합, 기존 9축 취향 개인화를 구현했으며 전체 122개 테스트와 build가 통과했다. 사용자가 2026-11-02 KST에 신규 migration 적용 완료를 보고했으며 production 배포·OAuth canary를 진행한다. 비회원 로컬 기능과 기존 PWA·공연 브라우저는 유지한다. 최신 CURRENT_TASK/HANDOFF를 따른다.
 
 # 이전 PWA 작업 — 2026-10-30
 
