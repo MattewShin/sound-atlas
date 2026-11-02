@@ -324,7 +324,6 @@ export function PreferenceScreen({ profile, onGoExplore, auth, syncStatus }) {
           </div>
         })}</div>
         <p>0~100 고정 척도예요. 각 감정은 독립적이며 합계가 100일 필요는 없어요.</p>
-        <p>현재 목록은 {tracks.length}곡이며, {Array.from(new Set(tracks.map((track) => track.composer))).join(' · ')}의 작품으로 구성되어 있어요.</p>
         <button className="library-save-button" type="button" onClick={onGoExplore}>내 취향 추천 보기</button>
       </section> : <section className="library-empty"><span aria-hidden="true">♬</span><h2>아직 취향이 형성되지 않았어요</h2><p>마음에 남는 곡을 보관하면 감정 성향을 볼 수 있어요.</p><button type="button" onClick={onGoExplore}>음악 탐색으로 가기</button></section>}
     </main>
