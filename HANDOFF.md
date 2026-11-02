@@ -1,118 +1,44 @@
 # 작업 인계
 
-- 작업 ID: CA-PWA-20261030-001 / 명세6
-- 상태: IMPLEMENTED / production 배포 검증 대기
-- 작성: 웹 GPT / 2026-10-30 KST
-- 브랜치: codex/ca-pwa-20261030-001-tension-label
-- 시작 기준: main / 18bb76573609e8c60229f847d437e74eff20ba9e
+- 작업 ID: CA-GOOGLE-PERSONALIZATION-20261102-001 / 명세1
+- 상태: BLOCKED / 운영 migration 적용 전
+- 작성: 웹 GPT / 2026-11-02 KST
+- 브랜치: codex/ca-google-personalization-20261102-001
+- 시작 기준: production / 1f138fc233b59d17ddecab5bc0a9b574a6a2cdd2
 
-## 구현 결과
+## 현재 확인
 
-MY PIANO MOOD를 홈 화면에 설치할 수 있도록 Manifest, production Service Worker, iOS 메타태그와 앱 아이콘을 추가했다. 아이콘은 텍스트 없이 음표와 나침반을 조합하고 기존 네이비·크림·골드 및 포인트 브라운 색을 사용했다. Android/Chromium any 192·512, maskable 512, iOS 180, SVG favicon을 제공한다.
+- 앱에는 Supabase browser client와 인증 UI가 없다.
+- 보관 기록은 `classic-atlas-track-reactions-v1` localStorage에 있으며 `listenAgain`, `liked`, `updatedAt`을 사용한다.
+- 나의 취향은 보관한 활성곡 ID를 기존 9개 감정 점수로 재계산하므로 별도 취향 벡터 저장은 필요하지 않다.
+- 사용자 설정으로 Google OAuth Provider와 Vercel 공개 Config가 준비됐다.
 
-Service Worker는 /api/ 요청과 외부 origin을 즉시 제외한다. navigation은 network-first이며 실패할 때만 offline.html을 표시한다. 해시된 /assets/, /composers/, /icons/, manifest만 cache-first로 재사용한다. 따라서 Supabase 6시간 fresh/24시간 stale 공연 캐시, 최신 추천·보관 데이터와 충돌하지 않는다.
+## 구현 정책
 
-Vercel은 /sw.js를 max-age=0/must-revalidate로 제공하고 Service-Worker-Allowed=/를 설정한다. Manifest는 application/manifest+json MIME을 사용한다. production에서만 등록하므로 개발 서버에는 Service Worker가 남지 않는다.
+- 내부 사용자 식별은 Supabase Auth UUID만 사용한다.
+- DB에는 사용자별 곡 반응만 저장하며 Google access/refresh token은 저장하지 않는다.
+- 최초 로그인은 로컬과 원격을 최신 수정시각 기준으로 병합하고, 이후에도 로컬 사본을 유지해 PWA·네트워크 장애 시 기존 화면을 보존한다.
+- 로그아웃 후에는 원격 동기화를 중단하고 현재 기기의 로컬 보관함을 비회원 상태에서 유지한다.
+- 운영 migration은 격리 테스트와 전체 회귀 통과 전에는 적용하지 않는다.
 
-## 검증
+## 결과
 
-| 항목 | 결과 |
-| --- | --- |
-| PWA 직접 테스트 | 4/4 PASS |
-| 전체 npm test | 113/113 PASS, fail0/skip0, 약9.18초 |
-| production build | PASS, 약1.11초 |
-| manifest | standalone, start/scope=/, any·maskable 아이콘3개 |
-| 아이콘 | PNG signature와 192/512/512/180 실제 크기 PASS, SVG 포함 |
-| Service Worker | node syntax PASS, /api/ 제외·offline navigation fixture PASS |
-| 로컬 preview | manifest·sw.js·512 PNG HTTP200 |
-| 기존 기능 | 음악·보관·취향·공연 안정성 전체 회귀 통과 |
+- React에 Supabase PKCE 세션 복원과 Google 로그인·로그아웃을 연결했다.
+- 비회원 localStorage 보관함은 유지하며, 첫 로그인은 로컬·원격의 곡별 `updated_at` 최신값으로 병합한다.
+- 로그인 후 보관·해제는 화면과 로컬에 먼저 반영한 뒤 원격 RPC를 순차 호출한다. 실패해도 로컬 자료는 유지하고 화면에 동기화 오류를 표시한다.
+- 다른 사용자로 전환할 때 이전 계정 소유 로컬 자료를 새 계정에 업로드하지 않는다.
+- DB에는 Supabase Auth UUID·곡 ID·보관/좋아요·수정시각만 저장한다. Google token·secret·이메일은 저장하지 않는다.
+- `202611020001_user_track_reactions.sql` 격리 적용에서 익명 차단, 두 사용자 RLS 분리, 오래된 쓰기 차단, 본인 CRUD를 확인했다.
+- Google OAuth 시작·callback URL·세션 이벤트·로그아웃 DOM 검증을 완료했다.
+- 전체 테스트 122/122, fail 0·skip 0. production build PASS.
+- 운영 migration 적용 0회, production 배포 0회. 기존 production·KOPIS 캐시·예약 Disabled 상태는 변경하지 않았다.
 
-실행 환경 Node24에서 package engine Node22 경고가 있었지만 테스트와 build는 통과했다. Vercel production은 Node22 설정을 유지한다. 기존 500kB 초과 bundle 경고는 유지되며 이번 PWA 변경에서 번들 의존성을 추가하지 않았다.
+## 재개점
 
-로컬 Playwright 설치에 브라우저 바이너리가 없어 실제 Service Worker controller 검증은 실행하지 못했다. 대신 HTTPS production에서 Manifest·Service Worker·아이콘 HTTP 200, Manifest MIME, sw.js 재검증 및 허용 scope 헤더, HTML 연결 메타데이터를 확인했다. cloud browser는 Service Worker API를 노출하지 않아 controller 값만 직접 읽지 못했다.
+1. Supabase SQL Editor 또는 `CLASSIC_ATLAS_DATABASE_URL` 관리자 연결에서 신규 파일 `supabase/migrations/202611020001_user_track_reactions.sql`만 1회 적용한다.
+2. 적용 후 `user_track_reactions` RLS와 `merge_user_track_reactions(jsonb)`의 authenticated 실행 권한을 확인한다.
+3. PR을 main에 병합해 production을 배포한다.
+4. production `나의 취향`에서 Google 로그인 → 기존 로컬 보관곡 병합 → 곡 1개 보관/해제 → 새로고침 유지 → 로그아웃을 확인한다.
+5. 가능하면 두 번째 계정에서 첫 계정 곡이 보이지 않는지 확인한 뒤 OPERATIONAL로 기록한다.
 
-PR #5를 main에 병합했고 production SHA는 `b2f6b5033c7b7dbdefd734544a352e3df82ee70f`다. Vercel 배포 상태는 success이며 production 공연 화면에서 서울 305건 중 첫 20건이 정상 표시됐다. 실제 iPhone/Android 홈 화면 추가는 사용자 기기의 최종 smoke test로 남지만 코드·배포 기준 상태는 OPERATIONAL이다.
-
-DB DDL/DML·migration·KOPIS/공연API 호출·예약 변경은 0이다. 이전 CA-CONCERT-RELIABILITY 작업 문서는 [보관본](docs/collaboration/archive/CA-CONCERT-RELIABILITY-20261029-001/main-before-pwa/HANDOFF.md)에 보존했다.
-
-## 사용자 최종 확인
-
-1. iPhone은 Safari에서 공유 > 홈 화면에 추가를 선택한다.
-2. Android는 Chrome 메뉴에서 앱 설치 또는 홈 화면에 추가를 선택한다.
-3. `Piano Mood` 아이콘으로 실행했을 때 브라우저 주소창 없는 standalone 화면인지 확인한다.
-
-## 명세 2 사용자 확인과 수정
-
-사용자가 iPhone 홈 화면 추가와 앱 아이콘 생성을 확인했다. standalone 실행에서 하단 내비게이션이 Safari보다 낮아 보이는 현상은 iOS 홈 인디케이터 영역을 위한 viewport 선언과 standalone 전용 최소 높이 보정으로 수정한다. 일반 브라우저 모드에는 전용 규칙을 적용하지 않는다.
-
-추가로 공연 찾기의 시작일·종료일 date input이 검색 패널 오른쪽을 넘는 현상을 수정한다. 패널·form·날짜 grid·label에 `min-width: 0`과 100% 최대 너비를 적용하고, iOS date input에는 물리 너비와 논리 너비를 함께 제한한다. 패널은 최종 안전장치로 넘친 native input 영역을 자른다.
-
-`viewport-fit=cover`를 추가했고 679px 이하 `display-mode: standalone`에서만 하단 내비게이션의 위쪽 10px, 아래쪽 `10px + max(10px, safe-area)`, 버튼 최소 높이 60px을 사용한다. 앱 본문 하단 여백도 132px+safe-area로 맞춰 마지막 콘텐츠가 내비게이션에 가려지지 않게 했다.
-
-| 명세 2 검증 | 결과 |
-| --- | --- |
-| PWA·모바일 직접 테스트 | 8/8 PASS |
-| 전체 `npm test` | 114/114 PASS, fail0/skip0, 약 9.67초 |
-| production build | PASS, 약 1.27초 |
-| 영향 범위 | index viewport, standalone 모바일 CSS, 회귀 테스트 |
-| 비변경 | 일반 Safari·Android/desktop 규칙, DB·API·예약·Service Worker |
-
-production 배포 후 기존 홈 화면 아이콘으로 앱을 완전히 종료·재실행해 하단 네 메뉴의 높이·홈 인디케이터 간격과 공연 찾기 날짜 입력이 패널 내부에 들어오는지 확인한다. CSS/HTML 갱신이 보이지 않으면 iOS 캐시 반영을 위해 앱을 종료한 뒤 다시 열고, 그래도 동일하면 홈 화면 아이콘을 한 번 제거·재추가한다.
-
-PR #6을 main에 병합했고 production SHA는 `3244388d7aada347d1603702c011b557666abaa6`다. Vercel status success 후 production HTML에서 `viewport-fit=cover`, 배포 CSS에서 standalone media와 날짜 input 논리 너비 제한을 확인했다. DB·API·예약 변경은 0이다.
-
-## 명세 3 수정
-
-사용자 실기기 확인에서 date input이 패널 안에는 들어오지만 공연명 입력창과 크기가 다르게 보이는 후속 현상을 확인했다. 세 입력에 동일한 46px 물리·논리 높이와 시각 속성을 적용하고, iOS WebKit date control의 기본 appearance 및 내부 값 여백을 정규화한다. `type=date`와 날짜 선택 동작은 변경하지 않는다.
-
-첨부된 iPhone PWA 화면에서는 날짜 입력의 오른쪽 테두리가 카드 경계에서 잘리고 공연명 입력보다 약 70px 넓게 렌더링된 상태였다. `width/max-width`만으로 iOS native control의 intrinsic size를 줄이지 못한 것이 원인이다.
-
-날짜·공연명 입력에 `inline-size/block-size/width/height`와 46px 높이, 동일 padding·border·배경·line-height를 하나의 규칙으로 적용했다. 날짜 입력에는 `-webkit-appearance: none`을 적용하고 `::-webkit-date-and-time-value`와 달력 indicator 여백을 정렬했다. 날짜 picker 기능과 값 형식은 유지한다.
-
-| 명세 3 검증 | 결과 |
-| --- | --- |
-| PWA·모바일 직접 테스트 | 8/8 PASS |
-| 전체 `npm test` | 114/114 PASS, fail0/skip0, 약 9.68초 |
-| production build | PASS, 약 2.00초 |
-| 비변경 | React 동작·KOPIS API·DB·Service Worker·예약 |
-
-## 명세 5 수정
-
-실기기 화면에서 `긴장감 있는`이 두 줄로 렌더링되자 CSS Grid의 기본 `stretch` 때문에 같은 가로줄의 `힘찬·애잔한` 버튼도 같은 높이로 늘어났다. 키워드 목록에 `align-items: start`를 적용해 긴 문구만 필요한 높이를 사용하고 나머지 버튼은 기존 최소 높이를 유지한다.
-
-| 명세 5 검증 | 결과 |
-|---|---|
-| 모바일 타이포그래피 직접 테스트 | 6/6 PASS |
-| 전체 테스트 | 116/116 PASS, fail 0, skip 0 |
-| production build | PASS |
-| 비변경 | 추천 동작·KOPIS API·DB·Service Worker·예약 |
-
-PR #9를 main에 병합했다. production SHA `0e216fa500ead6026b97059553fd3e1d94cc96dc`의 Vercel status success와 production CSS `index-9tJJqMOX.css`의 두 키워드 목록 `align-items:start` 반영을 확인했다.
-
-## 명세 6 수정
-
-화면 버튼만 축약하지 않고 감정 단일 기준인 `src/data/emotions.js`와 수동 평가 지침의 `tension` 운영 명칭을 `긴박한`, 정의를 `긴박감과 극적 긴장`으로 변경한다. 점수 데이터의 내부 키 `tension`과 기존 291곡의 수치는 그대로 유지하므로 추천 순위·취향 벡터는 달라지지 않는다. 이전 한글 선택값은 저장소 호환 규칙으로 같은 `tension` 축에 연결한다.
-
-| 명세 6 검증 | 결과 |
-|---|---|
-| 기준·추천·저장소 직접 테스트 | 48/48 PASS |
-| 전체 테스트 | 116/116 PASS, fail 0, skip 0 |
-| production build | PASS |
-| 비변경 | 기존 291곡 점수·추천 수식·KOPIS API·DB·Service Worker·예약 |
-
-PR #8을 main에 병합했다. production SHA `22f22c5078a111ba62adffccc5ff1464b1c2a1c4`의 Vercel status success와 production CSS `index-DQu4ZdAI.css`의 `place-items:center`, 대칭 `padding:8px 22px` 반영을 확인했다.
-
-production 배포 후 홈 화면 PWA를 완전히 종료·재실행하고 시작일·종료일·공연명 입력의 좌우 끝과 높이가 같은지 확인한다.
-
-PR #7을 main에 병합했고 production SHA는 `cd012347a6b501bfbc679d28bc69c0c3108bccc1`다. Vercel status success 후 production CSS `index-BYRLGxPp.css`에서 46px block/height, WebKit appearance 제거, date 내부 값 정렬 규칙을 확인했다. DB·API·예약 변경은 0이다.
-
-## 명세 4 수정
-
-느낌·기분 키워드 버튼의 기존 좌우 padding이 `9px/18px`로 비대칭이라 `text-align:center`가 있어도 단어가 왼쪽으로 치우쳐 보였다. 버튼을 grid 중앙 정렬로 바꾸고 좌우 padding을 22px로 통일한다. 선택 체크는 오른쪽 절대 위치를 유지하므로 선택 전후에도 단어 중심은 변하지 않는다.
-
-| 검증 | 결과 |
-|---|---|
-| 모바일 타이포그래피 직접 테스트 | 5/5 PASS |
-| 전체 테스트 | 115/115 PASS, fail 0, skip 0 |
-| production build | PASS |
-| 비변경 | React 동작·KOPIS API·DB·Service Worker·예약 |
+이전 PWA 작업은 [보관본](docs/collaboration/archive/CA-PWA-20261030-001/HANDOFF.md)에 보존했다.
