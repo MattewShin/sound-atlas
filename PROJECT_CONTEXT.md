@@ -1,6 +1,6 @@
 # 현재 개인정보·보안 작업 — 2026-11-02
 
-CA-PRIVACY-SECURITY-20261102-001, 브랜치 codex/ca-privacy-security-20261102-001. production 로그인·병합·새로고침은 정상이나 로그아웃 후 계정 보관함이 비회원 화면에 남는 문제를 재현했다. 로그아웃 로컬 격리, 본인 계정 삭제, 직접 DML 회수, 보안 헤더, 개인정보 안내 초안을 구현했고 전체 124개 테스트·build·production dependency audit가 통과했다. 신규 migration 운영 적용과 문의처·Supabase 처리 지역 확인 전에는 배포하지 않는다. 최신 CURRENT_TASK/HANDOFF를 따른다.
+CA-PRIVACY-SECURITY-20261102-001, 브랜치 codex/ca-privacy-security-20261102-001. production 로그인·병합·새로고침은 정상이나 로그아웃 후 계정 보관함이 비회원 화면에 남는 문제를 재현했다. 로그아웃 로컬 격리, 본인 계정 삭제, 직접 DML 회수, 보안 헤더, 개인정보 안내를 구현했고 전체 124개 테스트·build·production dependency audit가 통과했다. 문의처와 Supabase Sydney 지역을 반영했으며 사용자가 신규 migration 적용 완료를 보고해 production 배포 Gate를 재개한다. 최신 CURRENT_TASK/HANDOFF를 따른다.
 
 # 완료된 Google 개인화 작업 — 2026-11-02
 
