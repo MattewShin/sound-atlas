@@ -1,7 +1,7 @@
 # 작업 인계
 
 - 작업 ID: CA-PRIVACY-SECURITY-20261102-001 / 명세1
-- 상태: IN_PROGRESS / 운영 migration 사용자 적용 완료, production 배포 검증 대기
+- 상태: OPERATIONAL / main 병합·production 배포·로그아웃 격리 검증 완료
 - 작성: 웹 GPT / 2026-11-02 13:53 KST
 - 브랜치: codex/ca-privacy-security-20261102-001
 - 시작 기준: main / `97785fa`
@@ -35,17 +35,19 @@
 ## 운영 변경
 
 - 신규 migration 적용: 사용자가 2026-11-02 KST에 1회 적용 완료를 보고했다. 관리자 연결을 통한 독립 확인은 하지 않았다.
-- main 병합·production 배포: 0회.
-- production DB 쓰기·계정 삭제 canary: 0회.
+- main 병합·production 배포: PR #12 / `875a6bec7440fa34225341e9fd8024bc92c63fc9`, Vercel status success.
+- production 로그아웃 격리 canary: 기존 계정 보관곡 3개·파생 취향이 비로그인 재진입에서 0개로 정리됨.
+- production 계정 삭제 canary: 실제 주계정 보호를 위해 미실행. 격리 SQL에서 본인 계정/반응 삭제와 타 사용자 보존을 검증함.
 - 기존 공연 예약: Disabled 유지, 변경 없음.
 
-## 차단 사유와 재개점
+## production 확인
 
-1. PR을 main에 병합하고 production 배포를 확인한다.
-2. production에서 로그인 → 로그아웃 로컬 삭제를 확인한다.
-3. 계정 삭제는 실제 주계정 대신 별도 테스트 계정으로 canary하고, 해당 테스트 계정만 삭제됐음을 확인한다.
+1. Vercel의 merge SHA 배포 상태가 success임을 확인했다.
+2. 새 화면에서 개인정보 안내, Sydney 지역, 공개 문의 이메일을 확인했다.
+3. 비로그인 화면의 보관곡과 취향이 3곡에서 0곡으로 정리되어 이전 계정 자료가 더 이상 노출되지 않음을 확인했다.
+4. Google 로그인 버튼과 기존 음악 탐색·공연·보관함·취향 내비게이션을 유지했다.
 
 ## 구현자 의견
 
-- 사용자가 migration 적용 완료를 보고했으므로 production 배포 Gate를 재개한다. 단, 실제 주계정으로 삭제 버튼을 실행하지 않는다.
+- 계정 삭제 production canary가 필요하면 별도 Google 테스트 계정을 사용한다. 실제 주계정으로는 삭제 버튼을 실행하지 않는다.
 - 개인정보 안내는 기술적 사실의 초안이며 법률 자문을 대체하지 않는다. 공개 서비스 운영 전 문의처·국외 처리 지역·미성년자 정책을 운영자가 확정해야 한다.
