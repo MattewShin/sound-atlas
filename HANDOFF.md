@@ -1,10 +1,11 @@
 # 작업 인계
 
 - 작업 ID: CA-REFERENCE-TRACK-SEARCH-20261102-001 / 명세1
-- 상태: IMPLEMENTED / 로컬 검증 완료, production 확인 대기
+- 상태: IMPLEMENTED / main 병합·production 배포·읽기 전용 화면 검증 완료
 - 브랜치: codex/ca-reference-track-search-20261102-001
 - 코드 기준 main SHA: `3783d41334240d91ec1fcd9a378092f944549dfd`
-- 결과 코드 SHA는 이 문서가 포함된 작업 커밋/PR에서 확인한다.
+- 결과 코드/production SHA: `ada2c17f3d9b3829a847b4e77ff2fc5bc0fa5507` / [PR #17](https://github.com/MattewShin/sound-atlas/pull/17).
+- production tree: `c67e17b39d0ec16497ef45910663d27c316c6796`. 최종 로컬 검증 tree와 동일하다.
 - 시작 시 worktree/index 변경 없음. 이전 작업 브랜치·로컬 커밋 보존.
 
 ## 변경
@@ -23,7 +24,10 @@
 - DOM: 초보자 평안한 선택 → 숙련자 → 영문 20/40곡 추가 → 빈 결과 → 한글 단건 → 사용자 기준곡 선택 → 추천곡 보관 → 기존 상세/비공개 기록 → 초보자 입력 복원 → 기준곡 변경/포커스 → 악장 결과 구분 → 보관함 반영. 외부 fetch 0회.
 - npm run build PASS. 기존 500kB 번들 warning은 유지되며 새 네트워크 의존성은 추가하지 않았다.
 - 환경: 로컬 Node24; 프로젝트/배포 engine Node22. 운영 migration/DB 쓰기 0회.
-- production 배포·브라우저 확인은 아직 미완료. 실기기 iPhone PWA 폭/터치는 에뮬레이션하지 않았으며 DOM/CSS 검증과 구분한다.
+- Vercel production 배포 상태 success를 병합 SHA 기준으로 확인했다.
+- production 브라우저에서 초보자 평안한 선택 → 숙련자 → ‘Chopin Op.52’ / ‘쇼팽 발라드 4번’ 동일 1곡 검색 → ‘이 곡으로 추천’ → 기준곡과 다른 6곡 및 추천 근거 표시 → 초보자 평안한 선택 유지 → 숙련자 기준곡 복원을 확인했다.
+- 운영에서 보관·개인 기록·공개 게시 쓰기는 하지 않았다. 실기기 iPhone PWA 폭/터치는 검증하지 않았으며 DOM/CSS 검증과 구분한다.
+- 마무리 변경은 CURRENT_TASK.md / HANDOFF.md / PROJECT_CONTEXT.md 문서 3개뿐이다. 기존 140개 테스트/build 결과는 위 production 코드 tree 기준이며 이번 문서 변경으로 재실행하지 않았다. 미해결 구현 blocker 없음.
 
 ## 구현자 의견/한계
 

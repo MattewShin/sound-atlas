@@ -2,7 +2,7 @@
 
 - 작업 ID: CA-REFERENCE-TRACK-SEARCH-20261102-001
 - 명세 버전: 1 / 초보자·숙련자 탐색 분기
-- 상태: IMPLEMENTED / 로컬 검증 완료, 게시·배포 확인 대기
+- 상태: IMPLEMENTED / main 병합·production 배포·읽기 전용 화면 검증 완료
 - 브랜치: codex/ca-reference-track-search-20261102-001
 - 시작 main SHA: `3783d41334240d91ec1fcd9a378092f944549dfd`
 - 기록일: 2026-11-02 Asia/Seoul
@@ -22,8 +22,10 @@
 
 - 한·영·Op/No/번·악장·별칭 검색, 빈 결과·명시적 기준곡 선택, 추천 제외/다양성, 평가 불변 단위 테스트 통과.
 - DOM에서 모드 전환·초보자 입력 유지·20곡 추가·기준곡 변경·곡 상세·비공개 기록·보관함 반영·외부 호출 0을 검증.
-- 전체 테스트 140/140 PASS, fail 0·skip 0. build PASS. 최종 코드 재실행 및 운영 읽기 전용 확인 후 HANDOFF에 추가한다.
-- 배포 후 숙련자 검색/추천과 초보자 복귀를 직접 확인한다. 실제 사용자 보관·기록·공개 게시 쓰기는 수행하지 않는다.
+- 전체 테스트 140/140 PASS, fail 0·skip 0. build PASS. 최종 검증 tree는 병합된 production 코드 tree와 일치한다.
+- PR #17 병합 SHA: `ada2c17f3d9b3829a847b4e77ff2fc5bc0fa5507`. Vercel 상태 success 확인.
+- production에서 한글 ‘쇼팽 발라드 4번’과 영문 ‘Chopin Op.52’가 동일 작품을 찾는 것, 직접 기준곡 선택 후 6곡 추천, 초보자 ‘평안한’ 선택 유지와 숙련자 기준곡 복원을 확인했다.
+- 실제 사용자 보관·기록·공개 게시 쓰기는 수행하지 않았다. 실기기 iPhone PWA 검증은 미실행이다.
 
 ## 이전 작업 보존
 
