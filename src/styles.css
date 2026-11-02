@@ -200,6 +200,35 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 .music-journal-delete { margin-top: 10px; border-top: 1px solid #e3cec5; padding-top: 10px; }
 .music-journal-more { width: 100%; margin-top: 14px; }
 .music-journal-signin { margin-top: 12px !important; }
+.library-content-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 20px; border: 1px solid #d3ddd1; border-radius: 14px; padding: 4px; background: #eeebe2; }
+.library-content-switch button { min-height: 46px; border: 1px solid transparent; border-radius: 10px; padding: 8px; color: #53635b; background: transparent; font: inherit; font-size: 15px; cursor: pointer; }
+.library-content-switch button[aria-pressed="true"] { border-color: #31534d; color: #245a53; background: #fffdf7; }
+.all-music-records { border-top: 0; padding-top: 0; }
+.all-music-records > h2 { margin: 0 0 10px; font-size: 22px; color: #31534d; }
+.all-music-records > p { color: #53635b; font-size: 14px; line-height: 1.7; }
+.music-journal-track-title { margin: 0 0 12px; color: #31534d; font-size: 17px; overflow-wrap: anywhere; }
+.music-journal-track-title button { text-align: left; width: 100%; }
+.music-journal .music-shared-status { margin-top: 12px; padding: 9px; border-radius: 8px; background: #e4eee2; font-size: 13px; }
+.music-share-editor { margin-top: 16px; padding: 14px; border: 1px solid #b9c7ba; border-radius: 12px; background: #f8f7ef; }
+.music-share-editor h4 { margin: 0 0 12px; color: #31534d; font-size: 17px; }
+.music-share-editor > p, .music-share-editor > small { display: block; margin: 10px 0; color: #53635b; font-size: 13px; line-height: 1.7; }
+.music-share-editor form { display: grid; gap: 12px; }
+.music-share-editor label { display: grid; gap: 8px; min-width: 0; font-size: 14px; color: #31534d; }
+.music-share-editor form > small { color: #667269; font-size: 12px; line-height: 1.6; }
+.music-share-editor input[type="text"], .music-share-editor textarea { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; border: 1px solid #b9c7ba; border-radius: 9px; padding: 10px; color: #263b36; background: #fffdf7; font: inherit; font-size: 16px; line-height: 1.7; }
+.music-share-editor textarea { resize: vertical; min-height: 160px; }
+.music-share-editor .music-share-consent { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; font-size: 14px; line-height: 1.7; }
+.music-share-consent input { flex: none; width: 20px; height: 20px; margin-top: 3px; accent-color: #245a53; }
+.music-share-preview { border: 1px solid #d3ddd1; border-radius: 10px; padding: 14px; background: #fffdf7; }
+.music-share-preview > h4 { margin-top: 12px; }
+.music-share-close { margin-top: 12px; width: 100%; }
+.public-story-card { margin-top: 14px; border: 1px solid #d3ddd1; border-radius: 13px; padding: 16px; background: #fffdf7; overflow-wrap: anywhere; }
+.public-story-card h3 { margin: 12px 0; color: #31534d; font-size: 18px; line-height: 1.6; }
+.public-story-card > small { color: #667269; font-size: 12px; line-height: 1.6; }
+.public-story-card .music-journal-entry-body { margin: 14px 0; white-space: pre-wrap; overflow-wrap: anywhere; color: #263b36; font-size: 16px; line-height: 1.8; }
+.music-journal a, .public-story-card a { color: #245a53; text-underline-offset: 3px; }
+.public-music-stories button, .public-story-screen button, .public-story-card a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; box-sizing: border-box; border: 1px solid #b9c7ba; border-radius: 10px; padding: 8px 12px; color: #31534d; background: #fffdf7; font: inherit; font-size: 14px; cursor: pointer; }
+.public-story-screen > button { margin: 18px 8px 0 0; }
 .migration-notice { position: fixed; z-index: 50; top: 14px; left: 50%; width: min(calc(100% - 28px), 480px); transform: translateX(-50%); border: 1px solid #bbcdbb; border-radius: 12px; padding: 12px 35px 12px 12px; background: #edf2ea; box-shadow: 0 4px 18px #203b3322; color: #31534d; font-size: 11px; line-height: 1.5; }
 .migration-notice button { position: absolute; right: 8px; top: 8px; border: 0; background: transparent; color: #31534d; font-size: 20px; }
 
