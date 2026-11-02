@@ -263,6 +263,19 @@ export function LibraryScreen({ savedTracks, onOpenTrack, onRemoveTrack, onGoExp
   )
 }
 
+export function PrivacySummary() {
+  return <div className="privacy-summary">
+    <h3>개인정보 처리 안내</h3>
+    <p><b>수집·이용:</b> 로그인 식별자, 이메일·표시 이름, 보관한 곡과 수정 시각을 로그인·기기 간 동기화·개인화에 사용합니다.</p>
+    <p><b>보관:</b> 계정 삭제 전까지 저장하며, 로그아웃하면 이 기기의 계정 사본을 삭제합니다.</p>
+    <p><b>외부 서비스:</b> Google 로그인, Supabase 인증·데이터베이스, Vercel 호스팅을 사용합니다. Google access token과 Client Secret은 앱 DB에 저장하지 않습니다.</p>
+    <p><b>핵심 데이터 저장 지역:</b> Supabase Oceania (Sydney), Australia. 서비스 운영 과정에서 Google·Supabase·Vercel의 국외 처리가 발생할 수 있습니다.</p>
+    <p><b>이용자 권리:</b> 위의 ‘계정과 데이터 삭제’로 저장 자료와 계정을 삭제할 수 있습니다.</p>
+    <p><b>개인정보 문의:</b> <a href="mailto:ybshin09@gmail.com">ybshin09@gmail.com</a></p>
+    <small>시행 예정일: 2026년 11월 2일 · 법률 자문을 대신하지 않는 서비스 안내입니다.</small>
+  </div>
+}
+
 export function AccountPanel({ auth, syncStatus = 'local' }) {
   const user = auth?.user
   const [showPrivacy, setShowPrivacy] = useState(false)
@@ -288,15 +301,7 @@ export function AccountPanel({ auth, syncStatus = 'local' }) {
       {!auth?.configured && <small className="account-setup-message">로그인 설정이 아직 배포되지 않았어요.</small>}
     </>}
     <button className="account-text-button" type="button" aria-expanded={showPrivacy} onClick={() => setShowPrivacy((value) => !value)}>개인정보 처리 안내 {showPrivacy ? '접기' : '보기'}</button>
-    {showPrivacy && <div className="privacy-summary">
-      <h3>개인정보 처리 안내</h3>
-      <p><b>수집·이용:</b> 로그인 식별자, 이메일·표시 이름, 보관한 곡과 수정 시각을 로그인·기기 간 동기화·개인화에 사용합니다.</p>
-      <p><b>보관:</b> 계정 삭제 전까지 저장하며, 로그아웃하면 이 기기의 계정 사본을 삭제합니다.</p>
-      <p><b>외부 서비스:</b> Google 로그인, Supabase 인증·데이터베이스, Vercel 호스팅을 사용합니다. Google access token과 Client Secret은 앱 DB에 저장하지 않습니다.</p>
-      <p><b>이용자 권리:</b> 위의 ‘계정과 데이터 삭제’로 저장 자료와 계정을 삭제할 수 있습니다.</p>
-      <p className="privacy-pending"><b>공개 전 확인:</b> 개인정보 문의처와 Supabase 처리 지역은 운영자가 확정한 뒤 정식 고지합니다.</p>
-      <small>시행 예정일: 2026년 11월 2일 · 법률 자문을 대신하지 않는 서비스 안내입니다.</small>
-    </div>}
+    {showPrivacy && <PrivacySummary />}
     {auth?.error && <p className="account-error" role="alert">{auth.error}</p>}
   </section>
 }
