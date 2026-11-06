@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import React from 'react'
 import { JSDOM } from 'jsdom'
+import { tracks } from '../src/data/musicData.js'
 
 export async function verifyMusicJournal(MusicJournal) {
   const dom = new JSDOM('<div id="root"></div>', { url: 'https://example.test/' })
@@ -9,9 +10,10 @@ export async function verifyMusicJournal(MusicJournal) {
   for (const name of ['window', 'document', 'navigator', 'HTMLElement']) Object.defineProperty(globalThis, name, { value: name === 'window' ? dom.window : dom.window[name], configurable: true, writable: true })
   globalThis.IS_REACT_ACT_ENVIRONMENT = true
   const doc = dom.window.document
+  const trackA = tracks[0].id, trackB = tracks[1].id
   const button = (label) => [...doc.querySelectorAll('button')].find((element) => element.textContent.trim() === label)
   const flush = async (action) => React.act(async () => { action?.(); await new Promise((resolve) => setTimeout(resolve, 0)) })
-  const rows = Array.from({ length: 11 }, (_, i) => ({ id: `id-${i}`, track_id: 'track-a', kind: 'practice', body: `비공개 기록 ${i}`, recorded_on: '2026-11-02', revision: 1 }))
+  const rows = Array.from({ length: 11 }, (_, i) => ({ id: `id-${i}`, track_id: trackA, kind: 'practice', body: `비공개 기록 ${i}`, recorded_on: '2026-11-02', revision: 1 }))
   let requests = 0, writes = 0, fail = false, pending, hold = false, root
   const client = {
     from() {
@@ -21,7 +23,7 @@ export async function verifyMusicJournal(MusicJournal) {
         select() { return query }, eq(key, value) { filters[key] = value; return query }, order() { return query },
         async range(start, end) {
           if (hold) return new Promise((resolve) => { pending = resolve })
-          return filters.user_id === 'user-a' && filters.track_id === 'track-a' ? { data: rows.slice(start, end + 1), count: rows.length } : { data: [], count: 0 }
+          return filters.user_id === 'user-a' && filters.track_id === trackA ? { data: rows.slice(start, end + 1), count: rows.length } : { data: [], count: 0 }
         },
       }
       return query
@@ -37,7 +39,7 @@ export async function verifyMusicJournal(MusicJournal) {
       return { data: [row] }
     },
   }
-  const render = (user = 'user-a', trackId = 'track-a') => root.render(React.createElement(MusicJournal, { auth: { user: user ? { id: user } : null }, trackId, client }))
+  const render = (user = 'user-a', trackId = trackA) => root.render(React.createElement(MusicJournal, { auth: { user: user ? { id: user } : null }, trackId, client }))
   try {
     const { createRoot } = await import('react-dom/client')
     root = createRoot(doc.getElementById('root'))
@@ -82,7 +84,7 @@ export async function verifyMusicJournal(MusicJournal) {
     assert.equal(doc.querySelector('textarea'), null)
     assert.ok(!doc.body.textContent.includes('비공개 기록 1'))
     hold = true
-    await flush(() => render('user-a', 'track-b'))
+    await flush(() => render('user-a', trackB))
     await flush(() => render(null))
     await flush(() => pending({ data: rows, count: rows.length }))
     assert.ok(!doc.body.textContent.includes('비공개 기록 1'), 'late response after logout stays hidden')

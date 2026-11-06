@@ -4,6 +4,8 @@ import { formatTrackTitle } from '../data/emotions.js'
 import { JOURNAL_KINDS } from '../data/musicJournal.js'
 import { isStoryId, listPublicStories, publishMusicRecord, readMusicNickname, readPublicStory, sharingError, storyUrl, validateShare } from '../data/musicSharing.js'
 import { supabase } from '../lib/supabaseClient.js'
+import { socialScopes } from '../data/socialClient.js'
+import useSocialVisibility from './useSocialVisibility.js'
 
 export const musicRecordTitle = (trackId) => {
   const track = tracks.find(({ id }) => id === trackId)
@@ -14,8 +16,8 @@ export const notifySharingChanged = () => window.dispatchEvent(new window.Event(
 export function CopyStoryLink({ id }) {
   const [message, setMessage] = useState(null)
   return <><button type="button" onClick={async () => {
-    try { await navigator.clipboard.writeText(storyUrl(id)); setMessage('공개 링크를 복사했어요.') }
-    catch { setMessage('복사하지 못했어요. 공개 글을 열어 주소를 복사해 주세요.') }
+    try { await navigator.clipboard.writeText(storyUrl(id)); setMessage('공유 링크를 복사했어요. 공개 범위는 바뀌지 않아요.') }
+    catch { setMessage('복사하지 못했어요. 공유본을 열어 주소를 복사해 주세요.') }
   }}>링크 복사</button>{message && <small role="status">{message}</small>}</>
 }
 
@@ -35,6 +37,7 @@ export function ShareMusicRecord({ record, userId, client = supabase, onClose, o
   const [nickname, setNickname] = useState('')
   const [fixedNickname, setFixedNickname] = useState(false)
   const [body, setBody] = useState(record.body)
+  const [visibility, setVisibility] = useState('private')
   const [preview, setPreview] = useState(null)
   const [consent, setConsent] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -64,23 +67,25 @@ export function ShareMusicRecord({ record, userId, client = supabase, onClose, o
     } finally { sending.current = false; if (alive.current) setBusy(false) }
   }
   return <div className="music-share-editor" aria-label="음악 기록 공유 준비">
-    <h4>{preview ? '게시 전 미리보기' : '공개할 내용 준비'}</h4>
-    <p>원본은 비공개로 유지돼요. 아래에서 고른 내용만 누구나 볼 수 있게 공개합니다.</p>
+    <h4>{preview ? '게시 전 미리보기' : '공유할 내용 준비'}</h4>
+    <p>원본은 비공개로 유지돼요. 별도 공유본의 내용과 공개 범위를 직접 확인해주세요.</p>
     {loading ? <p role="status">닉네임을 확인하는 중…</p> : preview ? <>
       <div className="music-share-preview"><strong>{preview.nickname}</strong><h4>{musicRecordTitle(record.track_id)}</h4><small>{record.recorded_on} · {JOURNAL_KINDS.find(({ value }) => value === record.kind)?.label}</small><p className="music-journal-entry-body">{preview.body}</p></div>
       <p>공개 후 개인 기록을 수정해도 이 글은 바뀌지 않아요. 원본 기록·계정을 삭제하면 공유본도 내려갑니다.</p>
-      <label className="music-share-consent"><input type="checkbox" checked={consent} disabled={busy} onChange={(event) => setConsent(event.target.checked)} />닉네임·곡명·기록 날짜·유형·본문이 로그인하지 않은 사람에게도 공개됨을 확인했어요.</label>
+      <p role="status">공개 범위: <strong>{socialScopes[preview.visibility]}</strong></p>
+      <label className="music-share-consent"><input type="checkbox" checked={consent} disabled={busy} onChange={(event) => setConsent(event.target.checked)} />{socialScopes[preview.visibility]} 범위에 닉네임·곡명·기록 날짜·유형·본문을 공유함을 확인했어요.</label>
       <small>개인정보·타인의 권리를 침해하는 내용은 게시하지 마세요. 공유를 취소해도 이미 복사되거나 캡처된 내용까지 회수할 수는 없어요.</small>
-      <div className="music-journal-actions"><button type="button" disabled={busy} onClick={() => { setPreview(null); setConsent(false); setError(null) }}>내용 다시 편집</button><button type="button" disabled={busy || !consent} onClick={publish}>{busy ? '공개 중…' : '이 내용으로 공개'}</button></div>
+      <div className="music-journal-actions"><button type="button" disabled={busy} onClick={() => { setPreview(null); setConsent(false); setError(null) }}>내용 다시 편집</button><button type="button" disabled={busy || !consent} onClick={publish}>{busy ? '공유 중…' : '이 내용으로 공유'}</button></div>
     </> : <form onSubmit={(event) => {
       event.preventDefault()
       const message = validateShare(nickname, body)
       if (message) { setError(message); return }
-      setPreview({ nickname: nickname.trim(), body: body.trim() }); setConsent(false); setError(null)
+      setPreview({ nickname: nickname.trim(), body: body.trim(), visibility }); setConsent(false); setError(null)
     }}>
       <label>공개용 닉네임<input type="text" maxLength={20} value={nickname} disabled={fixedNickname} onChange={(event) => setNickname(event.target.value)} autoComplete="off" /></label>
       <small>{fixedNickname ? '처음 공유할 때 정한 닉네임이에요. 이번 버전에서는 변경하지 않아요.' : '실명·이메일·연락처 대신 2~20자의 닉네임을 정해주세요. 첫 공개 시 등록되며 이후 같은 이름을 사용해요.'}</small>
       <label>공개할 내용<textarea rows={6} maxLength={4000} value={body} onChange={(event) => setBody(event.target.value)} /></label>
+      <label>공개 범위<select value={visibility} onChange={event => setVisibility(event.target.value)}>{Object.entries(socialScopes).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label>
       <small>공개용 내용을 고쳐도 원본 일지는 바뀌지 않아요.</small>
       <div className="music-journal-actions"><button type="submit">게시 전 미리보기</button></div>
     </form>}
@@ -92,6 +97,7 @@ export function ShareMusicRecord({ record, userId, client = supabase, onClose, o
 export function PublicMusicStories({ trackId, client = supabase }) {
   const [stories, setStories] = useState([]), [total, setTotal] = useState(0), [loading, setLoading] = useState(false), [error, setError] = useState(null)
   const active = useRef(false), token = useRef(0)
+  const connected = useSocialVisibility(client, () => { token.current++; setStories([]); setTotal(0) }, () => void load())
   const load = async (page = 0) => {
     const request = ++token.current; setLoading(true); setError(null)
     try {
@@ -112,7 +118,7 @@ export function PublicMusicStories({ trackId, client = supabase }) {
     {loading && <p role="status">공개 기록을 불러오는 중…</p>}
     {error && <div role="alert"><p>{error}</p><button type="button" disabled={loading} onClick={() => void load()}>다시 불러오기</button></div>}
     {!loading && !error && stories.length === 0 && <p>아직 공개된 이야기가 없어요.</p>}
-    {stories.map((story) => <PublicStoryCard key={story.id} story={story} />)}
+    {connected && stories.map((story) => <PublicStoryCard key={story.id} story={story} />)}
     {stories.length < total && <button type="button" disabled={loading} onClick={() => void load(Math.ceil(stories.length / 10))}>이야기 더 보기</button>}
   </section>
 }
@@ -120,6 +126,7 @@ export function PublicMusicStories({ trackId, client = supabase }) {
 export function PublicStoryScreen({ id, onBack, onOpenTrack, client = supabase }) {
   const [state, setState] = useState({ loading: true, story: null, error: null })
   const [revision, setRevision] = useState(0)
+  const connected = useSocialVisibility(client, () => setState({ loading: true, story: null, error: null }), () => setRevision(v => v + 1))
   useEffect(() => {
     let active = true
     setState({ loading: true, story: null, error: null })
@@ -134,7 +141,7 @@ export function PublicStoryScreen({ id, onBack, onOpenTrack, client = supabase }
     return () => { window.removeEventListener('focus', refresh); window.removeEventListener('music-sharing-changed', refresh) }
   }, [])
   return <><header className="library-header"><p>MUSIC STORIES</p><h1>공유된 음악 기록</h1><span>음악과 함께 남긴 이야기</span></header><main className="library-main public-story-screen">
-    {state.loading ? <p role="status">공개 기록을 불러오는 중…</p> : state.error ? <p role="alert">{state.error}</p> : state.story ? <PublicStoryCard story={state.story} onOpenTrack={onOpenTrack} /> : <p>공유가 취소됐거나 존재하지 않는 글이에요.</p>}
+    {!connected || state.loading ? <p role="status">공개 기록을 불러오는 중…</p> : state.error ? <p role="alert">{state.error}</p> : state.story ? <PublicStoryCard story={state.story} onOpenTrack={onOpenTrack} /> : <p>열람 권한이 없거나 공유가 취소된 글이에요.</p>}
     <button type="button" onClick={() => setRevision((value) => value + 1)}>다시 확인</button><button type="button" onClick={onBack}>음악 탐색으로 돌아가기</button>
   </main></>
 }

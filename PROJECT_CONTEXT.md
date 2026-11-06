@@ -1,3 +1,7 @@
+# 음악 기록 SNS 통합 — 2026-11-06
+
+CA-SOCIAL-20261106-001 / 명세 2. main/f50251e95fe9c2e00290c6eee6329017e9d2e9f4에서 별도 통합하며 기존 단일 Google/Supabase client·개인 기록·닉네임·공개 공유 ID를 확장한다. 공개 프로필 ID와 비공개 Auth 매핑을 분리하고 이전 링크/REST에도 범위/차단 권한을 적용한다. 원본 삭제 시 공유본 삭제 정책을 유지한다. Pretendard·-0.03em·짝수 12px 이상·실제 줄 수별 leading을 적용한다. 코드 d2a7e88feb02bcd10fa075b070357d6ff92ba9a5에서 전체147/전용5/build 통과. 실제 OAuth/PostgREST/Realtime·모바일 시각/PWA·운영 적용은 미검증/미실행이며 새 Draft 검토까지 진행한다. 자세한 결과는 CURRENT_TASK/HANDOFF와 docs/MUSIC_SOCIAL.md를 따른다.
+
 # 완료된 숙련자 검색 UX 개선 — 2026-11-02
 
 CA-REFERENCE-SEARCH-UX-20261102-001. 검색 입력 중 텍스트 자동완성만 표시하고 곡명 선택/단일 결과 Enter로 FOR YOU 대표 카드를 확정한다. 상세는 대표 카드에서 열고 랜덤/추천/전체 목록은 대표 카드 선택으로 연결한다. 초보자와 공통 MORE TO EXPLORE 가로 추천 섹션 및 기존 전체 추천 목록을 재사용한다. DB·SQL·공연·평가는 변경하지 않는다. 로컬 140개 테스트/build PASS. 사용자 명시적 승인 후 PR #19를 main SHA `bb797f40b23b6184f81428e9e07f904d5c91b970`로 병합했다. Vercel success와 운영 텍스트 자동완성·Enter 대표 카드·공통 MORE TO EXPLORE·추천곡의 대표 카드 전환·대표 카드 상세 열림을 확인했다. 상세 상태는 CURRENT_TASK/HANDOFF를 따른다.

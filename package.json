@@ -10,13 +10,14 @@
     "dev": "vite",
     "build": "vite build",
     "test": "node scripts/test.mjs",
+    "test:social": "node scripts/testMusicSocial.mjs",
     "import:emma": "node scripts/emma/importEmma.js",
     "diagnose:recommendations": "node scripts/diagnoseRecommendations.js",
     "preview": "vite preview",
     "start": "node --env-file-if-exists=.env server/index.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.118.0",
+    "@supabase/supabase-js": "^2.119.0",
     "fast-xml-parser": "^5.11.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

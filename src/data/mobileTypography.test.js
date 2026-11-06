@@ -1,6 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { JSDOM } from 'jsdom'
+import { renderedTextLines } from './typography.js'
 
 const css = readFileSync(new URL('../styles.css', import.meta.url), 'utf8')
 const hex = (value) => value.match(/[\da-f]{2}/gi).map((part) => Number.parseInt(part, 16) / 255)
@@ -13,13 +15,42 @@ const contrast = (foreground, background) => {
   return (values[0] + 0.05) / (values[1] + 0.05)
 }
 
-test('모바일 공통 글자 변수는 본문 16px·보조정보 14px·캡션 13px 이상을 사용한다', () => {
+test('모바일 공통 글자 변수는 최소 12px 이상의 짝수 크기를 사용한다', () => {
   for (const declaration of [
-    '--font-body: 16px', '--font-small: 14px', '--font-caption: 13px', '--font-button: 15px',
-    '--font-card-title: 18px', '--font-section-title: 21px', '--font-page-title: 25px',
+    '--font-body: 16px', '--font-small: 14px', '--font-caption: 14px', '--font-button: 16px',
+    '--font-card-title: 18px', '--font-section-title: 22px', '--font-page-title: 26px',
   ]) assert.ok(css.includes(declaration), declaration)
   assert.match(css, /\.concert-period input,[\s\S]*?font-size:\s*16px/)
   assert.match(css, /\.app-shell button,[\s\S]*?min-height:\s*44px/)
+})
+
+test('서비스 글꼴·자간·글자 크기와 실제 줄 수에 따른 줄 높이를 통일한다', () => {
+  const social = readFileSync(new URL('../components/musicSocial.css', import.meta.url), 'utf8')
+  for (const source of [css,social]) {
+    for (const match of source.matchAll(/(?:font-size|--font-[\w-]+):\s*([\d.]+)px/g)) assert.ok(Number(match[1]) >= 12 && Number(match[1]) % 2 === 0, match[0])
+    for (const match of source.matchAll(/letter-spacing:\s*([^;}]+)/g)) assert.equal(match[1].trim(), '-0.03em')
+    assert.ok(!/font-size:\s*clamp/.test(source), 'fluid sizes must not introduce odd/fractional pixels')
+    for (const match of source.matchAll(/font-family:\s*([^;}]+)/g)) assert.ok(match[1].includes('Pretendard'))
+  }
+  assert.match(css,/\[data-text-lines="multiple"\][^}]*line-height:\s*1.5/)
+  assert.match(css,/\[data-text-lines="single"\][^}]*line-height:\s*normal/)
+  const font = readFileSync(new URL('../../public/fonts/PretendardVariable.woff2', import.meta.url))
+  assert.equal(font.subarray(0,4).toString(), 'wOF2')
+})
+
+test('줄 수 판별은 강조·인라인 조각을 포함하고 입력창·숨겨진 텍스트를 구분한다', () => {
+  const dom = new JSDOM('<p style="font-size:16px">첫째줄 <strong>강조</strong><br>둘째줄</p><input>')
+  const p = dom.window.document.querySelector('p'), input = dom.window.document.querySelector('input')
+  p.getClientRects = input.getClientRects = () => [{ width: 200, height: 48 }]
+  dom.window.document.createRange = () => {
+    let node
+    return { selectNodeContents(value) { node = value }, getClientRects() { return [{ top: node.textContent.includes('둘째') ? 24 : 0, width: 30, height: 16 }] } }
+  }
+  assert.equal(renderedTextLines(p), 2)
+  assert.equal(renderedTextLines(input), 1)
+  p.getClientRects = () => []
+  assert.equal(renderedTextLines(p), 0)
+  dom.window.close()
 })
 
 test('긴 곡명·공연명은 모바일에서 말줄임 없이 줄바꿈하고 하단 내비게이션 안전 여백을 둔다', () => {

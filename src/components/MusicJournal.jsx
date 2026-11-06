@@ -4,6 +4,7 @@ import { deleteMusicRecord, JOURNAL_BODY_LIMIT, JOURNAL_KINDS, JOURNAL_PAGE_SIZE
 import { listMyMusicShares, sharingError, storyUrl, withdrawMusicRecord } from '../data/musicSharing.js'
 import { CopyStoryLink, musicRecordTitle, notifySharingChanged, ShareMusicRecord } from './MusicSharing.jsx'
 import { tracks } from '../data/musicData.js'
+import { socialScopes } from '../data/socialClient.js'
 
 // Keyed by user and track: late requests and drafts can never enter another account's screen.
 export function MusicJournalRecords({ userId, trackId, client = supabase, onOpenTrack }) {
@@ -62,6 +63,7 @@ export function MusicJournalRecords({ userId, trackId, client = supabase, onOpen
     if (saving.current) return
     const validation = validateMusicRecord(draft)
     if (validation) { setError(validation); return }
+    if (!draft.revision && !tracks.some(track => track.id === (draft.track_id || trackId))) { setError('등록된 곡을 선택해주세요.'); return }
     saving.current = true
     setBusy(true)
     setError(null)
@@ -116,12 +118,13 @@ export function MusicJournalRecords({ userId, trackId, client = supabase, onOpen
   const editing = busy || Boolean(draft) || Boolean(shareTarget)
 
   return <>
-    <div className="music-journal-toolbar"><span>{total}개의 기록</span>{trackId && <button type="button" disabled={editing} onClick={() => {
+    <div className="music-journal-toolbar"><span>{total}개의 기록</span><button type="button" disabled={editing} onClick={() => {
       setNotice(null); setError(null); setDeleteTarget(null)
-      setDraft({ id: crypto.randomUUID(), kind: 'free', body: '', recorded_on: journalDate(), revision: 0 })
-    }}>기록 남기기</button>}</div>
+      setDraft({ id: crypto.randomUUID(), track_id: trackId || '', kind: 'free', body: '', recorded_on: journalDate(), revision: 0 })
+    }}>기록 남기기</button></div>
     {draft && <form className="music-journal-form" onSubmit={save}>
       <strong>{musicRecordTitle(draft.track_id || trackId)}</strong>
+      {!trackId && <label>등록된 곡<select required disabled={draft.revision > 0 || busy} value={draft.track_id} onChange={event => setDraft({ ...draft, track_id: event.target.value })}><option value="">곡을 선택해주세요</option>{tracks.map(track => <option key={track.id} value={track.id}>{musicRecordTitle(track.id)}</option>)}</select></label>}
       <label>기록 날짜<input type="date" required min="1900-01-01" max="2200-12-31" value={draft.recorded_on} disabled={busy} onChange={(event) => setDraft({ ...draft, recorded_on: event.target.value })} /></label>
       <label>기록 유형<select value={draft.kind} disabled={busy} onChange={(event) => setDraft({ ...draft, kind: event.target.value })}>{JOURNAL_KINDS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}</select></label>
       <label className="music-journal-body">기록 내용<textarea rows={6} maxLength={JOURNAL_BODY_LIMIT} value={draft.body} disabled={busy} placeholder="오늘 이 곡과 함께한 연습, 감상, 생각을 남겨보세요." onChange={(event) => setDraft({ ...draft, body: event.target.value })} /></label>
@@ -140,10 +143,10 @@ export function MusicJournalRecords({ userId, trackId, client = supabase, onOpen
       {!trackId && <h3 className="music-journal-track-title">{track && onOpenTrack ? <button type="button" onClick={() => onOpenTrack(track)}>{musicRecordTitle(record.track_id)}</button> : musicRecordTitle(record.track_id)}</h3>}
       <div className="music-journal-entry-meta"><time dateTime={record.recorded_on}>{record.recorded_on.replaceAll('-', '. ')}</time><span>{JOURNAL_KINDS.find(({ value }) => value === record.kind)?.label || '자유 기록'}</span>{record.revision > 1 && <small>수정됨</small>}</div>
       <p className="music-journal-entry-body">{record.body}</p>
-      {publication && <div className="music-shared-status"><p>공유 중 · 공개본은 원본 수정과 별도로 유지돼요.</p><a href={storyUrl(publication.id)}>공개본 확인</a> <CopyStoryLink id={publication.id} /></div>}
+      {publication && <div className="music-shared-status"><p>공유 중 · {socialScopes[publication.visibility] ?? '범위 확인 필요'} · 공유본은 원본 수정과 별도로 유지돼요.</p><a href={storyUrl(publication.id)}>공유본 확인</a> <CopyStoryLink id={publication.id} /></div>}
       <div className="music-journal-actions"><button type="button" disabled={editing} onClick={() => { setDraft({ ...record }); setError(null); setNotice(null); setDeleteTarget(null); setWithdrawTarget(null) }}>수정</button><button type="button" disabled={editing} onClick={() => { setDeleteTarget(record); setNotice(null); setWithdrawTarget(null) }}>삭제</button>
       {publication ? <button type="button" disabled={editing || sharesLoading} onClick={() => { setWithdrawTarget(publication); setDeleteTarget(null) }}>공유 취소</button> : <button type="button" disabled={editing || sharesLoading || Boolean(sharesError)} onClick={() => { setShareTarget(record); setDeleteTarget(null); setWithdrawTarget(null); setNotice(null) }}>선택한 기록 공유</button>}</div>
-      {shareTarget?.id === record.id && <ShareMusicRecord key={record.id} record={shareTarget} userId={userId} client={client} onClose={() => { setShareTarget(null); void load(); void loadShares() }} onPublished={() => { setShareTarget(null); setNotice('선택한 내용만 공개했어요. 원본은 비공개로 유지돼요.'); void loadShares() }} />}
+      {shareTarget?.id === record.id && <ShareMusicRecord key={record.id} record={shareTarget} userId={userId} client={client} onClose={() => { setShareTarget(null); void load(); void loadShares() }} onPublished={() => { setShareTarget(null); setNotice('선택한 범위로 공유본을 저장했어요. 원본은 비공개로 유지돼요.'); void loadShares() }} />}
       {withdrawTarget?.id === publication?.id && withdrawTarget && <div className="music-journal-delete" role="alert"><p>공유를 취소할까요? 공개 글과 링크에서 내려가며 비공개 원본은 남아요. 이미 복사된 내용은 회수할 수 없어요.</p><div className="music-journal-actions"><button type="button" disabled={busy} onClick={() => setWithdrawTarget(null)}>취소</button><button type="button" disabled={busy} onClick={withdraw}>공유 취소 확정</button></div></div>}
       {deleteTarget?.id === record.id && <div className="music-journal-delete" role="alert"><p>이 기록을 영구 삭제할까요? 공유본도 함께 내려가며 삭제 후에는 복구할 수 없어요.</p><div className="music-journal-actions"><button type="button" disabled={busy} onClick={() => setDeleteTarget(null)}>취소</button><button type="button" disabled={busy} onClick={remove}>{busy ? '삭제 중…' : '영구 삭제'}</button></div></div>}
     </article>})}</div>

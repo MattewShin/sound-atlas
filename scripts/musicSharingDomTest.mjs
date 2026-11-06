@@ -14,6 +14,8 @@ export async function verifyMusicSharing(components) {
   const publications = [], nicknames = new Map()
   let writes = 0, lastPublicationArgs, openedTrack, root, failPublish = true
   const client = {
+    channel() { const c = { on() { return c }, subscribe(fn) { fn('SUBSCRIBED'); return c } }; return c },
+    async removeChannel() {},
     from(table) {
       const filters = {}
       const query = { select() { return query },eq(key,value) { filters[key] = value; return query },order() { return query },
@@ -28,7 +30,7 @@ export async function verifyMusicSharing(components) {
     async rpc(name,args) {
       if (name === 'list_my_music_shares') return { data:publications.filter((p) => p.testOwner === args.p_owner_id).map((p) => ({ id:p.id,source_record_id:p.testRecord,published_at:p.published_at })) }
       writes += 1
-      if (name === 'publish_music_record') {
+      if (name === 'social_publish_record') {
         lastPublicationArgs = args
         if (failPublish) return { error:{ code:'NETWORK' } }
         const source = records.find((r) => r.id === args.p_record_id)
@@ -65,7 +67,7 @@ export async function verifyMusicSharing(components) {
     const preview = () => doc.querySelector('.music-share-editor form').dispatchEvent(new dom.window.Event('submit',{ bubbles:true,cancelable:true }))
     await flush(preview)
     assert.equal(writes,0,'preview never writes')
-    assert.equal(button('이 내용으로 공개').disabled,true)
+    assert.equal(button('이 내용으로 공유').disabled,true)
     assert.ok(doc.querySelector('.music-share-preview').textContent.includes('공개할 내용만'))
     assert.equal(doc.querySelector('.music-share-preview script'),null)
     await flush(() => doc.querySelector('.music-share-consent input').click())
@@ -73,14 +75,15 @@ export async function verifyMusicSharing(components) {
     await flush(preview)
     assert.equal(doc.querySelector('.music-share-consent input').checked,false,'revised preview requires renewed consent')
     await flush(() => doc.querySelector('.music-share-consent input').click())
-    await flush(() => button('이 내용으로 공개').click())
+    await flush(() => button('이 내용으로 공유').click())
     assert.equal(publications.length,0)
     assert.ok(doc.querySelector('.music-share-preview').textContent.includes('공개할 내용만'),'failed publication keeps preview')
     const attemptedId = lastPublicationArgs.p_id
     failPublish = false
-    await flush(() => { button('이 내용으로 공개').click(); button('이 내용으로 공개').click() })
+    await flush(() => { button('이 내용으로 공유').click(); button('이 내용으로 공유').click() })
     assert.equal(writes,2,'double click submits once')
     assert.equal(lastPublicationArgs.p_id,attemptedId,'retry uses same id')
+    assert.equal(lastPublicationArgs.p_visibility,'private','new share defaults to private')
     assert.equal(publications.length,1)
     assert.equal(records[0].body,'비공개 원본 0')
     assert.equal(doc.querySelector('.music-share-editor'),null)
@@ -97,7 +100,7 @@ export async function verifyMusicSharing(components) {
     await flush(() => renderRecords('user-b'))
     assert.ok(!doc.body.textContent.includes('비공개 원본 0'))
     await flush(() => root.render(React.createElement(components.PublicStoryScreen,{ id:attemptedId,client,onBack() {} })))
-    assert.ok(doc.body.textContent.includes('공유가 취소됐거나 존재하지 않는 글'))
+    assert.ok(doc.body.textContent.includes('열람 권한이 없거나 공유가 취소된 글'))
     assert.equal(dom.window.localStorage.length,0)
   } finally {
     if (root) await flush(() => root.unmount())

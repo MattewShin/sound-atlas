@@ -1,6 +1,6 @@
-const CACHE_NAME = 'piano-mood-shell-v1'
+const CACHE_NAME = 'piano-mood-shell-v2'
 const OFFLINE_URL = '/offline.html'
-const PRECACHE = [OFFLINE_URL, '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png']
+const PRECACHE = [OFFLINE_URL, '/offline.js', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/fonts/PretendardVariable.woff2']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting()))
@@ -27,6 +27,8 @@ self.addEventListener('fetch', (event) => {
   }
 
   const cacheableAsset = url.pathname.startsWith('/assets/') ||
+    url.pathname === '/offline.js' ||
+    url.pathname.startsWith('/fonts/') ||
     url.pathname.startsWith('/composers/') ||
     url.pathname.startsWith('/icons/') ||
     url.pathname === '/manifest.webmanifest'

@@ -28,12 +28,13 @@ export async function listMyMusicShares(client, userId) {
   if (error) throw error
   return data || []
 }
-export async function publishMusicRecord(client, userId, record, { id, nickname, body }) {
+export async function publishMusicRecord(client, userId, record, { id, nickname, body, visibility }) {
   const message = validateShare(nickname, body)
   if (message) throw new Error(message)
-  const { data, error } = await client.rpc('publish_music_record', {
+  const { data, error } = await client.rpc(visibility ? 'social_publish_record' : 'publish_music_record', {
     p_owner_id: userId, p_id: id, p_record_id: record.id, p_revision: record.revision,
     p_nickname: nickname.trim(), p_body: body.trim(),
+    ...(visibility ? { p_visibility: visibility } : {}),
   })
   if (error) throw error
   if (!isStoryId(data)) throw new Error('INVALID_PUBLICATION')
