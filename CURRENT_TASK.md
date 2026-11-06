@@ -37,3 +37,4 @@
 
 - 2026-11-06 KST: IMPLEMENTED. 로컬 구현·격리 검증 완료. 운영 DB 적용·배포와 검토자의 ACCEPTED 판단은 별도다. 로컬 미커밋·미push 상태다.
 - 2026-11-06 KST 게시 단계: SNS 기능을 7505b7f2a7ecee51acf9fcc850f163060e3f5e4b로 분리 커밋. 문서 보완 후 지정 브랜치와 Draft PR로 검토한다. 최신 main 통합 미해결을 명시하며 구현자 상태는 IMPLEMENTED를 유지한다.
+- 2026-11-06 KST 게시 확인: [Draft PR #20](https://github.com/MattewShin/sound-atlas/pull/20) 생성, OPEN/DRAFT·mergeable=false·변경 19개 파일 확인. 기능 코드 변경 없이 문서만 보완했다. 운영 DB·main·운영 배포는 변경하지 않았다.

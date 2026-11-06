@@ -11,7 +11,8 @@
 - 게시 시 비교한 원격 main SHA: `f50251e95fe9c2e00290c6eee6329017e9d2e9f4`
 - 커밋 전 변경: 무관한 공연 자동화 수정/미추적 파일은 로컬에 보존. SNS 기능과 문서만 분리 커밋
 - 결과: [구현·운영 안내](docs/MUSIC_SOCIAL.md), [현재 명세](CURRENT_TASK.md)
-- GitHub 검토 경로: 위 브랜치를 push하고 main 대상 Draft PR로 게시한다. 기능 SHA와 그 뒤 문서 커밋을 구분하며 최종 PR 링크/HEAD는 게시 완료 응답과 GitHub 이력에서 확인한다. main 병합·운영 DB 적용·운영 배포는 이번 단계에서 하지 않는다.
+- GitHub 검토 경로: [Draft PR #20](https://github.com/MattewShin/sound-atlas/pull/20), base `main`, head `codex/ca-social-20261106-001`. 기능 SHA와 그 뒤 문서 커밋을 구분하며 최종 PR HEAD는 GitHub 이력과 게시 완료 응답에서 확인한다. main 병합·운영 DB 적용·운영 배포는 하지 않았다.
+- 게시 확인: GitHub에서 OPEN/DRAFT, mergeable=false, SNS 변경 19개 파일을 확인했다. 원격 main은 위 비교 SHA 그대로다. 문서 3개를 제외한 시작 시 파일 52개의 SHA-256이 보존되었고 무관한 변경은 unstaged/untracked로 남아 있다.
 - 이전 로컬 공동 작업: [보관 명세](https://github.com/MattewShin/sound-atlas/blob/f50251e95fe9c2e00290c6eee6329017e9d2e9f4/docs/collaboration/archive/CA-COLLAB-20261022-001/CURRENT_TASK.md), [보관 인계](https://github.com/MattewShin/sound-atlas/blob/f50251e95fe9c2e00290c6eee6329017e9d2e9f4/docs/collaboration/archive/CA-COLLAB-20261022-001/HANDOFF.md)
 
 ## Draft의 병합 전 미해결 사항

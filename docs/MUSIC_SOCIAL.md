@@ -4,6 +4,7 @@
 - 작성일: 2026-11-06 (Asia/Seoul)
 - 구현 시작 기준: 로컬 main / 1607ca201c3a559bc7f28aabe998ef062db02ef9
 - 게시 브랜치: `codex/ca-social-20261106-001`. 고정된 기능 코드 SHA는 [HANDOFF](../HANDOFF.md)에 기록한다.
+- 검토: [Draft PR #20](https://github.com/MattewShin/sound-atlas/pull/20). 최신 main 통합 충돌이 남아 있으며 운영 적용/병합용 완료 상태가 아니다.
 - 이 문서는 구현·로컬 검증 안내다. 운영 DB 적용/배포 완료를 의미하지 않는다.
 
 ## 게시 기준과 최신 main의 차이
