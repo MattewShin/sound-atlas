@@ -101,6 +101,8 @@ Supabase fetch는 `cache:no-store`, SNS 내용/초안은 메모리만 사용한�
 
 ## 검증 경계
 
+검토 대상은 [통합 Draft PR #21](https://github.com/MattewShin/sound-atlas/pull/21)이다. 고정 코드 전체 SHA는 `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`이며 이후 커밋은 문서 보완이다. 이전 #20은 보존했다.
+
 전체 `npm test`, 전용 `npm run test:social`, `npm run build`를 이 통합 worktree의 실제 코드에서 실행한다. 이전 377개 결과를 이번 결과로 사용하지 않는다. SQL은 PGlite에서 실제 기존+신규 migration과 역할/열 권한/RLS를 실행한다. REST 검증은 실제 SDK 요청을 로컬 SQL 역할 검사에 연결한 전송 계약 검사다. **실제 PostgREST 서버/JWT 검증은 아니다.**
 
 최종 결과: Node 22.18.0/npm 10.9.3, 전체 147/147·SNS 전용 5/5·skip 0, build 성공(106 modules, JS 875.36 kB/gzip 224.81 kB, 기존 단일 chunk 경고). 코드 고정 뒤에는 문서만 보완했다. 기존 회귀의 가짜 track-a/track-b는 등록 곡 검증에 맞춰 실제 카탈로그 ID fixture로 바꾸었으며 원본/ID 정책을 완화해 테스트를 통과시키지 않았다.

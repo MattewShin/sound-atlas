@@ -4,6 +4,7 @@
 - 명세 버전: 2
 - 상태: IMPLEMENTED (검토/실환경 확인 대기)
 - 브랜치: codex/ca-social-20261106-001-integration
+- 통합 Draft PR: [#21](https://github.com/MattewShin/sound-atlas/pull/21)
 - 시작 원격 main: f50251e95fe9c2e00290c6eee6329017e9d2e9f4
 - 검증 코드 전체 SHA: d2a7e88feb02bcd10fa075b070357d6ff92ba9a5
 - 검증 tree: e9773ba88b48ea9dccec689d959a4e63be72160e
@@ -30,3 +31,4 @@
 
 - 2026-11-06 KST: IN_PROGRESS. 최신 main을 원격 조회·fetch하고 별도 통합 worktree 생성. 기존 테이블/인증을 확장하는 방식으로 구현 중.
 - 2026-11-06 KST: IMPLEMENTED. 위 고정 코드에서 전체 147/147, SNS 전용 5/5, build 통과. 기존 377개 근거를 재사용하지 않음. 실제 OAuth/PostgREST/Realtime·모바일 시각/PWA·운영 복구는 미검증. 컴퓨터 사용 도구가 Windows URL 확인 실패로 중단되어 시각 확인을 수행하지 못함. 새 Draft PR 게시 후에도 운영 DB/main/운영 배포는 변경하지 않음.
+- 2026-11-06 KST: Draft #21 게시. GitHub 변경 파일 43개가 로컬 allowlist와 일치하고 main과 충돌 없음 확인. 게시 후 추가 변경은 PR 링크를 기록한 문서뿐이다.

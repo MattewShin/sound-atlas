@@ -8,7 +8,7 @@
 - 이전 Draft #20/8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e 및 원래 worktree 미커밋 변경 보존
 - 고정 코드 전체 SHA: `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`
 - 검증 tree: `e9773ba88b48ea9dccec689d959a4e63be72160e`
-- 게시 브랜치: [codex/ca-social-20261106-001-integration](https://github.com/MattewShin/sound-atlas/tree/codex/ca-social-20261106-001-integration). 최종 PR/문서 HEAD는 게시 결과 응답과 GitHub 이력에서 확인한다.
+- 게시: [통합 Draft PR #21](https://github.com/MattewShin/sound-atlas/pull/21), [codex/ca-social-20261106-001-integration](https://github.com/MattewShin/sound-atlas/tree/codex/ca-social-20261106-001-integration). 문서 HEAD는 GitHub 이력에서 확인하며 검증 코드 SHA와 구분한다. 이 커밋에는 문서 3개만 변경했다.
 
 ## 구현
 
@@ -27,7 +27,7 @@
 - `npm run test:social`: **5/5 통과**, 실패/skip 0. 로그 `.cache/verified-social.log` (로컬). 실제 SQL 역할/열 권한/RLS, SDK REST 요청 계약, 구독 공유/교체, 실제 SDK local 로그아웃 선행 폐기, 실제 React+기존 auth hook 흐름을 포함한다.
 - `npm run build`: 성공, 106 modules, JS 875.36 kB/gzip 224.81 kB. 기존 단일 500kB 초과 chunk 경고 유지. Pretendard WOFF2 2,057,688 bytes와 OFL 포함.
 - 통합 도중 144개 통과 후 보강했으며, 최종 첫 실행의 1건은 예전 가짜 track-a/track-b가 등록 곡 검사에 걸린 fixture 문제였다. 실제 카탈로그 ID로 갱신한 뒤 위 147개 최종 실행을 통과했다. 게시 검사에서는 공식 라이선스의 줄 끝 공백만 정리했다. 앱 동작/검증 정책을 느슨하게 바꿔 통과시키지 않았다.
-- 게시 전 경로 allowlist·원본 보존 hash·UTF-8/링크·비밀값 패턴·빈 `.env.example`·공통 이력·소스 diff를 확인한다. 실제 .env/개인 사용자 자료/캐시/무관한 공연·OCR 변경은 게시하지 않는다.
+- 게시 검사 통과: GitHub 변경 경로 43개가 로컬 allowlist와 일치, 원래 파일 52개 hash 및 원래 HEAD 8a1fa8b 보존, UTF-8/링크·비밀값 패턴·빈 `.env.example`·공통 이력·소스 diff 확인. 실제 .env/개인 사용자 자료/캐시/무관한 공연·OCR 변경은 제외했다. GitHub에서 Draft와 main 충돌 없음 확인. 원래 IDE worktree는 보존하고 `.cache/social-integration`에서 구현·게시했다.
 - 실제 OAuth·PostgREST·Realtime·운영 DB·실배포·복구 실행 미검증. SDK REST 계약은 로컬 SQL 역할 검증이며 실제 PostgREST 서버 결과가 아니다.
 - 브라우저 호스트가 없고 Windows 현재 URL도 정책상 확인되지 않아 컴퓨터 사용이 중단됐다. 실제 모바일 화면/터치·실기기 PWA는 미검증이다. 정적 CSS/글꼴·DOM·줄 수 알고리즘 검증과 구분한다.
 
