@@ -1,5 +1,7 @@
 # Classic Atlas
 
+곡 중심 내 음악 기록 SNS의 데이터 구조, RLS, 로컬 검증과 운영 적용 순서는 [음악 기록 안내](docs/MUSIC_SOCIAL.md)를 참고하세요. 개인 원본은 기본 비공개이며 공유본과 분리합니다.
+
 주간 소개 콘텐츠는 `src/data/weeklySelections.js`에서 관리합니다. 글 등록·기간·공개 여부·미리듣기 구간 설정은 [주간 소개 운영 안내](docs/WEEKLY_SELECTIONS.md)를 참고하세요.
 
 홈의 초기 탐색 카드 선정 방식과 교체 시점, 로그인 연동 지점은 [홈 탐색 카드 안내](docs/HOME_DISCOVERY.md)를 참고하세요.

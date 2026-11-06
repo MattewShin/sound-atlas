@@ -18,6 +18,8 @@ import { getKoreanDate, getWeeklySelectionState } from './data/weeklySelectionHe
 import { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } from './components/WeeklySelectionScreens.jsx'
 import useHomeDiscovery from './components/useHomeDiscovery.js'
 import ComposerPicker from './components/ComposerPicker.jsx'
+import MusicSocial from './components/MusicSocial.jsx'
+import useSocialSession from './components/useSocialSession.js'
 import { describeComposerConditions, filterTracksByComposers, getComposerOptions } from './data/composerSelection.js'
 export { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } from './components/WeeklySelectionScreens.jsx'
 
@@ -288,10 +290,15 @@ export function PreferenceScreen({ profile, onGoExplore }) {
   </>
 }
 
-// 현재 인증 기능은 없습니다. 인증 연동 시 로그인 완료 여부를 이 prop으로 전달하세요.
 function App({ isLoggedIn = false } = {}) {
+  const socialAuth = useSocialSession()
   const [initialMusicState] = useState(getInitialMusicState)
-  const [activeView, setActiveView] = useState('explore')
+  const [activeView, setActiveView] = useState(() => typeof location !== 'undefined' && location.hash.startsWith('#music') ? 'social' : 'explore')
+  useEffect(() => {
+    const followLink = () => { if (window.location.hash.startsWith('#music')) setActiveView('social') }
+    window.addEventListener('hashchange', followLink)
+    return () => window.removeEventListener('hashchange', followLink)
+  }, [])
   const [concertRegion, setConcertRegion] = useState(readConcertRegion)
   const [concertDetailId, setConcertDetailId] = useState(null)
   const [concertNow, setConcertNow] = useState(Date.now)
@@ -356,7 +363,7 @@ function App({ isLoggedIn = false } = {}) {
   const discoveryCandidates = useMemo(() => getRecommendationResult(tracks).tracks, [])
   const discovery = useHomeDiscovery({ candidates: discoveryCandidates, activeView,
     conditionKey: JSON.stringify([recommendationInput, currentFeeling, activeKeys, selectedComposers, isLibraryMode ? 'library' : 'keyword']),
-    enabled: isInitialExploration, isLoggedIn })
+    enabled: isInitialExploration, isLoggedIn: isLoggedIn || Boolean(socialAuth.session) })
   const selectedRecommendationTrack = recommendedTracks.find((track) => track.id === selectedTrackId)
   const selectedTrack = selectedRecommendationTrack ?? (isLibraryMode || !activeKeys.length ? recommendedTracks[0]
     : featuredKeywordTrack ?? (selectedComposers.length ? recommendedTracks[0] : undefined))
@@ -582,12 +589,14 @@ function App({ isLoggedIn = false } = {}) {
       : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} selectedComposers={selectedComposers} onExpandComposers={expandComposers} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetail
       ? <ConcertDetailScreen result={concertDetail} now={concertNow} onBack={showConcerts} onOpenTrack={openTrackDetail} onOpenShort={openHighlightShort} details={trackDetails} isTrackSaved={isTrackSaved} onLoadProgram={dbConcertPreview ? undefined : concertSearch.loadProgram} programRequest={concertSearch.programRequests[detailConcert.kopisId]} />
       : <ConcertScreen searchResults={searchedConcertResults} now={concertNow} region={concertRegion} onSelectRegion={changeConcertRegion} onGoExplore={returnToExplore} onOpenConcert={openConcert} tracks={tracks} savedTracks={savedTracks} onSelectTrack={findTrackConcert} searchControls={{ period: concertPeriod, onChangePeriod: changeConcertPeriod, onSearch: concertSearch.runSearch, search: concertSearch.search, connection: concertSearch.connection, targetTrack: concertTargetTrack, onClearTarget: clearConcertTarget, onCheckMore: concertSearch.checkNext, onStop: concertSearch.stop }} />
+      : activeView === 'social' ? <MusicSocial key={socialAuth.session?.user.id ?? 'anonymous'} auth={socialAuth} />
       : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} onFindTrackConcert={findTrackConcert} />}
     <nav className="bottom-nav" aria-label="주요 메뉴">
       <button className={'nav-item ' + (['explore', 'recommendations', 'weekly-story', 'weekly-archive'].includes(activeView) ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
       <button className={'nav-item ' + (activeView === 'concert' ? 'active' : '')} type="button" onClick={showConcerts}><Icon name="stage" /><span>공연 찾기</span></button>
       <button className={'nav-item ' + (activeView === 'library' ? 'active' : '')} type="button" onClick={() => setActiveView('library')}><Icon name="bookmarkSmall" /><span>보관함</span></button>
       <button className={'nav-item ' + (activeView === 'taste' ? 'active' : '')} type="button" onClick={() => setActiveView('taste')}><Icon name="user" /><span>나의 취향</span></button>
+      <button className={'nav-item ' + (activeView === 'social' ? 'active' : '')} type="button" onClick={() => { location.hash = 'music'; setActiveView('social') }}><Icon name="piano" /><span>내 음악 기록</span></button>
     </nav>
     <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={!isInitialExploration && recommendationMode !== 'library' ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} onFindTrackConcert={findTrackConcert} onGoLibrary={showLibrary} />
     <HighlightShortView track={shortTrack} detail={shortTrack ? trackDetails[shortTrack.id] : null} isOpen={isShortOpen} onClose={closeHighlightShort} />

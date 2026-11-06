@@ -10,6 +10,7 @@
     "dev": "vite",
     "build": "vite build",
     "test": "node scripts/test.mjs",
+    "test:social": "node scripts/testMusicSocial.mjs",
     "collect:concerts": "node --env-file-if-exists=.env scripts/collectConcerts.mjs",
     "test:collection": "node scripts/testConcertCollection.mjs",
     "ocr:batch": "node --env-file-if-exists=.env scripts/runEasyOcrBatch.mjs",
@@ -26,6 +27,7 @@
     "start": "node --env-file-if-exists=.env server/index.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
     "fast-xml-parser": "^5.11.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
