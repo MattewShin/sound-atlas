@@ -4,7 +4,11 @@ import '../server/concertCacheSql.test.mjs'
 import '../server/userLibrarySql.test.mjs'
 import '../server/musicJournalSql.test.mjs'
 import '../server/musicSharingSql.test.mjs'
+import '../server/musicSocialSql.test.mjs'
+import '../server/musicSocialRest.test.mjs'
 import '../src/data/musicSharing.test.js'
+import '../src/data/socialClient.test.js'
+import '../src/data/sessionIsolation.test.js'
 import '../src/data/musicJournal.test.js'
 import './concertBrowserUi.test.mjs'
 import './pwa.test.mjs'
@@ -36,6 +40,7 @@ import { verifyComposerSelectionInteractions } from './composerSelectionDomTest.
 import { verifyWeeklySelectionInteractions } from './weeklySelectionDomTest.mjs'
 import { verifyHomeDiscoveryInteractions } from './homeDiscoveryDomTest.mjs'
 import { verifyGoogleAuthInteractions } from './googleAuthDomTest.mjs'
+import { verifyMusicSocial } from './musicSocialDomTest.mjs'
 import { verifyMusicJournal } from './musicJournalDomTest.mjs'
 import { verifyMusicSharing } from './musicSharingDomTest.mjs'
 import { verifyReferenceTrackInteractions } from './referenceTrackDomTest.mjs'
@@ -68,6 +73,10 @@ test('홈 탐색의 재진입·로그인·조건 변경·모달·보관 상태�
 
 test('Google OAuth 시작·세션 반영·로그아웃 흐름을 검증한다', async () => {
   await verifyGoogleAuthInteractions()
+})
+
+test('SNS는 기존 세션·재시도·초안·권한 무효화·계정 삭제 흐름을 함께 사용한다', async () => {
+  await verifyMusicSocial(components.MusicSocial)
 })
 
 test('음악 기록은 비공개 페이지·수정·실패 초안 보존·삭제 확인·계정 격리를 지원한다', async () => {
