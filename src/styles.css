@@ -537,6 +537,8 @@ main { border-radius: 27px 27px 0 0; background: #f7f3eb; margin-top: -17px; pos
 
 /* Shared typography: only even pixel sizes; rendered line count controls leading. */
 html, body, button, input, select, textarea { font-family: 'Pretendard', sans-serif; }
+/* Prevent the browser's relative small size from shrinking 12px captions. */
+small { font-size: 12px; }
 *, *::before, *::after { letter-spacing: -0.03em; }
 [data-text-lines="single"] { line-height: normal !important; }
 [data-text-lines="multiple"] { line-height: 1.5 !important; }
