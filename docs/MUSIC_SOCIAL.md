@@ -6,8 +6,10 @@
 - 이전 검토: [Draft #20](https://github.com/MattewShin/sound-atlas/pull/20) / `8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e` (보존)
 - 작성일: 2026-11-06 Asia/Seoul. 고정 코드 SHA와 최종 검증은 [HANDOFF](../HANDOFF.md)를 따른다.
 - 검증 코드 SHA: `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`, tree `e9773ba88b48ea9dccec689d959a4e63be72160e`.
-- 배포 전 확인 기준 HEAD: `5a302bcaff00c33246a2d68c8e688aa67b54cf89`. 스테이징 미구성을 사용자에게 확인했다. 실제 서비스 검증은 미실행이며 [환경 구성·검증표·신고 정리 설정안](MUSIC_SOCIAL_STAGING.md)을 별도로 준비했다. 운영 적용은 하지 않았다.
-- 현재 검증 경로: 사용자 지시로 신규 클라우드 프로젝트 대신 [로컬 Supabase](MUSIC_SOCIAL_LOCAL.md)로 전환. CLI 3.0.0/격리 프로젝트 준비와 start 시도까지 실행했지만 Docker 부재로 실패했다. 실제 migration/PostgREST/Realtime는 아직 미실행이다.
+- 초기 배포 전 확인 기준 HEAD: `5a302bcaff00c33246a2d68c8e688aa67b54cf89`. 당시 스테이징 미구성을 확인하고 [환경 구성·검증표·신고 정리 설정안](MUSIC_SOCIAL_STAGING.md)을 준비했다. 그 단계에서는 운영 적용/실제 서비스 검증을 하지 않았다.
+- 이전 로컬 검증 시도: [로컬 Supabase](MUSIC_SOCIAL_LOCAL.md)의 CLI 3.0.0/격리 프로젝트 준비와 start까지 실행했지만 Docker 부재로 실패했다. 그 단계의 migration/PostgREST/Realtime는 미실행이었다.
+
+> **최신 운영 결과:** 위 미실행 상태는 초기 단계 이력이다. 이후 사용자의 명시 승인으로 2026-11-06 운영 백업·001→002 적용·PR #21 병합·운영 배포를 완료했다. 최종 기능 SHA `78a1dbb65a515ae583687e2e19d1389c2a59fd0f`에서 실제 Auth/API/WS 16항목·브라우저 13항목 및 320/375/390px를 확인했다. Google 실인증·실기기/PWA·신고 스케줄·실복원 한계와 최신 결과는 [운영 반영 결과](MUSIC_SOCIAL_PRODUCTION.md)를 따른다. 이후 본문의 운영 미실행 문구는 초기 설계/게시 단계 기준으로 구분한다.
 
 ## 통합 기준
 
@@ -81,6 +83,8 @@ select atlas_private.purge_expired_social_reports();
 ## 실시간·캐시·타이포그래피
 
 기존 client의 하나의 `atlas-social` Broadcast 구독을 피드와 기존 공개 화면이 공유한다. DB 변경 트리거는 빈 `{}` invalidate만 보내며 행·Auth ID·원본 ID·본문을 보내지 않는다. 연결 오류/오프라인/탭 숨김에는 피드를 지우고, 재연결·온라인·복귀 후 RLS로 다시 읽는다. 요청 세대와 계정 key로 오래된 응답의 재등장을 막는다. 60초 재검증도 한다. 운영 Realtime 전달 지연은 별도 확인이 필요하다.
+
+운영 실수신에서는 Supabase가 추적용 메시지 UUID `payload.id`/동일한 `meta.id`를 붙였다. DB에 전달하는 업무 payload는 `{}`이며 이 추적 ID는 Auth/프로필/게시물/원본 ID와 다른 값임을 확인했다. 수신 객체 전체가 빈 객체라고 가정하지 않고 본문·비공개 식별자 비노출과 invalidate/권한 재조회를 검증한다. 실제 WS와 별도 창 갱신/재연결 검증은 운영 결과에 기록했다.
 
 Supabase fetch는 `cache:no-store`, SNS 내용/초안은 메모리만 사용한다. Google 세션 저장은 기존 SDK 흐름을 유지한다. 서비스워커는 같은 origin 정적 자산·글꼴만 캐시하며 `/api/`, 외부 Supabase, SNS 내용은 캐시하지 않는다. 추천은 기존 보관곡/감정 점수만 사용하고 비공개 기록 본문은 읽지 않는다.
 

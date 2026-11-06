@@ -1,6 +1,6 @@
-# 음악 기록 SNS 통합 — 2026-11-06
+# 음악 기록 SNS 운영 반영 — 2026-11-06
 
-CA-SOCIAL-20261106-001 / 명세 2. main/f50251e95fe9c2e00290c6eee6329017e9d2e9f4에서 별도 통합하며 기존 단일 Google/Supabase client·개인 기록·닉네임·공개 공유 ID를 확장한다. 공개 프로필 ID와 비공개 Auth 매핑을 분리하고 이전 링크/REST에도 범위/차단 권한을 적용한다. 원본 삭제 시 공유본 삭제 정책을 유지한다. Pretendard·-0.03em·짝수 12px 이상·실제 줄 수별 leading을 적용한다. 코드 d2a7e88feb02bcd10fa075b070357d6ff92ba9a5에서 전체147/전용5/build 통과. 실제 OAuth/PostgREST/Realtime·모바일 시각/PWA·운영 적용은 미검증/미실행이며 새 Draft 검토까지 진행한다. 자세한 결과는 CURRENT_TASK/HANDOFF와 docs/MUSIC_SOCIAL.md를 따른다.
+CA-SOCIAL-20261106-001 / 명세 2. 사용자 명시 승인 후 운영 논리 백업/복구 읽기 검사, SNS 202611060001→002 적용·기존 내용 보존, PR #21을 merge SHA 6bd183ca21efc53ea3c842c942cece96af0af03e로 병합했다. 운영에서 발견한 small 10px/메뉴 40px만 CSS로 보완한 최종 기능 SHA는 78a1dbb65a515ae583687e2e19d1389c2a59fd0f이며 production Ready/운영 alias 확인. 실제 Auth/API/WS 16항목·브라우저 13항목·관련 typography 8개 PASS, 320/375/390px 확인. 합성 계정/자료만 사용·정리했고 기존 평가 7/닉네임 1 보존. 기존 세션/원본/닉네임/공유 ID를 재사용하고 공개 식별자를 분리하며 기존 REST도 권한을 적용한다. 실제 Google 인증 완료·실기기 IME/PWA·신고 일일 작업/외부 알림·DB 실복원은 미검증/미설정이다. 변경 없는 전체 테스트/별도 스테이징/Docker 설치는 반복하지 않았다. [운영 결과](docs/MUSIC_SOCIAL_PRODUCTION.md)와 CURRENT_TASK/HANDOFF를 따른다.
 
 # 완료된 숙련자 검색 UX 개선 — 2026-11-02
 

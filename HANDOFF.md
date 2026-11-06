@@ -1,14 +1,34 @@
 # 작업 인계 — SNS 통합
 
 - 작업 ID: CA-SOCIAL-20261106-001 / 명세 2
-- 상태: IMPLEMENTED / 실제 서비스 검증·검토 대기 (ACCEPTED 아님)
+- 상태: IMPLEMENTED / 운영 반영·검증 결과 보고 (ACCEPTED 아님)
 - 작성: Codex / 2026-11-06 Asia/Seoul
-- 브랜치: codex/ca-social-20261106-001-integration
+- 결과 브랜치: main / codex/ca-social-20261106-001-production
+- PR #21 merge SHA: `6bd183ca21efc53ea3c842c942cece96af0af03e`
+- 최종 운영 기능 코드 SHA: `78a1dbb65a515ae583687e2e19d1389c2a59fd0f`
 - 시작 main: f50251e95fe9c2e00290c6eee6329017e9d2e9f4
 - 이전 Draft #20/8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e 및 원래 worktree 미커밋 변경 보존
-- 고정 코드 전체 SHA: `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`
-- 검증 tree: `e9773ba88b48ea9dccec689d959a4e63be72160e`
-- 게시: [통합 Draft PR #21](https://github.com/MattewShin/sound-atlas/pull/21), [codex/ca-social-20261106-001-integration](https://github.com/MattewShin/sound-atlas/tree/codex/ca-social-20261106-001-integration). 문서 HEAD는 GitHub 이력에서 확인하며 검증 코드 SHA와 구분한다. 최초 PR 링크 기록은 문서 3개, 이후 클라우드 준비 안내는 4개 변경이었다. 이번 로컬 전환은 아래 문서 5개 변경이다.
+- 이전 전체 회귀 기준 코드 SHA: `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`
+- 이전 검증 tree: `e9773ba88b48ea9dccec689d959a4e63be72160e`
+- 게시: [PR #21 병합 완료](https://github.com/MattewShin/sound-atlas/pull/21), [운영 결과](docs/MUSIC_SOCIAL_PRODUCTION.md). 기능 코드와 이후 문서 저장 SHA를 구분한다. 문서 HEAD는 GitHub 이력에서 확인한다.
+
+## 운영 반영·검증 — 2026-11-06 KST
+
+사용자가 운영 migration·병합·배포를 명시적으로 승인했다. 아래 로컬/클라우드 단계의 미실행 보고는 당시 이력이며 현재의 운영 금지 지시가 아니다. 별도 스테이징/Docker 설치와 변경 없는 전체 테스트 반복은 하지 않았다.
+
+1. 운영 앱·관리자 DB 대상 일치를 읽기 확인했다. PostgreSQL 17.11. 15:47:18 KST 전체 pg_dump archive 1,447,001 bytes 생성, pg_restore 목록 854개·전체 SQL 추출 검사 성공. 현재 Windows 사용자/SYSTEM만 접근하는 Git 제외 폴더에 보관했다. 운영 실복원·플랫폼 자동 백업/PITR은 미검증이다.
+2. 15:49:17 KST `202611060001`→`202611060002`를 원본 변경 없이 하나의 transaction으로 적용/COMMIT했다. 기존 평가/원본/닉네임/공유 내용 지문과 개수 일치, 등록 곡 291개. 운영에 CLI migration history 테이블이 없어 자동 이력 등록은 하지 않았고 local manifest에 파일 hash/결과를 기록했다.
+3. PR #21 기대 head fb3dc5b를 지정해 병합했다. 첫 운영 배포 Ready 확인 후 실제 화면에서 10px small과 약 40.125px 메뉴 폭을 발견해 **CSS 두 파일, 3줄 추가/1줄 변경**으로만 보완했다. 최종 기능 코드 78a1dbb, 운영 배포 `dpl_ARvQwrhzi1VT7iy6S3ZVaiS4AGgV` Ready 및 운영 alias 확인.
+4. 합성 A/B/C를 실제 Auth API로 로그인하고 실제 PostgREST/Realtime와 전용 headless 브라우저에서 검증했다. **최신 판정 API/WS 16/16, 브라우저 13/13, 보완 관련 기존 typography 테스트 8/8 PASS.** 320/375/390px·34자 기존형 handle·긴 곡명/한글 본문/댓글·글꼴/자간/leading·44px 터치를 확인했다. 별도 창의 반응/댓글/범위/공유 취소 갱신, offline 복귀 미재노출, 직접 링크/민감 열/팔로우 취소/차단·삭제를 포함한다.
+5. 실제 앱에서 테스트 A 계정을 삭제하고 B/C도 생성 ID/고유 테스트 이메일을 대조해 정리했다. 합성 신고만 ID+본문 접두사로 제한해 삭제했다. 16:12:20 KST 테스트 계정/신고 0, 원본/공유/프로필 0. 기존 평가 7·닉네임 1과 전체 내용 지문은 시작 전과 같았다. 실제 사용자 기록을 시험 목적으로 공개/삭제하지 않았다.
+
+초기 실패도 보존했다. Realtime는 `{}` 업무 payload에 플랫폼 추적 ID를 붙이므로 수신 객체 전체가 비어 있다는 runner 가정을 고쳐 실패 4개만 재검증했다. UI 시험의 합성 한글 표준입력 인코딩과 reload 세션 재주입 문제도 바로잡았다. 실제 앱 수정은 위 두 CSS뿐이다. 변경 없는 147개 전체 테스트는 반복하지 않았다.
+
+**검증 한계:** Google provider 활성화·PKCE authorize의 Google 302 리디렉션은 확인했지만 실제 Google 계정 인증/동의/코드 교환 완료는 미검증이다. 로그인/세션 시험은 테스트 이메일 Auth JWT와 앱 세션 반영이다. 모바일은 Chromium viewport/터치 모사로, 실기기 iOS/Android·한글 가상 키보드·설치 PWA는 미검증이다. 운영에 기존 기록/공유 행이 없어 실제 legacy backfill 사례는 없었다. 신고 일일 작업·외부 실패 알림은 기존 설정안만 있고 설치/발송하지 않았다.
+
+복구는 보존한 전체 논리 archive/이전 Ready 배포와 데이터 보존형 후속 수정 경로를 확보했다. 실제 DB 복원/배포 롤백은 실행하지 않았다. 상세 범위·초기 실패·백업 checksum·배포 ID·합성 화면 증거는 [운영 반영 결과](docs/MUSIC_SOCIAL_PRODUCTION.md)에 기록했다. 이번 결과 문서는 main에 게시하며 기능/DB 추가 변경 없이 경로·내용·비밀값·원래 작업 보존을 확인한다.
+
+이후 아래 내용은 단계별 과거 인계로 보존한다. 이전의 미실행/금지 상태를 현재 결과와 섞지 않는다.
 
 ## 로컬 Supabase 전환 — 2026-11-06 KST
 
@@ -65,7 +85,7 @@
 
 구조·권한·삭제 표·migration 순서·실패 복구·신고 보관은 [MUSIC_SOCIAL.md](docs/MUSIC_SOCIAL.md)를 따른다. 이전 377개 결과는 이번 통합의 근거로 사용하지 않는다.
 
-## 최종 검증과 한계
+## 초기 통합 검증과 당시 한계 (d2a7e88 기준)
 
 - 환경: Windows PowerShell, Node 22.18.0/npm 10.9.3, React 19/Vite 6.4.3, SDK 2.119.0, PGlite/JSDOM.
 - `npm test`: 위 고정 통합 코드에서 **147/147 통과**, 실패/skip 0. 로그 `.cache/verified-regression.log` (로컬, 커밋 제외).
@@ -87,7 +107,7 @@
 - 신고는 공유 snapshot·사유만 운영자 전용 저장, 계정/공유 삭제 시 식별 FK를 NULL로 만든다. expires_at=30일, service_role 전용 만료 삭제 함수 제공. 일일 정리 스케줄/실패 알림은 배포 전 운영 설정이 필요하며 물리적 자동 삭제를 이미 보장하지 않는다.
 - 실패 복구: 001 COMMIT 전 실패는 롤백 확인, 001 성공·002 실패는 공유 쓰기를 제한하고 002만 재시도. 프런트 실패는 이전 산출물로 복귀하면서 RLS/데이터 보존. 권한 사고는 직접 테이블/RPC 접근 제한+빈 무효화 신호 후 수정/재검증. RLS 해제/public 범위 확대/DROP CASCADE로 복구하지 않는다. 이미 데이터가 있으면 백업을 보존한 후속 migration을 쓴다. 운영 복구 실행은 미검증이다.
 
-## 운영
+## 초기 게시 단계의 운영 제한 (현재 승인 이전)
 
 운영 migration/main 병합/운영 배포는 하지 않는다. 검증한 코드 이후에는 문서만 보완하여 새 Draft PR로 게시한다. 명세 1 및 기존 main 작업 문서는 docs/collaboration/archive/에 보존했다. 원래 worktree와 PR #20은 그대로 두었다. 새 브랜치는 main과 공통 이력이 있으며 오래된 App 전체나 공연/OCR 변경을 이식하지 않았다.
 

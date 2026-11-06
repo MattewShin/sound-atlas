@@ -1,5 +1,7 @@
 # SNS 명세 2 — 로컬 Supabase 검증
 
+> 과거 로컬 준비/기동 실패 기록이다. 이후 사용자가 별도 스테이징/Docker 설치 없이 운영 반영을 승인했고 [운영 migration·배포·실제 검증](MUSIC_SOCIAL_PRODUCTION.md)을 완료했다. 아래 미실행/운영 미변경은 로컬 확인 당시의 상태로 구분한다.
+
 - 작업: CA-SOCIAL-20261106-001 / 명세 2
 - 사용자 방향 변경: 새 클라우드 Supabase 프로젝트를 만들지 않고 로컬 Supabase로 먼저 검증한다.
 - 확인 기준: `b3c17cd9882f3ca829f37c1f2ce79d79eed88a9f`. 기능 코드는 기존 `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`와 동일하다.
