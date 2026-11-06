@@ -8,7 +8,31 @@
 - 이전 Draft #20/8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e 및 원래 worktree 미커밋 변경 보존
 - 고정 코드 전체 SHA: `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`
 - 검증 tree: `e9773ba88b48ea9dccec689d959a4e63be72160e`
-- 게시: [통합 Draft PR #21](https://github.com/MattewShin/sound-atlas/pull/21), [codex/ca-social-20261106-001-integration](https://github.com/MattewShin/sound-atlas/tree/codex/ca-social-20261106-001-integration). 문서 HEAD는 GitHub 이력에서 확인하며 검증 코드 SHA와 구분한다. 이 커밋에는 문서 3개만 변경했다.
+- 게시: [통합 Draft PR #21](https://github.com/MattewShin/sound-atlas/pull/21), [codex/ca-social-20261106-001-integration](https://github.com/MattewShin/sound-atlas/tree/codex/ca-social-20261106-001-integration). 문서 HEAD는 GitHub 이력에서 확인하며 검증 코드 SHA와 구분한다. 최초 게시 후 PR 링크 기록은 문서 3개 변경이었으며, 이번 배포 전 확인은 아래 문서 4개 변경이다.
+
+## 배포 전 확인 — 2026-11-06 KST
+
+- 요청 기준 HEAD: `5a302bcaff00c33246a2d68c8e688aa67b54cf89`. 통합 worktree의 HEAD/깨끗한 작업 트리와 ID·명세 2를 대조했다. 원래 IDE worktree/기존 공연·OCR 변경은 보존했다.
+- 판정: **배포 전 검증 미완료**. 사용자가 운영과 분리된 스테이징이 아직 없다고 확인했다. 구현자 상태는 IMPLEMENTED를 유지하되 실제 검증 PASS/ACCEPTED로 표시하지 않는다.
+- 환경 조사: 통합 worktree는 빈 예제만 있고 실값 env 없음. 원래 worktree에는 기존 서버 DB 설정이 있지만 테스트 환경임을 확인할 수 없어 연결/재사용하지 않았다. 프로세스에 staging/DB/Google 설정 없음, Docker/Supabase CLI/psql은 PATH에서 사용 불가, Supabase 관리 연결 도구 없음. 비밀값은 출력/커밋하지 않았다.
+- GitHub에서 위 SHA의 Vercel status=success와 PR OPEN/DRAFT·미병합을 확인했다. 실제 Preview 앱·환경변수·DB 분리 확인이나 기능 검증을 뜻하지 않는다. 브라우저 호스트 부재 및 Windows 현재 URL 확인 실패로 컴퓨터 사용 도구가 이번에도 중단되었으며 UI 조작을 우회하지 않았다.
+
+| 요청 항목 | 이번 실제 실행 | 결과/남은 조건 |
+| --- | --- | --- |
+| 분리 스테이징 migration | 미실행 | 테스트 Supabase 생성, 별도 CLI 작업 폴더에 기반 4개+SNS 2개만 준비. dry-run 대상 ref 확인 필요 |
+| Google 로그인/로그아웃/전환·기존 기록/링크 | 미실행 | 테스트 OAuth client/A·B·C/Preview redirect 설정 및 합성 기존 데이터 필요 |
+| 실제 PostgREST A/B/C/익명·민감 열·삭제 | 미실행 | 실제 사용자 토큰/익명 apikey 요청으로 검증. 기존 PGlite/모의 전송 결과로 대체 안 함 |
+| 실제 Realtime 다중 접속/끊김·복귀 | 미실행 | Broadcast 수신/화면 제거/재조회·WSS 단독 끊김/전체 offline·재노출 확인 필요 |
+| 모바일 320/375/390px | 미실행 | 긴 곡명/24·34자 handle/본문/댓글/메뉴·44px 터치/실기기 IME·키보드·nav/실제 computed typography 확인 필요 |
+| 신고 일일 실행/실패 알림 | 설정안만 준비 | KST 03:15 pg_cron + 독립된 15분 감시, 실패/미실행/정리 잔여·전송 실패 알림안. 담당자/수신처/감시 환경 미정, 설치·실행·발송 0 |
+
+사용자의 후속 요청에 따라 [스테이징 준비·검증 안내](docs/MUSIC_SOCIAL_STAGING.md)를 작성했다. 테스트 프로젝트 생성부터 브랜치 전용 Preview 연결, 기존 합성 fixture와 실제 서비스 시험표까지 실행 순서를 제공한다. 테스트 기반 4개→OAuth/Preview의 계정 생성만→합성 기존 원본/공유→SNS 2개 순서로 빈 DB 설치와 backfill 호환 검증을 구분한다. Preview의 브라우저/서버 양쪽 DB 설정 상속을 확인해 운영 연결이 남지 않게 한다. 공연/OCR migration 전체 적용이나 운영 데이터 복사는 계획에 포함하지 않는다.
+
+신고 정리는 `atlas_private.purge_expired_social_reports()`만 신뢰된 DB 연결로 실행한다. UTC/GMT Cron이면 `15 18 * * *`이며 실제 cron.timezone 확인을 선행한다. cron.job_run_details와 만료 잔여 개수를 확인하고 DB 자체 중단까지 외부에서 감시하는 안이다. 수신처에 메시지를 보내거나 스케줄을 설치하지 않았다. 일일 배치의 정상 물리 삭제 지연은 만료 후 다음 실행까지 최대 약 24시간이며 엄격한 30일 시점 삭제를 이미 보장한다고 보고하지 않는다.
+
+이번 변경: `CURRENT_TASK.md`, `HANDOFF.md`, `docs/MUSIC_SOCIAL.md`, 새 `docs/MUSIC_SOCIAL_STAGING.md` 4개. 기능/SQL migration/환경변수 변경 없음. 문서의 로컬 링크·migration 6개 경로·파일 allowlist/기준 SHA·비밀값 패턴·소스 diff 검사 통과. PowerShell 예시 2개는 AST 문법 검사만 통과했으며 예시 명령은 실행하지 않았다. 기존 147/147·전용 5/5·build는 앞선 실행 이력이고 이번에 다시 실행한 결과가 아니다. 운영 DB 연결/쓰기·main 병합·운영 배포·실제 개인 기록 공개는 하지 않았다.
+
+다음 전달 정보: 테스트 Preview 앱 URL, Supabase project ref와 설정 위치, 배포 SHA, A/B/C 준비 여부. 비밀키는 채팅/문서에 보내지 않는다. 환경 구성 후 위 시험표의 실제 서비스 증거와 신고 일일 실행/실패 알림 수신 결과를 채우는 것이 남은 작업이다.
 
 ## 구현
 
