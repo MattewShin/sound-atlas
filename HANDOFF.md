@@ -5,12 +5,21 @@
 - 작성: Codex / 2026-11-06 Asia/Seoul
 - 결과 브랜치: main / codex/ca-social-20261106-001-production
 - PR #21 merge SHA: `6bd183ca21efc53ea3c842c942cece96af0af03e`
-- 최종 운영 기능 코드 SHA: `de661b53ec9cdaa7d679b062dd8c94b6acc9ccd3`
+- 최종 운영 기능 코드 SHA: `e569b568f66d22aae35e4317f3fae5a5fef70fc6`
 - 시작 main: f50251e95fe9c2e00290c6eee6329017e9d2e9f4
 - 이전 Draft #20/8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e 및 원래 worktree 미커밋 변경 보존
 - 이전 전체 회귀 기준 코드 SHA: `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`
 - 이전 검증 tree: `e9773ba88b48ea9dccec689d959a4e63be72160e`
 - 게시: [PR #21 병합 완료](https://github.com/MattewShin/sound-atlas/pull/21), [운영 결과](docs/MUSIC_SOCIAL_PRODUCTION.md). 기능 코드와 이후 문서 저장 SHA를 구분한다. 문서 HEAD는 GitHub 이력에서 확인한다.
+
+## 피드 상단 가로 정렬 후속 수정 — 2026-11-06 KST
+
+사용자 요청에 따라 게시물 작성자 별명/아이디와 선택 곡 정보를 **동일한 높이의 한 줄**로 정렬했다. 작성자 이름 영역의 두 줄 grid를 한 줄 flex로 바꾸고 아바타/곡명/시각을 세로 중앙에 맞췄다. 별명 공간을 확보하고 긴 별명·아이디/곡명은 말줄임 처리한다. 원문 텍스트와 title 속성은 보존하며 프로필/곡별 화면으로 이동해 전체 정보를 볼 수 있다. 곡명을 헤더에서 한 줄로 표시하는 이번 요청을 이전의 헤더 긴 제목 줄바꿈보다 우선 적용했다. 본문·댓글과 전체 정보 화면의 줄바꿈은 유지한다.
+
+- 코드: `e569b568f66d22aae35e4317f3fae5a5fef70fc6`, MusicSocial.jsx/musicSocial.css 2개 파일 13줄 추가/2줄 변경. main과 결과 브랜치 push, Vercel success 확인.
+- 검증: 기존 mobileTypography **8/8**, 기존 SNS `verifyMusicSocial` DOM 회귀 PASS. 실제 컴포넌트를 렌더링한 로컬 합성 화면과 **배포된 운영 번들에 합성 REST 응답을 주입한 화면**에서 각각 짧은/긴 작성자×320/375/390/520px **8조합 PASS**. 기본 헤더 높이 44px, 별명/아이디/곡명 한 줄, 버튼 중심/텍스트 높이 정렬, 겹침·가로 넘침 없음, 44px 이상 터치 확인. 프로필/곡별 화면의 전체 정보도 확인했다.
+- 운영 브라우저 검증은 실제 사용자 게시물을 가져오지 않도록 REST 응답을 모두 합성 데이터로 대체했다. 새 테스트 계정/게시물 생성·DB 쓰기 없음. 이번 결과를 권한/등록 API 재검증으로 보고하지 않는다. 검사에 사용한 loopback Vite 서버는 종료했다.
+- 증거: Git 제외 `.cache/social-production-ops/header-local-results.json`, `header-live-results.json`, `screenshots/header-live-*-320.png`. 기존 IDE 브랜치/미커밋 변경 보존. 이후 인계 문서 SHA는 GitHub 이력에서 확인한다.
 
 ## 하단 메뉴 표기 후속 수정 — 2026-11-06 KST
 
