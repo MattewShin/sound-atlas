@@ -6,7 +6,7 @@
 - 결과 브랜치: main / codex/ca-social-20261106-001-production
 - 통합 PR: [#21 병합 완료](https://github.com/MattewShin/sound-atlas/pull/21)
 - PR merge SHA: 6bd183ca21efc53ea3c842c942cece96af0af03e
-- 최종 기능 코드 SHA: 78a1dbb65a515ae583687e2e19d1389c2a59fd0f
+- 최종 기능 코드 SHA: de661b53ec9cdaa7d679b062dd8c94b6acc9ccd3 (하단 메뉴 표기 후속 수정)
 - 운영 결과: [백업·migration·배포·검증·한계](docs/MUSIC_SOCIAL_PRODUCTION.md)
 - 배포 전 확인 기준 HEAD: 5a302bcaff00c33246a2d68c8e688aa67b54cf89
 - 운영 검증 상태: 사용자 후속 승인으로 기존 운영에서 실제 Auth/API/WS 16항목·브라우저 13항목 PASS. 관련 typography 8개 PASS. 실제 Google 로그인/실기기 키보드/PWA 및 신고 스케줄은 별도
@@ -41,3 +41,4 @@
 - 2026-11-06 KST 배포 전 확인: 기준 HEAD와 문서/작업 트리 대조. 스테이징 미구성을 사용자에게 확인했으며 운영 DB에는 연결하지 않았다. 실제 migration/OAuth/PostgREST/Realtime 및 320/375/390px 화면은 미실행. [스테이징 준비·검증 안내](docs/MUSIC_SOCIAL_STAGING.md)에 테스트 Supabase→기반 migration→별도 Google OAuth→브랜치 전용 Vercel Preview→합성 기존 데이터→SNS migration→실제 검증 순서와 일일 신고 정리·독립 감시안을 기록했다. 기능 코드는 변경하지 않았다. 상태 IMPLEMENTED는 기존 구현 결과이며 배포 검증 통과를 뜻하지 않는다.
 - 2026-11-06 KST 로컬 전환: 사용자 지시에 따라 새 클라우드 프로젝트를 만들지 않는다. Docker 실행 파일/기본 설치 경로/서비스/pipe·컨텍스트 및 WSL을 확인했다. Docker/Podman 없음, WSL 기본 2/설치 배포판 없음. `.cache/social-local-runtime`에 CLI 3.0.0 고정 설치·로컬 init·기반 4개/SNS pending 2개 및 hash manifest 준비. 실제 local start는 DockerLifecycleInspectError/exit 1로 실패했다. 실제 DB migration/PostgREST/Realtime는 미실행이며 Google OAuth·브라우저/모바일·운영 알림은 별도 환경 필요. [로컬 검증 안내](docs/MUSIC_SOCIAL_LOCAL.md) 참조. 운영 DB/배포·기능 코드 변경 없음.
 - 2026-11-06 KST 운영 승인 후: 전체 논리 백업/복구 읽기·SQL 추출 검사 후 15:49에 001→002를 원자 적용. 기존 내용 지문 일치. PR #21 병합/운영 Ready, 실제 서비스 검증에서 10px small/40.125px 메뉴를 CSS 두 파일로 보완해 78a1dbb 운영 Ready 확인. Auth/API/WS 16·브라우저 13·관련 테스트 8 PASS, 320/375/390px 확인. 합성 A/B/C와 생성 자료만 정리하고 기존 평가 7·닉네임 1 보존. Google provider/PKCE 시작 리디렉션만 확인했으며 실인증/실기기는 미검증. 전체 회귀 반복 없음. 상세와 이미지/복구 한계는 운영 결과 문서를 따른다.
+- 2026-11-06 KST 후속 UI 요청: 하단 SNS 메뉴를 ‘음악 이야기’로 변경하고 한 줄 표시. 전용 nav-item-social/nowrap, 최소 76px 열과 내부 여백으로 글자 크기를 줄이지 않고 공간 확보. de661b5 운영 배포 success, 실제 Chromium 모바일 320/375/390 및 520px에서 한 줄·버튼 내부 표시·넘침 없음·모든 메뉴 44px 이상과 화면 이동 확인. 관련 기존 typography 8/8 PASS. DB/로그인 데이터 변경 없음.

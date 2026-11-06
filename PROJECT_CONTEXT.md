@@ -1,5 +1,7 @@
 # 음악 기록 SNS 운영 반영 — 2026-11-06
 
+후속 메뉴 표기 요청으로 하단 SNS 메뉴를 **음악 이야기** 한 줄로 바꿨다. 코드 SHA de661b53ec9cdaa7d679b062dd8c94b6acc9ccd3 / 운영 success. 320/375/390/520px 한 줄·넘침 없음·44px 이상 메뉴 터치 및 이동, 관련 typography 8개 통과. 아래 전체 운영 검증 기록은 그 이전 78a1dbb 기준이다.
+
 CA-SOCIAL-20261106-001 / 명세 2. 사용자 명시 승인 후 운영 논리 백업/복구 읽기 검사, SNS 202611060001→002 적용·기존 내용 보존, PR #21을 merge SHA 6bd183ca21efc53ea3c842c942cece96af0af03e로 병합했다. 운영에서 발견한 small 10px/메뉴 40px만 CSS로 보완한 최종 기능 SHA는 78a1dbb65a515ae583687e2e19d1389c2a59fd0f이며 production Ready/운영 alias 확인. 실제 Auth/API/WS 16항목·브라우저 13항목·관련 typography 8개 PASS, 320/375/390px 확인. 합성 계정/자료만 사용·정리했고 기존 평가 7/닉네임 1 보존. 기존 세션/원본/닉네임/공유 ID를 재사용하고 공개 식별자를 분리하며 기존 REST도 권한을 적용한다. 실제 Google 인증 완료·실기기 IME/PWA·신고 일일 작업/외부 알림·DB 실복원은 미검증/미설정이다. 변경 없는 전체 테스트/별도 스테이징/Docker 설치는 반복하지 않았다. [운영 결과](docs/MUSIC_SOCIAL_PRODUCTION.md)와 CURRENT_TASK/HANDOFF를 따른다.
 
 # 완료된 숙련자 검색 UX 개선 — 2026-11-02

@@ -5,14 +5,23 @@
 - 작성: Codex / 2026-11-06 Asia/Seoul
 - 결과 브랜치: main / codex/ca-social-20261106-001-production
 - PR #21 merge SHA: `6bd183ca21efc53ea3c842c942cece96af0af03e`
-- 최종 운영 기능 코드 SHA: `78a1dbb65a515ae583687e2e19d1389c2a59fd0f`
+- 최종 운영 기능 코드 SHA: `de661b53ec9cdaa7d679b062dd8c94b6acc9ccd3`
 - 시작 main: f50251e95fe9c2e00290c6eee6329017e9d2e9f4
 - 이전 Draft #20/8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e 및 원래 worktree 미커밋 변경 보존
 - 이전 전체 회귀 기준 코드 SHA: `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`
 - 이전 검증 tree: `e9773ba88b48ea9dccec689d959a4e63be72160e`
 - 게시: [PR #21 병합 완료](https://github.com/MattewShin/sound-atlas/pull/21), [운영 결과](docs/MUSIC_SOCIAL_PRODUCTION.md). 기능 코드와 이후 문서 저장 SHA를 구분한다. 문서 HEAD는 GitHub 이력에서 확인한다.
 
-## 운영 반영·검증 — 2026-11-06 KST
+## 하단 메뉴 표기 후속 수정 — 2026-11-06 KST
+
+사용자 요청에 따라 하단 SNS 메뉴를 **음악 이야기**로 바꾸고 한 줄 표시했다. App.jsx의 해당 메뉴만 이름/전용 클래스를 변경하고 styles.css에서 해당 열을 최소 76px로 확보했다. 라벨 nowrap과 내부 여백으로 글자를 줄이지 않고 버튼 안에 표시한다. 아이콘/이동 동작과 충분한 터치 영역을 유지했다.
+
+- 코드: `de661b53ec9cdaa7d679b062dd8c94b6acc9ccd3`, source 2개 파일 4줄 추가/1줄 변경. main 및 결과 브랜치에 push, Vercel success 확인.
+- 관련 기존 mobileTypography 테스트 8/8 PASS. 실제 운영 headless Chromium에서 **320/375/390/520px 모두 라벨 한 줄·버튼 내부 표시·가로 넘침 없음·전체 메뉴 44px 이상**, 음악 이야기 클릭 시 SNS 화면 이동 확인. 임시 CSS 없이 확인했다.
+- 메뉴 글자만 바꿨고 화면 제목은 기존 ‘내 음악 기록’이다. DB/실제 사용자 자료를 변경하지 않았다. 이전 운영 전체 검증은 아래 78a1dbb 기준이며 이번에는 해당 UI 검사만 실행했다.
+- 로컬 결과: Git 제외 `.cache/social-production-ops/nav-label-live-results.json`, nav-label-320.png. 원래 IDE 브랜치/HEAD와 미커밋 변경은 보존했다. 이후 문서 저장 SHA는 GitHub 이력에서 확인한다.
+
+## 운영 반영·검증 — 2026-11-06 KST (78a1dbb 기준)
 
 사용자가 운영 migration·병합·배포를 명시적으로 승인했다. 아래 로컬/클라우드 단계의 미실행 보고는 당시 이력이며 현재의 운영 금지 지시가 아니다. 별도 스테이징/Docker 설치와 변경 없는 전체 테스트 반복은 하지 않았다.
 
