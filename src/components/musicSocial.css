@@ -8,3 +8,14 @@
 .social-form { margin: 24px 0; }.social-form h2 { font-size: 22px; }.social-form label, .social-comments label { display: grid; gap: 6px; margin: 14px 0; }.social-form input, .social-form select, .social-form textarea, .social-comments textarea { width: 100%; min-width: 0; border: 1px solid #b7c4b7; background: #fffdf6; border-radius: 8px; padding: 12px; font: inherit; color: #243e39; box-sizing: border-box; }.social-form textarea, .social-comments textarea { resize: vertical; min-height: 100px; }.social-form button[type=submit], .social-form button:not([type]), .social-comments form button { background: #285f54; color: white; border-radius: 8px; padding: 10px 16px; }.social-hint { font-size: 14px; color: #68796c; }.social-comments { margin-top: 12px; padding-left: 12px; border-left: 2px solid #d6d9ce; }.social-comments > div { padding: 12px 0; border-bottom: 1px solid #d6d9ce; }.social-comments small { color: #68796c; font-size: 12px; }.social-record { border-bottom: 1px solid #d6d9ce; padding: 16px 0; }.social-record h3 { font-size: 18px; }.social-profile { padding: 24px 0; }.social-profile small { font-size: 14px; }.social-confirm { position: fixed; z-index: 40; inset: 25% 20px auto; max-width: 440px; margin: auto; padding: 24px; border-radius: 16px; background: #fffdf6; box-shadow: 0 0 0 100vmax #172b2480; }
 @media(max-width: 380px) { .social-screen { padding-inline: 14px; }.social-person { max-width: 40%; gap: 4px; }.social-avatar { width: 28px; height: 28px; }.social-time { max-width: 50px; }.social-post header { gap: 4px; } }
 .social-time summary, .social-menu summary { min-width: 44px; }
+
+/* Keep author identity and the selected piece on one centered header row. */
+.social-post header { align-items: center; }
+.social-post header > .social-person { align-items: center; min-width: 0; }
+.social-person span.social-person-copy { display: flex; align-items: center; gap: 4px; min-width: 0; overflow: hidden; white-space: nowrap; }
+.social-person-copy strong, .social-person-copy small { display: block; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.social-person-copy strong { flex: 1 1 auto; }
+.social-person-copy small { flex: 0 0 auto; max-width: 55%; }
+.social-post header > .social-track { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.social-path, .social-time summary { padding-top: 0; }
+.social-time summary { display: flex; align-items: center; white-space: nowrap; }

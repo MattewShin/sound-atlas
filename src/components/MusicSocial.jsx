@@ -44,8 +44,8 @@ function Post({ post, user, navigate, run, pending, openComments, commentState, 
   const [expanded, setExpanded] = useState(false)
   const own = user?.id === post.profile.id
   return <article className="social-post" aria-label={`${post.profile.nickname}의 음악 기록`}>
-    <header><button className="social-person" onClick={() => navigate('profile', post.profile.id)}><Avatar profile={post.profile} /><span><strong>@{post.profile.handle}</strong><small>{post.profile.nickname}</small></span></button>
-      <span className="social-path" aria-hidden="true">›</span><button className="social-track" onClick={() => navigate('track', post.track_id)}>{title(post.track_id)}</button>
+    <header><button className="social-person" title={`${post.profile.nickname} (@${post.profile.handle})`} onClick={() => navigate('profile', post.profile.id)}><Avatar profile={post.profile} /><span className="social-person-copy"><strong>@{post.profile.handle}</strong><small>{post.profile.nickname}</small></span></button>
+      <span className="social-path" aria-hidden="true">›</span><button className="social-track" title={title(post.track_id)} onClick={() => navigate('track', post.track_id)}>{title(post.track_id)}</button>
       <details className="social-time"><summary><time dateTime={post.created_at} title={exactTime(post.created_at)}>{relativeTime(post.created_at)}</time></summary><small>{exactTime(post.created_at)}</small></details>
     </header>
     <div className="social-post-copy"><p>{expanded || post.body.length <= 320 ? post.body : post.body.slice(0, 320) + '…'}</p>{post.body.length > 320 && <button aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? '접기' : '더 보기'}</button>}</div>
