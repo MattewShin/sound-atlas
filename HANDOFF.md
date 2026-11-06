@@ -8,7 +8,28 @@
 - 이전 Draft #20/8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e 및 원래 worktree 미커밋 변경 보존
 - 고정 코드 전체 SHA: `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`
 - 검증 tree: `e9773ba88b48ea9dccec689d959a4e63be72160e`
-- 게시: [통합 Draft PR #21](https://github.com/MattewShin/sound-atlas/pull/21), [codex/ca-social-20261106-001-integration](https://github.com/MattewShin/sound-atlas/tree/codex/ca-social-20261106-001-integration). 문서 HEAD는 GitHub 이력에서 확인하며 검증 코드 SHA와 구분한다. 최초 게시 후 PR 링크 기록은 문서 3개 변경이었으며, 이번 배포 전 확인은 아래 문서 4개 변경이다.
+- 게시: [통합 Draft PR #21](https://github.com/MattewShin/sound-atlas/pull/21), [codex/ca-social-20261106-001-integration](https://github.com/MattewShin/sound-atlas/tree/codex/ca-social-20261106-001-integration). 문서 HEAD는 GitHub 이력에서 확인하며 검증 코드 SHA와 구분한다. 최초 PR 링크 기록은 문서 3개, 이후 클라우드 준비 안내는 4개 변경이었다. 이번 로컬 전환은 아래 문서 5개 변경이다.
+
+## 로컬 Supabase 전환 — 2026-11-06 KST
+
+- 사용자 지시: 새 클라우드 Supabase 프로젝트를 만들지 않고 로컬에서 migration·실제 PostgREST·Realtime를 먼저 검증한다. 아래 이전 클라우드 안내는 과거 계획으로 보존하며 현재 선행 조건으로 요구하지 않는다.
+- 시작 HEAD: `b3c17cd9882f3ca829f37c1f2ce79d79eed88a9f`, 깨끗한 통합 worktree. 기능 코드는 고정 d2a7e88과 동일하다. 원래 IDE worktree의 기존 브랜치/공연·OCR 변경을 보존했다.
+- Docker 조사: PATH의 docker/podman 없음, 시스템/사용자 기본 Docker 설치 경로 없음, 관련 설치 레지스트리 항목 0, Docker 서비스/엔진 pipe 없음. DOCKER_HOST/DOCKER_CONTEXT 미설정. WSL은 샌드박스 조회 E_ACCESSDENIED 후 권한 밖 읽기 재확인에서 기본 버전 2·설치된 Linux 배포판 없음 확인. Docker Desktop 설치/시스템 기능 변경/재부팅은 실행하지 않았다.
+- 실제 준비: Node 22.18.0/npm 10.9.3. 독립 `.cache/social-local-runtime`에 **Supabase CLI 3.0.0 고정 설치**, --version/help와 local init 성공. 앱 package/전역 도구/env 변경 없이 API 예정 55321·DB 55322·Studio 55323, project_id=ca-social-local-20261106 구성. 기존 기반 4개 active/SNS 2개 pending, 6개 원본 hash 일치 manifest를 로컬에 저장했다. 원격 login/link 및 운영 env 복사 없음.
+- 실제 기동 시도: `supabase start --workdir .` → **exit 1 / DockerLifecycleInspectError**, `docker: command not found (podman also not found)`. DB 적용 0, 생성된 테스트 계정/기록 0. 서비스 기동 전에 막혔으므로 실제 PostgREST/Realtime 시험 결과는 없다.
+
+| 범위 | 로컬에서 가능한 검증 | 현재 상태 |
+| --- | --- | --- |
+| migration·기존 기록/링크 | 기반 4개→합성 기존 원본/닉네임/공유→SNS 2개, 실제 Postgres ID/개수/권한 backfill | Docker 준비 후 실행 필요 |
+| 실제 PostgREST | 로컬 GoTrue의 A/B/C 실제 JWT 및 익명으로 범위·민감 열·직접 REST·중복 반응·관계·삭제 | 미실행. 모의 fetch/SET ROLE 결과로 대체 안 함 |
+| 실제 Realtime | 실제 WS 다중 client·빈 invalidate·범위/차단/공유 취소·끊김/재연결 후 재조회 | 미실행. API/WS 성공과 브라우저 화면 갱신은 별도로 판단 |
+| 실제 Google OAuth | 로컬 provider/Google client·test users·callback과 사용자 로그인 필요. 클라우드 Supabase 프로젝트는 불필요 | 추가 설정 필요, 로컬 비밀번호 JWT 시험과 구분 |
+| 320/375/390px·키보드/PWA | 브라우저 확인 환경, 실기기 접속 경로/필요 시 HTTPS 필요 | 추가 환경 필요. 이번에 브라우저 UI 재검증 안 함 |
+| 신고 정리·알림 | 로컬 purge/스케줄 시험 가능, 지속 일일 실행·독립 감시/실제 알림은 별도 | 설치/실행/발송 없음 |
+
+다음 단계는 Docker Desktop의 이 PC Linux 컨테이너 엔진 설치·기동과 `docker version`/`docker info`의 Client/Server 확인이다. 이후 준비된 local start→합성 사용자/기존 데이터→SNS migration→실제 서비스 테스트를 이어간다. 실제 서비스 runner도 아직 작성/실행하지 않았으며, 기존 147/147·SNS 5/5·build는 이전 검증 이력으로 유지한다. [로컬 검증 안내](docs/MUSIC_SOCIAL_LOCAL.md)에 명령/포트/active-pending migration·로컬 가능한 범위와 추가 환경을 구분했다.
+
+이번 변경은 CURRENT_TASK/HANDOFF, MUSIC_SOCIAL/STAGING 및 새 MUSIC_SOCIAL_LOCAL 문서 5개와 Git 제외 로컬 준비 폴더다. 기능 코드·migration 원본·운영 DB·main·운영 배포 변경 없음. 문서 링크/UTF-8/허용 경로/비밀값 패턴·PowerShell 예시 2개 문법·로컬 설정/원격 link 부재·migration 복사본 6개/manifest·소스 diff 검사 통과. 원래 파일 52개의 hash와 원래 HEAD도 보존 확인했다. 이 정적 검사는 실제 서비스 시험 결과와 구분한다. 구현 상태 IMPLEMENTED는 배포 전 검증 PASS를 뜻하지 않는다.
 
 ## 배포 전 확인 — 2026-11-06 KST
 

@@ -6,7 +6,8 @@
 - 브랜치: codex/ca-social-20261106-001-integration
 - 통합 Draft PR: [#21](https://github.com/MattewShin/sound-atlas/pull/21)
 - 배포 전 확인 기준 HEAD: 5a302bcaff00c33246a2d68c8e688aa67b54cf89
-- 배포 전 검증 상태: 미완료 — 스테이징 미구성(사용자 확인), 환경 구성 안내와 시험/신고 정리 설정안 준비
+- 배포 전 검증 상태: 미완료 — 클라우드 신규 생성 대신 로컬 Supabase로 전환. Docker 엔진 부재로 start 실패, CLI/격리 프로젝트/migration 복사본 준비
+- 로컬 확인 시작 HEAD: b3c17cd9882f3ca829f37c1f2ce79d79eed88a9f
 - 시작 원격 main: f50251e95fe9c2e00290c6eee6329017e9d2e9f4
 - 검증 코드 전체 SHA: d2a7e88feb02bcd10fa075b070357d6ff92ba9a5
 - 검증 tree: e9773ba88b48ea9dccec689d959a4e63be72160e
@@ -35,3 +36,4 @@
 - 2026-11-06 KST: IMPLEMENTED. 위 고정 코드에서 전체 147/147, SNS 전용 5/5, build 통과. 기존 377개 근거를 재사용하지 않음. 실제 OAuth/PostgREST/Realtime·모바일 시각/PWA·운영 복구는 미검증. 컴퓨터 사용 도구가 Windows URL 확인 실패로 중단되어 시각 확인을 수행하지 못함. 새 Draft PR 게시 후에도 운영 DB/main/운영 배포는 변경하지 않음.
 - 2026-11-06 KST: Draft #21 게시. GitHub 변경 파일 43개가 로컬 allowlist와 일치하고 main과 충돌 없음 확인. 게시 후 추가 변경은 PR 링크를 기록한 문서뿐이다.
 - 2026-11-06 KST 배포 전 확인: 기준 HEAD와 문서/작업 트리 대조. 스테이징 미구성을 사용자에게 확인했으며 운영 DB에는 연결하지 않았다. 실제 migration/OAuth/PostgREST/Realtime 및 320/375/390px 화면은 미실행. [스테이징 준비·검증 안내](docs/MUSIC_SOCIAL_STAGING.md)에 테스트 Supabase→기반 migration→별도 Google OAuth→브랜치 전용 Vercel Preview→합성 기존 데이터→SNS migration→실제 검증 순서와 일일 신고 정리·독립 감시안을 기록했다. 기능 코드는 변경하지 않았다. 상태 IMPLEMENTED는 기존 구현 결과이며 배포 검증 통과를 뜻하지 않는다.
+- 2026-11-06 KST 로컬 전환: 사용자 지시에 따라 새 클라우드 프로젝트를 만들지 않는다. Docker 실행 파일/기본 설치 경로/서비스/pipe·컨텍스트 및 WSL을 확인했다. Docker/Podman 없음, WSL 기본 2/설치 배포판 없음. `.cache/social-local-runtime`에 CLI 3.0.0 고정 설치·로컬 init·기반 4개/SNS pending 2개 및 hash manifest 준비. 실제 local start는 DockerLifecycleInspectError/exit 1로 실패했다. 실제 DB migration/PostgREST/Realtime는 미실행이며 Google OAuth·브라우저/모바일·운영 알림은 별도 환경 필요. [로컬 검증 안내](docs/MUSIC_SOCIAL_LOCAL.md) 참조. 운영 DB/배포·기능 코드 변경 없음.

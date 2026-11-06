@@ -7,6 +7,7 @@
 - 작성일: 2026-11-06 Asia/Seoul. 고정 코드 SHA와 최종 검증은 [HANDOFF](../HANDOFF.md)를 따른다.
 - 검증 코드 SHA: `d2a7e88feb02bcd10fa075b070357d6ff92ba9a5`, tree `e9773ba88b48ea9dccec689d959a4e63be72160e`.
 - 배포 전 확인 기준 HEAD: `5a302bcaff00c33246a2d68c8e688aa67b54cf89`. 스테이징 미구성을 사용자에게 확인했다. 실제 서비스 검증은 미실행이며 [환경 구성·검증표·신고 정리 설정안](MUSIC_SOCIAL_STAGING.md)을 별도로 준비했다. 운영 적용은 하지 않았다.
+- 현재 검증 경로: 사용자 지시로 신규 클라우드 프로젝트 대신 [로컬 Supabase](MUSIC_SOCIAL_LOCAL.md)로 전환. CLI 3.0.0/격리 프로젝트 준비와 start 시도까지 실행했지만 Docker 부재로 실패했다. 실제 migration/PostgREST/Realtime는 아직 미실행이다.
 
 ## 통합 기준
 
