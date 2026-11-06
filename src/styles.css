@@ -543,3 +543,6 @@ small { font-size: 12px; }
 [data-text-lines="single"] { line-height: normal !important; }
 [data-text-lines="multiple"] { line-height: 1.5 !important; }
 .bottom-nav .nav-item > span:last-child { min-height: 36px; display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; }
+.bottom-nav { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(76px, 1fr); }
+.bottom-nav .nav-item-social { padding-inline: 2px; }
+.bottom-nav .nav-item-social > span:last-child { white-space: nowrap; }
