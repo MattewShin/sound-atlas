@@ -1,21 +1,18 @@
 # 현재 작업
 
-- 작업 ID: **CA-OCR-RETIRE-20261109-001**
-- 명세 버전: **1**
-- 상태: **IMPLEMENTED / 검토 전**
-- 기준 main/실제 운영 SHA: **2552f5b021238b65a8c4d2e235a342b12e498cde**
-- 구현 코드 전체 SHA: **e8e204e31d0bf5c401fec2e12641c8183a0fb219**
-- 결과 브랜치: **codex/ca-ocr-retire-20261109-001**
-- 작성일: 2026-11-09 Asia/Seoul
+- 작업 ID: CA-OCR-RETIRE-20261109-001
+- 명세 버전: 2
+- 상태: IMPLEMENTED
+- 승인 PR: [#22](https://github.com/MattewShin/sound-atlas/pull/22), Ready 전환 후 main 병합 완료
+- 승인 HEAD: `f90e6b77dcaf29d72982600033ad6e71377f5b9a`
+- 승인 기능·migration SHA: `e8e204e31d0bf5c401fec2e12641c8183a0fb219`
+- 운영 적용 당시 main / 기능 기준 SHA: `52869c77338d7d343ca7ce204c67d3a466b6da3c`
+- 결과 문서 브랜치: `codex/ca-ocr-retire-20261109-001-production` (문서 전용 PR의 head)
 
-## 범위·제품 정책
+사용자의 운영 승인을 받아 기존 main/실제 deployment·DB drift·기존 테스트의 승인 SHA를 확인한 뒤 병합·운영 배포·새 전체 논리 백업·직전 preflight·202611090001 한 파일 적용·postflight·NOTIFY·실제 PostgREST·앱 읽기 검증을 완료했다. migration COMMIT은 2026-11-09 16:30:20 KST다. OCR table5/View1/함수22/Trigger1/FK11 부재, 유지21개 전체 행 지문과 Auth 사용자·공식 text 확정2건 유지가 확인됐다.
 
-OCR를 영구 폐기하며 확정3건/모든 이력도 보존 이전하지 않는다. OCR5개 테이블과 전용 view/trigger/22함수를 명시적 RESTRICT migration으로 제거하도록 준비한다. 공식 Program text·수집·공유 helper 및 현재 보관함/개인 기록/공유/SNS/Auth/API/Realtime를 유지한다. 사용자 원래 WIP·실제 .env·로컬 모델을 보존한다.
+전체 DB restore·실제 사용자 데이터 시험 변경/공개/삭제·CASCADE/TRUNCATE/오류 우회는 하지 않았다. Windows task Disabled, frozen release 비활성, 모델2개 보존. Google OAuth/모바일 전체/Docker/새 프로젝트는 제외했으며 실제 Realtime 다중 창·백업 실복원은 미검증이다. 코드 불변이라 전체 테스트/build를 재실행하지 않고 승인된162/5/15 PASS와 build 근거를 확인했다.
 
-이번 허용은 새 브랜치·코드/migration·test/build·Draft PR·적용/backup/rollback 안내까지다. **운영 migration/main 병합/운영 배포·예약/실제 환경변수 변경·로컬 model 삭제는 하지 않는다.** 새 의존성을 발견하면 적용은 BLOCKED로 보고한다.
+사용자의 문서 마감 요청에 따라 이 결과를 문서 전용 PR로 main에 반영한다. 최신 문서/main SHA는 PR head·merge 이력으로 확인하며 운영 적용 당시 기능 SHA와 구분한다. 이번 문서 마감에서는 기능·migration·DB·예약·모델을 변경하지 않으며 앱 테스트/build를 반복하지 않는다.
 
-## 완료 결과
-
-실제 main/배포·DB 재조회에서 새 의존성 없음, 운영 READ ONLY 사전 SQL 11:02:34 KST PASS. 격리 DB에서 26→21 table,65→43함수,4→3view,38→27FK,15→14앱 trigger와 유지 데이터/권한 불변, 신규 text 저장/확정, 전체 rollback 및 새 의존성 차단을 검증했다. 전체162/162·SNS5/5·폐기15/15·정적검사/build PASS다. 운영 적용은 전부 미실행이다.
-
-[구현·적용/복구 안내](docs/OCR_RETIREMENT.md), [검증 증거](docs/OCR_RETIREMENT_VERIFICATION_2026-11-09.json), [HANDOFF](HANDOFF.md)를 함께 검토한다. 이전 감사 작업의 [명세/인계 보관본](docs/collaboration/archive/CA-OCR-DB-AUDIT-20261109-001/spec1/)과 원문 감사3개도 보존했다. Draft PR과 문서 저장 HEAD는 GitHub 브랜치 이력/최종 게시 보고로 확인하며 코드 SHA와 문서 저장 SHA를 구분한다.
+자세한 완료 기준/근거/한계는 [운영 보고서](docs/OCR_RETIREMENT_PRODUCTION_2026-11-09.md), [증거 JSON](docs/OCR_RETIREMENT_PRODUCTION_VERIFICATION_2026-11-09.json), [HANDOFF](HANDOFF.md)를 따른다. 명세1 요구/결과는 [함께 보관](docs/collaboration/archive/CA-OCR-RETIRE-20261109-001/spec1/)했으며 당시 운영 미실행 문구는 과거 상태다. 구현 완료 보고이며 자기 검토 ACCEPTED는 아니다.
