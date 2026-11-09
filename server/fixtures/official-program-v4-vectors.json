@@ -1,0 +1,106 @@
+{
+  "source_sha": "1db327cd38dfce778da543738f975b70789aed66",
+  "note": "Synthetic text-only inputs, generated with the frozen official v4 path; no network or recognition calls.",
+  "vectors": [
+    {
+      "name": "single exact work",
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "title": "Synthetic reference program",
+        "venue": "Fixture Hall",
+        "start_date": "2099-11-09",
+        "end_date": "2099-11-09",
+        "program_context_revision": 0,
+        "kopis_detail_text": "[Program]\nF. Chopin\nScherzo No.4 in E Major, Op.54",
+        "kopis_detail_text_hash": "3e0db0ca530e6604deb8a3c22ca020deb714789784934f5362860fbf8539903f"
+      },
+      "expected_source": "KOPIS_DETAIL_TEXT",
+      "expected_hash": "4c48640958545215ad8a997d15b05c828364657945e89a02bf694c376449f3e9",
+      "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6",
+      "candidate_count": 1
+    },
+    {
+      "name": "unicode and CRLF sections",
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "title": "Synthetic reference program",
+        "venue": "Fixture Hall",
+        "start_date": "2099-11-09",
+        "end_date": "2099-11-09",
+        "program_context_revision": 0,
+        "kopis_detail_text": "🎹 é 안내\r\n[Program]\r\nF. Chopin\r\nScherzo No.4 in E Major, Op.54\r\nBiography\r\nPast concerts\r\n[Program]\r\nJ. Brahms\r\nIntermezzo Op.118 No.2",
+        "kopis_detail_text_hash": "470e12af769ea2d91720e2a7f5ab51e2436990d385a8931acde98425f904253b"
+      },
+      "expected_source": "KOPIS_DETAIL_TEXT",
+      "expected_hash": "4cdfe604d0294b8d68fe8c8f6d2ecb9ae439152d6a910d4e0de383a16e7ee289",
+      "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6",
+      "candidate_count": 2
+    },
+    {
+      "name": "ambiguous number",
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "title": "Synthetic reference program",
+        "venue": "Fixture Hall",
+        "start_date": "2099-11-09",
+        "end_date": "2099-11-09",
+        "program_context_revision": 0,
+        "kopis_detail_text": "[Program]\nF. Chopin\nBallade No.Il Op.52",
+        "kopis_detail_text_hash": "fce7677d93409aac08d9b7c8d1dcba57f2a6504719d3431e021d7116affdeeb5"
+      },
+      "expected_source": "KOPIS_DETAIL_TEXT",
+      "expected_hash": "7364ffe96cc64bb0d7a751cbb7bb9b3d989cd4e883fb680f89645fc63c1e649f",
+      "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6",
+      "candidate_count": 1
+    },
+    {
+      "name": "unregistered work",
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "title": "Synthetic reference program",
+        "venue": "Fixture Hall",
+        "start_date": "2099-11-09",
+        "end_date": "2099-11-09",
+        "program_context_revision": 0,
+        "kopis_detail_text": "[Program]\nJ. Brahms\nUnknown Sonata Op.999",
+        "kopis_detail_text_hash": "2642aaa38f57220b6b69b1486997cec480ff9223ddea5bb559009f7814c11548"
+      },
+      "expected_source": "KOPIS_DETAIL_TEXT",
+      "expected_hash": "96da2ec0e641d876eda7706596d6537dfd01e4b0f71cd55a1d8ddfd436d37ad5",
+      "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6",
+      "candidate_count": 1
+    },
+    {
+      "name": "multi-session ambiguity",
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "title": "Synthetic reference program",
+        "venue": "Fixture Hall",
+        "start_date": "2099-11-09",
+        "end_date": "2099-11-10",
+        "program_context_revision": 0,
+        "kopis_detail_text": "[Program]\nF. Chopin\nScherzo No.4 Op.54",
+        "kopis_detail_text_hash": "4174f1afab70df04b37448e61a683fc27a18d624ebeed9893134b9d1ada9d9bc"
+      },
+      "expected_source": "KOPIS_DETAIL_TEXT",
+      "expected_hash": "85bf89eb3ee61aa6977963ec2b3e289e14cb056a9d26c765328ece9c28cc02d4",
+      "catalog_hash": "61269baa91498e00440c8c5b194d654a5117d8ff4d7390ab99472fab6163b8d6",
+      "candidate_count": 1
+    },
+    {
+      "name": "biography is not a program",
+      "concert": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "title": "Synthetic reference program",
+        "venue": "Fixture Hall",
+        "start_date": "2099-11-09",
+        "end_date": "2099-11-09",
+        "program_context_revision": 0,
+        "kopis_detail_text": "Biography\nPreviously performed Chopin Ballade No.4 Op.52",
+        "kopis_detail_text_hash": "e0a5a4d383755bdfa4eb3c10b0dfe23b07ba494048a67a4348691d3a9a8e0b8b"
+      },
+      "expected_source": "NONE",
+      "expected_hash": null
+    }
+  ]
+}

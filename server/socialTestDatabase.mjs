@@ -2,8 +2,9 @@ import { PGlite } from '@electric-sql/pglite'
 import { readFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { tracks } from '../src/data/musicData.js'
+import { prepareRetirementDatabase } from './retirementTestDatabase.mjs'
 
-export async function socialTestDatabase() {
+export async function socialTestDatabase({afterRetirement=false}={}) {
   const db = new PGlite()
   const users = { A: randomUUID(), B: randomUUID(), C: randomUUID() }
   const q = async (sql,args=[]) => (await db.query(sql,args)).rows
@@ -32,5 +33,6 @@ export async function socialTestDatabase() {
     await as(users[name])
     profiles[name]=(await q('select public.social_save_profile($1,$2,null) p',['listener_'+name.toLowerCase(),name==='A'?'기존닉네임':'별명'+name]))[0].p
   }
+  if(afterRetirement)await prepareRetirementDatabase(db,{apply:true})
   return {db,q,as,users,profiles,original,legacy,track,profileCountBeforeOnboarding,dormantNickname}
 }

@@ -17,4 +17,10 @@ __pycache__/
 **/*.local.*
 local-debug.png
 docs/
+scripts/
+supabase/
+server/programText/
+server/**/*.test.mjs
+server/*TestDatabase.mjs
+server/fixtures/
 data/kopis-*.local.json
