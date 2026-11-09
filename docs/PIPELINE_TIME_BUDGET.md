@@ -1,3 +1,5 @@
+> **과거 운영 자료 — CA-OCR-RETIRE-20261109-001.** 아래 OCR/통합 배치/수동 검토 설치·실행 명령을 재사용하지 않습니다. 공식 Program text와 공유 identity helper는 유지하며, 현재 text 전용 진입점·운영 미적용 상태는 [폐기 안내](OCR_RETIREMENT.md)를 따릅니다.
+
 # OCR 시간 예산과 analysis 예약
 
 daily/initial의 등록 인자와 전체 MaxSeconds=1800은 그대로 사용합니다.

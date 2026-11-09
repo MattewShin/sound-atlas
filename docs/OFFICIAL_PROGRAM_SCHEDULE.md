@@ -1,3 +1,5 @@
+> **현재 실행 절차 — CA-OCR-RETIRE-20261109-001.** KOPIS 수집/공식 Program text는 유지합니다. 과거 frozen 통합 배치 target을 재활성화하지 말고 [공식 text 전용 CLI와 적용 전 안내](OCR_RETIREMENT.md)를 따릅니다. 아래 과거 실행·검증 기록은 당시 기준입니다.
+
 # 공식 Program 제한 예약
 
 `PROGRAM_OFFICIAL_TEXT_SCHEDULE_ENABLED=false`가 기본이다. 활성화는 CURRENT_TASK Gate A~D를 모두 통과한 후에만 한다.

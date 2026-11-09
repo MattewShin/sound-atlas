@@ -1,0 +1,2064 @@
+{
+  "task_id": "CA-OCR-RETIRE-20261109-001",
+  "specification": 1,
+  "baseline_code_sha": "2552f5b021238b65a8c4d2e235a342b12e498cde",
+  "audit_commit": "bc8cf632c153d4dfcf401f8df18ebbe95cbf6a6b",
+  "branch": "codex/ca-ocr-retire-20261109-001",
+  "production_migration_applied": false,
+  "main_merged": false,
+  "production_deployed": false,
+  "local_models_deleted": false,
+  "production_preflight": {
+    "observed_kst": "2026-11-09 11:02:34",
+    "environment": "production read-only preflight; no migration applied",
+    "preflight_sql_sha256": "18608cf35f8dd31cc81812bc0515b00f771bf29e725a80dd0c09c37789412b78",
+    "read_only": "on",
+    "result": "PASS",
+    "counts": [
+      {
+        "schema": "atlas_private",
+        "name": "social_accounts",
+        "rows": "1",
+        "total_bytes": "40960"
+      },
+      {
+        "schema": "atlas_private",
+        "name": "social_reports",
+        "rows": "0",
+        "total_bytes": "32768"
+      },
+      {
+        "schema": "public",
+        "name": "concert_browser_cache",
+        "rows": "8",
+        "total_bytes": "245760"
+      },
+      {
+        "schema": "public",
+        "name": "concert_cleanup_events",
+        "rows": "71",
+        "total_bytes": "90112"
+      },
+      {
+        "schema": "public",
+        "name": "concert_image_ocr_attempts",
+        "rows": "72",
+        "total_bytes": "114688"
+      },
+      {
+        "schema": "public",
+        "name": "concert_image_ocr_results",
+        "rows": "60",
+        "total_bytes": "729088"
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_analyses",
+        "rows": "114",
+        "total_bytes": "1638400"
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_candidates",
+        "rows": "290",
+        "total_bytes": "1204224"
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_catalogs",
+        "rows": "4",
+        "total_bytes": "139264"
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_images",
+        "rows": "119",
+        "total_bytes": "139264"
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_reviews",
+        "rows": "65",
+        "total_bytes": "106496"
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_text_analyses",
+        "rows": "1",
+        "total_bytes": "163840"
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_text_candidates",
+        "rows": "18",
+        "total_bytes": "147456"
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_text_confirmations",
+        "rows": "2",
+        "total_bytes": "49152"
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_version_policy",
+        "rows": "1",
+        "total_bytes": "32768"
+      },
+      {
+        "schema": "public",
+        "name": "concerts",
+        "rows": "49",
+        "total_bytes": "147456"
+      },
+      {
+        "schema": "public",
+        "name": "music_record_publications",
+        "rows": "1",
+        "total_bytes": "98304"
+      },
+      {
+        "schema": "public",
+        "name": "music_social_blocks",
+        "rows": "0",
+        "total_bytes": "40960"
+      },
+      {
+        "schema": "public",
+        "name": "music_social_comments",
+        "rows": "0",
+        "total_bytes": "49152"
+      },
+      {
+        "schema": "public",
+        "name": "music_social_follows",
+        "rows": "0",
+        "total_bytes": "40960"
+      },
+      {
+        "schema": "public",
+        "name": "music_social_likes",
+        "rows": "0",
+        "total_bytes": "24576"
+      },
+      {
+        "schema": "public",
+        "name": "music_social_profiles",
+        "rows": "1",
+        "total_bytes": "49152"
+      },
+      {
+        "schema": "public",
+        "name": "social_tracks",
+        "rows": "291",
+        "total_bytes": "106496"
+      },
+      {
+        "schema": "public",
+        "name": "user_music_journal",
+        "rows": "1",
+        "total_bytes": "49152"
+      },
+      {
+        "schema": "public",
+        "name": "user_music_nicknames",
+        "rows": "1",
+        "total_bytes": "49152"
+      },
+      {
+        "schema": "public",
+        "name": "user_track_reactions",
+        "rows": "7",
+        "total_bytes": "65536"
+      }
+    ]
+  },
+  "production_dependency_drift": {
+    "added_dependencies": false,
+    "tables": 26,
+    "views": 4,
+    "functions": 65,
+    "foreign_keys": 38,
+    "app_triggers": 15,
+    "columns_fks_views_triggers_and_function_references_equal_to_audit": true,
+    "outside_schema_string_references": 0
+  },
+  "production_deployment": {
+    "status": [
+      "READY",
+      200
+    ],
+    "ready": "READY",
+    "sha": "2552f5b021238b65a8c4d2e235a342b12e498cde",
+    "crons": []
+  },
+  "windows_task": {
+    "name": "ClassicAtlas-LocalPipeline",
+    "state": "Disabled",
+    "enabled": false,
+    "lastRun": "2026-10-29T08:40:00",
+    "lastResult": 0,
+    "mode": "run"
+  },
+  "frozen_release": {
+    "sha": "1db327cd38dfce778da543738f975b70789aed66",
+    "manifest_files": 320,
+    "all_hashes_match": true,
+    "stages": {
+      "ocr": false,
+      "analysis": false,
+      "cleanup": false,
+      "collection": true,
+      "official_text": true
+    },
+    "changed": false
+  },
+  "production_setting_names": {
+    "read_only": true,
+    "retired_setting_names": [
+      {
+        "key": "PROGRAM_SEARCH_VERSION",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "PROGRAM_SEARCH_VERSION",
+        "target": [
+          "preview"
+        ]
+      }
+    ]
+  },
+  "local_setting_names_pending_cleanup": [
+    "PROGRAM_ANALYSIS_SCHEDULE_ENABLED",
+    "PROGRAM_SEARCH_VERSION"
+  ],
+  "local_models": {
+    "files": [
+      {
+        "path": ".cache/easyocr/models/craft_mlt_25k.pth",
+        "bytes": 83152330
+      },
+      {
+        "path": ".cache/easyocr/models/korean_g2.pth",
+        "bytes": 16081533
+      }
+    ],
+    "total_bytes": 99233863,
+    "observed_recognition_python_processes": 0,
+    "deleted": false
+  },
+  "expected_after_application": {
+    "environment": "expected, NOT a production observation",
+    "tables": 21,
+    "views": 3,
+    "functions": 43,
+    "foreign_keys": 27,
+    "app_triggers": 14,
+    "conditional_table_bytes_removed": 3792896,
+    "retained_table_counts_if_no_concurrent_writes": [
+      {
+        "schema": "atlas_private",
+        "name": "social_accounts",
+        "rows": 1
+      },
+      {
+        "schema": "atlas_private",
+        "name": "social_reports",
+        "rows": 0
+      },
+      {
+        "schema": "public",
+        "name": "concert_browser_cache",
+        "rows": 8
+      },
+      {
+        "schema": "public",
+        "name": "concert_cleanup_events",
+        "rows": 71
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_catalogs",
+        "rows": 4
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_images",
+        "rows": 119
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_text_analyses",
+        "rows": 1
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_text_candidates",
+        "rows": 18
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_text_confirmations",
+        "rows": 2
+      },
+      {
+        "schema": "public",
+        "name": "concert_program_version_policy",
+        "rows": 1
+      },
+      {
+        "schema": "public",
+        "name": "concerts",
+        "rows": 49
+      },
+      {
+        "schema": "public",
+        "name": "music_record_publications",
+        "rows": 1
+      },
+      {
+        "schema": "public",
+        "name": "music_social_blocks",
+        "rows": 0
+      },
+      {
+        "schema": "public",
+        "name": "music_social_comments",
+        "rows": 0
+      },
+      {
+        "schema": "public",
+        "name": "music_social_follows",
+        "rows": 0
+      },
+      {
+        "schema": "public",
+        "name": "music_social_likes",
+        "rows": 0
+      },
+      {
+        "schema": "public",
+        "name": "music_social_profiles",
+        "rows": 1
+      },
+      {
+        "schema": "public",
+        "name": "social_tracks",
+        "rows": 291
+      },
+      {
+        "schema": "public",
+        "name": "user_music_journal",
+        "rows": 1
+      },
+      {
+        "schema": "public",
+        "name": "user_music_nicknames",
+        "rows": 1
+      },
+      {
+        "schema": "public",
+        "name": "user_track_reactions",
+        "rows": 7
+      }
+    ]
+  },
+  "isolated_migration": {
+    "environment": "isolated PGlite, synthetic data only; never a production post-migration observation",
+    "before": {
+      "tables": [
+        {
+          "schemaname": "atlas_private",
+          "tablename": "social_accounts"
+        },
+        {
+          "schemaname": "atlas_private",
+          "tablename": "social_reports"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_browser_cache"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_cleanup_events"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_image_ocr_attempts"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_image_ocr_results"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_analyses"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_candidates"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_catalogs"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_images"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_reviews"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_text_analyses"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_text_candidates"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_text_confirmations"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_version_policy"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concerts"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_record_publications"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_blocks"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_comments"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_follows"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_likes"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_profiles"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "social_tracks"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "user_music_journal"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "user_music_nicknames"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "user_track_reactions"
+        }
+      ],
+      "counts": [
+        {
+          "schema": "atlas_private",
+          "name": "social_accounts",
+          "rows": 3
+        },
+        {
+          "schema": "atlas_private",
+          "name": "social_reports",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "concert_browser_cache",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "concert_cleanup_events",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "concert_image_ocr_attempts",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concert_image_ocr_results",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_analyses",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_candidates",
+          "rows": 3
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_catalogs",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_images",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_reviews",
+          "rows": 3
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_text_analyses",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_text_candidates",
+          "rows": 2
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_text_confirmations",
+          "rows": 2
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_version_policy",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concerts",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "music_record_publications",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "music_social_blocks",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "music_social_comments",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "music_social_follows",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "music_social_likes",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "music_social_profiles",
+          "rows": 3
+        },
+        {
+          "schema": "public",
+          "name": "social_tracks",
+          "rows": 291
+        },
+        {
+          "schema": "public",
+          "name": "user_music_journal",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "user_music_nicknames",
+          "rows": 3
+        },
+        {
+          "schema": "public",
+          "name": "user_track_reactions",
+          "rows": 0
+        }
+      ],
+      "functions": [
+        {
+          "nspname": "atlas_private",
+          "proname": "delete_profile",
+          "args": "",
+          "definition_md5": "74e28cfbc7a435e7d6e1b38633bdf679"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "ensure_profile",
+          "args": "owner uuid, display_name text",
+          "definition_md5": "59a6ca856d3fe930221330dbf7784739"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "publication_profile",
+          "args": "",
+          "definition_md5": "e5165be187d5be85247ea119ab696f31"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "purge_expired_social_reports",
+          "args": "",
+          "definition_md5": "e89e3ba9b6799584e11909c1470fe759"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "require_profile",
+          "args": "post uuid",
+          "definition_md5": "37f928c51d7a5661314a7125a8227071"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "social_invalidate",
+          "args": "",
+          "definition_md5": "3ab6457cafc85c00ca9ba1864b33f927"
+        },
+        {
+          "nspname": "public",
+          "proname": "backfill_concert_program_review_identity",
+          "args": "p_candidate_id uuid, p_review_id uuid, p_catalog_json text, p_expected_hash text, p_source_git_commit text, p_verified_catalog_hash text",
+          "definition_md5": "288e0634bfa066444f9f66d61e323888"
+        },
+        {
+          "nspname": "public",
+          "proname": "bump_program_concert_revision",
+          "args": "",
+          "definition_md5": "bbcd9e4e458174ec14a913e5811546a4"
+        },
+        {
+          "nspname": "public",
+          "proname": "bump_program_image_revision",
+          "args": "",
+          "definition_md5": "3d409c6fcb8b22e6d203e09459263b75"
+        },
+        {
+          "nspname": "public",
+          "proname": "concert_cleanup_counts",
+          "args": "p_ids uuid[]",
+          "definition_md5": "82e3537de240a854c03e80178bddeb2a"
+        },
+        {
+          "nspname": "public",
+          "proname": "concert_cleanup_foreign_keys",
+          "args": "",
+          "definition_md5": "e546bc8beb1504d01eff2501023063c6"
+        },
+        {
+          "nspname": "public",
+          "proname": "concert_cleanup_korean_date",
+          "args": "p_at timestamp with time zone",
+          "definition_md5": "b76be5a3d5bb8c0c7e52821d2b4d3aaa"
+        },
+        {
+          "nspname": "public",
+          "proname": "concert_cleanup_shared_dependency",
+          "args": "p_id uuid",
+          "definition_md5": "347f535474668548e6289f23aaa3e724"
+        },
+        {
+          "nspname": "public",
+          "proname": "concert_cleanup_valid_dates",
+          "args": "p_start date, p_end date",
+          "definition_md5": "a76087369f6b2b6834a6395117d25890"
+        },
+        {
+          "nspname": "public",
+          "proname": "concert_program_evidence_issue",
+          "args": "p_ocr_id uuid, p_revision bigint, p_context jsonb, p_attempt_id uuid, p_concert_revision bigint",
+          "definition_md5": "43d59af0697af49ecf21b99ee641af73"
+        },
+        {
+          "nspname": "public",
+          "proname": "confirm_concert_program_text_candidate_v4",
+          "args": "p_expected jsonb, p_catalog_json text",
+          "definition_md5": "45c26bdb81172f7eb69b0a97c553cce0"
+        },
+        {
+          "nspname": "public",
+          "proname": "decide_automatic_program_candidate",
+          "args": "p_candidate_id uuid, p_analysis_id uuid, p_input_hash text, p_rule text, p_status text, p_reasons jsonb, p_verified jsonb, p_catalog_json text",
+          "definition_md5": "48a1274de524456426b67f25b96d5965"
+        },
+        {
+          "nspname": "public",
+          "proname": "defer_automatic_program",
+          "args": "p_analysis_id uuid, p_input_hash text, p_catalog_hash text, p_rule text",
+          "definition_md5": "e52d64a9d94483cc835e30b741631e3f"
+        },
+        {
+          "nspname": "public",
+          "proname": "delete_current_user_account",
+          "args": "",
+          "definition_md5": "86752ec4c319b741e9be02176fd00220"
+        },
+        {
+          "nspname": "public",
+          "proname": "delete_expired_concert",
+          "args": "p_concert_id uuid, p_operation_id uuid, p_run_id uuid",
+          "definition_md5": "c87089f33da9ed9fcecdd88e5e3a8e2d"
+        },
+        {
+          "nspname": "public",
+          "proname": "delete_private_music_record",
+          "args": "p_id uuid, p_revision integer, p_owner_id uuid",
+          "definition_md5": "ee2761adac5a40ef254807a70ecffa8e"
+        },
+        {
+          "nspname": "public",
+          "proname": "finish_automatic_program",
+          "args": "p_analysis_id uuid, p_input_hash text, p_catalog_hash text, p_rule text",
+          "definition_md5": "6320ed2c4b8b93d79649d6634b7edb4b"
+        },
+        {
+          "nspname": "public",
+          "proname": "list_my_music_shares",
+          "args": "p_owner_id uuid",
+          "definition_md5": "4bab35fc06ca29c822484ebd60192672"
+        },
+        {
+          "nspname": "public",
+          "proname": "merge_user_track_reactions",
+          "args": "p_reactions jsonb",
+          "definition_md5": "a6ffaa545d6fabfb0714b3c6453226f8"
+        },
+        {
+          "nspname": "public",
+          "proname": "plan_expired_concert_cleanup",
+          "args": "p_limit integer",
+          "definition_md5": "699cef71fd8207c515f1f0a4c284e953"
+        },
+        {
+          "nspname": "public",
+          "proname": "prevent_program_text_confirmation_mutation",
+          "args": "",
+          "definition_md5": "fb9b9bca1cf5ba74a9ab8a60fb4d07f2"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_auto_input_hash",
+          "args": "p_analysis_id uuid, p_catalog_hash text, p_rule text",
+          "definition_md5": "e0247df9f6893b17620bdb2283aa9073"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_candidate_snapshot_valid",
+          "args": "p_id uuid",
+          "definition_md5": "1c569a4e446b36f5ce3908d1e35f4205"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_confirmation_evidence_hash",
+          "args": "p_id uuid",
+          "definition_md5": "d284c26caeb0126dfa9b16517953c222"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_identity_canonical",
+          "args": "p_value jsonb",
+          "definition_md5": "e089438b8833e48c7a21ed243716657c"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_identity_normalize",
+          "args": "p_value jsonb",
+          "definition_md5": "21b4403441de2f2926e2bf556a85bb9c"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_work_identity",
+          "args": "p_catalog jsonb, p_work_id text",
+          "definition_md5": "4a4509e4095960cd61e1751794472c92"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_work_identity_hash",
+          "args": "p_catalog jsonb, p_work_id text",
+          "definition_md5": "70d297e417f8ac7100d12a6d0e1b7120"
+        },
+        {
+          "nspname": "public",
+          "proname": "protect_program_review_identity",
+          "args": "",
+          "definition_md5": "3f53b1ebc5eb40479057fbeda7e25c70"
+        },
+        {
+          "nspname": "public",
+          "proname": "publish_music_record",
+          "args": "p_id uuid, p_record_id uuid, p_revision integer, p_owner_id uuid, p_nickname text, p_body text",
+          "definition_md5": "2ea84e844f3e412d61a4e8e1d5455392"
+        },
+        {
+          "nspname": "public",
+          "proname": "queue_automatic_programs",
+          "args": "p_limit integer, p_catalog_hash text, p_rule text, p_image_ids uuid[]",
+          "definition_md5": "dd5a0a1ea8b34563be24cd9a1f1ffd9b"
+        },
+        {
+          "nspname": "public",
+          "proname": "read_concert_program_text_candidate_status_v4",
+          "args": "p_analysis_id uuid",
+          "definition_md5": "96324874f21605a01e1f995d46c34dcb"
+        },
+        {
+          "nspname": "public",
+          "proname": "record_concert_image_ocr",
+          "args": "p_attempt jsonb, p_result jsonb",
+          "definition_md5": "2aeec358acecd556921e984cea98d079"
+        },
+        {
+          "nspname": "public",
+          "proname": "review_concert_program_candidate",
+          "args": "p_candidate_id uuid, p_status text, p_note text, p_analysis_id uuid, p_matcher_version text, p_catalog_hash text",
+          "definition_md5": "d79097a36fda45b137b7ae80cdf1a3cf"
+        },
+        {
+          "nspname": "public",
+          "proname": "review_concert_program_candidate_identity",
+          "args": "p_candidate_id uuid, p_status text, p_note text, p_analysis_id uuid, p_matcher_version text, p_catalog_json text",
+          "definition_md5": "f7bfb74edb72eba25b009208c78d28e6"
+        },
+        {
+          "nspname": "public",
+          "proname": "save_concert_program_analysis",
+          "args": "p_analysis jsonb, p_catalog_json text",
+          "definition_md5": "fbd4578fe805beb7629f6944833eb4a7"
+        },
+        {
+          "nspname": "public",
+          "proname": "save_concert_program_analysis_v3",
+          "args": "p_analysis jsonb, p_catalog_json text",
+          "definition_md5": "94810f9ed8aadd4a428f7d77f14dd7f5"
+        },
+        {
+          "nspname": "public",
+          "proname": "save_concert_program_analysis_v4",
+          "args": "p_analysis jsonb, p_catalog_json text",
+          "definition_md5": "db6f406ead5a548433949a3de50d0746"
+        },
+        {
+          "nspname": "public",
+          "proname": "save_concert_program_rematch",
+          "args": "p_source_candidate_id uuid, p_catalog_json text, p_candidate jsonb",
+          "definition_md5": "86cd084724d9600dfee968c2f3b7590d"
+        },
+        {
+          "nspname": "public",
+          "proname": "save_concert_program_text_analysis_v4",
+          "args": "p_analysis jsonb, p_catalog_json text",
+          "definition_md5": "820d3760fca844e8756c5f877a58b5fe"
+        },
+        {
+          "nspname": "public",
+          "proname": "save_private_music_record",
+          "args": "p_id uuid, p_track_id text, p_kind text, p_body text, p_recorded_on date, p_revision integer, p_owner_id uuid",
+          "definition_md5": "ba291706da4fac7444e94fa5a4dce4de"
+        },
+        {
+          "nspname": "public",
+          "proname": "set_concert_collection_updated_at",
+          "args": "",
+          "definition_md5": "d4bb775ef327ecb6d902406dadedb8bc"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_block",
+          "args": "person uuid, desired boolean",
+          "definition_md5": "2974e9fb768f77bad4ae3bde6acf50dc"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_can_read",
+          "args": "post uuid",
+          "definition_md5": "5f085c3950acdb882dc7bfea70c21a26"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_comment",
+          "args": "post uuid, content text, comment_id uuid",
+          "definition_md5": "bef602b8df4dc8c86818e7a69638c0d0"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_delete_comment",
+          "args": "comment_id uuid",
+          "definition_md5": "e5024ca66c237d6e4dea1b7a350b8d73"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_edit_post",
+          "args": "post uuid, content text, scope text",
+          "definition_md5": "cc19b7d17fd8746a7dbffcc24cebe460"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_feed",
+          "args": "track text, person uuid, post uuid, before_time timestamp with time zone, before_id uuid",
+          "definition_md5": "eec06a9ffcb57d3154f36da6c55e030e"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_follow",
+          "args": "person uuid, desired boolean",
+          "definition_md5": "2dffcefdfef709f61263215b115fa097"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_me",
+          "args": "",
+          "definition_md5": "d3766aa0c13daf4c5a9a902baf256923"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_profile",
+          "args": "person uuid",
+          "definition_md5": "2db889e50a66a87c351a54798b3a228d"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_publish_record",
+          "args": "p_id uuid, p_record_id uuid, p_revision integer, p_owner_id uuid, p_nickname text, p_body text, p_visibility text",
+          "definition_md5": "48538ce35ad670853dc4524a798cd942"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_report",
+          "args": "post uuid, reason text",
+          "definition_md5": "e82d19f961c90238970919fadd9ea2c2"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_save_profile",
+          "args": "p_handle text, p_nickname text, p_avatar_url text",
+          "definition_md5": "6bb7d9c11ba73f1a5ec3461287a22707"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_self_id",
+          "args": "",
+          "definition_md5": "40fdc121367140e0a376288da0313c80"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_set_like",
+          "args": "post uuid, desired boolean",
+          "definition_md5": "b52d0ba9e3e371dad6adc659a1ac9bbc"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_unblocked",
+          "args": "person uuid",
+          "definition_md5": "34660c519940be8e6584d7562afd8db0"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_withdraw",
+          "args": "post uuid",
+          "definition_md5": "4aecde99192ec9cb1abf5171c9b6c396"
+        },
+        {
+          "nspname": "public",
+          "proname": "sync_kopis_concert",
+          "args": "p_concert jsonb, p_images jsonb",
+          "definition_md5": "e5784ad0692754b9f21a63feba751cad"
+        },
+        {
+          "nspname": "public",
+          "proname": "withdraw_music_record",
+          "args": "p_id uuid, p_owner_id uuid",
+          "definition_md5": "4829dbe92a9a3e2c2e6c79cf98f93f7a"
+        }
+      ],
+      "views": [
+        {
+          "schemaname": "public",
+          "viewname": "concert_program_candidate_status"
+        },
+        {
+          "schemaname": "public",
+          "viewname": "concert_program_text_analysis_status"
+        },
+        {
+          "schemaname": "public",
+          "viewname": "concert_program_text_candidate_status"
+        },
+        {
+          "schemaname": "public",
+          "viewname": "concert_program_text_confirmation_status"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "nspname": "atlas_private",
+          "relname": "social_accounts",
+          "conname": "social_accounts_profile_id_fkey"
+        },
+        {
+          "nspname": "atlas_private",
+          "relname": "social_accounts",
+          "conname": "social_accounts_user_id_fkey"
+        },
+        {
+          "nspname": "atlas_private",
+          "relname": "social_reports",
+          "conname": "social_reports_post_id_fkey"
+        },
+        {
+          "nspname": "atlas_private",
+          "relname": "social_reports",
+          "conname": "social_reports_reported_id_fkey"
+        },
+        {
+          "nspname": "atlas_private",
+          "relname": "social_reports",
+          "conname": "social_reports_reporter_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_image_ocr_attempts",
+          "conname": "concert_image_ocr_attempts_image_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_image_ocr_attempts",
+          "conname": "concert_image_ocr_attempts_result_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_image_ocr_results",
+          "conname": "concert_image_ocr_results_image_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_analyses",
+          "conname": "concert_program_analyses_catalog_hash_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_analyses",
+          "conname": "concert_program_analyses_concert_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_analyses",
+          "conname": "concert_program_analyses_image_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_analyses",
+          "conname": "concert_program_analyses_ocr_result_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_analyses",
+          "conname": "concert_program_analyses_source_attempt_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_candidates",
+          "conname": "concert_program_candidates_analysis_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_candidates",
+          "conname": "concert_program_candidates_matching_catalog_hash_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_images",
+          "conname": "concert_program_images_concert_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_reviews",
+          "conname": "concert_program_reviews_candidate_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_analyses",
+          "conname": "concert_program_text_analyses_catalog_hash_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_analyses",
+          "conname": "concert_program_text_analyses_concert_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_candidates",
+          "conname": "concert_program_text_candidates_analysis_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "conname": "concert_program_text_confirmations_analysis_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "conname": "concert_program_text_confirmations_candidate_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "conname": "concert_program_text_confirmations_catalog_hash_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "conname": "concert_program_text_confirmations_concert_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "conname": "music_record_publications_owner_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "conname": "music_record_publications_profile_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "conname": "music_record_publications_source_record_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_blocks",
+          "conname": "music_social_blocks_blocked_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_blocks",
+          "conname": "music_social_blocks_blocker_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_comments",
+          "conname": "music_social_comments_post_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_comments",
+          "conname": "music_social_comments_profile_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_follows",
+          "conname": "music_social_follows_author_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_follows",
+          "conname": "music_social_follows_follower_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_likes",
+          "conname": "music_social_likes_post_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_likes",
+          "conname": "music_social_likes_profile_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "user_music_journal",
+          "conname": "user_music_journal_user_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "user_music_nicknames",
+          "conname": "user_music_nicknames_user_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "user_track_reactions",
+          "conname": "user_track_reactions_user_id_fkey"
+        }
+      ],
+      "triggers": [
+        {
+          "nspname": "atlas_private",
+          "relname": "social_accounts",
+          "tgname": "account_profile_cleanup"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_images",
+          "tgname": "concert_program_images_updated_at"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_images",
+          "tgname": "program_image_revision"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_reviews",
+          "tgname": "program_review_identity_immutable"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "tgname": "program_text_confirmation_immutable"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "tgname": "program_text_confirmation_no_truncate"
+        },
+        {
+          "nspname": "public",
+          "relname": "concerts",
+          "tgname": "concerts_updated_at"
+        },
+        {
+          "nspname": "public",
+          "relname": "concerts",
+          "tgname": "program_concert_revision"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "tgname": "publication_profile"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_blocks",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_comments",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_follows",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_likes",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_profiles",
+          "tgname": "social_invalidate"
+        }
+      ]
+    },
+    "after": {
+      "tables": [
+        {
+          "schemaname": "atlas_private",
+          "tablename": "social_accounts"
+        },
+        {
+          "schemaname": "atlas_private",
+          "tablename": "social_reports"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_browser_cache"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_cleanup_events"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_catalogs"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_images"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_text_analyses"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_text_candidates"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_text_confirmations"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concert_program_version_policy"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "concerts"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_record_publications"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_blocks"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_comments"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_follows"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_likes"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "music_social_profiles"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "social_tracks"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "user_music_journal"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "user_music_nicknames"
+        },
+        {
+          "schemaname": "public",
+          "tablename": "user_track_reactions"
+        }
+      ],
+      "counts": [
+        {
+          "schema": "atlas_private",
+          "name": "social_accounts",
+          "rows": 3
+        },
+        {
+          "schema": "atlas_private",
+          "name": "social_reports",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "concert_browser_cache",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "concert_cleanup_events",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_catalogs",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_images",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_text_analyses",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_text_candidates",
+          "rows": 2
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_text_confirmations",
+          "rows": 2
+        },
+        {
+          "schema": "public",
+          "name": "concert_program_version_policy",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "concerts",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "music_record_publications",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "music_social_blocks",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "music_social_comments",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "music_social_follows",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "music_social_likes",
+          "rows": 0
+        },
+        {
+          "schema": "public",
+          "name": "music_social_profiles",
+          "rows": 3
+        },
+        {
+          "schema": "public",
+          "name": "social_tracks",
+          "rows": 291
+        },
+        {
+          "schema": "public",
+          "name": "user_music_journal",
+          "rows": 1
+        },
+        {
+          "schema": "public",
+          "name": "user_music_nicknames",
+          "rows": 3
+        },
+        {
+          "schema": "public",
+          "name": "user_track_reactions",
+          "rows": 0
+        }
+      ],
+      "functions": [
+        {
+          "nspname": "atlas_private",
+          "proname": "delete_profile",
+          "args": "",
+          "definition_md5": "74e28cfbc7a435e7d6e1b38633bdf679"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "ensure_profile",
+          "args": "owner uuid, display_name text",
+          "definition_md5": "59a6ca856d3fe930221330dbf7784739"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "publication_profile",
+          "args": "",
+          "definition_md5": "e5165be187d5be85247ea119ab696f31"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "purge_expired_social_reports",
+          "args": "",
+          "definition_md5": "e89e3ba9b6799584e11909c1470fe759"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "require_profile",
+          "args": "post uuid",
+          "definition_md5": "37f928c51d7a5661314a7125a8227071"
+        },
+        {
+          "nspname": "atlas_private",
+          "proname": "social_invalidate",
+          "args": "",
+          "definition_md5": "3ab6457cafc85c00ca9ba1864b33f927"
+        },
+        {
+          "nspname": "public",
+          "proname": "bump_program_concert_revision",
+          "args": "",
+          "definition_md5": "bbcd9e4e458174ec14a913e5811546a4"
+        },
+        {
+          "nspname": "public",
+          "proname": "bump_program_image_revision",
+          "args": "",
+          "definition_md5": "3d409c6fcb8b22e6d203e09459263b75"
+        },
+        {
+          "nspname": "public",
+          "proname": "concert_cleanup_korean_date",
+          "args": "p_at timestamp with time zone",
+          "definition_md5": "b76be5a3d5bb8c0c7e52821d2b4d3aaa"
+        },
+        {
+          "nspname": "public",
+          "proname": "concert_cleanup_valid_dates",
+          "args": "p_start date, p_end date",
+          "definition_md5": "a76087369f6b2b6834a6395117d25890"
+        },
+        {
+          "nspname": "public",
+          "proname": "confirm_concert_program_text_candidate_v4",
+          "args": "p_expected jsonb, p_catalog_json text",
+          "definition_md5": "45c26bdb81172f7eb69b0a97c553cce0"
+        },
+        {
+          "nspname": "public",
+          "proname": "delete_current_user_account",
+          "args": "",
+          "definition_md5": "86752ec4c319b741e9be02176fd00220"
+        },
+        {
+          "nspname": "public",
+          "proname": "delete_private_music_record",
+          "args": "p_id uuid, p_revision integer, p_owner_id uuid",
+          "definition_md5": "ee2761adac5a40ef254807a70ecffa8e"
+        },
+        {
+          "nspname": "public",
+          "proname": "list_my_music_shares",
+          "args": "p_owner_id uuid",
+          "definition_md5": "4bab35fc06ca29c822484ebd60192672"
+        },
+        {
+          "nspname": "public",
+          "proname": "merge_user_track_reactions",
+          "args": "p_reactions jsonb",
+          "definition_md5": "a6ffaa545d6fabfb0714b3c6453226f8"
+        },
+        {
+          "nspname": "public",
+          "proname": "prevent_program_text_confirmation_mutation",
+          "args": "",
+          "definition_md5": "fb9b9bca1cf5ba74a9ab8a60fb4d07f2"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_identity_canonical",
+          "args": "p_value jsonb",
+          "definition_md5": "e089438b8833e48c7a21ed243716657c"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_identity_normalize",
+          "args": "p_value jsonb",
+          "definition_md5": "21b4403441de2f2926e2bf556a85bb9c"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_work_identity",
+          "args": "p_catalog jsonb, p_work_id text",
+          "definition_md5": "4a4509e4095960cd61e1751794472c92"
+        },
+        {
+          "nspname": "public",
+          "proname": "program_work_identity_hash",
+          "args": "p_catalog jsonb, p_work_id text",
+          "definition_md5": "70d297e417f8ac7100d12a6d0e1b7120"
+        },
+        {
+          "nspname": "public",
+          "proname": "publish_music_record",
+          "args": "p_id uuid, p_record_id uuid, p_revision integer, p_owner_id uuid, p_nickname text, p_body text",
+          "definition_md5": "2ea84e844f3e412d61a4e8e1d5455392"
+        },
+        {
+          "nspname": "public",
+          "proname": "read_concert_program_text_candidate_status_v4",
+          "args": "p_analysis_id uuid",
+          "definition_md5": "96324874f21605a01e1f995d46c34dcb"
+        },
+        {
+          "nspname": "public",
+          "proname": "save_concert_program_text_analysis_v4",
+          "args": "p_analysis jsonb, p_catalog_json text",
+          "definition_md5": "820d3760fca844e8756c5f877a58b5fe"
+        },
+        {
+          "nspname": "public",
+          "proname": "save_private_music_record",
+          "args": "p_id uuid, p_track_id text, p_kind text, p_body text, p_recorded_on date, p_revision integer, p_owner_id uuid",
+          "definition_md5": "ba291706da4fac7444e94fa5a4dce4de"
+        },
+        {
+          "nspname": "public",
+          "proname": "set_concert_collection_updated_at",
+          "args": "",
+          "definition_md5": "d4bb775ef327ecb6d902406dadedb8bc"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_block",
+          "args": "person uuid, desired boolean",
+          "definition_md5": "2974e9fb768f77bad4ae3bde6acf50dc"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_can_read",
+          "args": "post uuid",
+          "definition_md5": "5f085c3950acdb882dc7bfea70c21a26"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_comment",
+          "args": "post uuid, content text, comment_id uuid",
+          "definition_md5": "bef602b8df4dc8c86818e7a69638c0d0"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_delete_comment",
+          "args": "comment_id uuid",
+          "definition_md5": "e5024ca66c237d6e4dea1b7a350b8d73"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_edit_post",
+          "args": "post uuid, content text, scope text",
+          "definition_md5": "cc19b7d17fd8746a7dbffcc24cebe460"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_feed",
+          "args": "track text, person uuid, post uuid, before_time timestamp with time zone, before_id uuid",
+          "definition_md5": "eec06a9ffcb57d3154f36da6c55e030e"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_follow",
+          "args": "person uuid, desired boolean",
+          "definition_md5": "2dffcefdfef709f61263215b115fa097"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_me",
+          "args": "",
+          "definition_md5": "d3766aa0c13daf4c5a9a902baf256923"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_profile",
+          "args": "person uuid",
+          "definition_md5": "2db889e50a66a87c351a54798b3a228d"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_publish_record",
+          "args": "p_id uuid, p_record_id uuid, p_revision integer, p_owner_id uuid, p_nickname text, p_body text, p_visibility text",
+          "definition_md5": "48538ce35ad670853dc4524a798cd942"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_report",
+          "args": "post uuid, reason text",
+          "definition_md5": "e82d19f961c90238970919fadd9ea2c2"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_save_profile",
+          "args": "p_handle text, p_nickname text, p_avatar_url text",
+          "definition_md5": "6bb7d9c11ba73f1a5ec3461287a22707"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_self_id",
+          "args": "",
+          "definition_md5": "40fdc121367140e0a376288da0313c80"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_set_like",
+          "args": "post uuid, desired boolean",
+          "definition_md5": "b52d0ba9e3e371dad6adc659a1ac9bbc"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_unblocked",
+          "args": "person uuid",
+          "definition_md5": "34660c519940be8e6584d7562afd8db0"
+        },
+        {
+          "nspname": "public",
+          "proname": "social_withdraw",
+          "args": "post uuid",
+          "definition_md5": "4aecde99192ec9cb1abf5171c9b6c396"
+        },
+        {
+          "nspname": "public",
+          "proname": "sync_kopis_concert",
+          "args": "p_concert jsonb, p_images jsonb",
+          "definition_md5": "e5784ad0692754b9f21a63feba751cad"
+        },
+        {
+          "nspname": "public",
+          "proname": "withdraw_music_record",
+          "args": "p_id uuid, p_owner_id uuid",
+          "definition_md5": "4829dbe92a9a3e2c2e6c79cf98f93f7a"
+        }
+      ],
+      "views": [
+        {
+          "schemaname": "public",
+          "viewname": "concert_program_text_analysis_status"
+        },
+        {
+          "schemaname": "public",
+          "viewname": "concert_program_text_candidate_status"
+        },
+        {
+          "schemaname": "public",
+          "viewname": "concert_program_text_confirmation_status"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "nspname": "atlas_private",
+          "relname": "social_accounts",
+          "conname": "social_accounts_profile_id_fkey"
+        },
+        {
+          "nspname": "atlas_private",
+          "relname": "social_accounts",
+          "conname": "social_accounts_user_id_fkey"
+        },
+        {
+          "nspname": "atlas_private",
+          "relname": "social_reports",
+          "conname": "social_reports_post_id_fkey"
+        },
+        {
+          "nspname": "atlas_private",
+          "relname": "social_reports",
+          "conname": "social_reports_reported_id_fkey"
+        },
+        {
+          "nspname": "atlas_private",
+          "relname": "social_reports",
+          "conname": "social_reports_reporter_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_images",
+          "conname": "concert_program_images_concert_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_analyses",
+          "conname": "concert_program_text_analyses_catalog_hash_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_analyses",
+          "conname": "concert_program_text_analyses_concert_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_candidates",
+          "conname": "concert_program_text_candidates_analysis_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "conname": "concert_program_text_confirmations_analysis_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "conname": "concert_program_text_confirmations_candidate_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "conname": "concert_program_text_confirmations_catalog_hash_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "conname": "concert_program_text_confirmations_concert_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "conname": "music_record_publications_owner_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "conname": "music_record_publications_profile_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "conname": "music_record_publications_source_record_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_blocks",
+          "conname": "music_social_blocks_blocked_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_blocks",
+          "conname": "music_social_blocks_blocker_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_comments",
+          "conname": "music_social_comments_post_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_comments",
+          "conname": "music_social_comments_profile_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_follows",
+          "conname": "music_social_follows_author_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_follows",
+          "conname": "music_social_follows_follower_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_likes",
+          "conname": "music_social_likes_post_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_likes",
+          "conname": "music_social_likes_profile_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "user_music_journal",
+          "conname": "user_music_journal_user_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "user_music_nicknames",
+          "conname": "user_music_nicknames_user_id_fkey"
+        },
+        {
+          "nspname": "public",
+          "relname": "user_track_reactions",
+          "conname": "user_track_reactions_user_id_fkey"
+        }
+      ],
+      "triggers": [
+        {
+          "nspname": "atlas_private",
+          "relname": "social_accounts",
+          "tgname": "account_profile_cleanup"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_images",
+          "tgname": "concert_program_images_updated_at"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_images",
+          "tgname": "program_image_revision"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "tgname": "program_text_confirmation_immutable"
+        },
+        {
+          "nspname": "public",
+          "relname": "concert_program_text_confirmations",
+          "tgname": "program_text_confirmation_no_truncate"
+        },
+        {
+          "nspname": "public",
+          "relname": "concerts",
+          "tgname": "concerts_updated_at"
+        },
+        {
+          "nspname": "public",
+          "relname": "concerts",
+          "tgname": "program_concert_revision"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "tgname": "publication_profile"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_record_publications",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_blocks",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_comments",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_follows",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_likes",
+          "tgname": "social_invalidate"
+        },
+        {
+          "nspname": "public",
+          "relname": "music_social_profiles",
+          "tgname": "social_invalidate"
+        }
+      ]
+    },
+    "retained_counts": {
+      "atlas_private.social_accounts": 3,
+      "atlas_private.social_reports": 0,
+      "public.concert_browser_cache": 0,
+      "public.concert_cleanup_events": 0,
+      "public.concert_program_catalogs": 1,
+      "public.concert_program_images": 1,
+      "public.concert_program_text_analyses": 1,
+      "public.concert_program_text_candidates": 2,
+      "public.concert_program_text_confirmations": 2,
+      "public.concert_program_version_policy": 1,
+      "public.concerts": 1,
+      "public.music_record_publications": 1,
+      "public.music_social_blocks": 0,
+      "public.music_social_comments": 0,
+      "public.music_social_follows": 0,
+      "public.music_social_likes": 0,
+      "public.music_social_profiles": 3,
+      "public.social_tracks": 291,
+      "public.user_music_journal": 1,
+      "public.user_music_nicknames": 3,
+      "public.user_track_reactions": 0
+    },
+    "retained_data_definition_acl_policy_trigger_equality": true,
+    "official_effective_confirmations_at_migration_boundary": 2,
+    "new_official_save_and_confirmation": true,
+    "official_effective_confirmations_after_new_write": 3,
+    "late_failure_rollback": true,
+    "repeat_application_refused": true
+  },
+  "tests": {
+    "full": {
+      "pass": 162,
+      "fail": 0,
+      "skip": 0
+    },
+    "social": {
+      "pass": 5,
+      "fail": 0,
+      "skip": 0
+    },
+    "retirement": {
+      "pass": 15,
+      "fail": 0,
+      "skip": 0
+    },
+    "static": {
+      "removed_object_runtime_source_references": 0,
+      "recognition_dependencies": 0,
+      "python_source_files": 0,
+      "api_bundle_inputs": 8,
+      "cli_in_api_bundle": false,
+      "source_files": 119
+    },
+    "build": {
+      "result": "PASS",
+      "modules": 106,
+      "javascript_kb": 875.48,
+      "javascript_gzip_kb": 224.84,
+      "existing_large_chunk_warning": true
+    },
+    "environment": "Windows PowerShell / Node 22.18.0 / PGlite / JSDOM / mocked HTTP/SDK; no live OAuth/PostgREST/Realtime writes"
+  },
+  "recovery_list_check": {
+    "source": "existing 2026-11-06 private archive TOC metadata only; not a fresh backup and not a restore",
+    "entries": 95,
+    "tables": 5,
+    "table_data": 5,
+    "functions": 22,
+    "function_acls": 22,
+    "relation_acls": 6,
+    "row_security": 5,
+    "secondary_indexes": 5,
+    "constraints": 8,
+    "foreign_keys": 11,
+    "views": 1,
+    "triggers": 1,
+    "kept_user_table_data": 0
+  },
+  "not_verified": [
+    "fresh logical backup and actual isolated archive restore",
+    "production migration and post-migration observation",
+    "real OAuth/PostgREST/Realtime live tests",
+    "multi-session PostgreSQL DDL lock latency",
+    "other PCs or external manual callers"
+  ],
+  "secrets_and_user_bodies": "not included",
+  "implementation_code_sha": "e8e204e31d0bf5c401fec2e12641c8183a0fb219",
+  "safety_checks": {
+    "unexpected_dependency_types_tested": 10,
+    "includes_policy_and_check_drift": true,
+    "definition_hash_normalization": "CRLF_to_LF_only",
+    "function_and_view_definitions_match_reconstructed_schema": true,
+    "final_logs_and_changed_files_sensitive_value_check": "PASS",
+    "original_files_preserved": 52,
+    "original_head_preserved": true
+  }
+}

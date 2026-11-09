@@ -130,7 +130,7 @@ npm run build
 - [EasyOCR 배치 설정·실행](EASYOCR_BATCH.md)
 - [공연 코드 구조](CONCERT_PIPELINE.md)
 - [공연·이미지 확인 SQL](../supabase/verification/concert_collection.sql)
-- [OCR 결과 확인 SQL](../supabase/verification/concert_image_ocr.sql)
+- [OCR 결과 확인 SQL](../supabase/history/ocr/concert_image_ocr.sql.txt)
 
 ## 7. 아직 수행하지 않은 작업
 

@@ -1,3 +1,5 @@
+> **과거 운영 자료 — CA-OCR-RETIRE-20261109-001.** 아래 OCR/통합 배치/수동 검토 설치·실행 명령을 재사용하지 않습니다. 공식 Program text와 공유 identity helper는 유지하며, 현재 text 전용 진입점·운영 미적용 상태는 [폐기 안내](OCR_RETIREMENT.md)를 따릅니다.
+
 # stored-program-3 준비 및 canary 계획
 
 2026-10-20 추가: 버전 선택과 예약 게이트를 분리했습니다. [현재 전환 절차](PROGRAM_ROLLOUT.md)를 우선 사용하세요. 아래 2026-10-19 수치는 당시 읽기 전용 진단 기록이며 현재 DB를 다시 조회한 값은 아닙니다.
@@ -18,7 +20,7 @@
 
 기존 RPC/unique key는 새 문자열을 허용하지만, 저장 시 이전 버전의 `is_current`를 false로 바꿉니다. 또한 `logical_works`, `grouping`, 매칭 전용 근거와 catalog 부모 연결 등 새 payload 필드를 저장하지 않습니다. 따라서 문자열 변경만으로 운영 저장하지 않습니다.
 
-[미실행 SQL 초안](../supabase/drafts/PROGRAM_ANALYSIS_V3_DRAFT.sql)은 `supabase/drafts`에 두어 자동 migration 디렉터리와 구분합니다. 기존 202610140001·202610140002·202610150001 스키마 이후 적용하는 초안입니다.
+[미실행 SQL 초안](../supabase/history/ocr/PROGRAM_ANALYSIS_V3_DRAFT.sql.txt)은 `supabase/drafts`에 두어 자동 migration 디렉터리와 구분합니다. 기존 202610140001·202610140002·202610150001 스키마 이후 적용하는 초안입니다.
 
 1. 분석에 nullable `snapshot` JSONB를 추가해 v3 전체 payload를 보존합니다. 기존 v2 payload·후보·검토·현재 플래그·시각은 갱신하지 않습니다.
 2. 현재 분석의 unique index를 **이미지+버전당 현재 분석**으로 변경합니다. 새 snapshot은 같은 버전의 이전 현재 플래그만 변경합니다.
