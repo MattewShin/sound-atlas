@@ -1,0 +1,465 @@
+{
+  "task_id": "CA-OCR-RETIRE-20261109-001",
+  "specification": 2,
+  "status": "IMPLEMENTED",
+  "documentation_branch": "codex/ca-ocr-retire-20261109-001-production",
+  "code_branch": "main",
+  "code_sha": "52869c77338d7d343ca7ce204c67d3a466b6da3c",
+  "approved_head": "f90e6b77dcaf29d72982600033ad6e71377f5b9a",
+  "approved_code": "e8e204e31d0bf5c401fec2e12641c8183a0fb219",
+  "pr": {
+    "url": "https://github.com/MattewShin/sound-atlas/pull/22",
+    "draft": false,
+    "merged": true,
+    "head_sha": "f90e6b77dcaf29d72982600033ad6e71377f5b9a",
+    "merge_commit_sha": "52869c77338d7d343ca7ce204c67d3a466b6da3c",
+    "merged_at": "2026-11-09T07:19:40Z"
+  },
+  "initial_gate": {
+    "result": "PASS",
+    "approved_head": "f90e6b77dcaf29d72982600033ad6e71377f5b9a",
+    "implementation_code": "e8e204e31d0bf5c401fec2e12641c8183a0fb219",
+    "main": "2552f5b021238b65a8c4d2e235a342b12e498cde",
+    "deployment_sha": "2552f5b021238b65a8c4d2e235a342b12e498cde",
+    "deployment_ready": "READY",
+    "preflight_read_only": true,
+    "preflight_sha256": "18608cf35f8dd31cc81812bc0515b00f771bf29e725a80dd0c09c37789412b78",
+    "schema_drift": false,
+    "row_count_drift": false,
+    "application_write_statistics_drift": false,
+    "observed_kst": "2026-11-09 16:18:56",
+    "counts": {
+      "tables": 26,
+      "functions": 65,
+      "views": 4,
+      "foreign_keys": 38,
+      "app_triggers": 15
+    },
+    "tests": {
+      "full": 162,
+      "social": 5,
+      "retirement": 15,
+      "build": "PASS",
+      "code_diff_from_approved_implementation": 0
+    },
+    "official_effective_confirmations": 2
+  },
+  "backup": {
+    "created_utc": "2026-11-09T07:28:10.272Z",
+    "scope": "full database logical custom archive; global roles, Storage binary files and provider settings are outside pg_dump scope",
+    "tool": "pg_dump (PostgreSQL) 18.6",
+    "bytes": 1558953,
+    "sha256": "1fbeb302b6786f730a6c28e74f5e9b6281f932dfaa090230ab57e167d14bbaec",
+    "pg_dump_exit": 0,
+    "pg_restore_list_exit": 0,
+    "pg_restore_full_extract_to_null_exit": 0,
+    "toc_entries": 1041,
+    "ocr_only_entries": 95,
+    "ocr_only_counts": {
+      "TABLE": 5,
+      "TABLE DATA": 5,
+      "FUNCTION": 22,
+      "VIEW": 1,
+      "TRIGGER": 1,
+      "FK CONSTRAINT": 11,
+      "ROW SECURITY": 5,
+      "INDEX": 5,
+      "CONSTRAINT": 8,
+      "ACL_FUNCTION": 22,
+      "ACL_RELATION": 6
+    },
+    "production_restore_performed": false,
+    "archive_contents_printed": false
+  },
+  "immediate_preflight": {
+    "result": "PASS",
+    "observed_kst": "2026-11-09 16:30:11",
+    "read_only": true,
+    "preflight_sha256": "18608cf35f8dd31cc81812bc0515b00f771bf29e725a80dd0c09c37789412b78",
+    "backup_checksum_reverified": true,
+    "all_application_and_auth_users_fingerprints_unchanged_since_backup": true
+  },
+  "migration": {
+    "task_id": "CA-OCR-RETIRE-20261109-001",
+    "specification": 2,
+    "approved_head": "f90e6b77dcaf29d72982600033ad6e71377f5b9a",
+    "approved_code": "e8e204e31d0bf5c401fec2e12641c8183a0fb219",
+    "main_sha": "52869c77338d7d343ca7ce204c67d3a466b6da3c",
+    "migration": "202611090001_retire_ocr.sql",
+    "migration_sha256": "07458a1ae0a7a1017c85dd5e36e90c3a38754921085a9642b4703c9b3da5f27b",
+    "started_kst": "2026-11-09 16:30:20",
+    "committed_kst": "2026-11-09 16:30:20",
+    "commit_acknowledged": true,
+    "command_count": 48,
+    "logical_backup_sha256": "1fbeb302b6786f730a6c28e74f5e9b6281f932dfaa090230ab57e167d14bbaec",
+    "production_restore_performed": false
+  },
+  "database": {
+    "result": "PASS",
+    "observed_kst": "2026-11-09 16:30:22",
+    "counts_before": {
+      "tables": 26,
+      "functions": 65,
+      "views": 4,
+      "foreign_keys": 38,
+      "app_triggers": 15
+    },
+    "counts_after": {
+      "tables": 21,
+      "functions": 43,
+      "views": 3,
+      "foreign_keys": 27,
+      "app_triggers": 14
+    },
+    "retained_tables": [
+      {
+        "name": "atlas_private.social_accounts",
+        "rows": "1",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "atlas_private.social_reports",
+        "rows": "0",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.concert_browser_cache",
+        "rows": "9",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.concert_cleanup_events",
+        "rows": "71",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.concert_program_catalogs",
+        "rows": "4",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.concert_program_images",
+        "rows": "119",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.concert_program_text_analyses",
+        "rows": "1",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.concert_program_text_candidates",
+        "rows": "18",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.concert_program_text_confirmations",
+        "rows": "2",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.concert_program_version_policy",
+        "rows": "1",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.concerts",
+        "rows": "49",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.music_record_publications",
+        "rows": "1",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.music_social_blocks",
+        "rows": "0",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.music_social_comments",
+        "rows": "0",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.music_social_follows",
+        "rows": "0",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.music_social_likes",
+        "rows": "0",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.music_social_profiles",
+        "rows": "1",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.social_tracks",
+        "rows": "291",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.user_music_journal",
+        "rows": "1",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.user_music_nicknames",
+        "rows": "1",
+        "fingerprint_equal": true
+      },
+      {
+        "name": "public.user_track_reactions",
+        "rows": "7",
+        "fingerprint_equal": true
+      }
+    ],
+    "retained_function_view_fk_trigger_policy_acl_equal": true,
+    "auth_users_count_and_fingerprint_equal": true,
+    "official_effective_confirmations_before": 2,
+    "official_effective_confirmations_after": 2,
+    "postflight_read_only": true,
+    "postflight_sha256": "f4f042404d77e1a79500c8c715676f870cdf964fa937711de786c6f2c196dbaf",
+    "postgrest_reload_notified": true,
+    "user_content_mutations": 0,
+    "production_restore_performed": false
+  },
+  "postgrest": {
+    "result": "PASS",
+    "database_and_rest_project_match": true,
+    "service_role_openapi_reloaded": true,
+    "removed_table_requests": [
+      {
+        "name": "concert_image_ocr_attempts",
+        "status": 404,
+        "error_code": "PGRST205"
+      },
+      {
+        "name": "concert_image_ocr_results",
+        "status": 404,
+        "error_code": "PGRST205"
+      },
+      {
+        "name": "concert_program_analyses",
+        "status": 404,
+        "error_code": "PGRST205"
+      },
+      {
+        "name": "concert_program_candidates",
+        "status": 404,
+        "error_code": "PGRST205"
+      },
+      {
+        "name": "concert_program_reviews",
+        "status": 404,
+        "error_code": "PGRST205"
+      }
+    ],
+    "removed_view_paths": 1,
+    "removed_function_paths": 22,
+    "retained_required_routes": 12,
+    "official_effective_confirmation_rows": 2,
+    "source_rows_or_bodies_logged": false,
+    "mutating_api_requests": 0
+  },
+  "app_before_migration": {
+    "stage": "after-deploy",
+    "anonymous_isolated_context": true,
+    "google_oauth": false,
+    "personal_data_mutations": 0,
+    "checks": {
+      "home": true,
+      "concerts": true,
+      "library": true,
+      "music_stories": true,
+      "social_actual_read_api": true
+    },
+    "concert_requests": [
+      {
+        "status": 200
+      }
+    ],
+    "social_read_statuses": [
+      200
+    ],
+    "blocked_write_requests": 0,
+    "page_errors": 0,
+    "concert_response": {
+      "status": 200,
+      "total": 291,
+      "returned": 20,
+      "stale": false
+    },
+    "result": "PASS"
+  },
+  "app_after_migration": {
+    "stage": "after-migration",
+    "anonymous_isolated_context": true,
+    "google_oauth": false,
+    "personal_data_mutations": 0,
+    "checks": {
+      "home": true,
+      "concerts": true,
+      "library": true,
+      "music_stories": true,
+      "social_actual_read_api": true
+    },
+    "concert_requests": [
+      {
+        "status": 200
+      }
+    ],
+    "social_read_statuses": [
+      200
+    ],
+    "blocked_write_requests": 0,
+    "page_errors": 0,
+    "concert_response": {
+      "status": 200,
+      "total": 291,
+      "returned": 20,
+      "stale": false
+    },
+    "result": "PASS"
+  },
+  "authorized_concert_cache_change_before_backup": {
+    "result": "PASS",
+    "observed_kst": "2026-11-09 16:26:09",
+    "protected_data_except_authorized_concert_cache_unchanged": true,
+    "retained_metadata_unchanged": true,
+    "cache": {
+      "before_rows": "8",
+      "now_rows": "9",
+      "fingerprint_same": false
+    },
+    "reason_for_cache_change": "Authorized real concert lookup may fill the existing persistent cache; no user content mutation"
+  },
+  "final": {
+    "result": "PASS",
+    "observed_kst": "2026-11-09 16:35:57",
+    "main_sha": "52869c77338d7d343ca7ce204c67d3a466b6da3c",
+    "deployment": {
+      "id": "dpl_66uJ7dDatRkryksXWA1YwewgrU7J",
+      "sha": "52869c77338d7d343ca7ce204c67d3a466b6da3c",
+      "ready": "READY",
+      "target": "production",
+      "url": "sound-atlas-ro1tlm3j8-yhshin.vercel.app",
+      "created": 1794208783004,
+      "crons": []
+    },
+    "counts": {
+      "tables": 21,
+      "functions": 43,
+      "views": 3,
+      "foreign_keys": 27,
+      "app_triggers": 14
+    },
+    "removed": {
+      "tables": [
+        "concert_image_ocr_attempts",
+        "concert_image_ocr_results",
+        "concert_program_analyses",
+        "concert_program_candidates",
+        "concert_program_reviews"
+      ],
+      "views": [
+        "concert_program_candidate_status"
+      ],
+      "functions": [
+        "backfill_concert_program_review_identity",
+        "concert_cleanup_counts",
+        "concert_cleanup_foreign_keys",
+        "concert_cleanup_shared_dependency",
+        "concert_program_evidence_issue",
+        "decide_automatic_program_candidate",
+        "defer_automatic_program",
+        "delete_expired_concert",
+        "finish_automatic_program",
+        "plan_expired_concert_cleanup",
+        "program_auto_input_hash",
+        "program_candidate_snapshot_valid",
+        "program_confirmation_evidence_hash",
+        "protect_program_review_identity",
+        "queue_automatic_programs",
+        "record_concert_image_ocr",
+        "review_concert_program_candidate",
+        "review_concert_program_candidate_identity",
+        "save_concert_program_analysis",
+        "save_concert_program_analysis_v3",
+        "save_concert_program_analysis_v4",
+        "save_concert_program_rematch"
+      ],
+      "triggers": [
+        "program_review_identity_immutable"
+      ],
+      "foreign_keys": [
+        "concert_image_ocr_attempts_image_id_fkey",
+        "concert_image_ocr_attempts_result_id_fkey",
+        "concert_image_ocr_results_image_id_fkey",
+        "concert_program_analyses_catalog_hash_fkey",
+        "concert_program_analyses_concert_id_fkey",
+        "concert_program_analyses_image_id_fkey",
+        "concert_program_analyses_ocr_result_id_fkey",
+        "concert_program_analyses_source_attempt_id_fkey",
+        "concert_program_candidates_analysis_id_fkey",
+        "concert_program_candidates_matching_catalog_hash_fkey",
+        "concert_program_reviews_candidate_id_fkey"
+      ],
+      "remaining": 0
+    },
+    "retained_tables_all_row_counts_and_fingerprints_equal": true,
+    "retained_metadata_equal": true,
+    "auth_users_unchanged": true,
+    "official_effective_confirmations": 2,
+    "models": [
+      {
+        "name": "craft_mlt_25k.pth",
+        "bytes": 83152330,
+        "deleted": false
+      },
+      {
+        "name": "korean_g2.pth",
+        "bytes": 16081533,
+        "deleted": false
+      }
+    ],
+    "windows": {
+      "enabled": false,
+      "name": "ClassicAtlas-LocalPipeline",
+      "lastRun": "2026-10-29T08:40:00",
+      "lastResult": 0,
+      "state": "Disabled"
+    },
+    "production_restore_performed": false
+  },
+  "frozen_release": {
+    "sha": "1db327cd38dfce778da543738f975b70789aed66",
+    "manifest_files": 320,
+    "all_hashes_match": true,
+    "launcher_configuration": {
+      "ocr": false,
+      "analysis": false,
+      "cleanup": false,
+      "collection": true,
+      "official_text": true
+    },
+    "launcher_executed": false,
+    "reactivated": false
+  },
+  "full_tests_rerun": false,
+  "application_source_changed": false,
+  "not_verified": [
+    "actual isolated restoration of the new logical archive",
+    "real Google OAuth and authenticated account/session switching UI",
+    "full mobile/device/keyboard regression",
+    "live multi-client Realtime invalidation/reconnection",
+    "concurrent production DDL-lock latency and continuous traffic availability",
+    "external PCs or manual OCR callers"
+  ],
+  "secrets_and_user_bodies_in_report": false,
+  "private_archive_or_raw_toc_published": false
+}

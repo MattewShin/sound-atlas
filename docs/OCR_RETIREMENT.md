@@ -1,3 +1,5 @@
+> **명세2 운영 적용 완료 — 2026-11-09.** PR #22가 main `52869c77338d7d343ca7ce204c67d3a466b6da3c`로 병합·배포됐고, 새 백업 확인 후 16:30:20 KST 승인 migration을 적용했다. [운영 결과](OCR_RETIREMENT_PRODUCTION_2026-11-09.md)와 [실제 증거](OCR_RETIREMENT_PRODUCTION_VERIFICATION_2026-11-09.json)를 따른다. 아래 명세1의 미실행/추가 승인 문구는 준비 당시 이력이며 현재 사용자 승인을 취소하지 않는다. rollback 명령은 이번 미실행이다.
+
 # OCR 영구 폐기 — 적용 전 검토 자료
 
 CA-OCR-RETIRE-20261109-001 / 명세1. **구현·격리 검증·Draft PR 준비이며 운영 DB 적용 전**이다. 기준 main과 실제 production은 `2552f5b021238b65a8c4d2e235a342b12e498cde`다. [기존 감사](OCR_DB_CLEANUP_AUDIT_2026-11-09.md), [코드 감사](OCR_DB_CODE_AUDIT_2026-11-09.md), [감사 snapshot](OCR_DB_AUDIT_METADATA_2026-11-09.json), [이번 증거](OCR_RETIREMENT_VERIFICATION_2026-11-09.json)를 구분해서 읽는다.
