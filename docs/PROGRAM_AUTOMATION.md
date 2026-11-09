@@ -1,3 +1,5 @@
+> **과거 운영 자료 — CA-OCR-RETIRE-20261109-001.** 아래 OCR/통합 배치/수동 검토 설치·실행 명령을 재사용하지 않습니다. 공식 Program text와 공유 identity helper는 유지하며, 현재 text 전용 진입점·운영 미적용 상태는 [폐기 안내](OCR_RETIREMENT.md)를 따릅니다.
+
 # 공연–곡 연결 자동 운영 (2026-10-22)
 
 구현과 격리 DB 검증을 완료했다. **원격 migration·자동 처리 저장·웹 서버 배포는 아직 하지 않았다.** 원격에는 새 RPC가 없으며, 현재 확인된 자격증명은 Supabase 데이터 API용이다. SQL 실행용 DB 연결이나 관리 API 자격증명은 확인되지 않았다. 아래 적용 절차를 마쳐야 다음 예약 실행이 자동 확정까지 진행한다. 새 migration 없이 수정된 배치를 실행하면 쓰기 전 preflight에서 `PROGRAM_AUTOMATION_MIGRATION_REQUIRED`로 종료한다.

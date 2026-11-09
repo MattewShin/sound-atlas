@@ -1,3 +1,5 @@
+> **과거 운영 자료 — CA-OCR-RETIRE-20261109-001.** 아래 OCR/통합 배치/수동 검토 설치·실행 명령을 재사용하지 않습니다. 공식 Program text와 공유 identity helper는 유지하며, 현재 text 전용 진입점·운영 미적용 상태는 [폐기 안내](OCR_RETIREMENT.md)를 따릅니다.
+
 # 확정 공연 검색과 곡 단위 식별 hash
 
 2026-10-22 이후의 자동 운영 규칙과 적용 절차는 [PROGRAM_AUTOMATION.md](PROGRAM_AUTOMATION.md)를 따른다. 아래 수동 승인·검토 절차는 과거 구현 기록이며 매일 운영 절차가 아니다.

@@ -1,3 +1,5 @@
+> **과거 운영 자료 — CA-OCR-RETIRE-20261109-001.** 아래 OCR/통합 배치/수동 검토 설치·실행 명령을 재사용하지 않습니다. 공식 Program text와 공유 identity helper는 유지하며, 현재 text 전용 진입점·운영 미적용 상태는 [폐기 안내](OCR_RETIREMENT.md)를 따릅니다.
+
 # 프로그램 분석 단계적 전환
 
 2026-10-20 기준 실행 준비 문서입니다. 아래 운영 명령은 이번 작업에서 실행하지 않았습니다. SQL 초안은 미적용이며 canary·저장 재분석·검토 결정·예약 작업 변경도 하지 않았습니다. 이전 문서의 단일 matcher 선택 및 SQL 적용 후 예약 안내를 이 문서로 대체합니다.
@@ -71,7 +73,7 @@ npm.cmd run program:analyze -- config
 
 ## 2. v3 SQL/RPC 적용
 
-별도 승인된 운영 절차로 [SQL 초안 전체](../supabase/drafts/PROGRAM_ANALYSIS_V3_DRAFT.sql)를 적용합니다. CLI를 쓰는 경우 별도로 준비한 DB 연결 환경변수와 psql이 필요합니다. 연결 문자열을 출력하지 않습니다.
+별도 승인된 운영 절차로 [SQL 초안 전체](../supabase/history/ocr/PROGRAM_ANALYSIS_V3_DRAFT.sql.txt)를 적용합니다. CLI를 쓰는 경우 별도로 준비한 DB 연결 환경변수와 psql이 필요합니다. 연결 문자열을 출력하지 않습니다.
 
 ```powershell
 psql $env:SUPABASE_DB_URL -v ON_ERROR_STOP=1 -f .\supabase\drafts\PROGRAM_ANALYSIS_V3_DRAFT.sql

@@ -1,4 +1,7 @@
 import '../server/concertBrowser.test.mjs'
+import '../server/ocrRetirement.test.mjs'
+import '../server/programText.test.mjs'
+import '../server/programTextCoordinator.test.mjs'
 import '../server/concertReliability.test.mjs'
 import '../server/concertCacheSql.test.mjs'
 import '../server/userLibrarySql.test.mjs'

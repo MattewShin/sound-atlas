@@ -1,3 +1,5 @@
+> **과거 운영 자료 — CA-OCR-RETIRE-20261109-001.** 아래 OCR/통합 배치/수동 검토 설치·실행 명령을 재사용하지 않습니다. 공식 Program text와 공유 identity helper는 유지하며, 현재 text 전용 진입점·운영 미적용 상태는 [폐기 안내](OCR_RETIREMENT.md)를 따릅니다.
+
 # 지난 공연 자동 삭제
 
 통합 run에 환경 점검 → cleanup → 수집 → OCR → 분석 순서로 연결했습니다. **이번 구현 검증에서는 원격 삭제 RPC를 호출하지 않았습니다.** 실제 삭제·롤백·권한 검증은 로컬 PGlite PostgreSQL에서 수행합니다. 기존 예약을 변경하거나 재등록하지 않았습니다.
@@ -96,7 +98,7 @@ run의 `stages.cleanup`에는 공연 단위 attempted/succeeded/failed/skipped, 
 
 10:25 최종 확인에서는 `cleanup_schema_ready: false`, `schema_version: null`, `migration_required: true`였습니다. 실제 서버용 repository의 run 스키마 점검도 읽기 전용으로 실행해 `CLEANUP_MIGRATION_REQUIRED`를 확인했습니다. 위 완료본 SQL 전체 재적용이 첫 작업입니다. 원격 plan 응답의 공유 관계/일관 스냅샷 필드도 아직 완료본으로 확인되지 않아 각각 null/false로 표시하며 성공으로 추정하지 않습니다. GET만 허용한 최종 점검은 DB GET 29회(추가 run 스키마 읽기 포함)·DB 쓰기/KOPIS/OCR/체크포인트 쓰기 0회였고, 메모리 상태와 기존 진행/결과 파일 해시도 전후 동일했습니다.
 
-읽기 전용 SQL은 [expired_concert_cleanup.sql](../supabase/verification/expired_concert_cleanup.sql)입니다. 위 수치는 조회 시점 기준이며 다음 run에서는 DB가 날짜·관계를 다시 검증합니다.
+읽기 전용 SQL은 [expired_concert_cleanup.sql](../supabase/history/ocr/expired_concert_cleanup.sql.txt)입니다. 위 수치는 조회 시점 기준이며 다음 run에서는 DB가 날짜·관계를 다시 검증합니다.
 
 ## 검증 범위
 

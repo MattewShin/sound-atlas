@@ -1,3 +1,7 @@
+# OCR 영구 폐기 준비 — 2026-11-09
+
+CA-OCR-RETIRE-20261109-001 / 명세1. 사용자는 OCR 재사용·확정3건/이력 보존을 폐기하고 공식 Program text/현 서비스를 유지하도록 지시했다. 기준 main/운영2552f5b021238b65a8c4d2e235a342b12e498cde, 실제 schema를 재조회해 새 의존성 부재와 READ ONLY preflight PASS를 확인했다. 새 브랜치에서 명시적 RESTRICT 삭제 migration과 text-only CLI·격리 검증을 준비한다. 운영 migration·main 병합·배포·예약/설정·로컬 model 삭제는 아직 하지 않는다. 최신 [폐기 안내](docs/OCR_RETIREMENT.md)와 CURRENT_TASK/HANDOFF를 따른다. 아래 과거의 OCR 보존/자동화 목표는 이번 제품 정책을 제한하지 않는다.
+
 # 음악 기록 SNS 운영 반영 — 2026-11-06
 
 피드 상단 작성자 별명/아이디와 곡 정보를 같은 높이의 한 줄로 정렬했다. 긴 정보는 헤더 말줄임/title·프로필/곡별 전체 정보 접근으로 처리한다. 코드 e569b568f66d22aae35e4317f3fae5a5fef70fc6 / 운영 success. 짧은/긴 합성 응답×320/375/390/520px 각각 한 줄·44px 헤더·겹침/넘침 없음·전체 정보 이동, 기존 typography 8개/SNS DOM 회귀 통과. 실제 사용자 자료·DB 변경 없음. 자세한 최신 결과는 HANDOFF를 따른다.

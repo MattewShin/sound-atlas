@@ -1,3 +1,5 @@
+> **과거 운영 자료 — CA-OCR-RETIRE-20261109-001.** 아래 OCR/통합 배치/수동 검토 설치·실행 명령을 재사용하지 않습니다. 공식 Program text와 공유 identity helper는 유지하며, 현재 text 전용 진입점·운영 미적용 상태는 [폐기 안내](OCR_RETIREMENT.md)를 따릅니다.
+
 # 저장된 OCR 프로그램 추출·작품 후보·수동 검토
 
 2026-10-20 전환 설정: write/review=`stored-program-3`, 사용자 검색=`stored-program-2`, 통합 예약 저장=false입니다. SQL 준비와 예약 활성화는 독립적입니다. [현재 운영 전환 절차](PROGRAM_ROLLOUT.md)가 아래 과거 버전 전환 안내보다 우선합니다.
@@ -112,7 +114,7 @@ npm run build
 
 `analyze`는 `--save`를 지정해야 쓰며 기본은 dry-run입니다. dry-run은 Supabase 읽기·텍스트 분석만 수행합니다. 이미지 다운로드·OCR 실행·DB 쓰기를 하지 않습니다. `list`의 오래된 근거 후보는 재분석 대상이며 그대로 확정할 수 없습니다. 미등록/null 곡이나 모호한 연결도 확정할 수 없습니다. 일괄 확정은 제공하지 않습니다. 현재 실제 표본의 곡 ID는 모두 null이므로 **그대로 confirm을 실행할 대상은 없습니다**.
 
-Supabase 확인용 읽기 SQL은 [concert_program_analysis.sql](../supabase/verification/concert_program_analysis.sql)입니다.
+Supabase 확인용 읽기 SQL은 [concert_program_analysis.sql](../supabase/history/ocr/concert_program_analysis.sql.txt)입니다.
 
 ## 실제 표본과 검증 범위
 

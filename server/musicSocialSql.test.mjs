@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto'
 import { socialTestDatabase } from './socialTestDatabase.mjs'
 
 test('SNS spec2: existing rows/links/nicknames, safe public fields, scopes, revocation, cascades and account deletion',async()=>{
- const f=await socialTestDatabase(),{db,q,as,users:u,profiles:p,original,legacy,track}=f
+ const f=await socialTestDatabase({afterRetirement:true}),{db,q,as,users:u,profiles:p,original,legacy,track}=f
  const safe='id,track_id,nickname,body,kind,recorded_on,published_at,profile_id,visibility'
  const feed=async(post)=> (await q('select public.social_feed(post=>$1) f',[post]))[0].f
  const rows=async(id)=>q(`select ${safe} from public.music_record_publications where id=$1`,[id])

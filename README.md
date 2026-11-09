@@ -1,5 +1,7 @@
 # Classic Atlas
 
+OCR 영구 폐기(CA-OCR-RETIRE-20261109-001)의 명시적 삭제 대상·공식 Program text 전용 CLI·백업/rollback·검증과 운영 미적용 상태는 [OCR 폐기 안내](docs/OCR_RETIREMENT.md)를 참고하세요. 옛 OCR/통합 배치 진입점을 재활성화하지 않습니다.
+
 곡 중심 SNS 통합(명세 2)의 기존 기록 호환·공개 권한·삭제·신고 보관·적용/복구·검증 한계는 [음악 기록 SNS 안내](docs/MUSIC_SOCIAL.md)를 참고하세요. 운영 DB 적용과 배포는 별도입니다.
 
 듣고 싶은 한글 감정 키워드나 현재 기분으로 피아노 음악을 탐색하고, 마음에 남는 곡을 보관하는 React 19 + Vite 6 앱입니다.
