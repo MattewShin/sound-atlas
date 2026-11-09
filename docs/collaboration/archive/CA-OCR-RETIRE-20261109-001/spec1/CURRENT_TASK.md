@@ -1,3 +1,5 @@
+> **명세1 보관 이력.** 승인 HEAD `f90e6b77dcaf29d72982600033ad6e71377f5b9a`의 준비 결과를 보존한다. 아래 운영 미실행/추가 승인 문구는 당시 상태다. 명세2 최신 운영 결과는 [운영 보고서](../../../../OCR_RETIREMENT_PRODUCTION_2026-11-09.md)를 따른다. 보관 쌍: [명세1 CURRENT_TASK](CURRENT_TASK.md) · [명세1 HANDOFF](HANDOFF.md).
+
 # 현재 작업
 
 - 작업 ID: **CA-OCR-RETIRE-20261109-001**
@@ -18,4 +20,4 @@ OCR를 영구 폐기하며 확정3건/모든 이력도 보존 이전하지 않�
 
 실제 main/배포·DB 재조회에서 새 의존성 없음, 운영 READ ONLY 사전 SQL 11:02:34 KST PASS. 격리 DB에서 26→21 table,65→43함수,4→3view,38→27FK,15→14앱 trigger와 유지 데이터/권한 불변, 신규 text 저장/확정, 전체 rollback 및 새 의존성 차단을 검증했다. 전체162/162·SNS5/5·폐기15/15·정적검사/build PASS다. 운영 적용은 전부 미실행이다.
 
-[구현·적용/복구 안내](../../../../OCR_RETIREMENT.md), [검증 증거](../../../../OCR_RETIREMENT_VERIFICATION_2026-11-09.json), [HANDOFF](../../../../../HANDOFF.md)를 함께 검토한다. 이전 감사 작업의 [명세/인계 보관본](../../CA-OCR-DB-AUDIT-20261109-001/spec1)과 원문 감사3개도 보존했다. Draft PR과 문서 저장 HEAD는 GitHub 브랜치 이력/최종 게시 보고로 확인하며 코드 SHA와 문서 저장 SHA를 구분한다.
+[구현·적용/복구 안내](../../../../OCR_RETIREMENT.md), [검증 증거](../../../../OCR_RETIREMENT_VERIFICATION_2026-11-09.json), [명세1 HANDOFF](HANDOFF.md)를 함께 검토한다. 이전 감사 작업의 [명세/인계 보관본](../../CA-OCR-DB-AUDIT-20261109-001/spec1)과 원문 감사3개도 보존했다. Draft PR과 문서 저장 HEAD는 GitHub 브랜치 이력/최종 게시 보고로 확인하며 코드 SHA와 문서 저장 SHA를 구분한다.

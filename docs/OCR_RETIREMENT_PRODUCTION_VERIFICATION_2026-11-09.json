@@ -461,5 +461,32 @@
     "external PCs or manual OCR callers"
   ],
   "secrets_and_user_bodies_in_report": false,
-  "private_archive_or_raw_toc_published": false
+  "private_archive_or_raw_toc_published": false,
+  "documentation_closeout": {
+    "specification": 2,
+    "requested_kst_date": "2026-11-09",
+    "reviewed_document_head": "8d7dedba893e5a312c10dee86f481d42067cd672",
+    "compared_latest_main": "52869c77338d7d343ca7ce204c67d3a466b6da3c",
+    "historical_production_evidence_unchanged": true,
+    "scope": "Markdown and safe verification JSON only; publish and merge documentation PR",
+    "runtime_files_changed": false,
+    "migration_changed": false,
+    "production_database_accessed": false,
+    "application_tests_or_build_rerun": false,
+    "final_document_and_main_sha_source": "documentation PR head and merge commit history",
+    "backup_actual_paths_published": false,
+    "validation": {
+      "result": "PASS",
+      "markdown_files": 7,
+      "safe_json_files": 1,
+      "relative_links": 52,
+      "missing_links": 0,
+      "functional_and_migration_changes": 0,
+      "original_production_observations_unchanged": true,
+      "archive_results_preserved": true,
+      "original_ide_files_preserved": 52,
+      "original_ide_head_and_documents_preserved": true,
+      "secrets_connection_details_user_bodies_or_backup_actual_paths_found": false
+    }
+  }
 }

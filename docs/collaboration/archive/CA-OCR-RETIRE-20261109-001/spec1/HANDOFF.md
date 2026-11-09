@@ -1,3 +1,5 @@
+> **명세1 보관 이력.** 승인 HEAD `f90e6b77dcaf29d72982600033ad6e71377f5b9a`의 준비 결과를 보존한다. 아래 운영 미실행/추가 승인 문구는 당시 상태다. 명세2 최신 운영 결과는 [운영 보고서](../../../../OCR_RETIREMENT_PRODUCTION_2026-11-09.md)를 따른다. 보관 쌍: [명세1 CURRENT_TASK](CURRENT_TASK.md) · [명세1 HANDOFF](HANDOFF.md).
+
 # 작업 인계 — OCR 영구 폐기 준비
 
 - 작업 ID: **CA-OCR-RETIRE-20261109-001 / 명세1**

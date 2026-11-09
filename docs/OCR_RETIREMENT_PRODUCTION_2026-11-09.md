@@ -10,7 +10,7 @@ CA-OCR-RETIRE-20261109-001 / **명세2 · IMPLEMENTED**. 사용자의 명시적 
 | 승인 HEAD | `f90e6b77dcaf29d72982600033ad6e71377f5b9a` |
 | 승인 기능·migration SHA | `e8e204e31d0bf5c401fec2e12641c8183a0fb219` |
 | 적용 전 main / 실제 production | `2552f5b021238b65a8c4d2e235a342b12e498cde`, 서로 일치 |
-| 최종 main / 운영 배포 SHA | **`52869c77338d7d343ca7ce204c67d3a466b6da3c`** |
+| 운영 적용 당시 main / 운영 배포 SHA | **`52869c77338d7d343ca7ce204c67d3a466b6da3c`** |
 | Vercel deployment | `dpl_66uJ7dDatRkryksXWA1YwewgrU7J` / production **READY** |
 | 운영 앱 | https://sound-atlas.vercel.app |
 | 최초 READ ONLY gate | 2026-11-09 16:18:56 KST, schema/행 수/누적 앱 쓰기 통계의 승인 감사 대비 차이 없음 |
@@ -19,7 +19,7 @@ CA-OCR-RETIRE-20261109-001 / **명세2 · IMPLEMENTED**. 사용자의 명시적 
 | migration 시작 / COMMIT 확인 | 2026-11-09 16:30:20 / 2026-11-09 16:30:20 KST |
 | postflight / 최종 읽기 확인 | 2026-11-09 16:30:22 / 2026-11-09 16:35:57 KST PASS |
 
-원격 main과 실제 Vercel alias의 SHA를 다시 확인했다. merged main의 tree는 승인 HEAD tree와 일치하며 기능 수정이 없다. 결과 문서는 `codex/ca-ocr-retire-20261109-001-production`의 별도 문서 커밋으로 게시한다. 배포된 main과 결과 문서 브랜치를 혼동하지 않는다. main에 들어간 명세1 문서의 “운영 미실행” 문구는 준비 당시 기록이다. 명세2 최신 상태는 이 브랜치의 CURRENT_TASK/HANDOFF와 본 보고서다.
+운영 적용 시 원격 main과 실제 Vercel alias의 SHA를 확인했고 merged tree는 승인 HEAD와 같았다. 결과는 처음 `8d7dedba893e5a312c10dee86f481d42067cd672` 문서 커밋으로 별도 브랜치에 게시했다. 이번 문서 마감에서는 `codex/ca-ocr-retire-20261109-001-production`의 문서 전용 PR로 main에 반영한다. 위 표와 검증 JSON의 배포 SHA/관측 시각은 **운영 적용 당시 증거**이며 문서 병합 이후 최신 Git SHA와 구분한다. main의 CURRENT_TASK/HANDOFF와 이 보고서가 명세2 운영 완료 상태를 나타낸다. 명세1 문서의 “운영 미실행”은 당시 준비 이력이다.
 
 ## 적용 방법과 중단 조건
 
@@ -144,7 +144,7 @@ concert_program_reviews_candidate_id_fkey
 - SHA-256: **`1fbeb302b6786f730a6c28e74f5e9b6281f932dfaa090230ab57e167d14bbaec`**. migration 직전 다시 일치 확인.
 - pg_dump exit0, pg_restore --list exit0, 전체 SQL decode를 NUL로 보내는 검사 exit0. decode는 DB 연결/restore가 아니다. stderr 오류 없음.
 - 전체 TOC **1,041개**, OCR-only TOC **95개**. TABLE5/DATA5/FUNCTION22/VIEW1/TRIGGER1/FK11/ROW SECURITY5/secondary INDEX5/PK·UNIQUE8/function ACL22/relation ACL6을 검증했다.
-- archive·원본 TOC·원본 로그·비공개 snapshot은 현재 사용자와 SYSTEM만 접근하는 Git 제외 로컬 보안 폴더에 있다. Git/PR/공개 Storage에 업로드하지 않았다. 실제 경로는 로컬 `.cache/ocr-retire-production-ops/backup-location.private.json`에서 확인한다. 증거 JSON에는 안전한 종료 코드/개수/checksum만 옮겼다.
+- archive·원본 TOC·원본 로그·비공개 snapshot은 현재 사용자와 SYSTEM만 접근하는 Git 제외 로컬 보안 폴더에 있다. Git/PR/공개 Storage에 업로드하지 않았다. 백업 실제 경로와 위치 안내 파일 경로는 공개 문서에 담지 않는다. 증거 JSON에는 안전한 종료 코드/개수/checksum만 옮겼다.
 - 이 백업은 DB 논리 백업이다. global role, Storage binary, OAuth/provider 설정은 pg_dump 범위 밖이다. 이번 새 archive의 **실제 격리 restore는 미실행**이며 복원 성공까지 검증했다고 표현하지 않는다. 운영 DB 전체 restore도 수행하지 않았다.
 
 COMMIT 전 실패는 단일 transaction rollback 계약이다. 이미 성공 COMMIT된 현재 상태에는 자동 down이 없다. 장애 시 기존 사용자 데이터를 이전 시점으로 덮어쓰지 않고 영향 범위부터 조사한다. OCR graph 복구가 필요한 예외에는 최신 archive의 검증된 OCR-only TOC만 별도 격리 환경에서 먼저 복원·권한 확인한 뒤 운영 대응을 승인받는다. 전체 DB restore, --clean/--create/에러 무시로 우회하지 않는다. 구체적 제한/선별 복구 명령은 [명세1 복구 절차](OCR_RETIREMENT.md#rollback장애-대응)를 따른다. 이 문서의 링크는 실행 승인이 아니며 이번에 복구 명령을 실행하지 않았다. 임시 백업의 보관 기간/삭제는 별도 운영 정책으로 정하며 이번 작업에서 파일을 삭제하지 않았다.
@@ -160,3 +160,7 @@ Windows `ClassicAtlas-LocalPipeline`은 **Disabled / Enabled=false** 유지, 마
 실제 Google OAuth 로그인/계정 전환·로그인 사용자 보관함/기록 화면 전체, 모바일 전체/실기기 IME, 실 Realtime 다중 창의 범위 변경/차단/재연결, 동시 DDL lock 지연·연속 트래픽 가용성, 새 archive 실복원, 타 PC/외부 수동 OCR 호출은 이번에 검증하지 않았다. 앞 세 가지와 Docker/새 Supabase 프로젝트 구성은 요청에서 제외했다. 사용자 데이터는 테스트에 수정하지 않았다. 운영 성공은 이번 객체/보존/읽기 검증 범위로 한정한다.
 
 이번 최종 결과 커밋은 문서와 안전한 증거 JSON뿐이며 기능·migration 추가 수정이 없다. 원래 IDE branch/HEAD/미커밋 변경과 실제 .env는 보존한다. 검토자는 운영 성공 근거, 백업 실복원 미검증 및 향후 임시 백업 보관/모델 정리/공식 text task retarget을 확인하면 된다.
+
+## 명세2 문서 마감
+
+2026-11-09 문서 마감 기준: 결과 HEAD `8d7dedba893e5a312c10dee86f481d42067cd672`, 최신 main/운영 기능 기준 `52869c77338d7d343ca7ce204c67d3a466b6da3c`. 차이는 Markdown7개와 안전한 JSON1개이며 기능·migration·런타임 설정 차이0이다. 이번 보완은 시점 표현, 백업 위치 안내 경로 제거, 명세1 이력 구분과 보관본 연결뿐이다. 비밀값/사용자 본문/백업 실제 경로를 제외하고 문서 전용 PR로 게시·병합한다. 최종 문서 SHA와 main SHA는 PR head/merge 이력을 따른다. 문서 병합으로 Vercel deployment가 생성되면 기능 기준과 런타임 파일 동일 여부를 확인하며 기존 운영 관측 증거를 새 배포 검증으로 재표기하지 않는다. DB SQL·백업/restore·예약/모델 조작·전체 테스트/build는 이번 마감에서 실행하지 않는다.

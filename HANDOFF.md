@@ -3,7 +3,7 @@
 - 작업 ID: **CA-OCR-RETIRE-20261109-001 / 명세2**
 - 상태: **IMPLEMENTED** (검토자 ACCEPTED 아님)
 - 최종 코드 브랜치: main
-- 전체 코드 / Vercel deployment SHA: **`52869c77338d7d343ca7ce204c67d3a466b6da3c`**
+- 운영 적용 당시 main / Vercel deployment SHA: **`52869c77338d7d343ca7ce204c67d3a466b6da3c`**
 - 승인 HEAD: `f90e6b77dcaf29d72982600033ad6e71377f5b9a`; 기능·migration SHA: `e8e204e31d0bf5c401fec2e12641c8183a0fb219`
 - PR: [#22](https://github.com/MattewShin/sound-atlas/pull/22), 2026-11-09 16:19:40 KST Ready 후 병합, production READY
 - 결과 문서 브랜치: `codex/ca-ocr-retire-20261109-001-production`, 본 문서와 [운영 보고서](docs/OCR_RETIREMENT_PRODUCTION_2026-11-09.md) / [안전한 증거 JSON](docs/OCR_RETIREMENT_PRODUCTION_VERIFICATION_2026-11-09.json)
@@ -25,12 +25,18 @@
 
 ## 백업·운영 상태·복구
 
-새 archive 1,558,953 bytes, SHA-256 `1fbeb302b6786f730a6c28e74f5e9b6281f932dfaa090230ab57e167d14bbaec`. 원본 백업/TOC/로그·비공개 snapshot은 로컬 ACL 제한/Git 제외 폴더에만 있고 게시하지 않았다. 위치는 로컬 `.cache/ocr-retire-production-ops/backup-location.private.json` 참조. global roles/Storage binary/provider 설정은 논리 백업 범위 밖이다. COMMIT 이후 자동 down 없음. 장애 시 전체 DB restore를 하지 않고 영향 조사 후 필요할 때 검토된 OCR-only 복구를 별도 격리에서 먼저 확인한다. [상세 근거·절차](docs/OCR_RETIREMENT_PRODUCTION_2026-11-09.md)를 따른다.
+새 archive 1,558,953 bytes, SHA-256 `1fbeb302b6786f730a6c28e74f5e9b6281f932dfaa090230ab57e167d14bbaec`. 원본 백업/TOC/로그·비공개 snapshot은 로컬 ACL 제한/Git 제외 폴더에만 있고 게시하지 않았다. 백업 실제 경로와 위치 안내 파일 경로는 공개 문서에 기록하지 않는다. global roles/Storage binary/provider 설정은 논리 백업 범위 밖이다. COMMIT 이후 자동 down 없음. 장애 시 전체 DB restore를 하지 않고 영향 조사 후 필요할 때 검토된 OCR-only 복구를 별도 격리에서 먼저 확인한다. [상세 근거·절차](docs/OCR_RETIREMENT_PRODUCTION_2026-11-09.md)를 따른다.
 
 Windows ClassicAtlas-LocalPipeline Disabled/Enabled=false 유지, frozen320개 파일 해시 동일·실행/재활성화0. 모델2개94.64MiB는 운영 성공 후에도 보존했다. 실제 env 설정을 수정하지 않았다. 모델 삭제·백업 보관 기간/정리·향후 공식 text task retarget은 별도 작업이다.
 
 ## 문서 변경과 구현자 의견
 
-명세1 CURRENT_TASK/HANDOFF를 [함께 보관](docs/collaboration/archive/CA-OCR-RETIRE-20261109-001/spec1/)하고 현재 쌍을 명세2 결과로 갱신했다. PROJECT_CONTEXT 상단과 OCR_RETIREMENT 안내에 운영 완료 링크를 추가하고 운영 보고서/안전한 증거 JSON을 새로 작성했다. 기능 코드·migration 파일은 변경하지 않았다. 결과 문서 전용 브랜치로 게시해 운영 main/deployment SHA를 유지한다. 원래 IDE 변경은 계속 보존된다.
+명세1 CURRENT_TASK/HANDOFF를 [함께 보관](docs/collaboration/archive/CA-OCR-RETIRE-20261109-001/spec1/)하고 현재 쌍을 명세2 결과로 갱신했다. PROJECT_CONTEXT 상단과 OCR_RETIREMENT 안내에 운영 완료 링크를 추가하고 운영 보고서/안전한 증거 JSON을 새로 작성했다. 기능 코드·migration 파일은 변경하지 않았다. 당시에는 결과 문서 전용 브랜치로 게시했다. 이번 문서 마감에서는 이 결과를 main의 최신 상태로 반영한다. 원래 IDE 변경은 계속 보존된다.
 
 검토 요청: 보존/삭제 결과와 새 백업의 실복원 미검증을 확인한다. 향후 공식 text 예약은 옛 frozen target을 활성화하지 말고 새 text-only CLI로 별도 retarget해야 한다. 제품 정책은 바꾸지 않았다.
+
+## 명세2 문서 마감 — 2026-11-09
+
+문서 기준 HEAD `8d7dedba893e5a312c10dee86f481d42067cd672`와 최신 main `52869c77338d7d343ca7ce204c67d3a466b6da3c`를 비교했다. 차이는 Markdown7개와 안전한 검증 JSON1개이며, 기능·migration·package/config 파일 차이와 충돌이 없다. 운영 완료/명세1 이력/미검증 범위를 검토했고, 공개 문서에서 백업 위치 안내 경로를 제거했다. 명세1 두 문서에 과거 기준 표시와 같은 보관본 간 연결을 추가했다. 운영 검증 JSON의 당시 관측값은 유지한다.
+
+비밀값·접속정보·실제 사용자 본문·백업 실제 경로 제외, JSON 파싱·상대 링크·diff 공백, 원래 IDE 파일52개/HEAD/문서 보존을 확인한다. 이번 마감은 문서 검사만 수행하며 전체 자동 테스트/build·운영 DB/앱 회귀를 새로 실행한 것으로 보고하지 않는다. 문서 전용 PR head와 merge commit이 최종 문서/main SHA의 근거다. Vercel이 새 SHA로 배포하더라도 Git tree에서 런타임 입력 전체가 운영 기능 기준과 동일한지 대조한다.
