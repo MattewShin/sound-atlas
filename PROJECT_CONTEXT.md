@@ -1,6 +1,6 @@
 # 내비게이션·내 프로필 통합 — 2026-11-10
 
-CA-NAV-PROFILE-IA-20261110-001 / 명세1 / IMPLEMENTED. 기준 main `465173d2e2e41ee58f387b18b6897a3e29cbaff9`, 기능·테스트 `cbfce0e4564a4799a5892c0a5b0ffa42a75b654e`, 브랜치 `codex/ca-nav-profile-ia-20261110-001`. 음악 이야기는 공개 탐색으로 단순화하고 공개 프로필·내 기록·기존 음악 취향·활동·계정을 내 프로필로 통합했다. 아이콘 전용 메뉴와 기존 딥링크/세션/권한을 유지한다. 전체165/SNS5/통합3/모바일28·build PASS. migration 불필요, 운영 DB/병합/배포 미실행. 실 OAuth/PostgREST/Realtime·실기기는 미검증이다. [구현 결과](docs/NAV_PROFILE_IA.md) 및 CURRENT_TASK/HANDOFF를 따른다. 아래 OCR 운영 이력은 완료된 이전 작업이다.
+CA-NAV-PROFILE-IA-20261110-001 / 명세1 / IMPLEMENTED. 기준 main `465173d2e2e41ee58f387b18b6897a3e29cbaff9`, 기능·테스트 `1a03ca832329a356fa15a615af568958244c911e`, 브랜치 `codex/ca-nav-profile-ia-20261110-001`. 음악 이야기는 공개 탐색으로 단순화하고 공개 프로필·내 기록·기존 음악 취향·활동·계정을 내 프로필로 통합했다. 아이콘 전용 메뉴와 기존 딥링크/세션/권한을 유지한다. PR #24 검토 보완으로 프로필의 일괄 normal 선언을 제거하고 실제 글자 좌표/줄 높이 검증, 나만 보기·공개 중의 배타적 필터를 적용했다. 전체166/SNS5/통합4/모바일36·build PASS. migration 불필요, 운영 DB/병합/배포 미실행. 실 OAuth/PostgREST/Realtime·실기기는 미검증이다. [구현 결과](docs/NAV_PROFILE_IA.md) 및 CURRENT_TASK/HANDOFF를 따른다. 아래 OCR 운영 이력은 완료된 이전 작업이다.
 
 # OCR 영구 폐기 운영 완료 — 2026-11-09
 
