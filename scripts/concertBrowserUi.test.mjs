@@ -14,7 +14,7 @@ test('browser UI enters without selected song, paginates/deduplicates, filters a
  globalThis.fetch=async(value,init)=>{const url=new URL(value,'http://localhost');calls.push(url);assert.equal(init.method,'GET');assert.ok(!url.searchParams.has('targetTrackId'));assert.ok(!/program|match|ocr|rpc/i.test(url.pathname));if(mode==='error')return {ok:false,json:async()=>({message:'KOPIS 조회 실패'})};if(url.pathname==='/api/concerts'){
   const page=Number(url.searchParams.get('page')),query=Object.fromEntries(url.searchParams);query.page=page;const list=mode==='empty'?[]:page===1?Array.from({length:20},(_,i)=>concert(i+1)):[concert(20),...Array.from({length:20},(_,i)=>concert(i+21))];return {ok:true,json:async()=>({query,concerts:list.slice(0,20),total:mode==='empty'?0:41,page,pageSize:20,hasMore:mode==='empty'?false:page<3,fetchedAt:new Date().toISOString()})}
  }return {ok:true,json:async()=>({concert:concert(1),fetchedAt:new Date().toISOString()})}}
- const flush=async fn=>React.act(async()=>{fn?.();await new Promise(r=>setTimeout(r,25))}),button=label=>[...dom.window.document.querySelectorAll('button')].find(b=>b.textContent.trim()===label),doc=dom.window.document
+ const flush=async fn=>React.act(async()=>{fn?.();await new Promise(r=>setTimeout(r,25))}),button=label=>[...dom.window.document.querySelectorAll('button')].find(b=>(b.getAttribute('aria-label') || b.textContent.trim())===label),doc=dom.window.document
  try{
   const {createRoot}=await import('react-dom/client');root=createRoot(doc.getElementById('root'));await flush(()=>root.render(React.createElement(components.default)));assert.equal(calls.length,0)
   await flush(()=>button('공연 찾기').click());assert.equal(calls.length,0);assert.equal(doc.querySelectorAll('.concert-browser-card').length,0);assert.ok(doc.body.textContent.includes('공연 조회를 눌러주세요'))
@@ -25,7 +25,7 @@ test('browser UI enters without selected song, paginates/deduplicates, filters a
   await flush(()=>doc.querySelector('.concert-location-control').click());await flush(()=>[...doc.querySelectorAll('.region-choice-list button')].find(b=>b.textContent==='부산').click());assert.equal(dom.window.localStorage.getItem('classic-atlas-concert-region-v1'),'부산')
   const submit=()=>doc.querySelector('.concert-search-panel form').dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true}));mode='error';await flush(submit);assert.ok(doc.querySelector('[role="alert"]').textContent.includes('KOPIS 조회 실패'));assert.ok(!doc.body.textContent.includes('조건에 맞는 공연이 없어요'))
   mode='empty';await flush(()=>button('다시 시도').click());assert.ok(doc.body.textContent.includes('조건에 맞는 공연이 없어요'));assert.equal(calls.at(-1).searchParams.get('region'),'부산')
-  await flush(()=>button('보관함').click());assert.ok(!doc.body.textContent.includes('이 곡의 공연 찾기'));await flush(()=>button('나의 취향').click());assert.ok(doc.body.textContent.includes('아직 취향이 형성되지'))
+  await flush(()=>button('보관함').click());assert.ok(!doc.body.textContent.includes('이 곡의 공연 찾기'));await flush(()=>button('내 프로필').click());assert.ok(doc.body.textContent.includes('아직 취향이 형성되지'))
  }finally{if(root)await React.act(async()=>root.unmount());dom.window.close();for(const [n,d]of original){if(d)Object.defineProperty(globalThis,n,d);else delete globalThis[n]}}
 })
 test('independent detail supports missing booking/images and safe mobile image attributes',()=>{

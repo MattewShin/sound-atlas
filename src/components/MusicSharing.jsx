@@ -68,10 +68,10 @@ export function ShareMusicRecord({ record, userId, client = supabase, onClose, o
   }
   return <div className="music-share-editor" aria-label="음악 기록 공유 준비">
     <h4>{preview ? '게시 전 미리보기' : '공유할 내용 준비'}</h4>
-    <p>원본은 비공개로 유지돼요. 별도 공유본의 내용과 공개 범위를 직접 확인해주세요.</p>
+    <p>내 기록은 나만 보기로 유지돼요. 별도 공유본의 내용과 공개 범위를 직접 확인해주세요.</p>
     {loading ? <p role="status">닉네임을 확인하는 중…</p> : preview ? <>
       <div className="music-share-preview"><strong>{preview.nickname}</strong><h4>{musicRecordTitle(record.track_id)}</h4><small>{record.recorded_on} · {JOURNAL_KINDS.find(({ value }) => value === record.kind)?.label}</small><p className="music-journal-entry-body">{preview.body}</p></div>
-      <p>공개 후 개인 기록을 수정해도 이 글은 바뀌지 않아요. 원본 기록·계정을 삭제하면 공유본도 내려갑니다.</p>
+      <p>공개 후 개인 기록을 수정해도 이 글은 바뀌지 않아요. 내 기록·계정을 삭제하면 공유본도 내려갑니다.</p>
       <p role="status">공개 범위: <strong>{socialScopes[preview.visibility]}</strong></p>
       <label className="music-share-consent"><input type="checkbox" checked={consent} disabled={busy} onChange={(event) => setConsent(event.target.checked)} />{socialScopes[preview.visibility]} 범위에 닉네임·곡명·기록 날짜·유형·본문을 공유함을 확인했어요.</label>
       <small>개인정보·타인의 권리를 침해하는 내용은 게시하지 마세요. 공유를 취소해도 이미 복사되거나 캡처된 내용까지 회수할 수는 없어요.</small>

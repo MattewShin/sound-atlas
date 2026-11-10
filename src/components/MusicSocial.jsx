@@ -3,28 +3,12 @@ import { tracks } from '../data/musicData.js'
 import { formatTrackTitle } from '../data/emotions.js'
 import { getSocialApi, exactTime, relativeTime, socialRoute, socialScopes } from '../data/socialClient.js'
 
-import { MyMusicRecords } from './MusicJournal.jsx'
+import { Avatar } from './SocialProfile.jsx'
 
 const title = (id) => { const t = tracks.find(t => t.id === id); if (!t) return '등록 곡'; const full = formatTrackTitle(t); return full.includes(t.composer) ? full : `${t.composer} · ${full}` }
 const uuid = () => crypto.randomUUID()
-function Avatar({ profile }) {
-  const [failed, setFailed] = useState(false)
-  return profile?.avatar_url && !failed ? <img className="social-avatar" src={profile.avatar_url} referrerPolicy="no-referrer" alt="" onError={() => setFailed(true)} /> : <span className="social-avatar" aria-hidden="true">♪</span>
-}
 function Scope({ value, onChange }) {
   return <label>공개 범위<select value={value} onChange={e => onChange(e.target.value)}>{Object.entries(socialScopes).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label>
-}
-export function ProfileEditor({ profile, nicknameHint = '', save, pending }) {
-  const [handle, setHandle] = useState(profile?.handle ?? '')
-  const [nickname, setNickname] = useState(profile?.nickname ?? nicknameHint)
-  const [avatar, setAvatar] = useState(profile?.avatar_url ?? '')
-  return <form className="social-form" onSubmit={e => { e.preventDefault(); void save({ handle: handle.toLowerCase(), nickname: nickname.trim(), avatar_url: avatar.trim() || null }) }}>
-    <h2>공개 프로필 {profile ? '수정' : '만들기'}</h2><p>직접 입력한 닉네임과 아이디만 표시해요. Google 이름·이메일은 공개하지 않아요.</p>
-    <label>@아이디<input required pattern="[a-z][a-z0-9_]{2,23}" minLength={3} maxLength={24} value={handle} onChange={e => setHandle(e.target.value.toLowerCase())} autoComplete="off" /><small>영문 소문자로 시작, 영문·숫자·밑줄 3~24자</small></label>
-    <label>공개 닉네임<input required maxLength={20} disabled={Boolean(profile || nicknameHint)} value={nickname} onChange={e => setNickname(e.target.value)} /><small>기존에 정한 공개 닉네임은 그대로 사용해요.</small></label>
-    <label>프로필 이미지 URL (선택)<input type="url" pattern="https://.*" value={avatar} onChange={e => setAvatar(e.target.value)} placeholder="https://" /></label>
-    <button disabled={pending} type="submit">프로필 저장</button>
-  </form>
 }
 function ShareEditor({ source, post, save, cancel, pending }) {
   const [body, setBody] = useState(post?.body ?? source.body)
@@ -32,11 +16,11 @@ function ShareEditor({ source, post, save, cancel, pending }) {
   const [review, setReview] = useState(false)
   const id = useRef(uuid())
   return <form className="social-form" onSubmit={e => { e.preventDefault(); if (!review) { setReview(true); return }; void save(post ? { body: body.trim(), visibility: scope } : { id: id.current, source_record_id: source.id, track_id: source.track_id, body: body.trim(), visibility: scope }) }}>
-    <h2>{post ? '공유 내용·공개 범위 수정' : '독립 공유본 만들기'}</h2><p>{title(post?.track_id ?? source.track_id)}</p>
+    <h2>{post ? '공유 내용·공개 범위 수정' : '기록 공유하기'}</h2><p>{title(post?.track_id ?? source.track_id)}</p>
     <label>공유 내용<textarea required maxLength={4000} rows={6} value={body} onChange={e => { setBody(e.target.value); setReview(false) }} /></label>
     <Scope value={scope} onChange={v => { setScope(v); setReview(false) }} />
     <p role="status">공개 범위: <strong>{socialScopes[scope]}</strong> · {scope === 'private' ? '작성자만 글·댓글·반응을 볼 수 있어요.' : scope === 'public' ? '비로그인 사용자도 읽을 수 있어요.' : '작성자와 현재 팔로워만 읽을 수 있어요.'}</p>
-    {review && <p>이 내용과 공개 범위로 저장할까요? 개인 원본은 바뀌지 않아요.</p>}
+    {review && <p>이 내용과 공개 범위로 저장할까요? 내 기록은 바뀌지 않아요.</p>}
     <button disabled={pending || !body.trim()}>{review ? `${socialScopes[scope]}로 저장 확정` : '공유 전 확인'}</button><button type="button" onClick={cancel}>취소</button>
   </form>
 }
@@ -62,12 +46,11 @@ function Post({ post, user, navigate, run, pending, openComments, commentState, 
   </article>
 }
 
-export default function MusicSocial({ auth, initialPost, api = getSocialApi() }) {
+export default function MusicSocial({ auth, initialPost, onOpenMyProfile = () => {}, api = getSocialApi() }) {
   const client = api, user = auth?.user
   const [route, setRoute] = useState(() => initialPost ? { post: initialPost } : socialRoute(typeof window === 'undefined' ? '' : window.location.hash))
-  const [tab, setTab] = useState('feed')
   const [data, setData] = useState(null), [ownProfile, setOwnProfile] = useState(null)
-  const [meLoaded, setMeLoaded] = useState(false), [nicknameHint, setNicknameHint] = useState('')
+  const [meLoaded, setMeLoaded] = useState(false)
   const [connectionRevision, setConnectionRevision] = useState(0)
   const [error, setError] = useState(''), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false)
   const [connected, setConnected] = useState(false), [editor, setEditor] = useState(null)
@@ -80,9 +63,9 @@ export default function MusicSocial({ auth, initialPost, api = getSocialApi() })
     setData(null); setComments({})
     if (!client || !connectedRef.current || (typeof document !== 'undefined' && document.hidden)) return
     try {
-      const [posts, mine, profile, blocks] = await Promise.all([
+      const [posts, mine, profile] = await Promise.all([
         client.feed(route), user ? client.me() : null,
-        route.person ? client.profile(route.person) : null, user && tab === 'profile' ? client.blocks() : [],
+        route.person ? client.profile(route.person) : null,
       ])
       for (let page = 1; page < pageDepth.current && posts.length >= page * 30; page++) {
         if (stamp !== generation.current) return
@@ -90,12 +73,12 @@ export default function MusicSocial({ auth, initialPost, api = getSocialApi() })
       }
       const commentRows = await Promise.all(posts.filter(p => commentIds.current.has(p.id)).map(async p => [p.id, { rows: await client.comments(p.id) }]))
       if (!current.current || stamp !== generation.current || !connectedRef.current) return
-      setOwnProfile(mine?.id ? mine : null); setNicknameHint(mine?.nickname ?? ''); setMeLoaded(true); setData({ posts, profile, blocks }); setComments(Object.fromEntries(commentRows))
+      setOwnProfile(mine?.id ? mine : null); setMeLoaded(true); setData({ posts, profile }); setComments(Object.fromEntries(commentRows))
       const visible = new Set(posts.map(p => p.id))
       const nextDrafts = Object.fromEntries(Object.entries(draftRef.current).filter(([id]) => visible.has(id)))
       draftRef.current = nextDrafts; setDrafts(nextDrafts)
     } catch (e) { if (current.current && stamp === generation.current) { setData(null); setError(e.message) } }
-  }, [client, user?.id, route, tab])
+  }, [client, user?.id, route])
   requestRef.current = refresh
   useEffect(() => {
     current.current = true
@@ -116,10 +99,10 @@ export default function MusicSocial({ auth, initialPost, api = getSocialApi() })
   }, [client, connectionRevision])
   useEffect(() => { void refresh() }, [refresh])
   useEffect(() => {
-    const changed = () => { const next = socialRoute(window.location.hash); pageDepth.current = 1; setRoute(next); if (Object.keys(next).length) { setTab('feed'); setEditor(null) }; setData(null); setComments({}); setDrafts({}); draftRef.current = {} }
+    const changed = () => { const next = socialRoute(window.location.hash); pageDepth.current = 1; setRoute(next); if (Object.keys(next).length) setEditor(null); setData(null); setComments({}); setDrafts({}); draftRef.current = {} }
     window.addEventListener('hashchange', changed); return () => window.removeEventListener('hashchange', changed)
   }, [])
-  const navigate = (kind, id) => { window.location.hash = `music/${kind}/${encodeURIComponent(id)}` }
+  const navigate = (kind, id) => { if (kind === 'profile' && id === ownProfile?.id) { onOpenMyProfile(); return }; window.location.hash = `music/${kind}/${encodeURIComponent(id)}` }
   const run = async (key, operation, reload = true) => {
     if (locks.current.has(key)) return false
     locks.current.add(key); setBusy(true); setError(''); setNotice('')
@@ -136,27 +119,21 @@ export default function MusicSocial({ auth, initialPost, api = getSocialApi() })
     if (commentIds.current.has(id)) { commentIds.current.delete(id); setComments(v => { const next = { ...v }; delete next[id]; return next }); return }
     commentIds.current.add(id); void refresh()
   }
-  const reset = nextTab => { ++generation.current; pageDepth.current = 1; setData(null); setRoute({}); setTab(nextTab); setEditor(null); setConfirm(null); window.location.hash = 'music' }
-  if (!client) return <main className="social-screen"><h1>내 음악 기록</h1><p>음악 기록 서비스를 준비 중이에요. 기존 보관함은 계속 이용할 수 있어요.</p></main>
-  return <main className="social-screen"><header className="social-heading"><p>MUSIC JOURNAL</p><h1>내 음악 기록</h1><span>한 곡에서 시작하는 이야기</span></header>
-    <div className="social-tabs"><button aria-pressed={tab === 'feed'} onClick={() => reset('feed')}>피드</button>{user && <><button aria-pressed={tab === 'records'} onClick={() => reset('records')}>개인 원본</button><button aria-pressed={tab === 'profile'} onClick={() => reset('profile')}>내 프로필</button></>}<button onClick={user ? auth.signOut : auth.signInWithGoogle}>{user ? '로그아웃·계정 전환' : 'Google 로그인'}</button></div>
+  useEffect(() => { if (route.person && ownProfile?.id === route.person) onOpenMyProfile('', { replace: true }) }, [route.person, ownProfile?.id, onOpenMyProfile])
+  if (!client) return <main className="social-screen"><header className="social-heading"><p>MUSIC STORIES</p><h1>음악 이야기</h1></header><p>음악 이야기 서비스를 준비 중이에요. 기존 보관함은 계속 이용할 수 있어요.</p></main>
+  return <main className="social-screen"><header className="social-heading"><p>MUSIC STORIES</p><h1>음악 이야기</h1><span>음악으로 나눈 이야기를 만나보세요.</span></header>
     {(error || auth.error) && <p role="alert">{error || auth.error}</p>}{notice && <p role="status">{notice}</p>}
     {!connected ? <p role="status">실시간 연결을 확인하고 있어요. 연결되면 권한을 다시 확인해 기록을 표시해요.</p> : !data ? <p role="status">기록 불러오는 중… <button onClick={refresh}>다시 확인</button></p> : <>
-      {tab === 'profile' && ownProfile && <><button onClick={() => navigate('profile', ownProfile.id)}>내 게시물·팔로워 보기</button><h2>차단 관리</h2>{data.blocks.length ? data.blocks.map(b => <div key={b.blocked_id}><span>차단한 사용자 · {b.blocked_id.slice(0, 8)}</span><button disabled={busy} onClick={() => run('unblock:' + b.blocked_id, () => client.unblock(b.blocked_id))}>차단 해제</button></div>) : <p>차단한 사용자가 없어요.</p>}</>}
-      {tab === 'feed' && <>
         {route.track && <h2>{title(route.track)}의 기록</h2>}
         {route.person && (data.profile ? <section className="social-profile"><Avatar profile={data.profile} /><h2>{data.profile.nickname} <small>@{data.profile.handle}</small></h2><p>팔로워 {data.profile.follower_count} · 팔로잉 {data.profile.following_count}</p>{user && ownProfile?.id !== route.person && <><button disabled={busy || !ownProfile} onClick={() => run('follow', () => client.follow(route.person, !data.profile.following))}>{data.profile.following ? '팔로우 취소' : '팔로우'}</button><button onClick={() => setConfirm({ text: '이 사용자를 차단할까요? 서로의 게시물·댓글이 숨겨지고 양쪽 팔로우가 해제돼요.', action: () => client.block(route.person) })}>사용자 차단</button></>}</section> : <p>프로필을 볼 수 없어요.</p>)}
-        {ownProfile && <button onClick={() => { reset('records') }}>기록 작성</button>}
+        {ownProfile && <button onClick={() => onOpenMyProfile('records')}>기록 작성</button>}
         {!data.posts.length && <p>{route.post ? '게시물을 볼 수 없어요. 공개 범위·팔로우·차단 상태를 확인해주세요.' : '지금 볼 수 있는 음악 기록이 없어요.'}</p>}
         <section className="social-feed" aria-label="음악 기록 피드">{data.posts.map(post => <Post key={post.id} post={post} user={ownProfile} navigate={navigate} run={run} pending={busy} openComments={openComments} commentState={comments[post.id]} draft={drafts[post.id]} setDraft={setDraft} submitComment={submitComment}
-          manage={{ like: client.like, edit: post => setEditor({ kind: 'edit', post }), confirmUnshare: post => setConfirm({ text: '공유를 취소할까요? 공유본과 그 댓글·좋아요는 삭제하며 개인 원본은 보존해요.', action: () => client.unshare(post.id) }), deleteComment: client.deleteComment }}
+          manage={{ like: client.like, edit: post => setEditor({ kind: 'edit', post }), confirmUnshare: post => setConfirm({ text: '공유를 취소할까요? 공유본과 그 댓글·좋아요는 삭제하며 내 기록은 보존해요.', action: () => client.unshare(post.id) }), deleteComment: client.deleteComment }}
           report={post => { setReporting(post); setReason('') }} block={post => setConfirm({ text: '이 사용자를 차단할까요? 서로의 게시물·댓글이 숨겨지고 양쪽 팔로우가 해제돼요.', action: () => client.block(post.profile.id) })} />)}</section>
         {data.posts.length >= 30 && <button disabled={busy} onClick={() => run('more', async () => { const stamp = generation.current; const more = await client.feed(route, data.posts.at(-1)); if (stamp === generation.current) { if (more.length) pageDepth.current++; setData(v => v && ({ ...v, posts: [...v.posts, ...more.filter(p => !v.posts.some(old => old.id === p.id))] })) } }, false)}>이전 기록 더 보기</button>}
-      </>}
     </>}
-    {user && meLoaded && !ownProfile && <ProfileEditor key={nicknameHint} nicknameHint={nicknameHint} pending={busy} save={value => run('profile', () => client.saveProfile(value))} />}
-    {tab === 'profile' && ownProfile && <ProfileEditor key={ownProfile.id} profile={ownProfile} pending={busy} save={value => run('profile', () => client.saveProfile(value))} />}
-    {tab === 'records' && user && <MyMusicRecords auth={auth} client={client.db} />}
+    {user && meLoaded && !ownProfile && <aside className="social-join"><p>음악 이야기에 참여하려면 내 프로필을 먼저 만들어주세요.</p><button onClick={() => onOpenMyProfile()}>내 프로필 만들기</button></aside>}
     {editor && ownProfile && connected && <section className="social-editor" aria-label="공유본 편집"><ShareEditor key={editor.post.id} post={editor.post} pending={busy} cancel={() => setEditor(null)} save={value => run('share', async () => { await client.editPost(editor.post.id, value); setEditor(null) })} /></section>}
     {confirm && <section className="social-confirm" role="dialog" aria-modal="true" aria-label="변경 확인"><p>{confirm.text}</p><button disabled={busy} onClick={() => run('confirm', async () => { await confirm.action(); setConfirm(null) })}>확인</button><button disabled={busy} onClick={() => setConfirm(null)}>취소</button></section>}
     {reporting && <form className="social-form" onSubmit={e => { e.preventDefault(); void run('report', async () => { await client.report(reporting.id, reason.trim()); setReporting(null); setNotice('신고를 접수했어요. 운영자가 확인합니다.') }) }}><h2>게시물 신고</h2><label>신고 사유<textarea required maxLength={1000} value={reason} onChange={e => setReason(e.target.value)} /></label><button disabled={busy || !reason.trim()}>신고 접수</button><button type="button" onClick={() => setReporting(null)}>취소</button></form>}

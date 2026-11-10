@@ -19,7 +19,7 @@ export async function verifyComposerSelectionInteractions(App) {
   dom.window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ [tracks[0].id]: { listenAgain: true } }))
   const doc = dom.window.document
   const flush = async (action) => React.act(async () => { action?.(); await new Promise((resolve) => setTimeout(resolve, 10)) })
-  const button = (label) => [...doc.querySelectorAll('button')].find((node) => node.textContent.trim() === label)
+  const button = (label) => [...doc.querySelectorAll('button')].find((node) => (node.getAttribute('aria-label') || node.textContent.trim()) === label)
   const click = async (node) => { assert.ok(node, '조작할 버튼 존재'); await flush(() => node.click()) }
   const clickLabel = async (label) => click(button(label))
   const trigger = () => doc.querySelector('.composer-trigger')

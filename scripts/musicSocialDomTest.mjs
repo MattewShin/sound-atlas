@@ -37,6 +37,7 @@ export async function verifyMusicSocial(MusicSocial) {
   follow:async(_person,desired)=>{following=desired},block:async()=>{blocked=true;following=false},
  }
  function Harness(){const auth=useGoogleAuth(db);return React.createElement(React.Fragment,null,
+  React.createElement('button',{onClick:auth.signOut},'테스트 로그아웃'),
   React.createElement('button',{id:'delete-account',onClick:auth.deleteAccount},'계정 삭제'),
   React.createElement(MusicSocial,{key:`${auth.user?.id??'anon'}:${auth.sessionVersion}`,auth,api}))}
  const flush=async fn=>React.act(async()=>{fn?.();await new Promise(resolve=>setTimeout(resolve,25))})
@@ -73,22 +74,13 @@ export async function verifyMusicSocial(MusicSocial) {
   await flush(()=>window.dispatchEvent(new dom.window.Event('offline')));assert.equal(doc.querySelector('.social-post'),null)
   await flush(()=>window.dispatchEvent(new dom.window.Event('online')));assert.ok(doc.querySelector('.social-post'))
   scope='followers';following=true;await flush(invalidated)
-  await click('로그아웃·계정 전환');assert.equal(logoutCalls,1);assert.equal(doc.querySelector('.social-post'),null)
+  await click('테스트 로그아웃');assert.equal(logoutCalls,1);assert.equal(doc.querySelector('.social-post'),null)
   await flush(()=>listener('TOKEN_REFRESHED',{user:signedUser('B')}));assert.equal(doc.querySelector('.social-post'),null,'old refresh cannot restore logged-out identity')
   await event('SIGNED_IN','C');assert.equal(doc.querySelector('.social-post'),null)
   await event('SIGNED_IN','B');assert.ok(doc.querySelector('.social-post'))
   await flush(()=>doc.getElementById('delete-account').click());assert.equal(deleteCalls,1);assert.equal(doc.querySelector('.social-post'),null)
   await event('SIGNED_IN','B');await click('사용자 차단');await click('확인');assert.equal(doc.querySelector('.social-post'),null)
-  blocked=false;await flush(invalidated);await click('개인 원본');await click('기록 남기기')
-  const recordForm=()=>doc.querySelector('.music-journal-form')
-  await flush(()=>{const area=recordForm().querySelector('textarea');Object.getOwnPropertyDescriptor(dom.window.HTMLTextAreaElement.prototype,'value').set.call(area,'새 개인 기록');area.dispatchEvent(new dom.window.Event('input',{bubbles:true}))})
-  await flush(()=>recordForm().dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true})));assert.equal(saveCalls,0,'a new record requires a registered track')
-  await flush(()=>{const select=recordForm().querySelector('select');Object.getOwnPropertyDescriptor(dom.window.HTMLSelectElement.prototype,'value').set.call(select,tracks[0].id);select.dispatchEvent(new dom.window.Event('change',{bubbles:true}))})
-  await flush(()=>recordForm().dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true})));assert.equal(saveCalls,1);assert.equal(privateRows.length,1)
-  await click('수정')
-  await flush(()=>{const area=recordForm().querySelector('textarea');Object.getOwnPropertyDescriptor(dom.window.HTMLTextAreaElement.prototype,'value').set.call(area,'보존될 개인 기록 초안');area.dispatchEvent(new dom.window.Event('input',{bubbles:true}))})
-  await flush(invalidated);assert.equal(recordForm().querySelector('textarea').value,'보존될 개인 기록 초안','a social event must not discard the existing private editor')
-  await event('SIGNED_IN','C');assert.ok(!doc.body.textContent.includes('보존될 개인 기록 초안'))
+  assert.equal(doc.querySelector('.social-tabs'),null);assert.equal(doc.querySelector('.all-music-records'),null);assert.equal(doc.querySelector('.social-form input'),null)
   assert.equal(dom.window.localStorage.length,0);assert.equal(dom.window.sessionStorage.length,0)
  }finally{if(root)await React.act(async()=>root.unmount());dom.window.close();for(const[k,v]of before){if(v)Object.defineProperty(globalThis,k,v);else delete globalThis[k]}}
 }

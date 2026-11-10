@@ -542,7 +542,42 @@ small { font-size: 12px; }
 *, *::before, *::after { letter-spacing: -0.03em; }
 [data-text-lines="single"] { line-height: normal !important; }
 [data-text-lines="multiple"] { line-height: 1.5 !important; }
-.bottom-nav .nav-item > span:last-child { min-height: 36px; display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; }
-.bottom-nav { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(76px, 1fr); }
-.bottom-nav .nav-item-social { padding-inline: 2px; }
-.bottom-nav .nav-item-social > span:last-child { white-space: nowrap; }
+.bottom-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.bottom-nav .nav-item { min-width: 48px; min-height: 48px; padding: 10px 0; border-radius: 999px; flex-direction: row; }
+.bottom-nav .nav-item svg { width: 28px; height: 28px; flex: none; }
+.bottom-nav .nav-item.active { background: #deeadf; box-shadow: inset 0 0 0 1px #aec5b5; }
+.bottom-nav .nav-item:focus-visible { outline: 2px solid #245a53; outline-offset: -2px; }
+.my-profile { display: grid; gap: 20px; }
+.profile-section { min-width: 0; padding: 20px 16px; border: 1px solid #d6dccf; border-radius: 18px; background: #fffaf2; color: #263b36; overflow-wrap: anywhere; }
+.profile-section h2 { margin: 0 0 16px; font-size: 22px; scroll-margin-top: 20px; }
+.profile-section h3 { font-size: 18px; }
+.profile-section p, .profile-section a, .profile-section button { font-size: 16px; line-height: normal; }
+.profile-section button, .profile-section a, .profile-section summary { min-height: 44px; }
+.profile-section button, .profile-section a { display: inline-flex; align-items: center; justify-content: center; padding: 10px 12px; margin: 4px 4px 4px 0; border: 1px solid #b8c9b7; border-radius: 10px; color: #245a53; background: #f7f3eb; text-align: left; }
+.profile-section input, .profile-section select, .profile-section textarea { max-width: 100%; min-width: 0; font-size: 16px; }
+.profile-section .social-form label { display: grid; gap: 6px; }
+.profile-section .social-form input { box-sizing: border-box; width: 100%; min-height: 44px; padding: 12px; }
+.profile-identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.profile-identity > div { min-width: 0; }
+.profile-identity strong { font-size: 20px; }
+.profile-identity p { margin: 4px 0; }
+.profile-identity .social-avatar, .public-profile-preview .social-avatar { flex: none; width: 48px; height: 48px; }
+.profile-preference .preference-panel { padding: 0; border: 0; background: transparent; }
+.profile-preference .library-empty { padding: 20px 0; }
+.profile-block { display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid #d6dccf; }
+.profile-own-post { padding: 16px 0; border-bottom: 1px solid #d6dccf; }
+.profile-own-post p { white-space: pre-wrap; }
+.profile-own-post small { display: block; }
+.profile-privacy { margin-top: 20px; }
+.profile-privacy summary { cursor: pointer; padding-block: 12px; }
+.profile-privacy .privacy-summary { margin-inline: 0; }
+.account-danger { margin-top: 24px; padding: 16px; border: 1px solid #dbb7ad; border-radius: 12px; background: #fff0eb; }
+.account-danger h3 { margin-top: 0; font-size: 18px; }
+.record-filters { display: flex; flex-wrap: wrap; gap: 4px; margin: 12px 0; }
+.record-filters button[aria-pressed="true"] { background: #deeadf; box-shadow: inset 0 0 0 1px #245a53; }
+.record-filters p { flex-basis: 100%; font-size: 14px; }
+.record-private-status { font-size: 14px; color: #53635b; }
+.profile-records .music-journal { padding: 0; border: 0; }
+.profile-records .music-journal-toolbar { flex-wrap: wrap; }
+.profile-records .music-journal-form, .profile-records .music-share-editor { min-width: 0; }
+.social-join { margin-top: 20px; padding: 16px 0; border-top: 1px solid #d6dccf; }
