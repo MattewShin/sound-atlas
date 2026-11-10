@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { composerImages, trackDetails, tracks } from './data/musicData.js'
 import { emotionLabel, emotions, formatTrackTitle, getRepresentativeEmotions } from './data/emotions.js'
 import { getDiversifiedKeywordRecommendations, getKeywordMetrics, getLibraryPreferenceProfile, getLibraryRecommendations, getRecommendationResult, pickRandomKeywordRecommendation, pickRandomFeelingRecommendation } from './data/recommendations.js'
@@ -23,13 +23,15 @@ import { describeComposerConditions, filterTracksByComposers, getComposerOptions
 import useGoogleAuth from './components/useGoogleAuth.js'
 import MusicJournal from './components/MusicJournal.jsx'
 export { default as MusicJournal } from './components/MusicJournal.jsx'
-import { MyMusicRecords } from './components/MusicJournal.jsx'
+import MyProfile from './components/MyProfile.jsx'
+export { default as MyProfile } from './components/MyProfile.jsx'
 import { PublicMusicStories, PublicStoryScreen } from './components/MusicSharing.jsx'
 import MusicSocial from './components/MusicSocial.jsx'
 export { default as MusicSocial } from './components/MusicSocial.jsx'
 export { MyMusicRecords } from './components/MusicJournal.jsx'
 export { ShareMusicRecord, PublicStoryScreen, PublicMusicStories } from './components/MusicSharing.jsx'
 import { supabase } from './lib/supabaseClient.js'
+import { getSocialApi } from './data/socialClient.js'
 import { clearAccountLocalData, readLibraryOwner, saveLibraryOwner, syncUserLibrary } from './data/userLibrary.js'
 export { WeeklySelectionSection, WeeklySelectionScreen, WeeklyArchiveScreen } from './components/WeeklySelectionScreens.jsx'
 
@@ -214,7 +216,6 @@ function HighlightShortView({ track, detail, isOpen, onClose }) {
 }
 
 export function LibraryScreen({ savedTracks, onOpenTrack, onRemoveTrack, onGoExplore, auth }) {
-  const [libraryMode, setLibraryMode] = useState('saved')
   return (
     <>
       <header className="library-header" id="library-top">
@@ -224,8 +225,7 @@ export function LibraryScreen({ savedTracks, onOpenTrack, onRemoveTrack, onGoExp
         <strong>{savedTracks.length}곡 보관 중</strong>
       </header>
       <main className="library-main">
-        <div className="library-content-switch" role="group" aria-label="보관함 보기 방식"><button type="button" aria-pressed={libraryMode === 'saved'} onClick={() => setLibraryMode('saved')}>보관한 곡</button><button type="button" aria-pressed={libraryMode === 'records'} onClick={() => setLibraryMode('records')}>내 음악 기록</button></div>
-        {libraryMode === 'records' ? <MyMusicRecords auth={auth} onOpenTrack={onOpenTrack} /> : savedTracks.length > 0 ? (
+        {savedTracks.length > 0 ? (
           <section className="library-list" aria-label="보관한 곡 목록">
             {savedTracks.map((track) => (
               <article className={`saved-track-card ${track.tone}`} key={track.id}>
@@ -263,7 +263,7 @@ export function PrivacySummary() {
   </div>
 }
 
-export function AccountPanel({ auth, syncStatus = 'local' }) {
+export function AccountPanel({ auth, syncStatus = 'local', privacyControl = true }) {
   const user = auth?.user
   const [showPrivacy, setShowPrivacy] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -274,30 +274,34 @@ export function AccountPanel({ auth, syncStatus = 'local' }) {
         : '이 기기에만 보관돼요.'
 
   return <section className="account-panel" aria-labelledby="account-title">
-    <div className="account-heading"><div><p>ACCOUNT</p><h2 id="account-title">계정과 개인화</h2></div><span aria-hidden="true"><Icon name="user" /></span></div>
+    <div className="account-heading"><div><p>ACCOUNT</p><h2 id="account-title">계정</h2></div><span aria-hidden="true"><Icon name="user" /></span></div>
     {user ? <>
       <strong>{name}</strong>{user.email && name !== user.email && <small>{user.email}</small>}
       <p className={`account-sync-status ${syncStatus === 'error' ? 'is-error' : ''}`} role="status">{syncMessage}</p>
       <small className="account-local-note">로그아웃하면 이 기기의 계정 보관함 사본은 삭제돼요. 서버 자료는 계정 삭제 전까지 유지됩니다.</small>
+      <button className="account-secondary-button" type="button" onClick={auth.switchGoogleAccount} disabled={auth.isLoading || auth.isDeleting}>다른 Google 계정으로 전환</button>
       <button className="account-secondary-button" type="button" onClick={auth.signOut} disabled={auth.isLoading}>로그아웃</button>
-      {!confirmDelete ? <button className="account-text-button account-danger-link" type="button" onClick={() => setConfirmDelete(true)}>계정과 데이터 삭제</button>
-        : <div className="account-delete-confirm" role="alert"><p>보관함·개인 기록·공유본과 내 댓글·좋아요를 영구 삭제해요. 내 공유본의 댓글·좋아요도 함께 삭제되며 복구할 수 없어요. 신고 자료는 별도 보관 정책을 따릅니다.</p><div><button type="button" onClick={() => setConfirmDelete(false)} disabled={auth.isDeleting}>취소</button><button className="account-delete-button" type="button" onClick={auth.deleteAccount} disabled={auth.isDeleting}>{auth.isDeleting ? '삭제 중…' : '영구 삭제'}</button></div></div>}
+
     </> : <>
-      <p>Google로 로그인하면 보관한 곡과 나의 취향을 다른 기기에서도 이어볼 수 있어요.</p>
+      <p>Google로 로그인하면 보관한 곡과 나의 음악 취향을 내 프로필에서 다른 기기에서도 이어볼 수 있어요.</p>
       <button className="google-login-button" type="button" onClick={auth?.signInWithGoogle} disabled={auth?.isLoading || !auth?.configured}>{auth?.isLoading ? '로그인 확인 중…' : 'Google로 계속하기'}</button>
       {!auth?.configured && <small className="account-setup-message">로그인 설정이 아직 배포되지 않았어요.</small>}
     </>}
-    <button className="account-text-button" type="button" aria-expanded={showPrivacy} onClick={() => setShowPrivacy((value) => !value)}>개인정보 처리 안내 {showPrivacy ? '접기' : '보기'}</button>
-    {showPrivacy && <PrivacySummary />}
+    {privacyControl && <button className="account-text-button" type="button" aria-expanded={showPrivacy} onClick={() => setShowPrivacy((value) => !value)}>개인정보 처리 안내 {showPrivacy ? '접기' : '보기'}</button>}
+    {privacyControl && showPrivacy && <PrivacySummary />}
     {auth?.error && <p className="account-error" role="alert">{auth.error}</p>}
+    {user && <div className="account-danger"><h3>계정 삭제</h3>
+      {!confirmDelete ? <button className="account-text-button account-danger-link" type="button" onClick={() => setConfirmDelete(true)}>계정과 데이터 삭제</button>
+        : <div className="account-delete-confirm" role="alert"><p>보관함·개인 기록·공유본과 내 댓글·좋아요를 영구 삭제해요. 내 공유본의 댓글·좋아요도 함께 삭제되며 복구할 수 없어요. 신고 자료는 별도 보관 정책을 따릅니다.</p><div><button type="button" onClick={() => setConfirmDelete(false)} disabled={auth.isDeleting}>취소</button><button className="account-delete-button" type="button" onClick={auth.deleteAccount} disabled={auth.isDeleting}>{auth.isDeleting ? '삭제 중…' : '영구 삭제'}</button></div></div>}
+    </div>}
   </section>
 }
 
-export function PreferenceScreen({ profile, onGoExplore, auth, syncStatus }) {
+export function PreferenceScreen({ profile, onGoExplore, embedded = false }) {
+  const Container = embedded ? 'div' : 'main'
   return <>
-    <header className="library-header"><p>MY TASTE</p><h1>나의 취향</h1><span>보관한 곡의 감정을 함께 살펴봐요.</span><strong>{profile.count}곡 기준</strong></header>
-    <main className="library-main">
-      {auth && <AccountPanel auth={auth} syncStatus={syncStatus} />}
+    {!embedded && <header className="library-header"><p>MY PROFILE</p><h1>내 프로필</h1><span>보관한 곡의 감정을 함께 살펴봐요.</span></header>}
+    <Container className={embedded ? "profile-preference" : "library-main"}><p>보관한 곡 {profile.count}곡 기준</p>
       {profile.isActive ? <section className="preference-panel" aria-label="보관함 감정 성향">
         <h2>감정 성향 지수</h2>
         <p>{profile.count < 3 ? '현재 보관곡을 기준으로 한 초기 취향이에요.' : '현재 보관한 곡들의 감정 평가를 평균했어요.'}</p>
@@ -313,21 +317,34 @@ export function PreferenceScreen({ profile, onGoExplore, auth, syncStatus }) {
         <p>0~100 고정 척도예요. 각 감정은 독립적이며 합계가 100일 필요는 없어요.</p>
         <button className="library-save-button" type="button" onClick={onGoExplore}>내 취향 추천 보기</button>
       </section> : <section className="library-empty"><span aria-hidden="true">♬</span><h2>아직 취향이 형성되지 않았어요</h2><p>마음에 남는 곡을 보관하면 감정 성향을 볼 수 있어요.</p><button type="button" onClick={onGoExplore}>음악 탐색으로 가기</button></section>}
-    </main>
+    </Container>
   </>
 }
 
-function App({ isLoggedIn: isLoggedInOverride } = {}) {
-  const auth = useGoogleAuth()
+function App({ isLoggedIn: isLoggedInOverride, authClient = supabase, socialApi = getSocialApi(authClient) } = {}) {
+  const auth = useGoogleAuth(authClient)
   const sessionScope = `${auth.user?.id ?? 'anonymous'}:${auth.sessionVersion}`
   const isLoggedIn = typeof isLoggedInOverride === 'boolean' ? isLoggedInOverride : Boolean(auth.user)
   const [initialMusicState] = useState(getInitialMusicState)
   const [storyId] = useState(() => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('story'))
-  const [activeView, setActiveView] = useState(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('story') ? 'story' : typeof window !== 'undefined' && window.location.hash.startsWith('#music') ? 'social' : 'explore')
+  const [activeView, setActiveView] = useState(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('story') ? 'story' : typeof window !== 'undefined' && window.location.hash.startsWith('#music') ? 'social' : typeof window !== 'undefined' && window.location.hash.startsWith('#profile') ? 'taste' : 'explore')
+  const [profileSection, setProfileSection] = useState(() => typeof window === 'undefined' ? '' : window.location.hash.split('/')[1] || '')
+  const openMyProfile = useCallback((section = '', { replace = false } = {}) => {
+    const hash = section ? '#profile/' + section : '#profile'
+    if (replace) window.history.replaceState(null, '', hash)
+    else window.location.hash = hash
+    setProfileSection(section); setActiveView('taste')
+    if (!section) window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+  const goView = (view, hash = view) => { window.location.hash = hash; setActiveView(view); window.scrollTo({ top: 0, behavior: 'instant' }) }
   useEffect(() => {
-    const openSocial = () => { if (window.location.hash.startsWith('#music')) setActiveView('social') }
-    window.addEventListener('hashchange', openSocial)
-    return () => window.removeEventListener('hashchange', openSocial)
+    const changed = () => {
+      const hash = window.location.hash
+      if (hash.startsWith('#music')) setActiveView('social')
+      else if (hash === '#profile' || hash.startsWith('#profile/')) { setProfileSection(hash.split('/')[1] || ''); setActiveView('taste') }
+      else if (['#explore','#library','#concert',''].includes(hash)) setActiveView(hash.slice(1) || 'explore')
+    }
+    window.addEventListener('hashchange', changed); return () => window.removeEventListener('hashchange', changed)
   }, [])
   const [concertRegion, setConcertRegion] = useState(readConcertRegion)
   const [concertDetailId, setConcertDetailId] = useState(null)
@@ -363,6 +380,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   const [shortTrack, setShortTrack] = useState(null)
   const [isShortOpen, setIsShortOpen] = useState(false)
   const [trackReactions, setTrackReactions] = useState(initialMusicState.reactions)
+  const [reactionOwner, setReactionOwner] = useState(readLibraryOwner)
   const [librarySyncStatus, setLibrarySyncStatus] = useState('local')
   const [migrationNotice, setMigrationNotice] = useState(initialMusicState.notice)
   const [saveFeedback, setSaveFeedback] = useState(null)
@@ -374,8 +392,8 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   const activeKeys = useMemo(() => recommendationInput === 'feeling' ? getSuggestedEmotions(currentFeeling) : selectedKeys, [recommendationInput, currentFeeling, selectedKeys])
   const visibleTrackReactions = useMemo(() => {
     const owner = readLibraryOwner()
-    return owner && owner !== auth.user?.id ? {} : trackReactions
-  }, [trackReactions, auth.user?.id])
+    return (owner && owner !== auth.user?.id) || (reactionOwner && reactionOwner !== auth.user?.id) ? {} : trackReactions
+  }, [trackReactions, reactionOwner, auth.user?.id])
   const savedTrackIds = useMemo(() => Object.keys(visibleTrackReactions).filter((id) => visibleTrackReactions[id]?.listenAgain === true), [visibleTrackReactions])
   const libraryPreference = useMemo(() => getLibraryPreferenceProfile(tracks, savedTrackIds), [savedTrackIds])
   const isLibraryMode = recommendationMode === 'library' && libraryPreference.isActive
@@ -438,11 +456,12 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   useEffect(() => {
     if (auth.isLoading && !auth.sessionVersion) return undefined
     const userId = auth.user?.id
-    if (!userId || !supabase) {
+    if (!userId || !authClient) {
       activeSyncUserId.current = null
-      if (readLibraryOwner()) {
+      if (reactionOwner || readLibraryOwner() || auth.sessionVersion) {
         clearAccountLocalData()
         setTrackReactions({})
+        setReactionOwner(null)
         setRecommendationExposures([])
       }
       setLibrarySyncStatus('local')
@@ -451,6 +470,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     if (activeSyncUserId.current === userId) return undefined
 
     activeSyncUserId.current = userId
+    setReactionOwner(userId)
     const owner = readLibraryOwner()
     const includeLocal = !owner || owner === userId
     const localSnapshot = includeLocal ? trackReactions : {}
@@ -460,9 +480,9 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     }
     setLibrarySyncStatus('syncing')
     syncQueue.current = syncQueue.current.catch(() => undefined)
-      .then(() => syncUserLibrary(supabase, localSnapshot, { includeLocal }))
+      .then(() => activeSyncUserId.current === userId ? syncUserLibrary(authClient, localSnapshot, { includeLocal }) : null)
       .then((synced) => {
-        if (activeSyncUserId.current !== userId) return
+        if (activeSyncUserId.current !== userId || !synced) return
         setTrackReactions(synced)
         saveMusicValue(STORAGE_KEY, synced)
         saveLibraryOwner(userId)
@@ -472,7 +492,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
         if (activeSyncUserId.current === userId) setLibrarySyncStatus('error')
       })
     return undefined
-  }, [auth.isLoading, auth.user?.id])
+  }, [authClient, auth.isLoading, auth.user?.id, auth.sessionVersion])
   useEffect(() => {
     // 키워드는 현재 화면에서만 유지하며 이전 버전의 저장된 선택도 제거합니다.
     try { window.localStorage.removeItem(SELECTION_KEY) } catch { /* 저장 차단 */ }
@@ -600,14 +620,14 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
   const toggleTrackSave = (id) => {
     const isSaved = !isTrackSaved(id)
     const next = { ...visibleTrackReactions, [id]: { ...visibleTrackReactions[id], listenAgain: isSaved, updatedAt: new Date().toISOString() } }
-    setTrackReactions(next); saveMusicValue(STORAGE_KEY, next)
+    setTrackReactions(next); setReactionOwner(auth.user?.id ?? null); saveMusicValue(STORAGE_KEY, next)
     const userId = auth.user?.id
-    if (userId && supabase) {
+    if (userId && authClient) {
       setLibrarySyncStatus('syncing')
       syncQueue.current = syncQueue.current.catch(() => undefined)
-        .then(() => syncUserLibrary(supabase, next))
+        .then(() => activeSyncUserId.current === userId ? syncUserLibrary(authClient, next) : null)
         .then((synced) => {
-          if (activeSyncUserId.current !== userId) return
+          if (activeSyncUserId.current !== userId || !synced) return
           setTrackReactions(synced)
           saveMusicValue(STORAGE_KEY, synced)
           saveLibraryOwner(userId)
@@ -621,7 +641,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
     window.clearTimeout(saveFeedbackTimer.current)
     saveFeedbackTimer.current = window.setTimeout(() => setSaveFeedback(null), 1800)
   }
-  const showTasteRecommendations = () => { setActiveView('explore'); setExplorationLevel('beginner'); setRecommendationMode(libraryPreference.isActive ? 'library' : 'keyword'); setSelectedTrackId(null) }
+  const showTasteRecommendations = () => { goView('explore'); setExplorationLevel('beginner'); setRecommendationMode(libraryPreference.isActive ? 'library' : 'keyword'); setSelectedTrackId(null) }
   const openRecommendationList = () => {
     setRecommendationListState({ query: recommendationQuery, count: 20 })
     setActiveView('recommendations'); window.scrollTo({ top: 0 })
@@ -679,7 +699,7 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
         <WeeklySelectionSection entry={weeklyState.current} onOpen={openWeeklyStory} onArchive={openWeeklyArchive} />
         {!weeklyState.current && weeklyState.archive.length > 0 && <div className="weekly-archive-entry"><button className="weekly-link" type="button" onClick={openWeeklyArchive}>지난 선정곡 →</button></div>}
       </main>
-    </> : activeView === 'story' ? <MusicSocial key={`story:${storyId}:${sessionScope}`} auth={auth} initialPost={storyId} /> : activeView === 'social' ? <MusicSocial key={sessionScope} auth={auth} /> : activeView === 'weekly-story' ? weeklyEntry
+    </> : activeView === 'story' ? <MusicSocial key={`story:${storyId}:${sessionScope}`} auth={auth} api={socialApi} initialPost={storyId} onOpenMyProfile={openMyProfile} /> : activeView === 'social' ? <MusicSocial key={sessionScope} auth={auth} api={socialApi} onOpenMyProfile={openMyProfile} /> : activeView === 'weekly-story' ? weeklyEntry
       ? <WeeklySelectionScreen key={weeklyEntry.id} entry={weeklyEntry} detail={trackDetails[weeklyEntry.trackId]} isSaved={isTrackSaved(weeklyEntry.trackId)} onBack={weeklyStory.from === 'archive' ? openWeeklyArchive : returnToExplore} onToggleSave={toggleTrackSave} onOpenTrack={openTrackDetail} saveFeedback={saveFeedback?.trackId === weeklyEntry.trackId ? saveFeedback.message : null} PreviewPlayer={YouTubeShortEmbed} />
       : <main className="weekly-screen"><h1>지금은 읽을 수 없는 소개예요</h1><button className="weekly-link" type="button" onClick={returnToExplore}>음악 탐색으로</button></main>
       : activeView === 'weekly-archive' ? <WeeklyArchiveScreen entries={weeklyState.archive} onOpen={(id) => openWeeklyStory(id, 'archive')} onBack={returnToExplore} />
@@ -687,13 +707,12 @@ function App({ isLoggedIn: isLoggedInOverride } = {}) {
       : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} selectedComposers={selectedComposers} onExpandComposers={expandComposers} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetailId
       ? <ConcertDetailScreen detail={concertSearch.detail} onBack={showConcerts} onRetry={() => concertSearch.loadDetail(concertDetailId, true)} />
       : <ConcertScreen search={concertSearch.search} region={concertRegion} onSelectRegion={changeConcertRegion} period={concertPeriod} onChangePeriod={changeConcertPeriod} keyword={concertKeyword} onChangeKeyword={setConcertKeyword} onSearch={concertSearch.runSearch} onLoadMore={concertSearch.loadMore} onOpenConcert={openConcert} onGoExplore={returnToExplore} />
-      : activeView === 'taste' ? <PreferenceScreen profile={libraryPreference} onGoExplore={showTasteRecommendations} auth={auth} syncStatus={librarySyncStatus} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} auth={auth} />}
+      : activeView === 'taste' ? <MyProfile key={sessionScope} api={socialApi} auth={auth} preference={libraryPreference} syncStatus={librarySyncStatus} onGoExplore={showTasteRecommendations} onOpenTrack={openTrackDetail} section={profileSection} AccountPanel={AccountPanel} PreferenceScreen={PreferenceScreen} PrivacySummary={PrivacySummary} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} auth={auth} />}
     <nav className="bottom-nav" aria-label="주요 메뉴">
-      <button className={'nav-item ' + (['explore', 'recommendations', 'reference-recommendations', 'weekly-story', 'weekly-archive'].includes(activeView) ? 'active' : '')} type="button" onClick={() => setActiveView('explore')}><Icon name="compass" /><span>음악 탐색</span></button>
-      <button className={'nav-item ' + (activeView === 'concert' ? 'active' : '')} type="button" onClick={showConcerts}><Icon name="stage" /><span>공연 찾기</span></button>
-      <button className={'nav-item ' + (activeView === 'library' ? 'active' : '')} type="button" onClick={() => setActiveView('library')}><Icon name="bookmarkSmall" /><span>보관함</span></button>
-      <button className={'nav-item ' + (activeView === 'taste' ? 'active' : '')} type="button" onClick={() => setActiveView('taste')}><Icon name="user" /><span>나의 취향</span></button>
-      <button className={'nav-item nav-item-social ' + (['social','story'].includes(activeView) ? 'active' : '')} type="button" onClick={() => { window.location.hash = 'music'; setActiveView('social') }}><Icon name="piano" /><span>음악 이야기</span></button>
+      {[['explore','음악 탐색','compass'],['concert','공연 찾기','stage'],['library','보관함','bookmarkSmall'],['taste','내 프로필','user'],['social','음악 이야기','piano']].map(([view,label,icon]) => {
+        const active = view === 'explore' ? ['explore','recommendations','reference-recommendations','weekly-story','weekly-archive'].includes(activeView) : view === 'social' ? ['social','story'].includes(activeView) : activeView === view
+        return <button key={view} className={'nav-item ' + (active ? 'active' : '')} aria-label={label} title={label} aria-current={active ? 'page' : undefined} type="button" onClick={() => { if (view === 'taste') openMyProfile(); else { if (view === 'concert') showConcerts(); goView(view, view === 'social' ? 'music' : view) } }}><Icon name={icon} /></button>
+      })}
     </nav>
     <TrackDetailSheet track={detailTrack} detail={detailTrack ? trackDetails[detailTrack.id] : null} isSaved={detailTrack ? isTrackSaved(detailTrack.id) : false} selectedKeys={explorationLevel === 'beginner' && !isInitialExploration && recommendationMode !== 'library' ? activeKeys : []} isOpen={isDetailOpen} onClose={closeTrackDetail} onOpenShort={openHighlightShort} onToggleSave={toggleTrackSave} saveFeedback={saveFeedback?.trackId === detailTrack?.id ? saveFeedback?.message : null} onGoLibrary={showLibrary} auth={auth} />
     <HighlightShortView track={shortTrack} detail={shortTrack ? trackDetails[shortTrack.id] : null} isOpen={isShortOpen} onClose={closeHighlightShort} />

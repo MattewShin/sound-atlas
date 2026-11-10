@@ -1,0 +1,745 @@
+{
+  "task_id": "CA-NAV-PROFILE-IA-20261110-001",
+  "specification": 1,
+  "status": "IMPLEMENTED",
+  "baseline_main": "465173d2e2e41ee58f387b18b6897a3e29cbaff9",
+  "implementation_code_sha": "1a03ca832329a356fa15a615af568958244c911e",
+  "branch": "codex/ca-nav-profile-ia-20261110-001",
+  "tests": {
+    "full": {
+      "command": "npm test",
+      "pass": 166,
+      "fail": 0,
+      "skip": 0
+    },
+    "social": {
+      "command": "npm run test:social",
+      "pass": 5,
+      "fail": 0,
+      "skip": 0
+    },
+    "profile_ia": {
+      "command": "node scripts/testProfileIa.mjs",
+      "pass": 4,
+      "fail": 0,
+      "skip": 0
+    },
+    "build": {
+      "command": "npm run build",
+      "result": "PASS",
+      "existing_500kb_chunk_warning": true
+    },
+    "environment": "Windows / Node 22.18.0 / local PGlite / JSDOM / mocked SDK transport; actual JSX/esbuild/Vite"
+  },
+  "mobile": {
+    "task_id": "CA-NAV-PROFILE-IA-20261110-001",
+    "result": "PASS",
+    "environment": "local Chromium / synthetic in-memory transport / network limited to local static server",
+    "line_measurement": "independent character Range rectangles; numeric rendered line count compared with computed line-height; data-text-lines is not trusted",
+    "cases": [
+      {
+        "width": 320,
+        "state": "signed-in-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21,
+        "single_line_nodes": 14,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 320,
+        "state": "post-menu",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21,
+        "single_line_nodes": 14,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 320,
+        "state": "profile-records",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 120,
+        "single_line_nodes": 101,
+        "multiline_nodes": 14
+      },
+      {
+        "width": 320,
+        "state": "public-profile-preview",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 123,
+        "single_line_nodes": 103,
+        "multiline_nodes": 15
+      },
+      {
+        "width": 320,
+        "state": "profile-editor-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 134,
+        "single_line_nodes": 107,
+        "multiline_nodes": 16
+      },
+      {
+        "width": 320,
+        "state": "record-keyboard-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 145,
+        "single_line_nodes": 109,
+        "multiline_nodes": 17
+      },
+      {
+        "width": 320,
+        "state": "delete-confirmation",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 136,
+        "single_line_nodes": 108,
+        "multiline_nodes": 17
+      },
+      {
+        "width": 320,
+        "state": "anonymous-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 20,
+        "single_line_nodes": 13,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 320,
+        "state": "anonymous-profile",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 33,
+        "single_line_nodes": 14,
+        "multiline_nodes": 14
+      },
+      {
+        "width": 375,
+        "state": "signed-in-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21,
+        "single_line_nodes": 14,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 375,
+        "state": "post-menu",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21,
+        "single_line_nodes": 14,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 375,
+        "state": "profile-records",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 120,
+        "single_line_nodes": 105,
+        "multiline_nodes": 10
+      },
+      {
+        "width": 375,
+        "state": "public-profile-preview",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 123,
+        "single_line_nodes": 107,
+        "multiline_nodes": 11
+      },
+      {
+        "width": 375,
+        "state": "profile-editor-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 134,
+        "single_line_nodes": 111,
+        "multiline_nodes": 12
+      },
+      {
+        "width": 375,
+        "state": "record-keyboard-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 145,
+        "single_line_nodes": 113,
+        "multiline_nodes": 13
+      },
+      {
+        "width": 375,
+        "state": "delete-confirmation",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 136,
+        "single_line_nodes": 112,
+        "multiline_nodes": 13
+      },
+      {
+        "width": 375,
+        "state": "anonymous-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 20,
+        "single_line_nodes": 13,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 375,
+        "state": "anonymous-profile",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 33,
+        "single_line_nodes": 17,
+        "multiline_nodes": 11
+      },
+      {
+        "width": 390,
+        "state": "signed-in-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21,
+        "single_line_nodes": 14,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 390,
+        "state": "post-menu",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21,
+        "single_line_nodes": 14,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 390,
+        "state": "profile-records",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 120,
+        "single_line_nodes": 105,
+        "multiline_nodes": 10
+      },
+      {
+        "width": 390,
+        "state": "public-profile-preview",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 123,
+        "single_line_nodes": 107,
+        "multiline_nodes": 11
+      },
+      {
+        "width": 390,
+        "state": "profile-editor-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 134,
+        "single_line_nodes": 111,
+        "multiline_nodes": 12
+      },
+      {
+        "width": 390,
+        "state": "record-keyboard-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 145,
+        "single_line_nodes": 113,
+        "multiline_nodes": 13
+      },
+      {
+        "width": 390,
+        "state": "delete-confirmation",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 136,
+        "single_line_nodes": 112,
+        "multiline_nodes": 13
+      },
+      {
+        "width": 390,
+        "state": "anonymous-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 20,
+        "single_line_nodes": 13,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 390,
+        "state": "anonymous-profile",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 33,
+        "single_line_nodes": 17,
+        "multiline_nodes": 11
+      },
+      {
+        "width": 520,
+        "state": "signed-in-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21,
+        "single_line_nodes": 14,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 520,
+        "state": "post-menu",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21,
+        "single_line_nodes": 14,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 520,
+        "state": "profile-records",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 120,
+        "single_line_nodes": 108,
+        "multiline_nodes": 7
+      },
+      {
+        "width": 520,
+        "state": "public-profile-preview",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 123,
+        "single_line_nodes": 110,
+        "multiline_nodes": 8
+      },
+      {
+        "width": 520,
+        "state": "profile-editor-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 134,
+        "single_line_nodes": 114,
+        "multiline_nodes": 9
+      },
+      {
+        "width": 520,
+        "state": "record-keyboard-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 145,
+        "single_line_nodes": 117,
+        "multiline_nodes": 9
+      },
+      {
+        "width": 520,
+        "state": "delete-confirmation",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 136,
+        "single_line_nodes": 115,
+        "multiline_nodes": 10
+      },
+      {
+        "width": 520,
+        "state": "anonymous-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 20,
+        "single_line_nodes": 13,
+        "multiline_nodes": 2
+      },
+      {
+        "width": 520,
+        "state": "anonymous-profile",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 33,
+        "single_line_nodes": 20,
+        "multiline_nodes": 8
+      }
+    ],
+    "target_checks": [
+      {
+        "width": 320,
+        "name": "long-profile-button",
+        "lines": 2,
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 320,
+        "name": "records-description",
+        "lines": 3,
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 320,
+        "name": "public-profile-guide",
+        "lines": 3,
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 320,
+        "name": "delete-confirmation",
+        "lines": 4,
+        "fontSize": 12,
+        "lineHeight": "18px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.36
+      },
+      {
+        "width": 375,
+        "name": "long-profile-button",
+        "lines": 1,
+        "fontSize": 16,
+        "lineHeight": "normal",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 375,
+        "name": "records-description",
+        "lines": 3,
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 375,
+        "name": "public-profile-guide",
+        "lines": 2,
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 375,
+        "name": "delete-confirmation",
+        "lines": 4,
+        "fontSize": 12,
+        "lineHeight": "18px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.36
+      },
+      {
+        "width": 390,
+        "name": "long-profile-button",
+        "lines": 1,
+        "fontSize": 16,
+        "lineHeight": "normal",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 390,
+        "name": "records-description",
+        "lines": 3,
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 390,
+        "name": "public-profile-guide",
+        "lines": 2,
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 390,
+        "name": "delete-confirmation",
+        "lines": 3,
+        "fontSize": 12,
+        "lineHeight": "18px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.36
+      },
+      {
+        "width": 520,
+        "name": "long-profile-button",
+        "lines": 1,
+        "fontSize": 16,
+        "lineHeight": "normal",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 520,
+        "name": "records-description",
+        "lines": 2,
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 520,
+        "name": "public-profile-guide",
+        "lines": 2,
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.48
+      },
+      {
+        "width": 520,
+        "name": "delete-confirmation",
+        "lines": 2,
+        "fontSize": 12,
+        "lineHeight": "18px",
+        "family": "Pretendard, sans-serif",
+        "tracking": -0.36
+      }
+    ],
+    "negative_controls": [
+      {
+        "width": 320,
+        "forced_multiline_normal_rejected": true
+      },
+      {
+        "width": 375,
+        "forced_multiline_normal_rejected": true
+      },
+      {
+        "width": 390,
+        "forced_multiline_normal_rejected": true
+      },
+      {
+        "width": 520,
+        "forced_multiline_normal_rejected": true
+      }
+    ],
+    "keyboard_tab_and_records_focus": "PASS",
+    "browser_back": "PASS",
+    "navigation_overlay": "PASS",
+    "page_errors": 0,
+    "real_oauth": false,
+    "real_postgrest": false,
+    "real_realtime": false,
+    "real_device_ime": false,
+    "production_requests": 0
+  },
+  "protection": {
+    "migration_required": false,
+    "migration_or_database_contract_changed": false,
+    "shared_client_configuration_changed": false,
+    "existing_data_ids_and_rls_unchanged": true,
+    "production_database_accessed": false,
+    "production_database_mutated": false,
+    "main_merged": false,
+    "production_deployed": false,
+    "secrets_in_changes_or_logs": false,
+    "original_ide_files_preserved": 52,
+    "original_ide_head_and_documents_preserved": true
+  },
+  "not_verified": [
+    "real Google OAuth completion and real account chooser UI",
+    "cloud PostgREST and live Realtime across real clients",
+    "real iOS/Android IME and safe-area hardware behavior",
+    "production authenticated data and deployment"
+  ],
+  "scope_choices": {
+    "record_filters": "loaded pages only; no publication/private => private; followers/public => published; disjoint partition",
+    "blocked_user_labels": "existing API returns opaque blocked IDs; display ordinal labels without exposing Auth UUID or changing RLS",
+    "public_profile_preview": "public identity header preview; posts remain visitor-permission dependent",
+    "own_posts_subscription": "only on explicit own-posts section; person-filtered reads and the existing shared invalidation subscriber; no global feed request from profile entry"
+  },
+  "review": {
+    "baseline_head": "f343e6e753a8e8144ed0cf38148bbba951cc2f9a",
+    "previous_code_sha": "cbfce0e4564a4799a5892c0a5b0ffa42a75b654e",
+    "implementation_code_sha": "1a03ca832329a356fa15a615af568958244c911e",
+    "blanket_profile_line_height_removed": true,
+    "production_line_classifier_unchanged": true,
+    "independent_character_range_measurement": true,
+    "attribute_only_check": false,
+    "target_cases": 16,
+    "forced_incorrect_multiline_normal_controls": 4,
+    "record_classification": {
+      "private": [
+        "no publication",
+        "private"
+      ],
+      "published": [
+        "followers",
+        "public"
+      ],
+      "mutually_exclusive": true,
+      "status_labels": [
+        "나만 보기",
+        "팔로워 공개",
+        "전체 공개"
+      ]
+    },
+    "scope_edit_and_withdraw_unchanged": true,
+    "preserved_since_review": [
+      "SQL/RLS/Realtime/publication IDs/delete policies",
+      "MusicSocial feed simplification",
+      "App routing and icon navigation",
+      "MyProfile layout",
+      "Google session integration"
+    ],
+    "main_merged": false,
+    "production_deployed": false
+  }
+}

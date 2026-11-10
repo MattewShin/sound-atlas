@@ -16,7 +16,7 @@ export async function verifyReferenceTrackInteractions(App) {
   dom.window.requestAnimationFrame = (callback) => dom.window.setTimeout(callback, 0)
   const doc = dom.window.document
   const flush = async (action) => React.act(async () => { action?.(); await new Promise((resolve) => setTimeout(resolve, 10)) })
-  const button = (label) => [...doc.querySelectorAll('button')].find((node) => node.textContent.trim() === label)
+  const button = (label) => [...doc.querySelectorAll('button')].find((node) => (node.getAttribute('aria-label') || node.textContent.trim()) === label)
   const click = async (node) => { assert.ok(node, '선택할 요소 존재'); await flush(() => node.click()) }
   const chooseLevel = async (index) => {
     const toggle = doc.querySelector('.exploration-level-switch')

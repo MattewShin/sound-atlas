@@ -18,7 +18,7 @@ export async function verifyMusicSelectionInteractions(App) {
   dom.window.scrollTo = () => {}
   dom.window.requestAnimationFrame = (callback) => dom.window.setTimeout(callback, 0)
   const flush = async (action) => React.act(async () => { action?.(); await new Promise((resolve) => setTimeout(resolve, 10)) })
-  const button = (label) => [...dom.window.document.querySelectorAll('button')].find((node) => node.textContent.trim() === label)
+  const button = (label) => [...dom.window.document.querySelectorAll('button')].find((node) => (node.getAttribute('aria-label') || node.textContent.trim()) === label)
   const pressed = (label) => button(label).getAttribute('aria-pressed') === 'true'
   const featured = () => {
     const title = dom.window.document.querySelector('.featured-track h2')?.cloneNode(true)
