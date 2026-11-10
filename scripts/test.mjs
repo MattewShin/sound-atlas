@@ -1,4 +1,5 @@
 import '../server/concertBrowser.test.mjs'
+import './recordVisibility.test.mjs'
 import '../server/ocrRetirement.test.mjs'
 import '../server/programText.test.mjs'
 import '../server/programTextCoordinator.test.mjs'

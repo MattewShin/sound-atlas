@@ -1,4 +1,5 @@
 import test from 'node:test'
+import './recordVisibility.test.mjs'
 import { build } from 'esbuild'
 import { mkdirSync, writeFileSync, unlinkSync } from 'node:fs'
 import { verifyProfileIa, verifyProfileSetup, verifySwitchFailure } from './profileIaDomTest.mjs'

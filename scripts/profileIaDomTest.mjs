@@ -13,6 +13,10 @@ export async function verifyProfileIa(components) {
   for (const k of names) Object.defineProperty(globalThis,k,{ value: k === 'window' ? dom.window : k === 'IS_REACT_ACT_ENVIRONMENT' ? true : dom.window[k], configurable: true, writable: true })
   dom.window.scrollTo = () => {}; dom.window.HTMLElement.prototype.scrollIntoView = function () { this.dataset.scrolled = 'true' }
   const doc = dom.window.document, fixture = profileFixture(), {state, db, api} = fixture
+  state.shares.push(
+    {id:'44444444-4444-4444-8444-444444444444',source_record_id:'record-1',visibility:'private'},
+    {id:'55555555-5555-4555-8555-555555555555',source_record_id:'record-2',visibility:'followers'},
+  )
   let root
   const flush = async action => React.act(async () => { action?.(); await new Promise(resolve => setTimeout(resolve,40)) })
   const button = name => [...doc.querySelectorAll('button')].find(b => (b.getAttribute('aria-label') || b.textContent.trim()) === name)
@@ -35,8 +39,17 @@ export async function verifyProfileIa(components) {
     assert.deepEqual([...doc.querySelectorAll('.my-profile > section > h2')].map(h => h.textContent),['공개 프로필','내 기록','나의 음악 취향','활동 관리'])
     assert(button('다른 Google 계정으로 전환')); assert(button('로그아웃')); assert.equal(doc.querySelector('.account-panel').lastElementChild.className,'account-danger')
     assert.equal(doc.querySelectorAll('.music-journal-entry').length,10)
-    await click('공유 중'); assert.equal(doc.querySelectorAll('.music-journal-entry').length,1)
-    await click('나만 보기'); assert.equal(doc.querySelectorAll('.music-journal-entry').length,9)
+    assert(!doc.querySelector('.record-filters').textContent.includes('공유 중'))
+    assert(!doc.querySelector('.music-journal-list').textContent.includes('공유 중 ·'))
+    const allRows = [...doc.querySelectorAll('.music-journal-entry .music-journal-entry-body')].map(p => p.textContent)
+    assert.equal(doc.querySelectorAll('.music-shared-status > p')[1].textContent.split(' · ')[0],'나만 보기')
+    assert.equal(doc.querySelectorAll('.music-shared-status > p')[2].textContent.split(' · ')[0],'팔로워 공개')
+    await click('공개 중'); assert.equal(doc.querySelectorAll('.music-journal-entry').length,2)
+    const publicRows = [...doc.querySelectorAll('.music-journal-entry .music-journal-entry-body')].map(p => p.textContent)
+    await click('나만 보기'); assert.equal(doc.querySelectorAll('.music-journal-entry').length,8)
+    const privateRows = [...doc.querySelectorAll('.music-journal-entry .music-journal-entry-body')].map(p => p.textContent)
+    assert(privateRows.every(body => !publicRows.includes(body)))
+    assert.deepEqual([...privateRows,...publicRows].sort(),allRows.sort(),'the two filters partition the loaded records, including private publications')
     await click('전체'); await click('기록 더 보기'); assert.equal(doc.querySelectorAll('.music-journal-entry').length,11)
     const beforeShare = state.posts[0].body
     await click('수정'); await input(doc.querySelector('.music-journal-form textarea'),'변경한 합성 개인 기록')
@@ -44,6 +57,11 @@ export async function verifyProfileIa(components) {
     assert.equal(state.posts[0].body,beforeShare,'editing the private record does not change the snapshot')
     await click('공개 범위 변경'); await flush(); await input(doc.querySelector('form[aria-label="공개 범위 변경"] select'),'followers')
     await click('변경 전 확인'); await click('내 팔로워로 변경 확정'); assert.equal(state.posts[0].visibility,'followers')
+    await click('공개 범위 변경'); await flush(); await input(doc.querySelector('form[aria-label="공개 범위 변경"] select'),'private')
+    await click('변경 전 확인'); await click('나만 보기로 변경 확정'); assert.equal(state.posts[0].visibility,'private')
+    await click('공개 중'); assert.equal(doc.querySelectorAll('.music-journal-entry').length,1)
+    await click('나만 보기'); assert.equal(doc.querySelectorAll('.music-journal-entry').length,9)
+    await click('전체')
     await click('공유 취소'); await click('공유 취소 확정'); assert.equal(state.posts.length,0); assert(state.records.some(r => r.id === 'record-0'))
     await click('기록 남기기'); await input(doc.querySelector('.music-journal-form textarea'),'합성 새 기록')
     await flush(() => doc.querySelector('.music-journal-form').dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true})))

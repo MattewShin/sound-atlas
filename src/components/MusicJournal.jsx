@@ -5,6 +5,7 @@ import { listMyMusicShares, sharingError, storyUrl, withdrawMusicRecord } from '
 import { CopyStoryLink, musicRecordTitle, notifySharingChanged, ShareMusicRecord } from './MusicSharing.jsx'
 import { tracks } from '../data/musicData.js'
 import { getSocialApi, socialScopes } from '../data/socialClient.js'
+import { recordMatchesFilter, recordVisibilityLabel } from './musicRecordVisibility.js'
 
 // Keyed by user and track: late requests and drafts can never enter another account's screen.
 export function MusicJournalRecords({ userId, trackId, client = supabase, onOpenTrack }) {
@@ -124,7 +125,7 @@ export function MusicJournalRecords({ userId, trackId, client = supabase, onOpen
       setNotice(null); setError(null); setDeleteTarget(null)
       setDraft({ id: crypto.randomUUID(), track_id: trackId || '', kind: 'free', body: '', recorded_on: journalDate(), revision: 0 })
     }}>기록 남기기</button></div>
-    {!trackId && <div className="record-filters" role="group" aria-label="내 기록 필터">{[['all','전체'],['private','나만 보기'],['shared','공유 중']].map(([value, label]) => <button key={value} disabled={sharesLoading || Boolean(sharesError)} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>)}{filter !== 'all' && <p>불러온 기록 중 해당 상태를 표시해요. 다음 기록은 더 보기로 확인하세요.</p>}</div>}
+    {!trackId && <div className="record-filters" role="group" aria-label="내 기록 필터">{[['all','전체'],['private','나만 보기'],['public','공개 중']].map(([value, label]) => <button key={value} disabled={sharesLoading || Boolean(sharesError)} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>)}{filter !== 'all' && <p>불러온 기록 중 해당 상태를 표시해요. 다음 기록은 더 보기로 확인하세요.</p>}</div>}
     {draft && <form className="music-journal-form" onSubmit={save}>
       <strong>{musicRecordTitle(draft.track_id || trackId)}</strong>
       {!trackId && <label>등록된 곡<select required disabled={draft.revision > 0 || busy} value={draft.track_id} onChange={event => setDraft({ ...draft, track_id: event.target.value })}><option value="">곡을 선택해주세요</option>{tracks.map(track => <option key={track.id} value={track.id}>{musicRecordTitle(track.id)}</option>)}</select></label>}
@@ -139,15 +140,15 @@ export function MusicJournalRecords({ userId, trackId, client = supabase, onOpen
     {error && <div className="music-journal-error" role="alert"><p>{error}</p><button type="button" disabled={busy || loading} onClick={() => { void load(); void loadShares() }}>기록 새로고침</button></div>}
     {loading && <p role="status">기록을 불러오는 중…</p>}
     {!loading && !error && records.length === 0 && <p>{trackId ? '아직 이 곡에 남긴 기록이 없어요.' : '아직 남긴 기록이 없어요. 곡 상세에서 첫 기록을 남겨보세요.'}</p>}
-    <div className="music-journal-list">{records.filter(record => { const shared = shares.find(s => s.source_record_id === record.id); return filter === 'all' || (filter === 'shared' ? Boolean(shared) : !shared || shared.visibility === 'private') }).map((record) => {
+    <div className="music-journal-list">{records.filter(record => recordMatchesFilter(shares.find(s => s.source_record_id === record.id), filter)).map((record) => {
       const publication = shares.find(({ source_record_id }) => source_record_id === record.id)
       const track = tracks.find(({ id }) => id === record.track_id)
       return <article className="music-journal-entry" key={record.id}>
       {!trackId && <h3 className="music-journal-track-title">{track && onOpenTrack ? <button type="button" onClick={() => onOpenTrack(track)}>{musicRecordTitle(record.track_id)}</button> : musicRecordTitle(record.track_id)}</h3>}
       <div className="music-journal-entry-meta"><time dateTime={record.recorded_on}>{record.recorded_on.replaceAll('-', '. ')}</time><span>{JOURNAL_KINDS.find(({ value }) => value === record.kind)?.label || '자유 기록'}</span>{record.revision > 1 && <small>수정됨</small>}</div>
       <p className="music-journal-entry-body">{record.body}</p>
-      {!publication && <p className="record-private-status">나만 보기</p>}
-      {publication && <div className="music-shared-status"><p>공유 중 · {({ private: '나만 보기', public: '전체 공개', followers: '팔로워 공개' })[publication.visibility] ?? '범위 확인 필요'} · 공유한 글은 내 기록 수정과 별도로 유지돼요.</p><a href={storyUrl(publication.id)}>공유본 확인</a> <CopyStoryLink id={publication.id} /><button disabled={editing || sharesLoading} onClick={() => setScopeTarget(publication)}>공개 범위 변경</button></div>}
+      {!publication && <p className="record-private-status">{recordVisibilityLabel(publication)}</p>}
+      {publication && <div className="music-shared-status"><p>{recordVisibilityLabel(publication)} · 공유한 글은 내 기록 수정과 별도로 유지돼요.</p><a href={storyUrl(publication.id)}>공유본 확인</a> <CopyStoryLink id={publication.id} /><button disabled={editing || sharesLoading} onClick={() => setScopeTarget(publication)}>공개 범위 변경</button></div>}
       <div className="music-journal-actions"><button type="button" disabled={editing} onClick={() => { setDraft({ ...record }); setError(null); setNotice(null); setDeleteTarget(null); setWithdrawTarget(null) }}>수정</button><button type="button" disabled={editing} onClick={() => { setDeleteTarget(record); setNotice(null); setWithdrawTarget(null) }}>삭제</button>
       {publication ? <button type="button" disabled={editing || sharesLoading} onClick={() => { setWithdrawTarget(publication); setDeleteTarget(null) }}>공유 취소</button> : <button type="button" disabled={editing || sharesLoading || Boolean(sharesError)} onClick={() => { setShareTarget(record); setDeleteTarget(null); setWithdrawTarget(null); setNotice(null) }}>선택한 기록 공유</button>}</div>
       {scopeTarget?.id === publication?.id && scopeTarget && <RecordScopeEditor key={publication.id} publication={publication} client={client} onClose={() => setScopeTarget(null)} onSaved={() => { setScopeTarget(null); notifySharingChanged(); void loadShares() }} />}

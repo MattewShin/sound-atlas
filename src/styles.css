@@ -551,7 +551,7 @@ small { font-size: 12px; }
 .profile-section { min-width: 0; padding: 20px 16px; border: 1px solid #d6dccf; border-radius: 18px; background: #fffaf2; color: #263b36; overflow-wrap: anywhere; }
 .profile-section h2 { margin: 0 0 16px; font-size: 22px; scroll-margin-top: 20px; }
 .profile-section h3 { font-size: 18px; }
-.profile-section p, .profile-section a, .profile-section button { font-size: 16px; line-height: normal; }
+.profile-section p, .profile-section a, .profile-section button { font-size: 16px; }
 .profile-section button, .profile-section a, .profile-section summary { min-height: 44px; }
 .profile-section button, .profile-section a { display: inline-flex; align-items: center; justify-content: center; padding: 10px 12px; margin: 4px 4px 4px 0; border: 1px solid #b8c9b7; border-radius: 10px; color: #245a53; background: #f7f3eb; text-align: left; }
 .profile-section input, .profile-section select, .profile-section textarea { max-width: 100%; min-width: 0; font-size: 16px; }
