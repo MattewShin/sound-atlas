@@ -3,10 +3,10 @@
   "specification": 1,
   "status": "IMPLEMENTED",
   "result": "PASS",
-  "code_sha": "45f31bff938b820d1cda81b0a28af5d688b0211f",
+  "code_sha": "fda3efa7c750eaed9e9b3793b0fc18f887aceae0",
   "branch": "codex/ca-profile-dashboard-ia-20261110-001",
   "baseline_main": "fe73abfccd4aafa62dedadbbaed3e1fa4abe099d",
-  "recorded_at": "2026-11-10 14:55:59 KST",
+  "recorded_at": "2026-11-10 16:34:43 KST",
   "environment": "Windows / Node 22 / isolated worktree / synthetic transports / local Chromium only",
   "tests": {
     "full": {
@@ -33,16 +33,18 @@
       ],
       "page_errors": 0,
       "target_checks": 21,
-      "negative_controls": 3
+      "negative_controls": 3,
+      "management_return_checks": 12,
+      "relationship_counts_noninteractive": true
     },
     "production_build": "PASS",
     "build_warning": "existing chunk >500kB"
   },
   "log_sha256": {
-    "full-verified": "68ae9a2d5845a1ffc782e2d8d8037b8c5acf956d28b954b74ad078ceb3783294",
-    "social-verified": "826d1a9ae8bb7bd1642ea03e4acaf692cc676e9757658cac164908182f394ec6",
-    "profile-verified": "4f137d0210878ca9816fcf2b2b6ba8ae854867f0139b00b2027c9a5d72c538c7",
-    "build-verified": "92be11f7c1af400de630e019ced2b34e8e8873861617b9d9e27f7f6382514bde"
+    "full-review": "55ad1c6d478785ed177c8b9f10a2bba2f91b76e05ef33c7c90c28487b653031e",
+    "social-review": "a347f5be039557cc96336e4cd3b638c72b73554896518a58f9b2d835315bf8c8",
+    "profile-review": "ef0b76067cc763c1225e2e5a8f30c0b21f9434d8f43cab229babe98f372d708a",
+    "build-review": "777e02b3994d0dff3f34c6717daf56ab4bfcb4076a8c2edc5a558ca76a72fbec"
   },
   "safety": {
     "secret_values_in_changes_or_test_logs": false,
@@ -67,5 +69,11 @@
     "number": 26,
     "url": "https://github.com/MattewShin/sound-atlas/pull/26",
     "draft": true
-  }
+  },
+  "initial_code_sha": "45f31bff938b820d1cda81b0a28af5d688b0211f",
+  "review_base_head": "5e32e6d04255ff1a32ccba7bb8762a2e6243598c",
+  "review_changes": [
+    "relationship counts are noninteractive text; separate preview link retained",
+    "edit/preview/blocked/privacy primary back link targets settings; native history preserved"
+  ]
 }

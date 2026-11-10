@@ -39,8 +39,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 29,
-      "single_line_nodes": 19,
+      "visible_text_nodes": 27,
+      "single_line_nodes": 17,
       "multiline_nodes": 5
     },
     {
@@ -117,8 +117,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 29,
-      "single_line_nodes": 19,
+      "visible_text_nodes": 27,
+      "single_line_nodes": 17,
       "multiline_nodes": 5
     },
     {
@@ -234,8 +234,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 29,
-      "single_line_nodes": 20,
+      "visible_text_nodes": 27,
+      "single_line_nodes": 18,
       "multiline_nodes": 4
     },
     {
@@ -260,8 +260,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 24,
-      "single_line_nodes": 15,
+      "visible_text_nodes": 22,
+      "single_line_nodes": 13,
       "multiline_nodes": 4
     },
     {
@@ -338,8 +338,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 29,
-      "single_line_nodes": 20,
+      "visible_text_nodes": 27,
+      "single_line_nodes": 18,
       "multiline_nodes": 4
     },
     {
@@ -416,8 +416,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 29,
-      "single_line_nodes": 20,
+      "visible_text_nodes": 27,
+      "single_line_nodes": 18,
       "multiline_nodes": 4
     },
     {
@@ -533,8 +533,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 29,
-      "single_line_nodes": 20,
+      "visible_text_nodes": 27,
+      "single_line_nodes": 18,
       "multiline_nodes": 4
     },
     {
@@ -559,8 +559,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 24,
-      "single_line_nodes": 15,
+      "visible_text_nodes": 22,
+      "single_line_nodes": 13,
       "multiline_nodes": 4
     },
     {
@@ -637,8 +637,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 29,
-      "single_line_nodes": 20,
+      "visible_text_nodes": 27,
+      "single_line_nodes": 18,
       "multiline_nodes": 4
     },
     {
@@ -715,8 +715,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 29,
-      "single_line_nodes": 20,
+      "visible_text_nodes": 27,
+      "single_line_nodes": 18,
       "multiline_nodes": 4
     },
     {
@@ -832,8 +832,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 29,
-      "single_line_nodes": 20,
+      "visible_text_nodes": 27,
+      "single_line_nodes": 18,
       "multiline_nodes": 4
     },
     {
@@ -858,8 +858,8 @@
       "equal_widths_and_centering": true,
       "accessible_names_and_active_page": true,
       "typography": "PASS",
-      "visible_text_nodes": 24,
-      "single_line_nodes": 15,
+      "visible_text_nodes": 22,
+      "single_line_nodes": 13,
       "multiline_nodes": 4
     },
     {
@@ -1107,6 +1107,273 @@
       "forced_multiline_normal_rejected": true
     }
   ],
+  "management_returns": [
+    {
+      "width": 320,
+      "child": "preview",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 300,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 320,
+      "child": "edit",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 300,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 320,
+      "child": "blocked",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 300,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 320,
+      "child": "privacy",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 300,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 375,
+      "child": "preview",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 355,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 375,
+      "child": "edit",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 355,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 375,
+      "child": "blocked",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 355,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 375,
+      "child": "privacy",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 355,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 390,
+      "child": "preview",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 370,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 390,
+      "child": "edit",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 370,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 390,
+      "child": "blocked",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 370,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    },
+    {
+      "width": 390,
+      "child": "privacy",
+      "label": "← 설정",
+      "href": "#profile/settings",
+      "back": {
+        "left": 20,
+        "right": 64.375,
+        "top": 44,
+        "bottom": 88,
+        "width": 44.375,
+        "height": 44
+      },
+      "title": {
+        "left": 20,
+        "right": 370,
+        "top": 96,
+        "bottom": 130
+      },
+      "returned_to_settings": true,
+      "native_back_forward": true
+    }
+  ],
+  "relationship_counts_noninteractive": true,
   "browser_back_forward_reload": "PASS",
   "navigation_overlay": "PASS",
   "page_errors": 0,
@@ -1115,7 +1382,8 @@
   "real_realtime": false,
   "real_device_ime": false,
   "production_requests": 0,
-  "code_sha": "45f31bff938b820d1cda81b0a28af5d688b0211f",
+  "code_sha": "fda3efa7c750eaed9e9b3793b0fc18f887aceae0",
   "branch": "codex/ca-profile-dashboard-ia-20261110-001",
-  "recorded_at": "2026-11-10 14:55:59 KST"
+  "recorded_at": "2026-11-10 16:34:43 KST",
+  "review_base_head": "5e32e6d04255ff1a32ccba7bb8762a2e6243598c"
 }

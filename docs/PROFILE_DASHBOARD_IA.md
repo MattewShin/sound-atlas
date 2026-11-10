@@ -2,7 +2,7 @@
 
 게시: [Draft PR #26](https://github.com/MattewShin/sound-atlas/pull/26) · 브랜치 `codex/ca-profile-dashboard-ia-20261110-001`. 원격에 반영했으며 main은 병합하지 않았다.
 
-**CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세1 / IMPLEMENTED**. 기능·테스트 SHA는 `45f31bff938b820d1cda81b0a28af5d688b0211f`, 기준 main은 `fe73abfccd4aafa62dedadbbaed3e1fa4abe099d`다. 브랜치 `codex/ca-profile-dashboard-ia-20261110-001`에서 구현했다. [검증 JSON](PROFILE_DASHBOARD_IA_VERIFICATION_2026-11-10.json), [모바일 실측 JSON](PROFILE_DASHBOARD_MOBILE_2026-11-10.json), [HANDOFF](../HANDOFF.md)를 함께 읽는다. 자체 구현 완료이며 검토자의 ACCEPTED는 아니다.
+**CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세1 / IMPLEMENTED**. 기능·테스트 SHA는 `fda3efa7c750eaed9e9b3793b0fc18f887aceae0`, 기준 main은 `fe73abfccd4aafa62dedadbbaed3e1fa4abe099d`다. 브랜치 `codex/ca-profile-dashboard-ia-20261110-001`에서 구현했다. [검증 JSON](PROFILE_DASHBOARD_IA_VERIFICATION_2026-11-10.json), [모바일 실측 JSON](PROFILE_DASHBOARD_MOBILE_2026-11-10.json), [HANDOFF](../HANDOFF.md)를 함께 읽는다. 자체 구현 완료이며 검토자의 ACCEPTED는 아니다.
 
 ## 기존 문제와 신규 구조
 
@@ -24,7 +24,7 @@
 | 기존 기능 | 새 위치와 동작 |
 | --- | --- |
 | 프로필 이미지·공개 닉네임·@아이디 | 홈 상단. 이미지 없음은 기존 기본 아바타. Google 이름·이메일은 이 영역에서 사용하지 않는다. |
-| 팔로워·팔로잉 개수 | 홈에 표시하고 공개 프로필 미리보기로 이동한다. 기존 API는 숫자만 제공하므로 새로운 관계 목록/API는 만들지 않았다. |
+| 팔로워·팔로잉 개수 | 홈에 비대화형 텍스트로 표시한다. 숫자에는 링크·버튼·tabindex가 없고 관계 목록 기능은 추가하지 않았다. 공개 프로필 미리보기는 별도 명시적 링크로만 제공한다. |
 | 공개 프로필 만들기·수정 | 홈의 버튼/설정 메뉴 → `#profile/edit`. 기본 화면에 폼 없음. 기존 고정 닉네임·아이디 형식/중복 검증·이미지 URL 처리는 유지한다. 저장 실패 시 폼 입력을 유지한다. |
 | 타인에게 보이는 프로필 확인 | 홈 링크/설정 메뉴 → `#profile/preview`. 기존처럼 공개 헤더와 범위 안내를 표시하며 다른 방문자 권한을 가장하지 않는다. |
 | 내 기록 개수·최근 기록 | 홈에 전체/나만 보기/공개 중 개수와 최근 최대 3개. 곡명으로 기존 상세를 열 수 있다. 본문 미리보기는 최대 80자다. |
@@ -51,7 +51,7 @@
 | `#profile/records/private`, `#profile/records/public` | 해당 필터를 첫 페이지부터 복원 |
 | `#profile/posts` | `replaceState`로 `#profile/records/public`에 정규화. 뒤로 가기에서 옛 주소와 반복 이동하지 않음 |
 | `#profile/taste`, `#profile/settings` | 해당 하위 화면 직접 진입 |
-| `#profile/edit`, `preview`, `blocked`, `privacy` | 각각 독립 주소. 모든 하위 화면에 ‘내 프로필 홈’ 링크 |
+| `#profile/edit`, `preview`, `blocked`, `privacy` | 각각 독립 주소. 네 관리 하위 화면의 주 복귀 링크는 ‘← 설정’ → `#profile/settings`. 나머지 기록/취향/설정 화면은 ‘내 프로필 홈’으로 복귀 |
 | 알 수 없는 프로필 하위 주소 | 홈으로 안전하게 표시 |
 | `#music/post/...`, `#music/track/...`, `#music/profile/...`, 기존 story 링크 | 기존 SNS/공유 경로 유지. 자신의 SNS 프로필 링크는 기존처럼 홈으로 이동 |
 
@@ -106,7 +106,7 @@ App의 hash 해석은 첫 하위 조각만 읽던 방식에서 전체 하위 경
 - 실제 Google OAuth 로그인 완료·계정 선택/전환은 미검증이다. 호출 순서·prompt·실패·로컬 정리만 합성 Auth로 검증했다.
 - 실제 클라우드 PostgREST/RLS와 Realtime 다중 접속·재연결은 이번 작업에서 호출하지 않았다. 기존 SQL/계약/클라이언트·DOM 검증과 실제 운영 검증을 구분한다.
 - 실제 모바일 기기 IME·가상 키보드 높이·iOS Safari/PWA는 미검증이다. Chromium viewport/focus 검사는 실기기 인증이나 IME 검사가 아니다.
-- 팔로워/팔로잉 개수는 기존 공개 헤더 화면으로 연결한다. 개별 관계 목록 제공은 이번 구현 범위에 추가하지 않았다.
+- 팔로워/팔로잉 개수는 비대화형 요약이다. 개별 관계 목록 제공은 이번 구현 범위에 추가하지 않았다.
 - 동시 쓰기에 대한 원자적 통계와 offset 페이지 사이 변경 해결은 기존 API 범위의 한계로 남긴다.
 
 **DB migration 불필요·추가0.** user_music_journal/music_record_publications schema·RLS·RPC·공유 링크 ID·삭제/cascade 정책·Realtime publication·OAuth provider/환경변수 변경0. 운영 DB 접속/자료 생성·공개·수정·삭제, main 병합, 운영 배포를 실행하지 않았다. 사용자 자료의 실제 API 검증이나 배포는 별도 승인 범위다. 기존 운영 완료 보고는 [이전 보고서](NAV_PROFILE_IA_PRODUCTION_2026-11-10.md), 이전 CURRENT_TASK/HANDOFF는 [명세2 보관](collaboration/archive/CA-NAV-PROFILE-IA-20261110-001/spec2/CURRENT_TASK.md)에서 확인한다.
@@ -114,3 +114,20 @@ App의 hash 해석은 첫 하위 조각만 읽던 방식에서 전체 하위 경
 ## 검토 요청·되돌리기
 
 홈의 정보 우선순위, 하위 화면 이동, private 공유본을 포함한 기존 배타적 분류, 공개 글 관리 기능 보존을 검토해달라. 변경은 UI·인증된 소유자 SELECT 조합뿐이다. 문제가 있으면 이 작업의 기능 커밋을 되돌려 이전 UI로 복구할 수 있고 DB 역 migration은 필요 없다. 기능 SHA 이후의 추가 커밋은 문서·검증 증거만 포함하며 최종 PR HEAD는 GitHub PR 메타데이터와 완료 응답에 기록한다.
+
+## PR #26 명세1 검토 보완 — 2026-11-10 16:34:43 KST
+
+검토 기준 HEAD는 5e32e6d04255ff1a32ccba7bb8762a2e6243598c, 최초 구현 SHA는 45f31bff938b820d1cda81b0a28af5d688b0211f, 이번 수정 SHA는 fda3efa7c750eaed9e9b3793b0fc18f887aceae0다. 관계 숫자 링크로 목록 진입을 오해할 수 있다는 검토를 반영해 숫자를 비대화형 span으로 바꿨다. 별도의 ‘다른 사용자에게 보이는 내 프로필 확인’ 링크는 유지했다. 관계 목록/API는 추가하지 않았다.
+
+설정의 edit/preview/blocked/privacy 네 관리 화면은 상단 주 복귀를 ‘← 설정’/`#profile/settings`로 통일했다. 관리 화면을 홈에서 직접 열었어도 주 복귀 목적지는 설정이며, 실제 이전 방문 화면은 브라우저 뒤로/앞으로 가기로 그대로 돌아간다. 링크에 별도 history 차단 처리를 넣지 않았다. 전역 ‘내 프로필’ 메뉴로 홈에도 이동할 수 있다. 복귀 링크의 좌우 padding을 조정해 제목과 왼쪽 시작점을 맞췄고 44px 터치 영역을 유지했다.
+
+기존 전체170/170·SNS5/5·프로필8/8·production build를 이 수정 코드에서 다시 실행해 PASS(fail/skip0). 기존 mobile69/69도 재실행했고, 네 화면×세 너비의 별도12건에서 링크 텍스트/href·44px 영역·제목과 왼쪽 정렬·수직 비중첩·설정 복귀·실제 브라우저 뒤로/앞으로를 확인했다. 관계 숫자에 링크/버튼/role=link/tabindex가 없고 명시적 미리보기 링크가 남아 있는지 DOM과 실제 Chromium 양쪽에서 검사했다. 기존 타이포그래피/넘침 검증을 유지했다. 안전 검사와 원래 IDE52개 보존 검사를 다시 통과했다.
+
+| 관리 화면 | 320px | 375px | 390px |
+| --- | --- | --- | --- |
+| 프로필 수정 | [화면](profile-dashboard-20261110/back-edit-320.png) | [화면](profile-dashboard-20261110/back-edit-375.png) | [화면](profile-dashboard-20261110/back-edit-390.png) |
+| 공개 프로필 미리보기 | [화면](profile-dashboard-20261110/back-preview-320.png) | [화면](profile-dashboard-20261110/back-preview-375.png) | [화면](profile-dashboard-20261110/back-preview-390.png) |
+| 차단 관리 | [화면](profile-dashboard-20261110/back-blocked-320.png) | [화면](profile-dashboard-20261110/back-blocked-375.png) | [화면](profile-dashboard-20261110/back-blocked-390.png) |
+| 개인정보 안내 | [화면](profile-dashboard-20261110/back-privacy-320.png) | [화면](profile-dashboard-20261110/back-privacy-375.png) | [화면](profile-dashboard-20261110/back-privacy-390.png) |
+
+검증은 로컬 합성 환경이며 실제 OAuth/클라우드 PostgREST·Realtime/실기기 IME 미검증은 그대로다. DB migration/운영 DB/설정/실제 사용자 자료·main 병합·운영 배포 변경0. 같은 PR #26과 기존 작업 브랜치에 반영한다.
