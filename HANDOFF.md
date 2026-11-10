@@ -5,6 +5,7 @@
 - 브랜치: `codex/ca-nav-profile-ia-20261110-001`
 - 기준 main: `465173d2e2e41ee58f387b18b6897a3e29cbaff9`
 - 기능·테스트 코드 전체 SHA: **`cbfce0e4564a4799a5892c0a5b0ffa42a75b654e`**
+- 게시: [Draft PR #24](https://github.com/MattewShin/sound-atlas/pull/24), head `codex/ca-nav-profile-ia-20261110-001`, base main. 기능 SHA 이후는 문서 보완뿐이다.
 - 원래 IDE: codex/ca-social-20261106-001 / `8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e`, 기존 파일52개·HEAD·문서·미커밋/비추적 변경 보존. 별도 worktree에서 진행했다.
 - 결과: [정보 구조·코드·보존·한계](docs/NAV_PROFILE_IA.md), [검증 JSON](docs/NAV_PROFILE_IA_VERIFICATION_2026-11-10.json), [사용자 명세](docs/NAV_PROFILE_IA_SPEC.md)
 
@@ -30,4 +31,4 @@ App·MusicSocial·MusicJournal·MusicSharing·useGoogleAuth·styles, 신규 MyPr
 
 ## 게시·다음 검토
 
-변경 코드와 문서만 지정 브랜치에 push하고 Draft PR로 검토한다. 기능 SHA 이후 변경은 문서뿐이다. main 병합·운영 DB·운영 배포는 하지 않는다. 검토자는 프로필 공개/계정 정보 분리, 필터의 불러온 범위 표시, 딥링크/뒤로가기와 세션/구독 경계, 합성 모바일 결과 및 실 OAuth/PostgREST/Realtime 미검증을 확인하면 된다. 문서 저장 HEAD/PR 번호는 GitHub 이력과 최종 게시 보고를 따른다.
+변경 코드와 문서를 지정 브랜치에 push하고 Draft PR #24로 게시했다. 기능 SHA 이후 변경은 문서뿐이다. main 병합·운영 DB·운영 배포는 하지 않았다. 검토자는 프로필 공개/계정 정보 분리, 필터의 불러온 범위 표시, 딥링크/뒤로가기와 세션/구독 경계, 합성 모바일 결과 및 실 OAuth/PostgREST/Realtime 미검증을 확인하면 된다. 최신 문서 저장 HEAD는 GitHub 이력과 최종 게시 보고를 따른다.
