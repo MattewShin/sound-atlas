@@ -581,3 +581,38 @@ small { font-size: 12px; }
 .profile-records .music-journal-toolbar { flex-wrap: wrap; }
 .profile-records .music-journal-form, .profile-records .music-share-editor { min-width: 0; }
 .social-join { margin-top: 20px; padding: 16px 0; border-top: 1px solid #d6dccf; }
+
+/* Profile dashboard: bounded summary, with forms and full lists on child routes. */
+.profile-dashboard-header { min-height: 0; padding-block: 28px 16px; }
+.profile-dashboard-header h1 { font-size: 28px; margin-bottom: 0; }
+.my-profile { gap: 24px; }
+.my-profile a, .my-profile button { min-width: 44px; min-height: 44px; }
+.my-profile a { color: #245a53; }
+.my-profile button, .my-profile a, .profile-back { overflow-wrap: anywhere; }
+.profile-back, .profile-action, .profile-preview-link, .profile-social-counts a { display: inline-flex; align-items: center; padding: 12px 8px; font-size: 16px; }
+.profile-back { min-height: 44px; }
+.profile-dashboard-header .profile-back { color: #fffaf2; }
+.profile-home-identity, .profile-recent { min-width: 0; color: #263b36; overflow-wrap: anywhere; }
+.profile-home-identity .profile-action { border: 1px solid #b8c9b7; border-radius: 10px; padding-inline: 16px; }
+.profile-preview-link { display: flex; width: fit-content; }
+.profile-social-counts { display: flex; flex-wrap: wrap; gap: 8px; }
+.profile-menu { min-width: 0; border-block: 1px solid #d6dccf; }
+.profile-menu-row { display: grid; grid-template-columns: 24px minmax(0, 1fr) 16px; align-items: center; gap: 12px; padding: 18px 4px; text-decoration: none; border-bottom: 1px solid #d6dccf; }
+.profile-menu-row:last-child { border-bottom: 0; }
+.profile-menu-row strong { display: block; font-size: 18px; }
+.profile-menu-row small { display: block; margin-top: 4px; font-size: 14px; color: #64756a; }
+.profile-record-counts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; margin: 12px 0; }
+.profile-record-counts dt { font-size: 14px; color: #64756a; }
+.profile-record-counts dd { margin: 0; font-size: 24px; }
+.profile-record-counts a { display: inline-flex; align-items: center; justify-content: center; padding: 8px; }
+.profile-recent h2, .profile-account > h2 { font-size: 22px; }
+.profile-recent ul { list-style: none; padding: 0; margin: 0; }
+.profile-recent li { padding: 12px 0; border-bottom: 1px solid #d6dccf; }
+.profile-recent li button { border: 0; background: transparent; color: #245a53; padding: 8px 0; text-align: left; font-size: 16px; }
+.profile-recent li time { display: block; font-size: 12px; color: #64756a; }
+.profile-recent li p { font-size: 14px; white-space: pre-wrap; margin: 8px 0; }
+.profile-view-settings .account-panel { margin: 0; }
+.profile-view-settings .account-secondary-button + .account-secondary-button { border-style: dashed; background: transparent; margin-top: 12px; }
+.profile-taste .preference-panel { padding: 0; border: 0; background: transparent; }
+.my-profile :is(a,button):focus-visible { outline: 2px solid #245a53; outline-offset: 3px; }
+.profile-view-records .profile-section { padding-inline: 12px; }

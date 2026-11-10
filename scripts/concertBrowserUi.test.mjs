@@ -25,7 +25,7 @@ test('browser UI enters without selected song, paginates/deduplicates, filters a
   await flush(()=>doc.querySelector('.concert-location-control').click());await flush(()=>[...doc.querySelectorAll('.region-choice-list button')].find(b=>b.textContent==='부산').click());assert.equal(dom.window.localStorage.getItem('classic-atlas-concert-region-v1'),'부산')
   const submit=()=>doc.querySelector('.concert-search-panel form').dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true}));mode='error';await flush(submit);assert.ok(doc.querySelector('[role="alert"]').textContent.includes('KOPIS 조회 실패'));assert.ok(!doc.body.textContent.includes('조건에 맞는 공연이 없어요'))
   mode='empty';await flush(()=>button('다시 시도').click());assert.ok(doc.body.textContent.includes('조건에 맞는 공연이 없어요'));assert.equal(calls.at(-1).searchParams.get('region'),'부산')
-  await flush(()=>button('보관함').click());assert.ok(!doc.body.textContent.includes('이 곡의 공연 찾기'));await flush(()=>button('내 프로필').click());assert.ok(doc.body.textContent.includes('아직 취향이 형성되지'))
+  await flush(()=>button('보관함').click());assert.ok(!doc.body.textContent.includes('이 곡의 공연 찾기'));await flush(()=>button('내 프로필').click());assert.ok(doc.querySelector('.profile-login'));assert.ok(doc.body.textContent.includes('Google로 로그인하면 내 기록과 취향'))
  }finally{if(root)await React.act(async()=>root.unmount());dom.window.close();for(const [n,d]of original){if(d)Object.defineProperty(globalThis,n,d);else delete globalThis[n]}}
 })
 test('independent detail supports missing booking/images and safe mobile image attributes',()=>{

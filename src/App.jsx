@@ -328,7 +328,7 @@ function App({ isLoggedIn: isLoggedInOverride, authClient = supabase, socialApi 
   const [initialMusicState] = useState(getInitialMusicState)
   const [storyId] = useState(() => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('story'))
   const [activeView, setActiveView] = useState(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('story') ? 'story' : typeof window !== 'undefined' && window.location.hash.startsWith('#music') ? 'social' : typeof window !== 'undefined' && window.location.hash.startsWith('#profile') ? 'taste' : 'explore')
-  const [profileSection, setProfileSection] = useState(() => typeof window === 'undefined' ? '' : window.location.hash.split('/')[1] || '')
+  const [profileSection, setProfileSection] = useState(() => typeof window === 'undefined' ? '' : window.location.hash.split('/').slice(1).join('/'))
   const openMyProfile = useCallback((section = '', { replace = false } = {}) => {
     const hash = section ? '#profile/' + section : '#profile'
     if (replace) window.history.replaceState(null, '', hash)
@@ -341,7 +341,7 @@ function App({ isLoggedIn: isLoggedInOverride, authClient = supabase, socialApi 
     const changed = () => {
       const hash = window.location.hash
       if (hash.startsWith('#music')) setActiveView('social')
-      else if (hash === '#profile' || hash.startsWith('#profile/')) { setProfileSection(hash.split('/')[1] || ''); setActiveView('taste') }
+      else if (hash === '#profile' || hash.startsWith('#profile/')) { setProfileSection(hash.split('/').slice(1).join('/')); setActiveView('taste') }
       else if (['#explore','#library','#concert',''].includes(hash)) setActiveView(hash.slice(1) || 'explore')
     }
     window.addEventListener('hashchange', changed); return () => window.removeEventListener('hashchange', changed)
@@ -707,7 +707,7 @@ function App({ isLoggedIn: isLoggedInOverride, authClient = supabase, socialApi 
       : activeView === 'recommendations' ? <RecommendationListScreen recommendedTracks={recommendedTracks} selectedKeys={activeKeys} selectedComposers={selectedComposers} onExpandComposers={expandComposers} isLibraryMode={isLibraryMode} visibleCount={recommendationVisibleCount} onLoadMore={loadMoreRecommendations} onBack={returnToExplore} onOpenTrack={openTrackDetail} isTrackSaved={isTrackSaved} onToggleSave={toggleTrackSave} /> : activeView === 'concert' ? concertDetailId
       ? <ConcertDetailScreen detail={concertSearch.detail} onBack={showConcerts} onRetry={() => concertSearch.loadDetail(concertDetailId, true)} />
       : <ConcertScreen search={concertSearch.search} region={concertRegion} onSelectRegion={changeConcertRegion} period={concertPeriod} onChangePeriod={changeConcertPeriod} keyword={concertKeyword} onChangeKeyword={setConcertKeyword} onSearch={concertSearch.runSearch} onLoadMore={concertSearch.loadMore} onOpenConcert={openConcert} onGoExplore={returnToExplore} />
-      : activeView === 'taste' ? <MyProfile key={sessionScope} api={socialApi} auth={auth} preference={libraryPreference} syncStatus={librarySyncStatus} onGoExplore={showTasteRecommendations} onOpenTrack={openTrackDetail} section={profileSection} AccountPanel={AccountPanel} PreferenceScreen={PreferenceScreen} PrivacySummary={PrivacySummary} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} auth={auth} />}
+      : activeView === 'taste' ? <MyProfile key={sessionScope} api={socialApi} auth={auth} preference={libraryPreference} savedTracks={savedTracks} syncStatus={librarySyncStatus} onGoExplore={showTasteRecommendations} onOpenTrack={openTrackDetail} section={profileSection} AccountPanel={AccountPanel} PreferenceScreen={PreferenceScreen} PrivacySummary={PrivacySummary} /> : <LibraryScreen savedTracks={savedTracks} onOpenTrack={openTrackDetail} onRemoveTrack={toggleTrackSave} onGoExplore={() => setActiveView('explore')} auth={auth} />}
     <nav className="bottom-nav" aria-label="주요 메뉴">
       {[['explore','음악 탐색','compass'],['concert','공연 찾기','stage'],['library','보관함','bookmarkSmall'],['taste','내 프로필','user'],['social','음악 이야기','piano']].map(([view,label,icon]) => {
         const active = view === 'explore' ? ['explore','recommendations','reference-recommendations','weekly-story','weekly-archive'].includes(activeView) : view === 'social' ? ['social','story'].includes(activeView) : activeView === view

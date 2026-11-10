@@ -2,10 +2,10 @@ import { tracks } from '../src/data/musicData.js'
 import { createSocialApi } from '../src/data/socialClient.js'
 
 // Synthetic in-memory transport. This file never connects to Supabase or OAuth.
-export function profileFixture({ signedIn = true, needsSetup = false } = {}) {
+export function profileFixture({ signedIn = true, needsSetup = false, recordCount = 11 } = {}) {
   const ownId = '11111111-1111-4111-8111-111111111111', otherId = '22222222-2222-4222-8222-222222222222'
   const publicationId = '33333333-3333-4333-8333-333333333333'
-  const state = { user: signedIn ? 'A' : null, needsSetup, calls: [], channels: new Set(), maxChannels: 0, blocks: [{ blocked_id: otherId }], records: Array.from({ length: 11 }, (_, i) => ({ id: 'record-' + i, track_id: tracks[i % 2].id, body: '합성 비공개 기록 ' + i, kind: 'free', recorded_on: '2026-11-10', revision: 1, created_at: '2026-11-10T00:00:00Z' })), shares: [{ id: publicationId, source_record_id: 'record-0', visibility: 'public' }], posts: [], failLogout: false, failSave: false }
+  const state = { user: signedIn ? 'A' : null, needsSetup, calls: [], channels: new Set(), maxChannels: 0, blocks: [{ blocked_id: otherId }], records: Array.from({ length: recordCount }, (_, i) => ({ id: 'record-' + i, track_id: tracks[i % 2].id, body: '합성 비공개 기록 ' + i, kind: 'free', recorded_on: '2026-11-10', revision: 1, created_at: '2026-11-10T00:00:00Z' })), shares: [{ id: publicationId, source_record_id: 'record-0', visibility: 'public' }], posts: [], failLogout: false, failSave: false }
   const profile = { id: ownId, nickname: '피아노산책', handle: 'piano_walk', avatar_url: null, follower_count: 2, following_count: 3 }
   const other = { id: otherId, nickname: '함께듣기', handle: 'another_listener', avatar_url: null, follower_count: 1, following_count: 0, following: false }
   state.posts = [{ id: publicationId, track_id: tracks[0].id, body: '합성 공유 글\n' + '함께 듣는 음악 이야기 '.repeat(40), visibility: 'public', profile, created_at: '2026-11-10T00:00:00Z', liked: false, like_count: 0, comment_count: 0 }]
@@ -22,12 +22,12 @@ export function profileFixture({ signedIn = true, needsSetup = false } = {}) {
     },
     rpc: async (name, args = {}) => {
       state.calls.push({ name, args })
-      if (name === 'merge_user_track_reactions') return { data: [] }
+      if (name === 'merge_user_track_reactions') return { data: state.user === 'A' ? state.libraryRows ?? [] : [] }
       if (name === 'social_me') return { data: state.user ? state.needsSetup ? { nickname: profile.nickname, needs_setup: true } : state.user === 'A' ? profile : other : null }
       if (name === 'social_profile') return { data: args.person === ownId ? profile : other }
       if (name === 'social_save_profile') { state.needsSetup = false; Object.assign(profile, { handle: args.p_handle, nickname: args.p_nickname, avatar_url: args.p_avatar_url }); return { data: profile } }
       if (name === 'social_feed') return { data: state.posts.filter(p => (!args.post || p.id === args.post) && (!args.person || p.profile.id === args.person) && (!args.track || p.track_id === args.track) && (!args.before_id || p.id !== args.before_id)) }
-      if (name === 'list_my_music_shares') return { data: state.shares.map(s => ({ ...s })) }
+      if (name === 'list_my_music_shares') { if(state.failShares) return {error:Error('synthetic metadata failure')}; return { data: state.user === 'A' ? state.shares.map(s => ({ ...s })) : [] } }
       if (name === 'social_block') { if (!args.desired) state.blocks = state.blocks.filter(b => b.blocked_id !== args.person); return { data: true } }
       if (name === 'save_private_music_record') {
         if (state.failSave) return { error: { code: '40001' } }
@@ -42,10 +42,21 @@ export function profileFixture({ signedIn = true, needsSetup = false } = {}) {
       throw Error('UNEXPECTED_SYNTHETIC_RPC:' + name)
     },
     from: name => {
-      const filters = []; const query = { select() { return query }, eq(k, v) { filters.push([k, v]); return query }, order() { return query },
-        range: async (a, b) => { const rows = state.user === 'A' ? state.records.filter(row => filters.every(([k, v]) => k === 'user_id' || row[k] === v)) : []; return { data: rows.slice(a, b + 1), count: rows.length } },
+      const filters = []; let columns,options; const query = {
+        select(value, opts) { columns=value; options=opts; return query },
+        eq(k,v) { filters.push([k,v]); return query },
+        in(k,values) { filters.push([k,values,'in']); return query },
+        not(k,_op,value) { filters.push([k,JSON.parse('['+value.slice(1,-1)+']'),'not']); return query },
+        order() { return query },
+        range: async (a,b) => {
+          state.calls.push({name:'journal_range',table:name,columns,options,filters,start:a,end:b,user:state.user})
+          const owner=state.user; if (state.waitRecords) await state.waitRecords
+          if(state.failRecords) return {error:Error('synthetic journal failure')}
+          const rows=owner === 'A' ? state.records.filter(row => filters.every(([k,v,op]) => k === 'user_id' ? v === 'AUTH-A' : op === 'in' ? v.includes(row[k]) : op === 'not' ? !v.includes(row[k]) : row[k] === v)) : []
+          return {data:rows.slice(a,b+1),count:rows.length}
+        },
         maybeSingle: async () => ({ data: { nickname: profile.nickname } }),
-        then: (resolve, reject) => Promise.resolve({ data: name === 'music_social_blocks' ? state.blocks.map(b => ({ ...b })) : [] }).then(resolve, reject),
+        then: (resolve,reject) => { state.calls.push({name:'table_read',table:name}); return Promise.resolve({ data:name === 'music_social_blocks' ? state.blocks.map(b => ({...b})) : [] }).then(resolve,reject) },
       }; return query
     },
     channel() { const c = { on(_kind, _event, callback) { c.event = callback; return c }, subscribe(fn) { c.status = fn; state.channels.add(c); state.maxChannels = Math.max(state.maxChannels, state.channels.size); queueMicrotask(() => { if (state.channels.has(c)) fn('SUBSCRIBED') }); return c } }; return c },
