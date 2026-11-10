@@ -1,44 +1,28 @@
-# 음악 이야기·내 프로필 통합 인계
+# 내비게이션·내 프로필 운영 인계
 
-- 작업 ID: **CA-NAV-PROFILE-IA-20261110-001 / 명세1**
-- 상태: **IMPLEMENTED** (검토 전, ACCEPTED 아님)
-- 브랜치: `codex/ca-nav-profile-ia-20261110-001`
-- 기준 main: `465173d2e2e41ee58f387b18b6897a3e29cbaff9`
-- 기능·테스트 코드 전체 SHA: **`1a03ca832329a356fa15a615af568958244c911e`**
-- 게시: [Draft PR #24](https://github.com/MattewShin/sound-atlas/pull/24), head `codex/ca-nav-profile-ia-20261110-001`, base main. 기능 SHA 이후는 문서 보완뿐이다.
-- 원래 IDE: codex/ca-social-20261106-001 / `8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e`, 기존 파일52개·HEAD·문서·미커밋/비추적 변경 보존. 별도 worktree에서 진행했다.
-- 결과: [정보 구조·코드·보존·한계](docs/NAV_PROFILE_IA.md), [검증 JSON](docs/NAV_PROFILE_IA_VERIFICATION_2026-11-10.json), [사용자 명세](docs/NAV_PROFILE_IA_SPEC.md)
+- 작업 ID: **CA-NAV-PROFILE-IA-20261110-001 / 명세2**
+- 상태: **IMPLEMENTED** (검토자 ACCEPTED 아님)
+- PR: [#24](https://github.com/MattewShin/sound-atlas/pull/24), Ready 전환 후 2026-11-10 10:24:07 KST 병합
+- 최종 main / Vercel production SHA: **`3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`**
+- 승인 HEAD: `2cfb28ffd0587a3f481029561b0ac8ff12dbd677`
+- 승인 기능·테스트 SHA: `1a03ca832329a356fa15a615af568958244c911e`
+- 결과 문서 브랜치: `codex/ca-nav-profile-ia-20261110-001-production`, [운영 보고서](docs/NAV_PROFILE_IA_PRODUCTION_2026-11-10.md) / [검증 JSON](docs/NAV_PROFILE_IA_PRODUCTION_VERIFICATION_2026-11-10.json)
+- 원래 IDE: codex/ca-social-20261106-001 / `8a1fa8bed4a1a296c174b6a1fc61745c783a6f5e`, 기존52개 파일/문서/HEAD와 미커밋·비추적 변경 보존. 별도 worktree에서 진행했다.
 
-## 구현 결과
+## 적용 결과
 
-음악 이야기 헤더 MUSIC STORIES/음악 이야기 및 공개 피드만 남겼다. records/profile/계정/차단 관리 탭과 자신의 ProfileEditor를 없애고 참여 안내·내 프로필 이동을 제공한다. 타인 프로필·곡/게시물 딥링크·반응/댓글/팔로우/신고/차단·기존 Realtime 흐름을 유지했다. 본인 프로필은 통합 화면으로, 기록 작성은 내 기록 제목으로 스크롤·focus한다.
+main/PR/실제 production 기준 일치와 충돌 없음, 승인166/166·SNS5/5·프로필4/4·모바일36/36·build PASS의 로그/JSON·기능 SHA 일치를 확인하고 PR #24를 Ready로 전환·expected HEAD로 병합했다. Vercel `dpl_93i4kUeQpqhYuyE9sHsWTtivt73M` production READY, 승인 HEAD와 merged tree 동일. 기능 추가 수정0이다.
 
-내 프로필은 공개 프로필/내 기록/나의 음악 취향/활동 관리/계정 순서다. 기존 프로필·개인 기록·공유·취향 차트/추천을 재사용하고 보관함은 보관곡만 남겼다. 곡 상세 기록 작성 유지. 계정 전환/로그아웃을 분리하고 계정 삭제는 맨 아래 위험 영역의 기존 2단계 확인이다. 내 프로필 기본 진입은 전체 feed/Realtime 구독0개, 내 게시물 섹션만 person 필터·기존 shared subscriber를 사용한다.
+2026-11-10 10:25:09 KST 운영 익명 스모크18/18 PASS. 320/375/390px에서 음악 이야기 한·영 제목·탭 제거·익명 피드, 보관곡 전용 보관함, 내 프로필/나의 음악 취향/Google 로그인 안내, 기존 게시물·곡·타인 프로필 링크를 확인했다. 하단 아이콘5/ARIA/단일 활성 페이지·터치48·SVG28·정렬·가로 넘침0·페이지 오류0이다. 기존 링크는 익명 공개 응답으로만 얻었으며 실제 ID/본문은 로그·문서에 남기지 않았다.
 
-계정 전환은 계정 로컬 사본 삭제/화면 세션 폐기→로그아웃 완료→prompt=select_account OAuth 순서다. 기존 PKCE/redirect/client는 유지한다. 실패 시 OAuth 중단, 중복 클릭 잠금, 이전 refresh/지연 응답 차단, React 보관함 상태 소유자 분리와 이전 계정 동기화 대기 취소를 포함한다.
+## 범위와 한계
 
-## 검증과 보존
+DB 접속/SQL/migration·Supabase 설정/RLS/Realtime publication·OAuth provider·환경변수 변경0. 보호된 SQL/API/SDK 설정/곡/패키지 파일은 이전 main과 같다. 사용자 기록 생성/수정/삭제/공개0, 계정 전환/로그아웃/삭제0, 기존 사용자 세션 미사용. 테스트/build 및 DB 검증을 다시 실행하지 않고 승인 증거만 확인했다. 실제 익명 RPC15회는 읽기 스모크이며 데이터 검증/쓰기 시험이 아니다.
 
-최종 코드 기준 전체 **166/166**, SNS **5/5**, 신규 통합 **4/4**, production build **PASS**. 기존 큰 chunk 경고는 유지한다. JSDOM/실 JSX·PGlite·mock SDK transport이며 기존 SQL/REST 권한·Auth/session·Realtime invalidation 계약 회귀를 포함한다. 모바일 실제 Chromium 합성 **36/36 PASS**: 320/375/390/520px, 아이콘28/터치48·동일 너비·활성 aria-current/이름·Pretendard/자간/짝수크기/실제 줄별 leading·키보드focus·뒤로가기·하단 가림/가로 넘침0.
+Google OAuth/계정 선택은 수동 미검증으로 남겼다. 로그인 실제 개인 기록/프로필 CRUD·계정 삭제, Realtime 다중 창 무효화/재연결, 실기기 IME/safe-area도 미검증이다. 최초 Vercel 조회403은 기존 CLI inspect로 만료된 로컬 인증을 갱신해 해결했으며 서비스 설정은 수정하지 않았다.
 
-운영 DB 접근/변경0, migration 추가0, SQL/RLS/publication/삭제 cascade·API 계약·곡 ID/평가·Supabase 설정·패키지/lockfile 변경0이다. 실제 사용자 기록은 공개/수정/삭제하지 않았다. 신규 테스트는 합성 계정·기록만 사용하고 screenshot도 합성이다. 실제 Google 인증 완료/chooser·클라우드 PostgREST/Realtime·iOS/Android IME·운영 배포는 **미검증**이다. 로컬 검증을 실환경 검증으로 표현하지 않는다.
+## 문서와 구현자 의견
 
-## 변경 파일과 구현자 의견
+명세1 CURRENT_TASK/HANDOFF를 [함께 보관](docs/collaboration/archive/CA-NAV-PROFILE-IA-20261110-001/spec1/)하고 현재 쌍을 명세2로 갱신했다. PROJECT_CONTEXT·구현 안내에 운영 결과 링크를 추가하고 별도 운영 보고서/안전한 JSON을 작성했다. 결과는 문서 전용 브랜치에 게시해 운영 코드 SHA를 그대로 유지한다. 원문 토큰/로그/사용자 본문은 포함하지 않았다.
 
-App·MusicSocial·MusicJournal·MusicSharing·useGoogleAuth·styles, 신규 MyProfile/SocialProfile 및 DOM fixture/검증, 기존 테스트의 접근 가능한 메뉴 이름을 수정했다. 상세 diff는 기능 SHA를 따른다. 이전 OCR CURRENT_TASK/HANDOFF를 함께 보관하고 새 명세/인계·PROJECT_CONTEXT·결과/증거/사진을 추가했다.
-
-기존 서버 필터 API를 늘리지 않고 필터는 불러온 기록에만 적용하며 더 보기 제한을 화면에 설명한다. 차단 목록은 기존 API가 ID만 반환하므로 순번으로 구분하며 해제할 수 있다. 공개 프로필 미리보기는 공개 헤더이며 타인의 권한을 가장하지 않는다. 실제 IAM/RLS를 변경할 필요가 없어 migration은 만들지 않았다.
-
-## 게시·다음 검토
-
-변경 코드와 문서를 지정 브랜치에 push하고 Draft PR #24로 게시했다. 기능 SHA 이후 변경은 문서뿐이다. main 병합·운영 DB·운영 배포는 하지 않았다. 검토자는 프로필 공개/계정 정보 분리, 필터의 불러온 범위 표시, 딥링크/뒤로가기와 세션/구독 경계, 합성 모바일 결과 및 실 OAuth/PostgREST/Realtime 미검증을 확인하면 된다. 최신 문서 저장 HEAD는 GitHub 이력과 최종 게시 보고를 따른다.
-
-## PR #24 검토 보완 — 명세1 유지
-
-- 검토 기준 HEAD: `f343e6e753a8e8144ed0cf38148bbba951cc2f9a`
-- 보완 기능·테스트 SHA: `1a03ca832329a356fa15a615af568958244c911e`
-- `.profile-section p/a/button`의 일괄 normal 선언을 제거했다. 기존 공통 `[data-text-lines]` 규칙과 실제 줄 수 판별기는 그대로 유지한다. 전역 important 규칙 덕분에 삭제 전 대상 실측도 기준을 충족했지만 중복 기본 선언을 정리해 책임을 명확히 했다.
-- scripts/profileTextMetrics.mjs는 production 분류 함수·data-text-lines 값을 신뢰하지 않고 글자별 Range 좌표로 실제 줄 수를 센다. scripts/testProfileMobile.mjs로 링크를 포함한 실제 줄 수/계산된 leading을 대조하고, 긴 프로필 버튼·기록 설명·공개 프로필 안내·계정 삭제 확인을 너비별16건 기록했다. 다중 줄에 normal!important를 강제한 대조군4건도 탐지했다.
-- 필터는 전체/나만 보기/공개 중으로 변경했다. publication 없음/private와 followers/public을 서로 배타적으로 나눴으며 private 공유본을 공개 중에 넣지 않는다. 공유 중·나만 보기 중복 문구를 없앴다. 불러온 페이지에 적용하는 제한은 유지한다. 공유 범위 변경/공유 취소 API는 수정하지 않았다.
-- 최종 전체166/166·SNS5/5·프로필4/4·모바일36/36·대상16·잘못된 줄 높이 탐지4·build PASS. 기존 chunk 경고 유지. 이전165/3/28 수치를 새 결과로 재사용하지 않았다.
-- 검토 기준 이후 MusicSocial·MyProfile 구조/라우팅·App·Google 세션·공유 범위 변경/취소 구현·SQL/RLS/Realtime/공유 ID/삭제 정책 변경0. 기능 변경은 CSS·기록 필터/상태 표시뿐이다. 운영 DB/병합/배포 미실행이며 실 OAuth/PostgREST/Realtime·실기기 IME 한계는 그대로다.
+사용자의 이번 운영 승인이 이전 명세1의 배포 금지를 대체한다. 운영 앱 읽기 확인 범위에서는 추가 기능 수정이 필요하지 않았다. 검토자는 Ready/병합/배포·읽기 결과와 수동 OAuth/Realtime/실기기 한계를 확인하면 된다. 새 자료를 만들어 추가 시험하거나 변경 없는 전체 검증을 반복하지 않았다.

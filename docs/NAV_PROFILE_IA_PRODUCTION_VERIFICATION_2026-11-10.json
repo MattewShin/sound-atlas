@@ -1,0 +1,361 @@
+{
+  "task_id": "CA-NAV-PROFILE-IA-20261110-001",
+  "specification": 2,
+  "status": "IMPLEMENTED",
+  "documentation_branch": "codex/ca-nav-profile-ia-20261110-001-production",
+  "approved_head": "2cfb28ffd0587a3f481029561b0ac8ff12dbd677",
+  "approved_functional_sha": "1a03ca832329a356fa15a615af568958244c911e",
+  "main_sha": "3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef",
+  "pr": {
+    "url": "https://github.com/MattewShin/sound-atlas/pull/24",
+    "head_sha": "2cfb28ffd0587a3f481029561b0ac8ff12dbd677",
+    "merge_commit_sha": "3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef",
+    "merged": true,
+    "draft": false,
+    "merged_at": "2026-11-10T01:24:07Z"
+  },
+  "gate": {
+    "task_id": "CA-NAV-PROFILE-IA-20261110-001",
+    "specification": 2,
+    "result": "PASS",
+    "observed_kst": "2026-11-10 10:22:45",
+    "approved_head": "2cfb28ffd0587a3f481029561b0ac8ff12dbd677",
+    "implementation_code_sha": "1a03ca832329a356fa15a615af568958244c911e",
+    "main_before": "465173d2e2e41ee58f387b18b6897a3e29cbaff9",
+    "production_before": {
+      "id": "dpl_Bcnj4u7PViy44Qtv4xu1DjHKYJey",
+      "sha": "465173d2e2e41ee58f387b18b6897a3e29cbaff9",
+      "ready": "READY",
+      "target": "production",
+      "created": 1794210975594
+    },
+    "conflict": false,
+    "unexpected_main_changes": false,
+    "approved_source_diff": 0,
+    "protected_database_client_config_and_api_diff": 0,
+    "approved_tests": {
+      "full": 166,
+      "social": 5,
+      "profile": 4,
+      "mobile": 36,
+      "build": "PASS"
+    },
+    "verification_json_sha256": "e622523ad29bb59333a9da94ec501c1746b56fb9ff5e25f5c60e104ccc391f7d",
+    "tests_rerun": false,
+    "database_accessed": false
+  },
+  "production_deployment": {
+    "id": "dpl_93i4kUeQpqhYuyE9sHsWTtivt73M",
+    "sha": "3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef",
+    "ready": "READY",
+    "target": "production",
+    "created": 1794273850546,
+    "observed_kst": "2026-11-10 10:24:28"
+  },
+  "smoke": {
+    "task_id": "CA-NAV-PROFILE-IA-20261110-001",
+    "specification": 2,
+    "result": "PASS",
+    "observed_kst": "2026-11-10 10:25:09",
+    "production_origin": "https://sound-atlas.vercel.app",
+    "main_sha": "3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef",
+    "deployment": {
+      "id": "dpl_93i4kUeQpqhYuyE9sHsWTtivt73M",
+      "sha": "3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef",
+      "ready": "READY",
+      "target": "production",
+      "created": 1794273850546
+    },
+    "anonymous_isolated_browser": true,
+    "existing_deeplink_reference_obtained_from_anonymous_feed": true,
+    "existing_user_identifiers_or_bodies_logged": false,
+    "cases": [
+      {
+        "width": 320,
+        "screen": "anonymous-music-stories",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 320,
+        "screen": "anonymous-library-saved-only",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 320,
+        "screen": "anonymous-my-profile-and-google-guidance",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 320,
+        "screen": "existing-post-deeplink",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 320,
+        "screen": "existing-track-deeplink",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 320,
+        "screen": "existing-profile-deeplink",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 375,
+        "screen": "anonymous-music-stories",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 375,
+        "screen": "anonymous-library-saved-only",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 375,
+        "screen": "anonymous-my-profile-and-google-guidance",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 375,
+        "screen": "existing-post-deeplink",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 375,
+        "screen": "existing-track-deeplink",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 375,
+        "screen": "existing-profile-deeplink",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 390,
+        "screen": "anonymous-music-stories",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 390,
+        "screen": "anonymous-library-saved-only",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 390,
+        "screen": "anonymous-my-profile-and-google-guidance",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 390,
+        "screen": "existing-post-deeplink",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 390,
+        "screen": "existing-track-deeplink",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      },
+      {
+        "width": 390,
+        "screen": "existing-profile-deeplink",
+        "result": "PASS",
+        "horizontal_overflow": false,
+        "icons_only": 5,
+        "accessible_names_and_active_page": true,
+        "minimum_touch_48": true
+      }
+    ],
+    "read_api_results": [
+      {
+        "width": 320,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 320,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 320,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 320,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 320,
+        "rpc": "social_profile",
+        "status": 200
+      },
+      {
+        "width": 375,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 375,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 375,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 375,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 375,
+        "rpc": "social_profile",
+        "status": 200
+      },
+      {
+        "width": 390,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 390,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 390,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 390,
+        "rpc": "social_feed",
+        "status": 200
+      },
+      {
+        "width": 390,
+        "rpc": "social_profile",
+        "status": 200
+      }
+    ],
+    "blocked_write_requests": 0,
+    "page_errors": 0,
+    "user_record_mutations": 0,
+    "google_oauth_or_account_switch_executed": false,
+    "real_multi_client_realtime_test": false,
+    "real_device_ime_test": false
+  },
+  "assertions": {
+    "music_stories_korean_and_english_header": true,
+    "legacy_feed_records_profile_and_account_tabs_removed": true,
+    "anonymous_feed_rpc_200": true,
+    "icon_only_navigation_five_buttons": true,
+    "aria_labels_titles_and_current_page": true,
+    "bookmark_library_without_records_switch": true,
+    "anonymous_profile_entry_and_my_music_taste": true,
+    "google_login_guidance_visible_and_enabled_not_clicked": true,
+    "existing_post_track_and_other_profile_deeplinks": true,
+    "mobile_widths_without_overflow": [
+      320,
+      375,
+      390
+    ]
+  },
+  "constraints": {
+    "functional_code_changed_after_approval": false,
+    "approved_tests_rerun": false,
+    "database_connection_or_sql_executed": false,
+    "migration_added_or_applied": false,
+    "supabase_settings_rls_realtime_publication_changed": false,
+    "oauth_provider_or_environment_changed": false,
+    "real_user_record_created_updated_deleted_or_published": false,
+    "existing_user_signed_out_or_switched": false,
+    "existing_ide_worktree_preserved": true
+  },
+  "local_vercel_cli_authentication": {
+    "initial_direct_read_status": 403,
+    "expired_local_login_refreshed_by_existing_cli_inspect": true,
+    "project_settings_changed": false,
+    "google_provider_settings_changed": false,
+    "raw_output_published": false
+  },
+  "not_verified": [
+    "real Google OAuth and account chooser; automated switching/sign-out intentionally not executed",
+    "authenticated private record/profile CRUD and real account deletion",
+    "live multi-client Realtime invalidation/reconnection",
+    "real iOS/Android device IME and hardware safe-area behavior"
+  ],
+  "secrets_user_ids_or_bodies_in_evidence": false
+}
