@@ -1,5 +1,7 @@
 # 내 프로필 대시보드 구현 — 2026-11-10
 
+게시: [Draft PR #26](https://github.com/MattewShin/sound-atlas/pull/26) · 브랜치 `codex/ca-profile-dashboard-ia-20261110-001`. 원격에 반영했으며 main은 병합하지 않았다.
+
 **CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세1 / IMPLEMENTED**. 기능·테스트 SHA는 `45f31bff938b820d1cda81b0a28af5d688b0211f`, 기준 main은 `fe73abfccd4aafa62dedadbbaed3e1fa4abe099d`다. 브랜치 `codex/ca-profile-dashboard-ia-20261110-001`에서 구현했다. [검증 JSON](PROFILE_DASHBOARD_IA_VERIFICATION_2026-11-10.json), [모바일 실측 JSON](PROFILE_DASHBOARD_MOBILE_2026-11-10.json), [HANDOFF](../HANDOFF.md)를 함께 읽는다. 자체 구현 완료이며 검토자의 ACCEPTED는 아니다.
 
 ## 기존 문제와 신규 구조

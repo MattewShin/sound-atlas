@@ -1,5 +1,7 @@
 # 프로필 대시보드 구현 인계
 
+게시: [Draft PR #26](https://github.com/MattewShin/sound-atlas/pull/26) · 브랜치 `codex/ca-profile-dashboard-ia-20261110-001`. 원격에 반영했으며 main은 병합하지 않았다.
+
 - 작업 ID: CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세1
 - 상태: IMPLEMENTED (검토자의 ACCEPTED 아님)
 - 브랜치: codex/ca-profile-dashboard-ia-20261110-001

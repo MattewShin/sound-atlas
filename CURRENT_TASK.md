@@ -1,5 +1,7 @@
 # 현재 작업
 
+게시: [Draft PR #26](https://github.com/MattewShin/sound-atlas/pull/26) · 브랜치 `codex/ca-profile-dashboard-ia-20261110-001`. 원격에 반영했으며 main은 병합하지 않았다.
+
 - 작업 ID: CA-PROFILE-DASHBOARD-IA-20261110-001
 - 명세 버전: 1
 - 상태: IMPLEMENTED (구현자 보고, 검토 전)
