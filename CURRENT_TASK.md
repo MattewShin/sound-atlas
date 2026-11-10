@@ -1,17 +1,18 @@
 # 현재 작업
 
 - 작업 ID: CA-NAV-PROFILE-IA-20261110-001
-- 명세 버전: 1
+- 명세 버전: 2
 - 상태: IMPLEMENTED
-- 기준 main: `465173d2e2e41ee58f387b18b6897a3e29cbaff9`
-- 기능·테스트 코드 전체 SHA: `1a03ca832329a356fa15a615af568958244c911e`
-- 작업 브랜치: `codex/ca-nav-profile-ia-20261110-001`
-- 게시: [Draft PR #24](https://github.com/MattewShin/sound-atlas/pull/24), main 대상, 검토 전
+- 승인 PR: [#24](https://github.com/MattewShin/sound-atlas/pull/24), Ready 후 main 병합 완료
+- 승인 HEAD: `2cfb28ffd0587a3f481029561b0ac8ff12dbd677`
+- 승인 기능·테스트 SHA: `1a03ca832329a356fa15a615af568958244c911e`
+- 운영 기능 기준 / 적용 당시 Vercel SHA: `3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`
+- 문서 전용 PR 브랜치: `codex/ca-nav-profile-ia-20261110-001-production`
 
-[사용자 명세](docs/NAV_PROFILE_IA_SPEC.md)에 따라 음악 이야기 공개 탐색 전용화, 내 프로필 통합, 보관함 중복 제거, 아이콘 전용 내비게이션과 세션/이동 호환을 구현했다. 전체166·SNS5·신규 통합4·모바일36 및 build PASS. DB migration 불필요. 기존 데이터·권한 SQL/API·곡/평가·공유 ID는 유지한다. 운영 DB·main 병합·운영 배포는 미실행이며 Draft PR 검토 전이다.
+사용자 명시 승인으로 기준 main/PR HEAD·기존166/5/4/36 및 build 증거를 확인한 뒤 병합·Vercel READY·운영 익명 스모크18/18을 완료했다. 기능 수정0, DB 접속/SQL/migration·설정/환경변수 변경0, 사용자 자료 생성/수정/삭제/공개0, 계정 전환/로그아웃0이다. 변경 없는 전체 테스트와 DB 검증을 반복하지 않았다.
 
-[구현 결과](docs/NAV_PROFILE_IA.md), [검증 JSON](docs/NAV_PROFILE_IA_VERIFICATION_2026-11-10.json), [HANDOFF](HANDOFF.md)를 따른다. 이전 OCR 명세2 [명세/인계 보관](docs/collaboration/archive/CA-OCR-RETIRE-20261109-001/spec2/)을 함께 남겼다. 실제 OAuth/PostgREST/Realtime·실기기 IME는 미검증이다. 문서 HEAD·PR은 GitHub 이력과 최종 게시 보고에서 확인하며 기능 SHA와 구분한다.
+[운영 결과](docs/NAV_PROFILE_IA_PRODUCTION_2026-11-10.md), [증거 JSON](docs/NAV_PROFILE_IA_PRODUCTION_VERIFICATION_2026-11-10.json), [HANDOFF](HANDOFF.md)를 따른다. 명세1/검토 보완은 [함께 보관](docs/collaboration/archive/CA-NAV-PROFILE-IA-20261110-001/spec1/)했다. Google 계정 선택/실 OAuth·다중 창 Realtime·실기기 IME와 로그인 개인 데이터 작업은 미검증이다. 검토 ACCEPTED는 별도다.
 
-## PR #24 검토 보완
+## 명세2 문서 마감
 
-명세1을 유지하며 기준 HEAD `f343e6e753a8e8144ed0cf38148bbba951cc2f9a`의 검토 의견을 반영했다. `.profile-section`의 p/a/button 일괄 line-height 선언을 제거하고 기존 실제 줄 수 규칙에 맡긴다. 4개 너비에서 독립 글자 Range 실측과 computed line-height를 대조했다(36 화면/대상16/잘못된 normal 탐지4). 필터는 전체·나만 보기·공개 중이며 private 공유본과 미공유는 나만 보기, followers/public만 공개 중이다. 데이터 구조·권한·공유 범위 변경/취소·딥링크/아이콘 메뉴는 유지한다. 전체166·SNS5·프로필4·build PASS.
+결과 HEAD `73ccd94d7d96a679fd285cf87f1c83b37ddc5ca4`와 최신 main `3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`를 비교해 운영 보고서·안전한 검증 JSON·CURRENT_TASK/HANDOFF/PROJECT_CONTEXT·명세1 보관 쌍만 main에 반영한다. 기능/runtime/migration/package/설정 변경0, 실제 게시물 식별정보·닉네임·본문·이메일·비밀값 미포함을 확인한다. 문서 병합 후 최종 문서/main SHA는 PR head/merge 이력을 따르며, 위 운영 당시 증거 SHA와 구분한다. DB 작업·전체 테스트·기존 스모크를 재실행하지 않고 새 Vercel 배포가 생기면 Ready만 확인한다.

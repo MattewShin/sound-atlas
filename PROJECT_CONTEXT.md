@@ -1,3 +1,7 @@
+# 내비게이션·내 프로필 운영 반영 — 2026-11-10
+
+CA-NAV-PROFILE-IA-20261110-001 / 명세2 / IMPLEMENTED. 사용자 승인 후 PR #24 Ready→main 병합·Vercel READY, 운영 기능 기준/당시 배포 SHA `3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`. 승인 코드/166·5·4·36·build 증거를 확인하고 새 전체 테스트/DB 검증 없이 실제 익명 스모크18/18 PASS. 320/375/390px의 메뉴/제목/보관함/프로필/기존 딥링크를 읽기로 확인했다. DB/설정/자료·계정 전환/로그아웃 변경0. Google chooser·실 OAuth/다중 창 Realtime/실기기 IME는 미검증이다. 문서 마감으로 운영 결과를 main에 반영하며, 문서 병합 SHA는 운영 기능 기준 SHA와 구분한다. 최신 [운영 결과](docs/NAV_PROFILE_IA_PRODUCTION_2026-11-10.md)와 CURRENT_TASK/HANDOFF가 최신이며, 아래 명세1의 미배포 문구는 준비 이력이다.
+
 # 내비게이션·내 프로필 통합 — 2026-11-10
 
 CA-NAV-PROFILE-IA-20261110-001 / 명세1 / IMPLEMENTED. 기준 main `465173d2e2e41ee58f387b18b6897a3e29cbaff9`, 기능·테스트 `1a03ca832329a356fa15a615af568958244c911e`, 브랜치 `codex/ca-nav-profile-ia-20261110-001`. 음악 이야기는 공개 탐색으로 단순화하고 공개 프로필·내 기록·기존 음악 취향·활동·계정을 내 프로필로 통합했다. 아이콘 전용 메뉴와 기존 딥링크/세션/권한을 유지한다. PR #24 검토 보완으로 프로필의 일괄 normal 선언을 제거하고 실제 글자 좌표/줄 높이 검증, 나만 보기·공개 중의 배타적 필터를 적용했다. 전체166/SNS5/통합4/모바일36·build PASS. migration 불필요, 운영 DB/병합/배포 미실행. 실 OAuth/PostgREST/Realtime·실기기는 미검증이다. [구현 결과](docs/NAV_PROFILE_IA.md) 및 CURRENT_TASK/HANDOFF를 따른다. 아래 OCR 운영 이력은 완료된 이전 작업이다.
