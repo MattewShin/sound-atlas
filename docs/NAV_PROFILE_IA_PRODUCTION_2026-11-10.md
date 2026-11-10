@@ -10,7 +10,7 @@
 | 승인 HEAD | `2cfb28ffd0587a3f481029561b0ac8ff12dbd677` |
 | 승인 기능·테스트 SHA | `1a03ca832329a356fa15a615af568958244c911e` |
 | 적용 전 main / 실제 production | `465173d2e2e41ee58f387b18b6897a3e29cbaff9`, 동일 |
-| 최종 main / 운영 배포 SHA | **`3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`** |
+| 운영 기능 기준 / 적용 당시 배포 SHA | **`3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`** |
 | Vercel deployment | `dpl_93i4kUeQpqhYuyE9sHsWTtivt73M` / production **READY** |
 | 운영 앱 | https://sound-atlas.vercel.app |
 | 사전 gate | 2026-11-10 10:22:45 KST PASS |
@@ -19,7 +19,7 @@
 
 원격 main/승인 HEAD를 다시 확인했고 main의 새 변경이나 충돌이 없었다. expected_head_sha를 고정해 Ready 전환 후 merge했다. 병합 main의 전체 tree는 승인 HEAD와 같고, 승인 기능 SHA 이후 차이는 문서뿐이다. 별도 기능 수정 커밋은 필요하지 않았다.
 
-결과 문서는 `codex/ca-nav-profile-ia-20261110-001-production`에 문서 전용 커밋으로 게시한다. 운영 코드/main은 위 SHA를 유지하고 문서 저장 SHA는 해당 브랜치 이력을 따른다. main에 병합된 명세1의 “운영 미실행/Draft 검토 전”은 준비 당시 이력이며, 이 문서 브랜치의 CURRENT_TASK/HANDOFF와 본 보고서가 명세2 결과다.
+결과는 처음 `73ccd94d7d96a679fd285cf87f1c83b37ddc5ca4`의 별도 문서 브랜치에 게시했다. 이번 명세2 문서 마감은 운영 보고서·검증 JSON·공동 문서·명세1 보관 쌍을 문서 전용 PR로 main에 반영한다. 표와 검증 JSON의 배포 SHA/관측 시각은 **운영 적용 당시 증거**이며, 문서 병합 이후 최신 main SHA와 구분한다. main의 CURRENT_TASK/HANDOFF와 본 보고서가 명세2 운영 완료 상태다. 명세1의 “운영 미실행/Draft 검토 전”은 당시 준비 이력이다.
 
 ## 승인 테스트 근거 확인
 
@@ -60,3 +60,9 @@
 실 Google OAuth 인증 완료/Google 계정 선택 화면은 **수동 미검증**이다. 자동 계정 전환·로그아웃을 실행하지 않았다. 로그인된 실제 개인 기록/공개 프로필 CRUD·계정 삭제, Realtime 다중 창 무효화/재연결, 실제 iOS/Android IME·하드웨어 safe-area도 미검증이다. 운영 스모크는 익명 읽기·화면 확인 범위이며 이전 합성 테스트를 실환경 검증으로 바꾸어 보고하지 않는다.
 
 롤백이 필요하면 승인 전 UI 코드로 되돌리는 별도 앱 배포를 검토한다. 이번에는 DB 구조·자료 변경이 없어 DB restore/down migration은 필요하지 않으며 실행하지 않았다. 현재 운영 오류가 확인돼 기능을 추가 수정한 내역은 없다. 명세1/검토 보완 [명세·인계 보관](collaboration/archive/CA-NAV-PROFILE-IA-20261110-001/spec1/)과 운영 증거를 함께 검토하면 된다.
+
+## 명세2 문서 마감
+
+2026-11-10 기준 결과 HEAD `73ccd94d7d96a679fd285cf87f1c83b37ddc5ca4`와 최신 main `3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`를 비교했다. Markdown6개와 안전한 검증 JSON1개만 포함하고, 구현 안내 문서의 배너 변경은 제외한다. 기능/runtime/migration/package/설정은 모두 동일하다. 실제 게시물 ID·닉네임·본문·이메일·비밀값을 포함하지 않는지 다시 검사했다. 원래 사용자 IDE 변경은 보존한다.
+
+운영 관측값과 미검증 범위는 그대로 유지한다. 이번 작업은 문서 검사와 PR 게시·병합, 새 Vercel 문서 배포의 Ready 확인까지만이며 DB 작업·전체 테스트·운영 화면 스모크를 다시 실행하지 않는다. 최종 문서 SHA/main SHA는 문서 PR head·merge 이력으로 확인한다.

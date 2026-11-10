@@ -1,5 +1,3 @@
-> **명세2 운영 반영 완료 — 2026-11-10.** PR #24를 main `3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`로 병합했고 Vercel production READY·실제 익명 스모크18/18을 확인했다. [운영 결과](NAV_PROFILE_IA_PRODUCTION_2026-11-10.md)와 [운영 증거](NAV_PROFILE_IA_PRODUCTION_VERIFICATION_2026-11-10.json)를 따른다. 아래 명세1의 Draft/운영 미실행 문구는 당시 준비 이력이다. 승인 이후 기능 추가 수정은 없다.
-
 # 음악 이야기·내 프로필 통합 — 구현 결과
 
 CA-NAV-PROFILE-IA-20261110-001 / 명세1 / **IMPLEMENTED**. 기준 main `465173d2e2e41ee58f387b18b6897a3e29cbaff9`, 기능·테스트 코드 `1a03ca832329a356fa15a615af568958244c911e`, 브랜치 `codex/ca-nav-profile-ia-20261110-001`. [사용자 명세](NAV_PROFILE_IA_SPEC.md), [검증 JSON](NAV_PROFILE_IA_VERIFICATION_2026-11-10.json), [HANDOFF](../HANDOFF.md)를 함께 읽는다. Draft PR 검토 전이며 main 병합·운영 DB·운영 배포는 하지 않았다.

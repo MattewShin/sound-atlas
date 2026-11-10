@@ -1,6 +1,6 @@
 # 내비게이션·내 프로필 운영 반영 — 2026-11-10
 
-CA-NAV-PROFILE-IA-20261110-001 / 명세2 / IMPLEMENTED. 사용자 승인 후 PR #24 Ready→main 병합·Vercel READY, main/운영 SHA `3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`. 승인 코드/166·5·4·36·build 증거를 확인하고 새 전체 테스트/DB 검증 없이 실제 익명 스모크18/18 PASS. 320/375/390px의 메뉴/제목/보관함/프로필/기존 딥링크를 읽기로 확인했다. DB/설정/자료·계정 전환/로그아웃 변경0. Google chooser·실 OAuth/다중 창 Realtime/실기기 IME는 미검증이다. 이 결과 문서 브랜치의 [운영 결과](docs/NAV_PROFILE_IA_PRODUCTION_2026-11-10.md)와 CURRENT_TASK/HANDOFF가 최신이며, 아래 명세1의 미배포 문구는 준비 이력이다.
+CA-NAV-PROFILE-IA-20261110-001 / 명세2 / IMPLEMENTED. 사용자 승인 후 PR #24 Ready→main 병합·Vercel READY, 운영 기능 기준/당시 배포 SHA `3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`. 승인 코드/166·5·4·36·build 증거를 확인하고 새 전체 테스트/DB 검증 없이 실제 익명 스모크18/18 PASS. 320/375/390px의 메뉴/제목/보관함/프로필/기존 딥링크를 읽기로 확인했다. DB/설정/자료·계정 전환/로그아웃 변경0. Google chooser·실 OAuth/다중 창 Realtime/실기기 IME는 미검증이다. 문서 마감으로 운영 결과를 main에 반영하며, 문서 병합 SHA는 운영 기능 기준 SHA와 구분한다. 최신 [운영 결과](docs/NAV_PROFILE_IA_PRODUCTION_2026-11-10.md)와 CURRENT_TASK/HANDOFF가 최신이며, 아래 명세1의 미배포 문구는 준비 이력이다.
 
 # 내비게이션·내 프로필 통합 — 2026-11-10
 
