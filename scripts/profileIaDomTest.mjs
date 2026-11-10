@@ -36,6 +36,9 @@ export async function verifyProfileIa(components) {
     const feedsBeforeProfile=state.calls.filter(c=>c.name==='social_feed').length
     await click('내 프로필');assert.equal(doc.querySelector('h1').textContent,'내 프로필')
     assert.equal(doc.querySelectorAll('.profile-recent li').length,3);assert.equal(doc.querySelector('.all-music-records'),null);assert.equal(doc.querySelector('.social-form'),null);assert.equal(doc.querySelector('.account-panel'),null)
+    assert.deepEqual([...doc.querySelectorAll('.profile-social-counts span')].map(el=>el.textContent),['팔로워 2','팔로잉 3'])
+    assert.equal(doc.querySelector('.profile-social-counts a,.profile-social-counts button,.profile-social-counts [role="link"],.profile-social-counts [tabindex]'),null)
+    assert.equal(doc.querySelector('.profile-preview-link').getAttribute('href'),'#profile/preview')
     assert.equal(state.channels.size,0);assert.equal(state.calls.filter(c=>c.name==='social_feed').length,feedsBeforeProfile)
     assert.deepEqual([...doc.querySelectorAll('.profile-menu-row strong')].map(el=>el.textContent),['내 기록','나의 취향','설정'])
     assert.deepEqual([...doc.querySelectorAll('.profile-record-counts dd')].map(el=>el.textContent),['11','9','2'])
@@ -131,6 +134,13 @@ export async function verifyDashboardStates(components) {
 export async function verifyDashboardHistoryAndIsolation(components) {
   const fixture=profileFixture()
   await withApp(components,fixture,'profile',async({doc,go,flush,click})=>{
+    for(const child of ['edit','preview','blocked','privacy']) {
+      await go('profile/'+child)
+      const back=doc.querySelector('.profile-back');assert.equal(back.textContent,'← 설정');assert.equal(back.getAttribute('href'),'#profile/settings')
+      await click('← 설정');assert.equal(window.location.hash,'#profile/settings');assert.equal(doc.querySelector('h1').textContent,'설정')
+      await flush(()=>window.history.back());await flush();assert.equal(window.location.hash,'#profile/'+child,'native back retains the actual previous child')
+      await flush(()=>window.history.forward());await flush();assert.equal(window.location.hash,'#profile/settings')
+    }
     await go('profile/taste');await go('profile/settings');await flush(()=>window.history.back());await flush();assert.equal(doc.querySelector('h1').textContent,'나의 음악 취향')
     await flush(()=>window.history.forward());await flush();assert.equal(doc.querySelector('h1').textContent,'설정')
     await go('profile/records');await click('수정');assert(doc.querySelector('.music-journal-form'));await flush(()=>fixture.setUser('B'));assert.equal(doc.querySelector('.music-journal-form'),null);assert(!doc.body.textContent.includes('합성 비공개 기록'))

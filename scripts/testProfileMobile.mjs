@@ -22,7 +22,7 @@ const server = createServer((req,res) => {
 await new Promise(resolve => server.listen(0,'127.0.0.1',resolve))
 const origin = 'http://127.0.0.1:'+server.address().port
 const browser = await chromium.launch({...(process.argv.includes('--browser') ? {executablePath:option('--browser')} : {}),headless:true})
-const results = [], errors = [], targetChecks = [], negativeControls = []
+const results = [], errors = [], targetChecks = [], negativeControls = [], managementReturns = []
 const settle = async page => { await page.waitForTimeout(250); await page.evaluate(() => document.fonts.ready) }
 async function check(page, width, state) {
   await settle(page)
@@ -57,11 +57,22 @@ try {
   const page=await browser.newPage({viewport:{width,height:844},isMobile:true,hasTouch:true})
   page.on('pageerror',e=>errors.push(e.message));await page.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort())
   const go=async hash=>{await page.evaluate(hash=>{location.hash=hash},hash);await settle(page)}
-  const shot=async name=>page.screenshot({path:'.cache/mobile-shots/'+name+'-'+width+'.png',fullPage:name==='home'})
+  const shot=async name=>page.screenshot({path:'.cache/mobile-shots/'+name+'-'+width+'.png'})
+  const managementReturn=async child=>{
+    await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await settle(page)
+    const header=await page.locator('.profile-dashboard-header').evaluate(el=>{const a=el.querySelector('.profile-back'),h=el.querySelector('h1'),r=a.getBoundingClientRect(),t=h.getBoundingClientRect();return{label:a.textContent,href:a.getAttribute('href'),back:{left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height},title:{left:t.left,right:t.right,top:t.top,bottom:t.bottom}}})
+    assert.equal(header.label,'← 설정');assert.equal(header.href,'#profile/settings');assert(Math.abs(header.back.left-header.title.left)<1);assert(header.back.bottom<=header.title.top);assert(header.back.width>=44&&header.back.height>=44);assert(header.title.right<=width)
+    await shot('back-'+child)
+    await page.getByRole('link',{name:'← 설정',exact:true}).click();await settle(page);assert.equal(await page.evaluate(()=>location.hash),'#profile/settings');assert.equal(await page.locator('h1').textContent(),'설정')
+    await page.goBack();await settle(page);assert.equal(await page.evaluate(()=>location.hash),'#profile/'+child);await page.goForward();await settle(page);assert.equal(await page.evaluate(()=>location.hash),'#profile/settings')
+    managementReturns.push({width,child,...header,returned_to_settings:true,native_back_forward:true})
+  }
   await page.goto(origin+'/#music');await page.locator('.social-post').waitFor();await check(page,width,'signed-in-feed')
   await page.locator('.social-menu summary').click();await check(page,width,'post-menu')
   await page.getByRole('button',{name:'내 프로필',exact:true}).click();await page.locator('.profile-record-counts').waitFor();await check(page,width,'profile-home');await shot('home')
   assert.equal(await page.locator('.profile-recent li').count(),3);assert.equal(await page.locator('.social-form,.all-music-records,.account-panel').count(),0)
+  assert.equal(await page.locator('.profile-social-counts span').count(),2);assert.equal(await page.locator('.profile-social-counts :is(a,button,[role="link"],[tabindex])').count(),0)
+  assert.equal(await page.locator('.profile-preview-link').getAttribute('href'),'#profile/preview')
   await target(page,width,'long-profile-button','.profile-preview-link');await target(page,width,'long-handle','.profile-identity p')
   await page.getByRole('link',{name:'전체 기록 보기',exact:true}).click();await page.locator('.music-journal-entry').first().waitFor();await check(page,width,'records');await shot('records')
   assert.equal(await page.locator('.music-journal-entry').count(),10);await target(page,width,'records-description','.all-music-records > p');await target(page,width,'long-record-body','.music-journal-entry-body')
@@ -77,9 +88,13 @@ try {
   const deletion=await page.getByRole('button',{name:'계정과 데이터 삭제',exact:true}).boundingBox(),nav=await page.locator('.bottom-nav').boundingBox();assert(deletion.y+deletion.height<=nav.y,'account control must clear bottom navigation')
   await page.getByRole('button',{name:'계정과 데이터 삭제',exact:true}).click();await check(page,width,'delete-confirmation');await target(page,width,'delete-confirmation','.account-delete-confirm > p');await page.locator('.account-delete-confirm').getByRole('button',{name:'취소',exact:true}).click()
   await go('profile/preview');await check(page,width,'public-profile-preview');await target(page,width,'public-profile-guide','.public-profile-preview > p:last-of-type')
+  await managementReturn('preview')
   await go('profile/edit');await page.locator('.social-form input').first().focus();await check(page,width,'profile-editor-focus')
+  await managementReturn('edit')
   await go('profile/blocked');await check(page,width,'blocked');await page.getByRole('button',{name:'차단 해제',exact:true}).click();await check(page,width,'blocked-empty')
+  await managementReturn('blocked')
   await go('profile/privacy');await check(page,width,'privacy')
+  await managementReturn('privacy');await go('profile/privacy')
   await go('profile/posts');assert.equal(await page.evaluate(()=>location.hash),'#profile/records/public');await page.goBack();await settle(page);assert.equal(await page.evaluate(()=>location.hash),'#profile/privacy');await page.goForward();await settle(page);assert.equal(await page.evaluate(()=>location.hash),'#profile/records/public');await page.reload();await page.locator('.record-filters [aria-pressed="true"]').waitFor();assert.equal(await page.locator('.record-filters [aria-pressed="true"]').textContent(),'공개 중')
   await page.goto(origin+'/?taste=1#profile');await page.locator('.profile-menu-row small').filter({hasText:'많이 보관한 작곡가'}).waitFor();await check(page,width,'taste-summary-populated');await go('profile/taste');await check(page,width,'taste-chart-populated');assert.equal(await page.locator('.preference-chart meter').count(),9)
   await page.goto(origin+'/?empty=1#profile');await page.locator('.profile-record-counts').waitFor();await check(page,width,'empty-home');assert.equal(await page.locator('.profile-recent li').count(),0)
@@ -90,6 +105,7 @@ try {
  }
  assert.deepEqual(errors,[])
  for(const name of ['settings-profile-link','records-description','public-profile-guide','delete-confirmation','long-record-body'])assert(targetChecks.some(t=>t.name===name&&t.lines>1),'missing multiline coverage '+name)
- const evidence={task_id:'CA-PROFILE-DASHBOARD-IA-20261110-001',result:'PASS',environment:'local Chromium / synthetic in-memory transport / network restricted to whitelisted local assets',line_measurement:'independent character Range rectangles and numeric computed line-height; data-text-lines is not trusted',cases:results,target_checks:targetChecks,negative_controls:negativeControls,browser_back_forward_reload:'PASS',navigation_overlay:'PASS',page_errors:0,real_oauth:false,real_postgrest:false,real_realtime:false,real_device_ime:false,production_requests:0}
+ assert.equal(managementReturns.length,12)
+ const evidence={task_id:'CA-PROFILE-DASHBOARD-IA-20261110-001',result:'PASS',environment:'local Chromium / synthetic in-memory transport / network restricted to whitelisted local assets',line_measurement:'independent character Range rectangles and numeric computed line-height; data-text-lines is not trusted',cases:results,target_checks:targetChecks,negative_controls:negativeControls,management_returns:managementReturns,relationship_counts_noninteractive:true,browser_back_forward_reload:'PASS',navigation_overlay:'PASS',page_errors:0,real_oauth:false,real_postgrest:false,real_realtime:false,real_device_ime:false,production_requests:0}
  writeFileSync('.cache/mobile-verification.json',JSON.stringify(evidence,null,2)+'\n');console.log(JSON.stringify({result:'PASS',cases:results.length,widths:[320,375,390],page_errors:errors.length}))
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve))}

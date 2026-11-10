@@ -67,15 +67,16 @@ export default function MyProfile({ auth, preference, savedTracks = [], onGoExpl
   useEffect(() => { if (route.canonical) navigate(route.canonical,true); heading.current?.focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}) }, [section])
   const mine = data?.mine?.id ? data.mine : null, publicProfile = data?.profile ?? mine
   const titles = {home:'내 프로필',records:'내 기록',taste:'나의 음악 취향',settings:'설정',edit:'프로필 수정',preview:'공개 프로필 미리보기',blocked:'차단한 사용자',privacy:'개인정보 처리 안내'}
+  const backToSettings = ['edit','preview','blocked','privacy'].includes(route.view)
   const composers = [...savedTracks.reduce((map,track) => map.set(track.composer,(map.get(track.composer)||0)+1),new Map())].sort((a,b) => b[1]-a[1]).slice(0,2).map(([name]) => name)
   const tasteSummary = preference?.count ? [preference.topEmotions?.map(emotionLabel).join(' · '),composers.length ? '많이 보관한 작곡가: ' + composers.join(' · ') : ''].filter(Boolean).join(' / ') : '마음에 드는 곡을 보관하며 취향을 알아보세요.'
   return <>
-    <header className="library-header profile-dashboard-header"><p>MY PROFILE</p>{route.view !== 'home' && <a className="profile-back" href="#profile">← 내 프로필 홈</a>}<h1 id={route.view === 'records' ? 'my-records-title' : 'profile-screen-title'} tabIndex={-1} ref={heading}>{titles[route.view]}</h1></header>
+    <header className="library-header profile-dashboard-header"><p>MY PROFILE</p>{route.view !== 'home' && <a className="profile-back" href={backToSettings ? '#profile/settings' : '#profile'}>{backToSettings ? '← 설정' : '← 내 프로필 홈'}</a>}<h1 id={route.view === 'records' ? 'my-records-title' : 'profile-screen-title'} tabIndex={-1} ref={heading}>{titles[route.view]}</h1></header>
     <main className={'library-main my-profile profile-view-' + route.view}>
       {auth?.isLoading ? <p role="status">로그인을 확인하고 있어요.</p> : !auth?.user ? <section className="profile-section profile-login"><h2>나의 음악 활동을 모아보세요</h2><p>Google로 로그인하면 내 기록과 취향을 살펴보고, 선택한 글만 공유할 수 있어요.</p><button onClick={auth?.signInWithGoogle} disabled={auth?.isLoading || !auth?.configured}>Google로 계속하기</button>{auth?.error && <p role="alert">{auth.error}</p>}</section> : <>
         {route.view === 'home' && <>
           <section className="profile-home-identity" aria-label="내 프로필 요약"><Identity profile={mine} />{error ? <p role="alert">프로필을 불러오지 못했어요. <button onClick={load}>다시 시도</button></p> : !data ? <p role="status">프로필 불러오는 중…</p> : <>
-            {mine && <div className="profile-social-counts"><a href="#profile/preview">팔로워 {publicProfile?.follower_count ?? 0}</a><a href="#profile/preview">팔로잉 {publicProfile?.following_count ?? 0}</a></div>}
+            {mine && <div className="profile-social-counts"><span>팔로워 {publicProfile?.follower_count ?? 0}</span><span>팔로잉 {publicProfile?.following_count ?? 0}</span></div>}
             <a className="profile-action" href="#profile/edit">{mine ? '프로필 수정' : '공개 프로필 만들기'}</a>{mine && <a className="profile-preview-link" href="#profile/preview">다른 사용자에게 보이는 내 프로필 확인</a>}
           </>}</section>
           <nav className="profile-menu" aria-label="프로필 메뉴"><MenuLink to="records" icon="records" title="내 기록">비공개 원본과 공개 중인 기록</MenuLink><MenuLink to="taste" icon="taste" title="나의 취향">{tasteSummary}</MenuLink><MenuLink to="settings" icon="settings" title="설정">프로필 · 개인정보 · 계정</MenuLink></nav>

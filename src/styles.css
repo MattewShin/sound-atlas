@@ -589,13 +589,14 @@ small { font-size: 12px; }
 .my-profile a, .my-profile button { min-width: 44px; min-height: 44px; }
 .my-profile a { color: #245a53; }
 .my-profile button, .my-profile a, .profile-back { overflow-wrap: anywhere; }
-.profile-back, .profile-action, .profile-preview-link, .profile-social-counts a { display: inline-flex; align-items: center; padding: 12px 8px; font-size: 16px; }
+.profile-back, .profile-action, .profile-preview-link { display: inline-flex; align-items: center; padding: 12px 8px; font-size: 16px; }
 .profile-back { min-height: 44px; }
-.profile-dashboard-header .profile-back { color: #fffaf2; }
+.profile-dashboard-header .profile-back { color: #fffaf2; padding-inline: 0; }
 .profile-home-identity, .profile-recent { min-width: 0; color: #263b36; overflow-wrap: anywhere; }
 .profile-home-identity .profile-action { border: 1px solid #b8c9b7; border-radius: 10px; padding-inline: 16px; }
 .profile-preview-link { display: flex; width: fit-content; }
 .profile-social-counts { display: flex; flex-wrap: wrap; gap: 8px; }
+.profile-social-counts span { padding: 8px 4px; font-size: 16px; }
 .profile-menu { min-width: 0; border-block: 1px solid #d6dccf; }
 .profile-menu-row { display: grid; grid-template-columns: 24px minmax(0, 1fr) 16px; align-items: center; gap: 12px; padding: 18px 4px; text-decoration: none; border-bottom: 1px solid #d6dccf; }
 .profile-menu-row:last-child { border-bottom: 0; }
