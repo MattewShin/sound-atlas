@@ -1,0 +1,383 @@
+{
+  "task_id": "CA-NAV-PROFILE-IA-20261110-001",
+  "specification": 1,
+  "status": "IMPLEMENTED",
+  "baseline_main": "465173d2e2e41ee58f387b18b6897a3e29cbaff9",
+  "implementation_code_sha": "cbfce0e4564a4799a5892c0a5b0ffa42a75b654e",
+  "branch": "codex/ca-nav-profile-ia-20261110-001",
+  "tests": {
+    "full": {
+      "command": "npm test",
+      "pass": 165,
+      "fail": 0,
+      "skip": 0
+    },
+    "social": {
+      "command": "npm run test:social",
+      "pass": 5,
+      "fail": 0,
+      "skip": 0
+    },
+    "profile_ia": {
+      "command": "node scripts/testProfileIa.mjs",
+      "pass": 3,
+      "fail": 0,
+      "skip": 0
+    },
+    "build": {
+      "command": "npm run build",
+      "result": "PASS",
+      "existing_500kb_chunk_warning": true
+    },
+    "environment": "Windows / Node 22.18.0 / local PGlite / JSDOM / mocked SDK transport; actual JSX/esbuild/Vite"
+  },
+  "mobile": {
+    "task_id": "CA-NAV-PROFILE-IA-20261110-001",
+    "result": "PASS",
+    "environment": "local Chromium 141 / synthetic in-memory transport / network limited to local static server",
+    "cases": [
+      {
+        "width": 320,
+        "state": "signed-in-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21
+      },
+      {
+        "width": 320,
+        "state": "post-menu",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21
+      },
+      {
+        "width": 320,
+        "state": "profile-records",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 116
+      },
+      {
+        "width": 320,
+        "state": "profile-editor-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 127
+      },
+      {
+        "width": 320,
+        "state": "record-keyboard-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 138
+      },
+      {
+        "width": 320,
+        "state": "anonymous-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 20
+      },
+      {
+        "width": 320,
+        "state": "anonymous-profile",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 32
+      },
+      {
+        "width": 375,
+        "state": "signed-in-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21
+      },
+      {
+        "width": 375,
+        "state": "post-menu",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21
+      },
+      {
+        "width": 375,
+        "state": "profile-records",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 116
+      },
+      {
+        "width": 375,
+        "state": "profile-editor-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 127
+      },
+      {
+        "width": 375,
+        "state": "record-keyboard-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 138
+      },
+      {
+        "width": 375,
+        "state": "anonymous-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 20
+      },
+      {
+        "width": 375,
+        "state": "anonymous-profile",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 32
+      },
+      {
+        "width": 390,
+        "state": "signed-in-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21
+      },
+      {
+        "width": 390,
+        "state": "post-menu",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21
+      },
+      {
+        "width": 390,
+        "state": "profile-records",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 116
+      },
+      {
+        "width": 390,
+        "state": "profile-editor-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 127
+      },
+      {
+        "width": 390,
+        "state": "record-keyboard-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 138
+      },
+      {
+        "width": 390,
+        "state": "anonymous-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 20
+      },
+      {
+        "width": 390,
+        "state": "anonymous-profile",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 32
+      },
+      {
+        "width": 520,
+        "state": "signed-in-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21
+      },
+      {
+        "width": 520,
+        "state": "post-menu",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 21
+      },
+      {
+        "width": 520,
+        "state": "profile-records",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 116
+      },
+      {
+        "width": 520,
+        "state": "profile-editor-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 127
+      },
+      {
+        "width": 520,
+        "state": "record-keyboard-focus",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 138
+      },
+      {
+        "width": 520,
+        "state": "anonymous-feed",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 20
+      },
+      {
+        "width": 520,
+        "state": "anonymous-profile",
+        "horizontal_overflow": false,
+        "touch_areas_48": true,
+        "icons_28": true,
+        "equal_widths_and_centering": true,
+        "accessible_names_and_active_page": true,
+        "typography": "PASS",
+        "visible_text_nodes": 32
+      }
+    ],
+    "keyboard_tab_and_records_focus": "PASS",
+    "browser_back": "PASS",
+    "navigation_overlay": "PASS",
+    "page_errors": 0,
+    "real_oauth": false,
+    "real_postgrest": false,
+    "real_realtime": false,
+    "real_device_ime": false,
+    "production_requests": 0
+  },
+  "protection": {
+    "migration_required": false,
+    "migration_or_database_contract_changed": false,
+    "shared_client_configuration_changed": false,
+    "existing_data_ids_and_rls_unchanged": true,
+    "production_database_accessed": false,
+    "production_database_mutated": false,
+    "main_merged": false,
+    "production_deployed": false,
+    "secrets_in_changes_or_logs": false,
+    "original_ide_files_preserved": 52,
+    "original_ide_head_and_documents_preserved": true
+  },
+  "not_verified": [
+    "real Google OAuth completion and real account chooser UI",
+    "cloud PostgREST and live Realtime across real clients",
+    "real iOS/Android IME and safe-area hardware behavior",
+    "production authenticated data and deployment"
+  ],
+  "scope_choices": {
+    "record_filters": "filter the loaded page set; load more traverses the remaining existing pages",
+    "blocked_user_labels": "existing API returns opaque blocked IDs; display ordinal labels without exposing Auth UUID or changing RLS",
+    "public_profile_preview": "public identity header preview; posts remain visitor-permission dependent",
+    "own_posts_subscription": "only on explicit own-posts section; person-filtered reads and the existing shared invalidation subscriber; no global feed request from profile entry"
+  }
+}

@@ -1,3 +1,7 @@
+# 내비게이션·내 프로필 통합 — 2026-11-10
+
+CA-NAV-PROFILE-IA-20261110-001 / 명세1 / IMPLEMENTED. 기준 main `465173d2e2e41ee58f387b18b6897a3e29cbaff9`, 기능·테스트 `cbfce0e4564a4799a5892c0a5b0ffa42a75b654e`, 브랜치 `codex/ca-nav-profile-ia-20261110-001`. 음악 이야기는 공개 탐색으로 단순화하고 공개 프로필·내 기록·기존 음악 취향·활동·계정을 내 프로필로 통합했다. 아이콘 전용 메뉴와 기존 딥링크/세션/권한을 유지한다. 전체165/SNS5/통합3/모바일28·build PASS. migration 불필요, 운영 DB/병합/배포 미실행. 실 OAuth/PostgREST/Realtime·실기기는 미검증이다. [구현 결과](docs/NAV_PROFILE_IA.md) 및 CURRENT_TASK/HANDOFF를 따른다. 아래 OCR 운영 이력은 완료된 이전 작업이다.
+
 # OCR 영구 폐기 운영 완료 — 2026-11-09
 
 CA-OCR-RETIRE-20261109-001 / 명세2. 사용자 승인 후 PR #22 병합·Vercel READY, 운영 적용 당시 main/production `52869c77338d7d343ca7ce204c67d3a466b6da3c`. 새 전체 논리 백업과 직전 READ ONLY preflight 후 16:30:20 KST 승인 migration 한 파일 적용 완료. OCR table5/View1/함수22/Trigger1/FK11 제거, 유지21개 데이터 지문/권한·Auth 사용자·공식 text 확정2건 보존. 실제 PostgREST/익명 앱 읽기 PASS. Windows 예약Disabled/frozen 비활성/모델2개 보존. 실 OAuth·모바일 전체·live Realtime 다중창·백업 실복원은 미검증이다. 문서 마감은 기능·migration 변경 없이 운영 결과를 main에 반영한다. 최신 문서 SHA는 문서 PR 이력과 구분하며, 운영 결과는 [보고서](docs/OCR_RETIREMENT_PRODUCTION_2026-11-09.md)와 CURRENT_TASK/HANDOFF를 따른다. 아래 명세1의 운영 미실행 문구는 당시 준비 기록이다.
