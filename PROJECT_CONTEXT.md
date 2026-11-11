@@ -1,3 +1,7 @@
+# 음악 이야기 좋아요 UX 운영 반영 — 2026-11-11
+
+CA-SOCIAL-LIKE-UX-20261111-001 / **DEPLOYED**. 기능 283decdf99d54ca1969d4983e97a2c9cd189751d, PR #29 merge/main/Production ed77628aef351a5655c382f97a40f8a75026e78a, Ready/SHA/alias/HTTP200. 신규202611110001 trigger/function만 transaction 적용(기존 행·RLS·RPC 보존). 전체174/SNS5/전용3/모바일3·build와 실제 합성 Auth/PostgREST·운영UI·두 브라우저 Realtime·권한 회귀/자료 정리 PASS. 실 Google OAuth·실기기 PWA/IME·실 통신 장애 미검증. PWA는 **IOS_CONFIRMATION_PENDING** 유지. 결과는 별도 문서 브랜치에만 게시하며 문서 PR은 생성/병합하지 않는다. [운영 결과](docs/SOCIAL_LIKE_UX_PRODUCTION_2026-11-11.md)·CURRENT_TASK/HANDOFF가 최신이고 아래 적용 전 문구는 구현 당시 이력이다.
+
 # 좋아요 UX 통합 작업 — 2026-11-11
 
 CA-SOCIAL-LIKE-UX-20261111-001. optimistic/per-post pending·typed like invalidate background 동기화, 권한 이벤트 clear-first 유지. 신규 trigger/function migration만 추가하며 RLS/기존 RPC/사용자 행은 변경하지 않는다. 기능 283decdf99d54ca1969d4983e97a2c9cd189751d, 전체174/SNS5/전용3/모바일320·375·390 및 build PASS. 운영 적용은 후속 검증 후 진행하고 실제 결과는 별도 결과 문서 브랜치에 기록한다. PWA 결과 브랜치는 합치거나 종료하지 않으며 PR #28 운영 완료·**IOS_CONFIRMATION_PENDING**을 유지한다. [구현 문서](docs/SOCIAL_LIKE_UX.md)가 최신이다. 아래는 이전 작업의 작성 당시 이력이다.

@@ -1,0 +1,322 @@
+{
+  "task_id": "CA-SOCIAL-LIKE-UX-20261111-001",
+  "state": "DEPLOYED",
+  "recorded_kst": "2026-11-11 17:03:50 KST",
+  "feature_sha": "283decdf99d54ca1969d4983e97a2c9cd189751d",
+  "pr_head": "7069cf1318b00b51d324a4d11faca966fca1dc9e",
+  "pr": 29,
+  "pr_url": "https://github.com/MattewShin/sound-atlas/pull/29",
+  "merged_kst": "2026-11-11 16:56:38 KST",
+  "main_sha": "ed77628aef351a5655c382f97a40f8a75026e78a",
+  "production_deployment": {
+    "id": "dpl_CSPnzCi2SmKoLaZv6Lz7Vz2Z5wDy",
+    "sha": "ed77628aef351a5655c382f97a40f8a75026e78a",
+    "ready": "READY",
+    "target": "production",
+    "created": 1794383801778,
+    "ready_at": 1794383815425,
+    "aliases": [
+      "sound-atlas.vercel.app",
+      "sound-atlas-git-main-yhshin.vercel.app"
+    ],
+    "url": "sound-atlas-5kbixaudt-yhshin.vercel.app",
+    "observed_kst": "2026-11-11 16:58:01 KST"
+  },
+  "migration": {
+    "result": "PASS",
+    "applied_kst": "2026-11-11 16:56:07 KST",
+    "feature_head": "7069cf1318b00b51d324a4d11faca966fca1dc9e",
+    "migration": "supabase/migrations/202611110001_social_like_invalidation.sql",
+    "migration_sha256": "5305f26c70d2f62cdba72f464b2a5e366b7921cf199825858ad23408abff805b",
+    "single_transaction": true,
+    "commit": true,
+    "likes_before": {
+      "count": 0,
+      "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "likes_after": {
+      "count": 0,
+      "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "all_existing_row_fingerprints_unchanged": true,
+    "other_triggers_unchanged": true,
+    "rls_and_existing_rpc_definitions_unchanged": true,
+    "typed_trigger": {
+      "table_name": "music_social_likes",
+      "name": "social_like_invalidate",
+      "definition": "CREATE TRIGGER social_like_invalidate AFTER INSERT OR DELETE OR UPDATE ON public.music_social_likes FOR EACH STATEMENT EXECUTE FUNCTION atlas_private.social_like_invalidate()",
+      "function": "atlas_private.social_like_invalidate()",
+      "tgtype": 28,
+      "tgenabled": "O"
+    },
+    "private_function_exec_acl": {
+      "anon": false,
+      "authenticated": false,
+      "public": false
+    },
+    "payload": {
+      "kind": "like"
+    },
+    "topic": "atlas-social",
+    "event": "invalidate",
+    "migration_history_table_present": false,
+    "recovery": {
+      "definition_file_sha256": "1015335db8904cd62a8febdb1455068c0e4d32c6e32f71396c5175bc8d42361b",
+      "rollback_sha256": "52979604655a166d8994231daa4c9efca926cb2bccd9d7fa62646a14a8af5315",
+      "migration_sha256": "5305f26c70d2f62cdba72f464b2a5e366b7921cf199825858ad23408abff805b",
+      "feature_head": "7069cf1318b00b51d324a4d11faca966fca1dc9e",
+      "observed_kst": "2026-11-11 16:56:03 KST",
+      "likes_before": {
+        "count": 0,
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "restoration_scope": "trigger/function definitions + explicit rollback SQL; no row mutations; no whole DB restore"
+    }
+  },
+  "implementation_tests": {
+    "task_id": "CA-SOCIAL-LIKE-UX-20261111-001",
+    "state": "IMPLEMENTED",
+    "recorded_kst": "2026-11-11 16:54:09 KST",
+    "base_main": "de4f78d2b00edae6166348194e1a648c8d0e184a",
+    "code_sha": "283decdf99d54ca1969d4983e97a2c9cd189751d",
+    "tests": {
+      "full": 174,
+      "social": 5,
+      "like_ux": 3,
+      "sql_static_and_isolated": 2,
+      "build": "PASS"
+    },
+    "logs": {
+      "full": {
+        "sha256": "cc4ca56fc0a2c6367ef745eebf7e65ba34e0d0a89f0fc83c4b07d2d006113053"
+      },
+      "social": {
+        "sha256": "b84f86630d86ea43f40d949ce19059c24aa1ea3f922e11454ce776a9f5cd1503"
+      },
+      "like": {
+        "sha256": "0c82dc15cfd791363687bfe09f922133db2aed069c1c39e61ef6fec6fa2ee37e"
+      },
+      "build": {
+        "sha256": "06d2fb5481efbb67434f1d388e0139675ed0200f51b0ea1f92dcc3c278900963"
+      }
+    },
+    "mobile": {
+      "result": "PASS",
+      "cases": [
+        {
+          "width": 320,
+          "result": "PASS",
+          "optimistic": true,
+          "per_post_pending": true,
+          "focus_scroll_dom_expansion_draft_preserved": true,
+          "loaded_posts": 60,
+          "failure_rollback": true,
+          "loading_flicker": false,
+          "external_network": false
+        },
+        {
+          "width": 375,
+          "result": "PASS",
+          "optimistic": true,
+          "per_post_pending": true,
+          "focus_scroll_dom_expansion_draft_preserved": true,
+          "loaded_posts": 60,
+          "failure_rollback": true,
+          "loading_flicker": false,
+          "external_network": false
+        },
+        {
+          "width": 390,
+          "result": "PASS",
+          "optimistic": true,
+          "per_post_pending": true,
+          "focus_scroll_dom_expansion_draft_preserved": true,
+          "loaded_posts": 60,
+          "failure_rollback": true,
+          "loading_flicker": false,
+          "external_network": false
+        }
+      ],
+      "real_ios": false,
+      "production": false
+    },
+    "operating_migration_applied": false,
+    "actual_operating_like_verified": false
+  },
+  "production_live": {
+    "task_id": "CA-SOCIAL-LIKE-UX-20261111-001",
+    "result": "PASS",
+    "observed_kst": "2026-11-11 17:01:42 KST",
+    "tests": [
+      {
+        "name": "synthetic-password-auth-A-B-C-isolated",
+        "result": "PASS"
+      },
+      {
+        "name": "real-postgrest-A-B-C-anonymous-scope-matrix",
+        "result": "PASS"
+      },
+      {
+        "name": "production-like-unlike-state-preservation-320",
+        "result": "PASS"
+      },
+      {
+        "name": "production-like-unlike-state-preservation-375",
+        "result": "PASS"
+      },
+      {
+        "name": "production-like-unlike-state-preservation-390",
+        "result": "PASS"
+      },
+      {
+        "name": "production-intercepted-network-failure-local-rollback",
+        "result": "PASS"
+      },
+      {
+        "name": "real-websocket-two-browser-peer-count-sync",
+        "result": "PASS"
+      },
+      {
+        "name": "real-generic-scope-change-clears-peer",
+        "result": "PASS"
+      },
+      {
+        "name": "unfollow-read-like-revocation",
+        "result": "PASS"
+      },
+      {
+        "name": "block-read-like-revocation-and-peer-clear",
+        "result": "PASS"
+      },
+      {
+        "name": "withdraw-clears-peer-and-preserves-synthetic-source",
+        "result": "PASS"
+      },
+      {
+        "name": "production-no-fatal-js-errors",
+        "result": "PASS"
+      }
+    ],
+    "cleanup": {
+      "result": "PASS",
+      "synthetic_accounts_deleted": 3,
+      "synthetic_original_share_likes_follows_blocks_removed": true,
+      "existing_rows_and_fingerprints_unchanged": true
+    },
+    "real_postgrest": true,
+    "real_two_browser_realtime": true,
+    "google_oauth": false,
+    "actual_ios": false,
+    "user_identifiers_or_bodies_logged": false
+  },
+  "production_anonymous": {
+    "result": "PASS",
+    "observed_kst": "2026-11-11 17:01:56 KST",
+    "main_sha": "ed77628aef351a5655c382f97a40f8a75026e78a",
+    "deployment": {
+      "id": "dpl_CSPnzCi2SmKoLaZv6Lz7Vz2Z5wDy",
+      "sha": "ed77628aef351a5655c382f97a40f8a75026e78a",
+      "ready": "READY",
+      "target": "production",
+      "created": 1794383801778,
+      "ready_at": 1794383815425,
+      "aliases": [
+        "sound-atlas.vercel.app",
+        "sound-atlas-git-main-yhshin.vercel.app"
+      ],
+      "url": "sound-atlas-5kbixaudt-yhshin.vercel.app"
+    },
+    "http": 200,
+    "anonymous_postgrest_read": "PASS",
+    "sensitive_source_owner_fields_absent": true,
+    "cases": [
+      {
+        "width": 320,
+        "result": "PASS",
+        "screens": [
+          "home",
+          "library",
+          "concerts",
+          "music-stories"
+        ],
+        "anonymous_likes_disabled": true,
+        "horizontal_overflow": false,
+        "page_errors": 0
+      },
+      {
+        "width": 375,
+        "result": "PASS",
+        "screens": [
+          "home",
+          "library",
+          "concerts",
+          "music-stories"
+        ],
+        "anonymous_likes_disabled": true,
+        "horizontal_overflow": false,
+        "page_errors": 0
+      },
+      {
+        "width": 390,
+        "result": "PASS",
+        "screens": [
+          "home",
+          "library",
+          "concerts",
+          "music-stories"
+        ],
+        "anonymous_likes_disabled": true,
+        "horizontal_overflow": false,
+        "page_errors": 0
+      }
+    ],
+    "user_bodies_or_identifiers_logged": false
+  },
+  "realtime_observation": {
+    "event": "invalidate",
+    "topic": "atlas-social",
+    "application_payload": {
+      "kind": "like"
+    },
+    "sdk_payload_keys": [
+      "id",
+      "kind"
+    ],
+    "managed_transport_event_id": true,
+    "values_or_identifiers_recorded": false,
+    "observation": "real Supabase SDK broadcast observer; two production browser UIs independently checked for peer updates"
+  },
+  "diagnostics": {
+    "initial_raw_frame_observer_attempts": 2,
+    "reason": "Auxiliary raw-frame parser did not decode current managed transport; UI checks passed but Realtime PASS withheld until real SDK observations plus peer-browser updates passed.",
+    "all_attempts_cleaned": true,
+    "total_synthetic_accounts_deleted": 9
+  },
+  "changes": {
+    "old_migrations_modified": 0,
+    "likes_trigger_functions_only": true,
+    "rls_or_existing_rpc_changes": 0,
+    "existing_user_row_mutations": 0,
+    "environment_changes": 0,
+    "supabase_oauth_vercel_configuration_changes": 0,
+    "additional_runtime_changes_after_feature_sha": 0
+  },
+  "privacy": {
+    "actual_user_bodies_emails_ids_sessions_or_backup_paths_recorded": false,
+    "synthetic_credentials_file_removed": true
+  },
+  "unverified": [
+    "Actual Google OAuth provider login/account selection",
+    "Physical iOS/Android PWA and IME",
+    "Actual provider outage or physical network loss; failure test used intercepted synthetic 503",
+    "More than 30 posts tested with 60 synthetic local records, not a production bulk fixture"
+  ],
+  "pwa_status": "DEPLOYED / IOS_CONFIRMATION_PENDING",
+  "rollback": {
+    "merge_sha": "ed77628aef351a5655c382f97a40f8a75026e78a",
+    "command": "git revert -m 1 ed77628aef351a5655c382f97a40f8a75026e78a",
+    "sql": "supabase/rollback/202611110001_social_like_invalidation.sql"
+  },
+  "result_document_branch": "codex/ca-social-like-ux-20261111-001-production",
+  "result_document_pr_created": false
+}
