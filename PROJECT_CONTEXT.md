@@ -1,3 +1,7 @@
+# PWA 상단 상태바 운영 반영 — 2026-11-11
+
+CA-PWA-TOP-SAFE-AREA-20261111-001 / 명세2 / **DEPLOYED / IOS_CONFIRMATION_PENDING**. PR #28 Ready→main merge de4f78d2b00edae6166348194e1a648c8d0e184a, Vercel Production Ready·SHA/alias·HTTP200·default meta/cover/black-translucent 부재 확인. 운영 익명 Chromium39/39 PASS, 기존171/5/78/build 증거는 재실행 없이 검토했다. 실제 iPhone PWA 해결·Safari/Android 설치형·native safe area/IME·OAuth/인증 PostgREST/Realtime·완전 오프라인 fallback은 미검증. 사용자 완전 종료/필요시 재설치 확인 전 CLOSED 아님. DB·migration·환경·설정·사용자 자료 변경0, 별도 결과 문서 브랜치만 게시하며 문서 PR은 미생성/미병합. [운영 결과](docs/PWA_TOP_SAFE_AREA_PRODUCTION_2026-11-11.md)와 CURRENT_TASK/HANDOFF가 최신이다. 아래 명세1 미배포 문구는 당시 준비 이력이다.
+
 # PWA 상단 상태바 보완 준비 — 2026-11-11
 
 CA-PWA-TOP-SAFE-AREA-20261111-001 / 명세1 / IMPLEMENTED. 기준 main 3e4e163fbc77577354dddc783d174ccb2893258a, 기능·검증 b8b15cf25f5c80ac3dd3f36eb4f5971c49303c20, 브랜치 codex/ca-pwa-top-safe-area-20261111-001. iOS status-bar default/불투명 크림색 canvas, 일반 헤더 top 보정 없음·기존 하단/헤더 디자인 보존. 홈 브랜드 hit 영역만 배치 변화 없이44px로 보완. 전체171/정적5/수정모바일78+기준78·build PASS. 일반39/standalone CSS시뮬레이션39는 실 iOS/Safari/Android 설치형이 아니며 실기기 미검증이다. [구현·재설치 안내](docs/PWA_TOP_SAFE_AREA.md)·CURRENT_TASK/HANDOFF가 최신이다. DB·설정·사용자 자료/main 병합/운영 배포 변경0, Draft 검토까지 진행한다. 이전 대시보드 작업은 [명세2 보관](docs/collaboration/archive/CA-PROFILE-DASHBOARD-IA-20261110-001/spec2/CURRENT_TASK.md)했고 PR #27 병합·Ready로 CLOSED가 확정됐다. 아래 조건부 문구는 과거 문서 작성 이력이다.
