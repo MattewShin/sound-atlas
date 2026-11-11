@@ -1,3 +1,7 @@
+# 프로필 대시보드 운영 반영 — 2026-11-11
+
+CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세2 / IMPLEMENTED. 사용자 명세1 ACCEPTED·운영 승인에 따라 PR #26 Ready→main merge a771252d86df084d382e7d7ad4d3f64d32d0adde, Vercel Production READY/운영 alias와 SHA 일치 확인. 익명 운영45/45(프로필33·기존12)/history3/공연 실제GET조회1 PASS. DB·migration·환경변수·설정·사용자 자료 변경0. 로그인 운영 검증/실 OAuth·인증 RLS·다중 창 Realtime·실기기 IME는 미검증이다. [운영 보고서](docs/PROFILE_DASHBOARD_PRODUCTION_2026-11-11.md)·CURRENT_TASK/HANDOFF가 최신이며 아래 명세1 미배포 문구는 준비 이력이다. 결과는 별도 문서 브랜치에서 게시하고 문서 PR 병합은 하지 않는다. [명세1 보관](docs/collaboration/archive/CA-PROFILE-DASHBOARD-IA-20261110-001/spec1/CURRENT_TASK.md).
+
 # 내 프로필 대시보드 준비 — 2026-11-10
 
 CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세1 / IMPLEMENTED. 기준 main fe73abfccd4aafa62dedadbbaed3e1fa4abe099d, 기능·테스트 fda3efa7c750eaed9e9b3793b0fc18f887aceae0, 브랜치 codex/ca-profile-dashboard-ia-20261110-001. 요약 홈과 records/taste/settings 하위 화면, 공개 프로필 편집·미리보기/차단/개인정보 하위 경로를 구현했다. 홈은 최근3개/개수만, 기록 필터는 기존 소유자 메타데이터와 서버 SELECT 조건으로 전체 기준10개씩이다. 기존 private 공유본의 나만 보기 분류와 원본/공유·Auth·권한·추천을 보존한다. 전체170/SNS5/프로필8/모바일69·build PASS, migration 불필요. Draft 검토까지의 작업이며 main 병합/운영 DB/배포 미실행, 실 OAuth/클라우드 PostgREST/Realtime/실기기 미검증이다. PR #26 검토 보완으로 관계 숫자를 비대화형 정보로 바꾸고 관리 하위 화면의 주 복귀를 설정으로 통일했다. 기존 검증 재통과와 모바일 복귀/상단 정렬12건을 확인했다. 최신 [구현 결과](docs/PROFILE_DASHBOARD_IA.md)·CURRENT_TASK/HANDOFF가 이 작업을 설명한다. 아래 운영 완료 기록은 이전 CA-NAV 작업이며 최신 운영 기능은 여전히 그 결과다. 이전 작업 문서는 [명세2 보관](docs/collaboration/archive/CA-NAV-PROFILE-IA-20261110-001/spec2/CURRENT_TASK.md)에서 읽는다.

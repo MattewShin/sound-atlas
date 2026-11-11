@@ -1,46 +1,26 @@
-# 프로필 대시보드 구현 인계
+# 프로필 대시보드 운영 인계
 
-게시: [Draft PR #26](https://github.com/MattewShin/sound-atlas/pull/26) · 브랜치 `codex/ca-profile-dashboard-ia-20261110-001`. 원격에 반영했으며 main은 병합하지 않았다.
+- 작업 ID: CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세2
+- 상태: IMPLEMENTED
+- 명세1 검토: 사용자 ACCEPTED, 승인 HEAD 9e60130a23e37d42a5d233cd6831daa1573e57f2
+- 코드 기준 브랜치/전체 SHA: main / a771252d86df084d382e7d7ad4d3f64d32d0adde
+- 결과 문서 브랜치: codex/ca-profile-dashboard-ia-20261110-001-production
+- 기록 시각: 2026-11-11 10:16:52 KST
 
-- 작업 ID: CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세1
-- 상태: IMPLEMENTED (검토자의 ACCEPTED 아님)
-- 브랜치: codex/ca-profile-dashboard-ia-20261110-001
-- 코드 기준 전체 SHA: fda3efa7c750eaed9e9b3793b0fc18f887aceae0
-- 기준 main: fe73abfccd4aafa62dedadbbaed3e1fa4abe099d
-- 기록 시각: 2026-11-10 16:34:43 KST
+## 운영 결과
 
-## 구현 결과
+PR #26을 Ready 전환 후 2026-11-11 10:09:14 KST merge commit 방식으로 병합했다. 최종 main/production SHA는 위와 같으며 Vercel dpl_81wuvD5ArSLJiLaMx9quKop5J8zd, production/READY와 운영 도메인 alias를 확인했다. 승인 HEAD와 병합 tree diff0, 추가 런타임 수정0. 미해결 thread0·Vercel Preview Ready/등록 status success 및 승인 로그/checksum을 확인했고 전체 테스트/build/DB 검증은 반복하지 않았다.
 
-홈은 공개 프로필 헤더/수정 진입/미리보기/관계 숫자, 내 기록·나의 취향·설정 세 메뉴와 기록 개수/최근3개다. 기록10개씩·취향 차트·프로필 편집·차단·개인정보·계정은 별도 hash 화면으로 이동했다. 계정 전환/로그아웃/삭제는 설정 최하단에 기존 컴포넌트를 재사용한다. 공개 글 관리는 내 기록의 공유본 본문 편집/공개 범위/링크/공유 취소로 보존한다.
+운영 익명45/45:320/375/390px 각각 프로필11주소 직접 진입/새로고침 +기존4화면. 실제 history3/3 및 추가 공연 GET 조회200/결과 렌더링1/1. 익명 프로필 개인 REST0/websocket0·가로 넘침0·폰트/줄 높이/터치/전역 메뉴·로그인 안내의 하단 메뉴 비중첩 확인. 실제 public social_feed 응답200. pageerror/console error/REST오류·차단 쓰기0, 사용자 기록 변경0.
 
-전체 기능 이동표·데이터 요청·주소·모바일 증거·한계는 [구현 보고서](docs/PROFILE_DASHBOARD_IA.md), 수치 근거는 [검증 JSON](docs/PROFILE_DASHBOARD_IA_VERIFICATION_2026-11-10.json)과 [실측 JSON](docs/PROFILE_DASHBOARD_MOBILE_2026-11-10.json)에 있다. 코드 이후 커밋은 문서/증거만 추가한다. 최종 PR HEAD는 PR 메타데이터와 완료 응답을 기준으로 확인한다.
+안전하게 지정된 테스트 계정/준비된 세션이 없어 로그인 운영 검증은 미수행. 실제 사용자 세션을 찾아 쓰거나 계정 전환/로그아웃/삭제하지 않았다. 로그인 홈 최근3개/전체10개·필터/공유 관리·설정 계정 영역, 실제 OAuth·authenticated PostgREST RLS/범위/계정 격리·다중 창 Realtime/재연결·실기기 IME는 미검증이다. 합성 테스트를 운영 검증으로 대신하지 않는다.
 
-## 변경 파일
+## 변경·보안
 
-- src/App.jsx: 전체 프로필 hash 경로 전달, 기존 보관곡을 취향 요약에 전달.
-- src/components/MyProfile.jsx: 요약 홈/하위 화면·필요한 화면만 마운트·제한된 요청/지연 응답 격리.
-- src/components/MusicJournal.jsx: 전체 기준 서버 SELECT 필터/페이지·공유본 편집·focus 갱신.
-- src/data/profileRecords.js, profileRoutes.js: 기존 소유자 API 기반 요약·쿼리와 호환 경로.
-- src/styles.css: 간결한 목록/프로필 홈·하위 복귀·터치·계정 영역.
-- scripts/profileIaDomTest.mjs, profileIaFixture.mjs, profileIaMobileEntry.jsx, profileRecords.test.mjs, test.mjs, testProfileIa.mjs, testProfileMobile.mjs, concertBrowserUi.test.mjs: 변경 구조와 기존 기능의 회귀/실측 검증.
-- 공동 문서/보고서·검증 JSON·합성 화면9개 및 이전 작업 보관 쌍.
+변경 파일은 CURRENT_TASK/HANDOFF/PROJECT_CONTEXT, [운영 결과](docs/PROFILE_DASHBOARD_PRODUCTION_2026-11-11.md), [검증 JSON](docs/PROFILE_DASHBOARD_PRODUCTION_VERIFICATION_2026-11-11.json), 익명 화면3개와 명세1 보관 쌍뿐이다. 런타임/package/migration/설정 파일 변경0. DB/migration/환경변수/Supabase·OAuth·Vercel 설정/사용자 자료 변경0. 원래 IDE dirty worktree·HEAD/파일52개를 보존한다. 문서에 비밀값·원시 세션·실제 사용자 본문/ID/닉네임/이메일·백업 실제 경로를 포함하지 않는다. 커밋 전·게시 후 범위/비밀값/링크/JSON을 검사하며 결과 브랜치에는 커밋 전 변경을 남기지 않는다.
 
-## 검증
+## 롤백·다음 단계
 
-전체170/170, SNS5/5, 프로필8/8, 모바일69/69(320/375/390px), production build PASS. 모든 fail/skip0, 실제 텍스트 줄 수/computed line-height와 잘못된 normal 대조군3개 확인. 실제 SDK 요청 구성과 합성 DOM에서 전체 상태 필터·10→20→23·홈3·오류 재시도·원본/공유 독립·삭제/공유 취소·주소/history·계정 전환/지연 응답/초안 격리 확인. 기존 build chunk 경고는 남는다.
+Production Ready/SHA·치명 오류·익명 자료 노출·기존 화면/딥링크 접근·계정 혼합 실패 기준과 revert 대상은 [운영 보고서](docs/PROFILE_DASHBOARD_PRODUCTION_2026-11-11.md)에 기록했다. 대상 a771252d86df084d382e7d7ad4d3f64d32d0adde, 필요 시 별도 revert -m 1 커밋을 검토·병합·재배포한다. 이번에는 롤백하지 않았고 DB rollback/설정 변경도 없다.
 
-DB schema/migration/RLS/RPC/Realtime·OAuth 로직/환경변수·추천 알고리즘/기존 곡 ID 파일 변경0. 운영 DB 접속/실제 사용자 자료 생성·공개·수정·삭제0. 원래 IDE의 dirty worktree와 HEAD를 보존했고 기준 파일52개 checksum을 대조했다. .env/실제 비밀값/사용자 본문을 커밋하지 않는다. 게시 전 링크/JSON/변경 범위/비밀값/로그를 검사한다.
-
-## 구현자 의견·미해결
-
-기존 승인된 분류를 유지해 publication 없음 또는 private는 나만 보기, followers/public은 공개 중으로 전체를 배타적으로 분류한다. private 공유본을 누락하거나 취소로 오인하지 않는다. 소유자 목록 RPC 한도와 공유 quota가 모두100이어서 전체 본문 없이 정확한 상태 필터가 가능하다. 상한 변경 시 이 전제를 재검토해야 한다. 요약의 병렬 API는 단일 트랜잭션이 아니며 offset 페이지 사이의 외부 쓰기에는 재진입/focus 갱신이 필요할 수 있다.
-
-팔로워/팔로잉 목록 API가 없으므로 두 숫자는 링크/버튼이 아닌 비대화형 요약으로 표시한다. 공개 프로필 미리보기는 별도 명시적 링크로 제공한다. 실제 Google OAuth/chooser·계정 전환, 클라우드 PostgREST/RLS와 다중 창 Realtime·재연결, 실기기 IME/키보드/iOS Safari/PWA는 미검증이다. 합성 Auth/API/채널·SQL 테스트를 실서비스 검증으로 보고하지 않는다.
-
-## 다음 검토 요청
-
-홈의 정보 우선순위·하위 화면 이동·private 공유본 분류·기록/공개 글 관리 기능 보존과 화면 증거를 검토해달라. Draft 게시만 수행하며 main 병합·운영 배포·DB 작업은 이번 명세에서 실행하지 않는다. 이전 작업은 [명세2 보관 쌍](docs/collaboration/archive/CA-NAV-PROFILE-IA-20261110-001/spec2/CURRENT_TASK.md)을 참조한다.
-
-## 명세1 검토 보완 완료
-
-검토 기준 PR HEAD 5e32e6d04255ff1a32ccba7bb8762a2e6243598c, 수정 SHA fda3efa7c750eaed9e9b3793b0fc18f887aceae0. 관계 숫자를 링크/버튼이 없는 비대화형 요약으로 바꾸고 별도 공개 프로필 미리보기 링크를 유지했다. edit/preview/blocked/privacy의 주 복귀 링크는 ‘← 설정’ → #profile/settings이며 전역 내 프로필 메뉴와 브라우저 history를 유지한다. 기존 전체170/SNS5/프로필8·build를 다시 통과했다. 모바일69개 상태와 별도 관리 복귀/상단 정렬/history12건(네 화면×320/375/390px)을 통과하고 합성 증거를 갱신했다. 변경 코드는 MyProfile.jsx·styles.css, 검증은 profileIaDomTest.mjs·testProfileMobile.mjs 네 파일뿐이다. 기능 SHA 이후에는 문서·JSON·화면 증거만 추가하며 게시 후 작업 트리의 커밋 전 변경을 남기지 않는다. DB migration·운영 DB·main 병합·운영 배포는 실행하지 않았다.
+결과는 별도 문서 브랜치에 push한다. 이번 운영 반영과 문서 전용 PR 생성/병합은 분리한다. 결과 문서 검토와 남은 로그인/실기기 검증 여부를 후속으로 결정해달라. [명세1 CURRENT_TASK/HANDOFF 보관](docs/collaboration/archive/CA-PROFILE-DASHBOARD-IA-20261110-001/spec1/CURRENT_TASK.md).
