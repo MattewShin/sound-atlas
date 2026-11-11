@@ -11,7 +11,7 @@ export function createInvalidationSubscriber(db) {
       lifecycle = lifecycle.catch(() => {}).then(() => {
         if (ticket !== generation || !listeners.size) return
         channel = db.channel('atlas-social', { config: { private: false } })
-        channel.on('broadcast', { event: 'invalidate' }, () => { if (ticket === generation) for (const l of listeners) l.onInvalidate() })
+        channel.on('broadcast', { event: 'invalidate' }, message => { if (ticket === generation) for (const l of listeners) l.onInvalidate(message?.payload) })
           .subscribe(value => { if (ticket === generation) { status = value; for (const l of listeners) l.onStatus(value) } })
       }).catch(() => { if (ticket === generation) { status = 'CHANNEL_ERROR'; for (const l of listeners) l.onStatus(status) } })
     } else if (status === 'SUBSCRIBED') onStatus(status)

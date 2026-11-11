@@ -16,6 +16,7 @@ import '../src/data/sessionIsolation.test.js'
 import '../src/data/musicJournal.test.js'
 import './concertBrowserUi.test.mjs'
 import './pwa.test.mjs'
+import '../server/socialLikeInvalidation.test.mjs'
 import './emma/emma.test.js'
 import '../src/data/recommendation.test.js'
 import '../src/data/composerSelection.test.js'
@@ -45,6 +46,7 @@ import { verifyWeeklySelectionInteractions } from './weeklySelectionDomTest.mjs'
 import { verifyHomeDiscoveryInteractions } from './homeDiscoveryDomTest.mjs'
 import { verifyGoogleAuthInteractions } from './googleAuthDomTest.mjs'
 import { verifyMusicSocial } from './musicSocialDomTest.mjs'
+import { verifySocialLikeUx } from './socialLikeUxDomTest.mjs'
 import { verifyMusicJournal } from './musicJournalDomTest.mjs'
 import { verifyMusicSharing } from './musicSharingDomTest.mjs'
 import { verifyReferenceTrackInteractions } from './referenceTrackDomTest.mjs'
@@ -64,6 +66,7 @@ try {
   try { unlinkSync(compiledPath) } catch { /* 컴파일 실패 시 파일 없음 */ }
 }
 const render = (component, props = {}) => renderToStaticMarkup(React.createElement(component, props))
+test('좋아요 UX·typed refresh·경합·계정/권한 격리 회귀',async()=>verifySocialLikeUx(components.MusicSocial))
 
 test('통합 내 프로필·내 기록·권한 상태·계정 전환과 아이콘 이동을 검증한다', async () => verifyProfileIa(components))
 test('피드 프로필 생성 안내와 통합 프로필의 생성·닉네임 불변을 검증한다', async () => verifyProfileSetup(components))

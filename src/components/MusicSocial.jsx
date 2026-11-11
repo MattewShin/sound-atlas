@@ -24,7 +24,7 @@ function ShareEditor({ source, post, save, cancel, pending }) {
     <button disabled={pending || !body.trim()}>{review ? `${socialScopes[scope]}로 저장 확정` : '공유 전 확인'}</button><button type="button" onClick={cancel}>취소</button>
   </form>
 }
-function Post({ post, user, navigate, run, pending, openComments, commentState, draft, setDraft, submitComment, manage, report, block }) {
+function Post({ post, user, navigate, run, pending, likePending, like, openComments, commentState, draft, setDraft, submitComment, manage, report, block }) {
   const [expanded, setExpanded] = useState(false)
   const own = user?.id === post.profile.id
   return <article className="social-post" aria-label={`${post.profile.nickname}의 음악 기록`}>
@@ -33,7 +33,7 @@ function Post({ post, user, navigate, run, pending, openComments, commentState, 
       <details className="social-time"><summary><time dateTime={post.created_at} title={exactTime(post.created_at)}>{relativeTime(post.created_at)}</time></summary><small>{exactTime(post.created_at)}</small></details>
     </header>
     <div className="social-post-copy"><p>{expanded || post.body.length <= 320 ? post.body : post.body.slice(0, 320) + '…'}</p>{post.body.length > 320 && <button aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? '접기' : '더 보기'}</button>}</div>
-    <footer><button disabled={!user || pending} aria-pressed={post.liked} aria-label={`좋아요 ${post.like_count}개`} onClick={() => run('like:' + post.id, () => manage.like(post.id, !post.liked))}><svg viewBox="0 0 24 24" fill={post.liked ? 'currentColor' : 'none'} aria-hidden="true"><path d="M12 21 3 12C-3 4 7-2 12 5c5-7 15-1 9 7Z" /></svg>{post.like_count}</button>
+    <footer><button disabled={!user} aria-disabled={likePending || undefined} aria-busy={likePending || undefined} aria-pressed={post.liked} aria-label={`좋아요 ${post.like_count}개`} onClick={() => { if (!likePending) void like(post.id) }}><svg viewBox="0 0 24 24" fill={post.liked ? 'currentColor' : 'none'} aria-hidden="true"><path d="M12 21 3 12C-3 4 7-2 12 5c5-7 15-1 9 7Z" /></svg>{post.like_count}</button>
       <button aria-expanded={Boolean(commentState)} aria-label={`댓글 ${post.comment_count}개`} onClick={() => openComments(post.id)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11a9 9 0 0 1-9 9H3l2-5A9 9 0 1 1 21 11Z" /></svg>{post.comment_count}</button>
       <small>{socialScopes[post.visibility]}</small><details className="social-menu"><summary aria-label="게시물 메뉴">···</summary><div>{own ? <><button onClick={() => manage.edit(post)}>공유 내용 수정</button><button onClick={() => manage.edit(post)}>공개 범위 변경</button><button disabled={pending} onClick={() => manage.confirmUnshare(post)}>공유 취소</button></> : <><button disabled={!user} onClick={() => report(post)}>신고</button><button disabled={!user || pending} onClick={() => block(post)}>사용자 차단</button></>}
       <button onClick={() => run('copy', () => navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#music/post/${post.id}`), false)}>링크 복사</button></div></details>
@@ -58,9 +58,14 @@ export default function MusicSocial({ auth, initialPost, onOpenMyProfile = () =>
   const [confirm, setConfirm] = useState(null), [reporting, setReporting] = useState(null), [reason, setReason] = useState('')
   const generation = useRef(0), locks = useRef(new Set()), current = useRef(true), connectedRef = useRef(false)
   const commentIds = useRef(new Set()), draftRef = useRef({}), requestRef = useRef(null), pageDepth = useRef(1)
+  const dataRef = useRef(data), likeRequests = useRef(new Map()), likeRevision = useRef(0), backgroundSequence = useRef(0)
+  const [likePending, setLikePending] = useState({})
+  const [likeError, setLikeError] = useState('')
+  dataRef.current = data
+  const resetLikes = () => { likeRevision.current++; backgroundSequence.current++; likeRequests.current.clear(); setLikePending({}) }
   const refresh = useCallback(async () => {
     const stamp = ++generation.current
-    setData(null); setComments({})
+    resetLikes(); setData(null); setComments({})
     if (!client || !connectedRef.current || (typeof document !== 'undefined' && document.hidden)) return
     try {
       const [posts, mine, profile] = await Promise.all([
@@ -79,27 +84,83 @@ export default function MusicSocial({ auth, initialPost, onOpenMyProfile = () =>
       draftRef.current = nextDrafts; setDrafts(nextDrafts)
     } catch (e) { if (current.current && stamp === generation.current) { setData(null); setError(e.message) } }
   }, [client, user?.id, route])
-  requestRef.current = refresh
+  // Like broadcasts contain no identifiers. Re-read the currently loaded pages
+  // without unmounting posts or touching comments/drafts. Permission events use refresh.
+  const refreshLikes = useCallback(async () => {
+    if (!client || !connectedRef.current || document.hidden || !dataRef.current) return
+    const stamp = generation.current, sequence = ++backgroundSequence.current, revision = likeRevision.current
+    const loaded = dataRef.current.posts.map(p => p.id), observed = new Set(loaded), depth = pageDepth.current
+    try {
+      const rows = [...await client.feed(route)]
+      for (let page = 1; page < depth && rows.length >= page * 30; page++) {
+        if (stamp !== generation.current) return
+        rows.push(...await client.feed(route, rows.at(-1)))
+      }
+      // A newly inserted post may move an older loaded post beyond the last page.
+      // Verify missing loaded IDs individually instead of dropping pagination state.
+      const seen = new Set(rows.map(p => p.id))
+      for (const id of loaded.filter(id => !seen.has(id))) {
+        if (stamp !== generation.current) return
+        rows.push(...await client.feed({ ...route, post: id }))
+      }
+      if (!current.current || !connectedRef.current || stamp !== generation.current || sequence !== backgroundSequence.current || revision !== likeRevision.current) return
+      const fresh = new Map(rows.map(p => [p.id, p]))
+      setData(value => {
+        if (!value || stamp !== generation.current || revision !== likeRevision.current) return value
+        const next = { ...value, posts: value.posts.filter(p => !observed.has(p.id) || fresh.has(p.id)).map(p => {
+          const row = fresh.get(p.id)
+          return !row || likeRequests.current.has(p.id) ? p : { ...p, liked: row.liked, like_count: Math.max(0, row.like_count) }
+        }) }
+        dataRef.current = next; return next
+      })
+    } catch (e) {
+      if (!current.current || stamp !== generation.current || sequence !== backgroundSequence.current) return
+      if (['42501', '401', '403', 'PGRST301', 'PGRST302'].includes(String(e.code ?? e.status))) void refresh()
+      else setLikeError('좋아요 수를 다시 확인하지 못했어요. 잠시 후 다시 시도해주세요.')
+    }
+  }, [client, route, refresh])
+  const like = async id => {
+    if (!user || !ownProfile || !connectedRef.current || likeRequests.current.has(id)) return
+    const old = dataRef.current?.posts.find(p => p.id === id); if (!old) return
+    const token = {}, stamp = generation.current, desired = !old.liked
+    likeRequests.current.set(id, token); likeRevision.current++; setLikePending(v => ({ ...v, [id]: true })); setLikeError('')
+    const patch = fields => setData(value => {
+      if (!value || generation.current !== stamp) return value
+      const next = { ...value, posts: value.posts.map(p => p.id === id ? { ...p, ...fields } : p) }; dataRef.current = next; return next
+    })
+    patch({ liked: desired, like_count: Math.max(0, old.like_count + (desired ? 1 : -1)) })
+    try { await client.like(id, desired) }
+    catch (e) {
+      if (!current.current || stamp !== generation.current || likeRequests.current.get(id) !== token) return
+      if (['42501', '401', '403', 'PGRST301', 'PGRST302'].includes(String(e.code ?? e.status))) { setError(e.message); void refresh(); return }
+      patch({ liked: old.liked, like_count: old.like_count }); setLikeError(e.message || '좋아요를 저장하지 못했어요. 다시 시도해주세요.')
+    } finally {
+      if (current.current && stamp === generation.current && likeRequests.current.get(id) === token) {
+        likeRequests.current.delete(id); likeRevision.current++; setLikePending(v => { const next = { ...v }; delete next[id]; return next }); void refreshLikes()
+      }
+    }
+  }
+  requestRef.current = { refresh, likes: refreshLikes }
   useEffect(() => {
     current.current = true
     if (!client) return
-    const clear = () => { ++generation.current; setData(null); setComments({}) }
-    const stop = client.subscribe(() => { clear(); void requestRef.current() }, status => {
+    const clear = () => { ++generation.current; resetLikes(); setData(null); setComments({}) }
+    const stop = client.subscribe(payload => { if (payload?.kind === 'like') void requestRef.current.likes(); else { clear(); void requestRef.current.refresh() } }, status => {
       connectedRef.current = status === 'SUBSCRIBED'; setConnected(connectedRef.current)
-      clear(); if (connectedRef.current) void requestRef.current()
+      clear(); if (connectedRef.current) void requestRef.current.refresh()
     })
-    const visibility = () => { clear(); if (!document.hidden) void requestRef.current() }
+    const visibility = () => { clear(); if (!document.hidden) void requestRef.current.refresh() }
     const offline = () => { connectedRef.current = false; setConnected(false); clear() }
     const online = () => setConnectionRevision(v => v + 1)
     document.addEventListener('visibilitychange', visibility); window.addEventListener('offline', offline)
     window.addEventListener('online', online)
     window.addEventListener('pagehide', clear); window.addEventListener('pageshow', visibility)
-    const tick = window.setInterval(() => { if (!document.hidden) void requestRef.current() }, 60000)
+    const tick = window.setInterval(() => { if (!document.hidden) void requestRef.current.refresh() }, 60000)
     return () => { current.current = false; ++generation.current; connectedRef.current = false; stop(); clearInterval(tick); document.removeEventListener('visibilitychange', visibility); window.removeEventListener('offline', offline); window.removeEventListener('online', online); window.removeEventListener('pagehide', clear); window.removeEventListener('pageshow', visibility) }
   }, [client, connectionRevision])
   useEffect(() => { void refresh() }, [refresh])
   useEffect(() => {
-    const changed = () => { const next = socialRoute(window.location.hash); pageDepth.current = 1; setRoute(next); if (Object.keys(next).length) setEditor(null); setData(null); setComments({}); setDrafts({}); draftRef.current = {} }
+    const changed = () => { ++generation.current; resetLikes(); const next = socialRoute(window.location.hash); pageDepth.current = 1; setRoute(next); if (Object.keys(next).length) setEditor(null); setData(null); setComments({}); setDrafts({}); draftRef.current = {} }
     window.addEventListener('hashchange', changed); return () => window.removeEventListener('hashchange', changed)
   }, [])
   const navigate = (kind, id) => { if (kind === 'profile' && id === ownProfile?.id) { onOpenMyProfile(); return }; window.location.hash = `music/${kind}/${encodeURIComponent(id)}` }
@@ -122,13 +183,14 @@ export default function MusicSocial({ auth, initialPost, onOpenMyProfile = () =>
   useEffect(() => { if (route.person && ownProfile?.id === route.person) onOpenMyProfile('', { replace: true }) }, [route.person, ownProfile?.id, onOpenMyProfile])
   if (!client) return <main className="social-screen"><header className="social-heading"><p>MUSIC STORIES</p><h1>음악 이야기</h1></header><p>음악 이야기 서비스를 준비 중이에요. 기존 보관함은 계속 이용할 수 있어요.</p></main>
   return <main className="social-screen"><header className="social-heading"><p>MUSIC STORIES</p><h1>음악 이야기</h1><span>음악으로 나눈 이야기를 만나보세요.</span></header>
+    {likeError && <aside className="social-like-error" role="alert"><p>{likeError}</p><button aria-label="좋아요 오류 안내 닫기" onClick={() => setLikeError('')}>닫기</button></aside>}
     {(error || auth.error) && <p role="alert">{error || auth.error}</p>}{notice && <p role="status">{notice}</p>}
     {!connected ? <p role="status">실시간 연결을 확인하고 있어요. 연결되면 권한을 다시 확인해 기록을 표시해요.</p> : !data ? <p role="status">기록 불러오는 중… <button onClick={refresh}>다시 확인</button></p> : <>
         {route.track && <h2>{title(route.track)}의 기록</h2>}
         {route.person && (data.profile ? <section className="social-profile"><Avatar profile={data.profile} /><h2>{data.profile.nickname} <small>@{data.profile.handle}</small></h2><p>팔로워 {data.profile.follower_count} · 팔로잉 {data.profile.following_count}</p>{user && ownProfile?.id !== route.person && <><button disabled={busy || !ownProfile} onClick={() => run('follow', () => client.follow(route.person, !data.profile.following))}>{data.profile.following ? '팔로우 취소' : '팔로우'}</button><button onClick={() => setConfirm({ text: '이 사용자를 차단할까요? 서로의 게시물·댓글이 숨겨지고 양쪽 팔로우가 해제돼요.', action: () => client.block(route.person) })}>사용자 차단</button></>}</section> : <p>프로필을 볼 수 없어요.</p>)}
         {ownProfile && <button onClick={() => onOpenMyProfile('records')}>기록 작성</button>}
         {!data.posts.length && <p>{route.post ? '게시물을 볼 수 없어요. 공개 범위·팔로우·차단 상태를 확인해주세요.' : '지금 볼 수 있는 음악 기록이 없어요.'}</p>}
-        <section className="social-feed" aria-label="음악 기록 피드">{data.posts.map(post => <Post key={post.id} post={post} user={ownProfile} navigate={navigate} run={run} pending={busy} openComments={openComments} commentState={comments[post.id]} draft={drafts[post.id]} setDraft={setDraft} submitComment={submitComment}
+        <section className="social-feed" aria-label="음악 기록 피드">{data.posts.map(post => <Post key={post.id} post={post} user={ownProfile} navigate={navigate} run={run} pending={busy} likePending={Boolean(likePending[post.id])} like={like} openComments={openComments} commentState={comments[post.id]} draft={drafts[post.id]} setDraft={setDraft} submitComment={submitComment}
           manage={{ like: client.like, edit: post => setEditor({ kind: 'edit', post }), confirmUnshare: post => setConfirm({ text: '공유를 취소할까요? 공유본과 그 댓글·좋아요는 삭제하며 내 기록은 보존해요.', action: () => client.unshare(post.id) }), deleteComment: client.deleteComment }}
           report={post => { setReporting(post); setReason('') }} block={post => setConfirm({ text: '이 사용자를 차단할까요? 서로의 게시물·댓글이 숨겨지고 양쪽 팔로우가 해제돼요.', action: () => client.block(post.profile.id) })} />)}</section>
         {data.posts.length >= 30 && <button disabled={busy} onClick={() => run('more', async () => { const stamp = generation.current; const more = await client.feed(route, data.posts.at(-1)); if (stamp === generation.current) { if (more.length) pageDepth.current++; setData(v => v && ({ ...v, posts: [...v.posts, ...more.filter(p => !v.posts.some(old => old.id === p.id))] })) } }, false)}>이전 기록 더 보기</button>}
