@@ -1,3 +1,7 @@
+# 프로필 대시보드 문서 마감·종료 조건 — 2026-11-11
+
+CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세2 문서 마감. 명세1 구현/검토 보완/사용자 ACCEPTED와 PR #26 운영 병합·Vercel Ready는 완료했다. 이 문서 전용 PR이 main에 병합되고, 문서 병합 후 최종 main SHA의 Vercel Production Ready·운영 alias가 확인되면 작업을 CLOSED로 마감한다. 작성 시점에는 문서 PR 병합을 완료했다고 주장하지 않으며, 병합 또는 배포 확인이 실패하면 CLOSED로 처리하지 않는다. 최종 종료 식별자는 **CA-PROFILE-DASHBOARD-IA-20261110-001 / CLOSED**다. 운영 기능 기준 a771252d86df084d382e7d7ad4d3f64d32d0adde와 문서 마감 시작 a48ccbddd83ad91239271064c3a7351df16096ad를 구분한다. 최종 문서/merge SHA는 문서 PR 메타데이터·커밋 이력과 최종 보고를 따른다. 런타임·migration·설정 변경0, 기존 증거 검토만 하며 DB/전체 테스트/운영 스모크를 반복하지 않는다. 로그인 운영/OAuth/인증 PostgREST/다중 창 Realtime/실기기 IME 미검증은 유지한다. [운영 보고서](docs/PROFILE_DASHBOARD_PRODUCTION_2026-11-11.md)·CURRENT_TASK/HANDOFF가 최신이고 아래 문서 미병합 표기는 운영 반영 당시 이력이다.
+
 # 프로필 대시보드 운영 반영 — 2026-11-11
 
 CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세2 / IMPLEMENTED. 사용자 명세1 ACCEPTED·운영 승인에 따라 PR #26 Ready→main merge a771252d86df084d382e7d7ad4d3f64d32d0adde, Vercel Production READY/운영 alias와 SHA 일치 확인. 익명 운영45/45(프로필33·기존12)/history3/공연 실제GET조회1 PASS. DB·migration·환경변수·설정·사용자 자료 변경0. 로그인 운영 검증/실 OAuth·인증 RLS·다중 창 Realtime·실기기 IME는 미검증이다. [운영 보고서](docs/PROFILE_DASHBOARD_PRODUCTION_2026-11-11.md)·CURRENT_TASK/HANDOFF가 최신이며 아래 명세1 미배포 문구는 준비 이력이다. 결과는 별도 문서 브랜치에서 게시하고 문서 PR 병합은 하지 않는다. [명세1 보관](docs/collaboration/archive/CA-PROFILE-DASHBOARD-IA-20261110-001/spec1/CURRENT_TASK.md).

@@ -1,6 +1,6 @@
 # 프로필 대시보드 운영 결과 — 2026-11-11
 
-**CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세2 / IMPLEMENTED**. 사용자 명세1 ACCEPTED 및 운영 승인에 따라 [PR #26](https://github.com/MattewShin/sound-atlas/pull/26)을 Ready 전환·main 병합했고 Vercel Production Ready 및 운영 도메인 적용을 확인했다. [검증 JSON](PROFILE_DASHBOARD_PRODUCTION_VERIFICATION_2026-11-11.json)·[HANDOFF](../HANDOFF.md)·[명세1 구현](PROFILE_DASHBOARD_IA.md)을 구분해 읽는다. 결과는 별도 문서 브랜치에 게시하며 이 문서의 main 병합은 이번 범위에서 수행하지 않는다.
+**CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세2 / IMPLEMENTED**. 사용자 명세1 ACCEPTED 및 운영 승인에 따라 [PR #26](https://github.com/MattewShin/sound-atlas/pull/26)을 Ready 전환·main 병합했고 Vercel Production Ready 및 운영 도메인 적용을 확인했다. [검증 JSON](PROFILE_DASHBOARD_PRODUCTION_VERIFICATION_2026-11-11.json)·[HANDOFF](../HANDOFF.md)·[명세1 구현](PROFILE_DASHBOARD_IA.md)을 구분해 읽는다. 운영 결과는 별도 문서 브랜치에 게시했다. 이번 문서 전용 PR이 main에 병합되고 최종 Production Ready가 확인되면 아래 문서 마감 조건에 따라 CLOSED로 종료한다.
 
 ## 운영 반영 기준과 결과
 
@@ -11,8 +11,8 @@
 | 적용 전 main/운영 배포 SHA | fe73abfccd4aafa62dedadbbaed3e1fa4abe099d, 동일 |
 | Ready 전환·병합 | PR #26 Draft → Ready → merge commit 방식 |
 | 병합 시각 | 2026-11-11 10:09:14 KST |
-| 최종 merge/main 및 운영 배포 SHA | **a771252d86df084d382e7d7ad4d3f64d32d0adde** |
-| Vercel Deployment | dpl_81wuvD5ArSLJiLaMx9quKop5J8zd / **production / READY** |
+| 운영 기능 merge / 최초 운영 검증 당시 배포 SHA | **a771252d86df084d382e7d7ad4d3f64d32d0adde** |
+| 최초 운영 적용 당시 Vercel Deployment | dpl_81wuvD5ArSLJiLaMx9quKop5J8zd / **production / READY** |
 | 운영 도메인 | https://sound-atlas.vercel.app/ — 위 deployment의 alias 및 SHA 확인 |
 | Ready 관측 | 2026-11-11 10:09:48 KST |
 | 익명 스모크 완료 | 2026-11-11 10:13:50 KST |
@@ -70,7 +70,7 @@ DB migration 추가/실행0, 직접 운영 DB 작업0, 환경변수/ Supabase �
 
 원래 IDE의 dirty worktree/HEAD·다른 브랜치를 보존한다. 비밀키/토큰/실제 .env 값·세션·사용자 본문·백업 실제 경로·원시 build/API 응답은 Git/문서에 올리지 않는다. JSON에는 메타데이터·상태·안전한 검증 수치만 기록했다. 기존 명세1 CURRENT_TASK/HANDOFF는 [보관 쌍](collaboration/archive/CA-PROFILE-DASHBOARD-IA-20261110-001/spec1/CURRENT_TASK.md)에 보존했다. 명세1은 사용자 지시에서 ACCEPTED로 확정되었고, 보관 문서의 구현자 IMPLEMENTED 표시는 당시 이력이다.
 
-결과 문서는 위 별도 결과 브랜치로 push하며 문서 전용 PR 생성/병합과 이 브랜치의 운영 배포는 이번 단계에서 실행하지 않는다. 운영 main은 기능 merge SHA a771252d86df084d382e7d7ad4d3f64d32d0adde로 유지한다.
+운영 적용 단계에서는 별도 결과 브랜치에 게시했다. 이번 문서 마감은 같은 브랜치의 문서 전용 PR 하나를 main에 병합하는 작업이다. 문서 병합으로 main/배포 SHA는 바뀔 수 있지만 런타임 파일은 운영 기능 SHA a771252d86df084d382e7d7ad4d3f64d32d0adde와 동일하게 유지한다. 위 표와 검증 JSON의 배포 메타데이터/스모크는 최초 운영 적용 당시의 관측값이다. 문서 병합 후 새 배포의 Ready/SHA/alias는 PR 상태와 최종 보고에서 별도로 확정한다.
 
 ## 롤백 기준과 복구 대상
 
@@ -83,3 +83,13 @@ git revert -m 1 a771252d86df084d382e7d7ad4d3f64d32d0adde
 ```
 
 위 명령은 복구 준비 안내이며 실행하지 않았다. 강제 push/main history rewrite·전체 DB restore·DB 역 migration·설정 변경은 하지 않는다. 기존 정상 배포를 삭제하지 않는다. 후속 main 변경과 충돌하면 그 범위를 먼저 확인한다.
+
+## 명세2 문서 마감 및 최종 종료 조건
+
+문서 마감 시작 기준은 a48ccbddd83ad91239271064c3a7351df16096ad이고, 사용자가 이 SHA를 변경 불가능한 최종 HEAD가 아닌 시작 기준으로 확인했다. 같은 허용10개 파일 안에서만 종료 문구와 SHA 구분을 보완한다. 이 문서 전용 PR이 main에 병합되고, 문서 병합 후 최종 main SHA의 Vercel Production Ready·운영 alias가 확인되면 작업을 CLOSED로 마감한다. 작성 시점에는 문서 PR 병합을 완료했다고 주장하지 않으며, 병합 또는 배포 확인이 실패하면 CLOSED로 처리하지 않는다.
+
+조건 충족 후 종료 상태: **CA-PROFILE-DASHBOARD-IA-20261110-001 / CLOSED**. 명세1 구현/검토 보완/ACCEPTED, PR #26 운영 병합·Ready 확인은 완료했으며 문서 결과가 main에 반영되면 현 작업에 남은 필수 구현은 없다. 미검증 로그인·OAuth·인증 PostgREST·다중 창 Realtime·실기기 IME는 여전히 미검증으로 남기고 별도 후속 명세 없이는 실행하지 않는다.
+
+운영 기능 기준 SHA는 a771252d86df084d382e7d7ad4d3f64d32d0adde, 문서 마감 시작 SHA는 a48ccbddd83ad91239271064c3a7351df16096ad다. 최종 문서 HEAD는 이 문서가 포함된 PR의 head_sha/커밋 이력, 문서 병합 후 최종 main SHA·병합 시각은 PR의 merge_commit_sha/merged_at과 최종 보고에서 확정한다. 문서 자체의 SHA를 본문에 재귀적으로 기록하려는 추가 커밋이나 두 번째 문서 PR은 만들지 않는다.
+
+문서 마감 PR에는 CURRENT_TASK/HANDOFF/PROJECT_CONTEXT, 본 보고서/검증 JSON, 명세1 보관 쌍 및 익명 화면3개 총10개만 포함한다. 런타임·테스트·package·migration·Vercel/Supabase/OAuth/환경 설정·사용자 자료 차이0을 확인하고, 비밀값·세션·실제 사용자 본문/이메일/불필요 UUID·개인 브라우저 정보·백업 실제 경로가 없음을 검사한다. 기존 합성 테스트와 운영 스모크는 이미 검증된 동일 런타임에 대한 과거 증거이므로 DB 작업/전체·SNS·프로필 테스트/운영 스모크/실 OAuth를 이번 문서 작업에서 재실행하지 않는다. 문서 병합 후에는 Vercel Production/Ready/최종 main SHA/운영 alias만 확인한다. 배포가 실패하면 원인을 확인하고 CLOSED를 확정하지 않는다.
