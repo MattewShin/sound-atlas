@@ -1,3 +1,7 @@
+# 좋아요 UX 통합 작업 — 2026-11-11
+
+CA-SOCIAL-LIKE-UX-20261111-001. optimistic/per-post pending·typed like invalidate background 동기화, 권한 이벤트 clear-first 유지. 신규 trigger/function migration만 추가하며 RLS/기존 RPC/사용자 행은 변경하지 않는다. 기능 283decdf99d54ca1969d4983e97a2c9cd189751d, 전체174/SNS5/전용3/모바일320·375·390 및 build PASS. 운영 적용은 후속 검증 후 진행하고 실제 결과는 별도 결과 문서 브랜치에 기록한다. PWA 결과 브랜치는 합치거나 종료하지 않으며 PR #28 운영 완료·**IOS_CONFIRMATION_PENDING**을 유지한다. [구현 문서](docs/SOCIAL_LIKE_UX.md)가 최신이다. 아래는 이전 작업의 작성 당시 이력이다.
+
 # PWA 상단 상태바 보완 준비 — 2026-11-11
 
 CA-PWA-TOP-SAFE-AREA-20261111-001 / 명세1 / IMPLEMENTED. 기준 main 3e4e163fbc77577354dddc783d174ccb2893258a, 기능·검증 b8b15cf25f5c80ac3dd3f36eb4f5971c49303c20, 브랜치 codex/ca-pwa-top-safe-area-20261111-001. iOS status-bar default/불투명 크림색 canvas, 일반 헤더 top 보정 없음·기존 하단/헤더 디자인 보존. 홈 브랜드 hit 영역만 배치 변화 없이44px로 보완. 전체171/정적5/수정모바일78+기준78·build PASS. 일반39/standalone CSS시뮬레이션39는 실 iOS/Safari/Android 설치형이 아니며 실기기 미검증이다. [구현·재설치 안내](docs/PWA_TOP_SAFE_AREA.md)·CURRENT_TASK/HANDOFF가 최신이다. DB·설정·사용자 자료/main 병합/운영 배포 변경0, Draft 검토까지 진행한다. 이전 대시보드 작업은 [명세2 보관](docs/collaboration/archive/CA-PROFILE-DASHBOARD-IA-20261110-001/spec2/CURRENT_TASK.md)했고 PR #27 병합·Ready로 CLOSED가 확정됐다. 아래 조건부 문구는 과거 문서 작성 이력이다.
