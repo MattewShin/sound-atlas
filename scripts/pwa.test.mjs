@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
+import { JSDOM } from 'jsdom'
 
 const text = async (path) => readFile(new URL('../' + path, import.meta.url), 'utf8')
 const pngSize = async (path) => {
@@ -35,6 +36,26 @@ test('HTML과 앱 진입점은 manifest·iOS 아이콘·production service worke
   assert.match(main, /serviceWorker\.register\('\/sw\.js', \{ scope: '\/' \}\)/)
   assert.match(css, /@media \(display-mode: standalone\) and \(max-width: 679px\)/)
   assert.match(css, /padding-bottom:\s*calc\(10px \+ max\(10px, env\(safe-area-inset-bottom\)\)\)/)
+})
+
+test('iOS 상태바는 default이며 cover와 기존 하단 여백을 유지하고 상단 기종 보정을 두지 않는다', async () => {
+  const [html, css] = await Promise.all([text('index.html'), text('src/styles.css')])
+  const dom = new JSDOM(html), doc = dom.window.document
+  try {
+    const status = doc.querySelectorAll('meta[name="apple-mobile-web-app-status-bar-style"]')
+    assert.equal(status.length, 1)
+    assert.equal(status[0].content, 'default')
+    assert(!html.includes('black-translucent'))
+    assert(doc.querySelector('meta[name="viewport"]').content.includes('viewport-fit=cover'))
+    // The existing highlight modal has its own inset; page headers do not.
+    const topInsets = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(rule => rule[2].includes('safe-area-inset-top'))
+    assert.equal(topInsets.length, 1)
+    assert.equal(topInsets[0][1].trim(), '.highlight-short-view')
+    assert(!/\(\s*(?:min-|max-)?device-(?:width|height)\s*:/i.test(css))
+    assert.match(css, /:root\s*\{[^}]*background:\s*#f7f3eb;/)
+    assert.match(css, /body, #root\s*\{\s*background:\s*#f7f3eb;\s*\}/)
+    assert.match(css, /padding-bottom:\s*calc\(10px \+ max\(10px, env\(safe-area-inset-bottom\)\)\)/)
+  } finally { dom.window.close() }
 })
 
 test('service worker는 API를 캐시하지 않고 navigation 실패에만 offline 화면을 사용한다', async () => {

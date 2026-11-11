@@ -12,10 +12,15 @@
   --text-secondary: #53635b;
   --text-muted: #667269;
   color: #1e2928;
-  background: #e4e1da;
+  background: #f7f3eb;
   font-family: 'Pretendard', sans-serif;
   font-synthesis: none;
 }
+/* Keep the page canvas opaque around the installed app's system chrome. */
+body, #root { background: #f7f3eb; }
+/* Enlarge the brand link hit area without moving its text or the header. */
+.brand { position: relative; }
+.brand::before { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 44px; transform: translateY(-50%); }
 /* 운영자의 주간 소개: 추천 카드보다 조용한 가로형 지면 */
 .weekly-section { margin: 26px 20px 12px; padding: 18px 0 0; border-top: 1px solid #ded9cf; }
 .weekly-section-heading { margin-bottom: 18px; }

@@ -1,0 +1,74 @@
+{
+  "task_id": "CA-PWA-TOP-SAFE-AREA-20261111-001",
+  "specification": 1,
+  "status": "IMPLEMENTED",
+  "code_sha": "b8b15cf25f5c80ac3dd3f36eb4f5971c49303c20",
+  "base_main": "3e4e163fbc77577354dddc783d174ccb2893258a",
+  "branch": "codex/ca-pwa-top-safe-area-20261111-001",
+  "recorded_kst": "2026-11-11 13:36:42 KST",
+  "environment": "Windows / Node22 / isolated worktree / synthetic transport / existing local Chromium",
+  "tests": {
+    "full": {
+      "pass": 171,
+      "fail": 0,
+      "skip": 0
+    },
+    "pwa_static": {
+      "pass": 5,
+      "fail": 0,
+      "skip": 0
+    },
+    "mobile": {
+      "candidate_pass": 78,
+      "baseline_cases": 78,
+      "browser_cases": 39,
+      "standalone_css_simulation_cases": 39,
+      "widths": [
+        320,
+        375,
+        390
+      ],
+      "actual_ios_status_bar_emulated": false
+    },
+    "production_build": "PASS",
+    "build_warning": "existing chunk >500kB"
+  },
+  "log_sha256": {
+    "full-test": "3f17bd8ea10b3f0699f9485736cd218bb2a8e51123839ed212f87bfe895a7355",
+    "pwa-static": "efbbf62e179e45a8755dd6e3a8de6b97a136b13be7b15eee9012ccc8bff5ab35",
+    "build": "b841685c6aea015ed7bfd5c35afb51489d8315c3ddedabb543678aaf6484866b"
+  },
+  "changes": {
+    "status_bar": "default",
+    "viewport_fit_cover_retained": true,
+    "canvas_background": "#f7f3eb",
+    "page_header_top_padding_added": false,
+    "existing_highlight_modal_top_inset_unchanged": true,
+    "bottom_nav_rules_unchanged": true,
+    "brand_hit_area_height": 44,
+    "brand_text_and_header_geometry_unchanged": true,
+    "device_specific_top_height_added": false
+  },
+  "safety": {
+    "secret_values_in_changes_or_logs": false,
+    "original_ide_files_preserved": 52,
+    "original_ide_head_and_documents_preserved": true,
+    "real_iphone_screenshot_saved_or_committed": false,
+    "synthetic_screenshot_email_and_google_name_removed": true
+  },
+  "unverified": [
+    "actual iOS installed PWA status bar blur/clipping and reinstall behavior",
+    "actual Safari browser on iPhone",
+    "actual Android installed PWA",
+    "notch/Dynamic Island and native safe-area values",
+    "physical device IME/keyboard and orientation",
+    "actual OAuth/PostgREST/Realtime"
+  ],
+  "database_migration_required": false,
+  "database_migrations_added": 0,
+  "production_database_accessed": false,
+  "environment_or_supabase_oauth_setting_changes": 0,
+  "user_record_mutations": 0,
+  "main_merged": false,
+  "production_deployed": false
+}

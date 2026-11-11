@@ -1,22 +1,13 @@
-# 프로필 대시보드 명세2 문서 마감
+# PWA 상단 상태바 보완
 
-- 작업 ID: CA-PROFILE-DASHBOARD-IA-20261110-001
-- 명세 버전: 2
-- 상태: 문서 마감 준비 완료; 아래 조건 충족 시 CLOSED
-- 최종 종료 식별자: **CA-PROFILE-DASHBOARD-IA-20261110-001 / CLOSED** (병합·배포 확인 후 유효)
-- 명세1: 구현 완료·검토 보완 완료·사용자 ACCEPTED
-- 기능 PR #26: 운영 병합 완료, Production Ready 확인 완료
-- 운영 기능 기준 SHA: a771252d86df084d382e7d7ad4d3f64d32d0adde
-- 문서 마감 시작 SHA: a48ccbddd83ad91239271064c3a7351df16096ad
-- 문서 브랜치: codex/ca-profile-dashboard-ia-20261110-001-production
-- 문서 정리 시각: 2026-11-11 11:13:31 KST
+- 작업 ID: CA-PWA-TOP-SAFE-AREA-20261111-001
+- 명세 버전: 1
+- 상태: IMPLEMENTED (구현자 보고, 실제 iOS/검토 미확인)
+- 기준 main: 3e4e163fbc77577354dddc783d174ccb2893258a
+- 기능·검증 SHA: b8b15cf25f5c80ac3dd3f36eb4f5971c49303c20
+- 브랜치: codex/ca-pwa-top-safe-area-20261111-001
+- 기록 시각: 2026-11-11 13:36:42 KST
 
-이 문서 전용 PR이 main에 병합되고, 문서 병합 후 최종 main SHA의 Vercel Production Ready·운영 alias가 확인되면 작업을 CLOSED로 마감한다. 작성 시점에는 문서 PR 병합을 완료했다고 주장하지 않으며, 병합 또는 배포 확인이 실패하면 CLOSED로 처리하지 않는다.
+상태바 default와 불투명 크림색 canvas를 적용했다. 실제 중첩 증거 없이 일반 헤더 top inset은 추가하지 않았고, 기존 모달 inset/헤더 장식/하단 safe-area를 유지한다. 브랜드 클릭 영역만 텍스트 위치를 유지하며44px로 보완했다. 전체171/정적PWA5·build PASS. 모바일 수정78/기준78 비교(일반39,standalone CSS시뮬레이션39) PASS. 실제 iOS PWA/Safari/Android 설치형·노치/홈 인디케이터/실기기는 미검증이며 iOS PWA PASS로 기록하지 않는다. DB·환경변수·OAuth·사용자 자료·main 병합·운영 배포 변경0.
 
-운영 기능 기준 SHA는 a771252d86df084d382e7d7ad4d3f64d32d0adde, 문서 마감 시작 SHA는 a48ccbddd83ad91239271064c3a7351df16096ad다. 최종 문서 HEAD는 이 문서가 포함된 PR의 head_sha/커밋 이력, 문서 병합 후 최종 main SHA·병합 시각은 PR의 merge_commit_sha/merged_at과 최종 보고에서 확정한다. 문서 자체의 SHA를 본문에 재귀적으로 기록하려는 추가 커밋이나 두 번째 문서 PR은 만들지 않는다.
-
-운영 익명45/45(프로필33+기존12), history3/3, 추가 공연 조회1/1은 이전 운영 적용 단계의 실제 검증이다. 전체170/SNS5/프로필8/모바일69 및 관리 복귀12건은 명세1의 기존 합성 검증이다. 이번에는 문서/JSON/화면·비밀값·파일 범위·배포 메타데이터만 검사하며 DB 작업/전체 테스트/SNS/프로필 테스트/운영 스모크/OAuth/사용자 자료 검증은 재실행하지 않는다.
-
-DB migration 없음. 런타임·설정·환경변수·Supabase/OAuth/Vercel 설정과 사용자 자료 변경0. 남은 미검증은 로그인 운영 기능·실제 OAuth·인증 PostgREST 권한/계정 격리·Realtime 다중 창/재연결·실기기 IME/iOS/PWA다. 이를 PASS로 바꾸지 않는다. 이 문서 PR과 Production Ready 확인으로 현 작업을 종료하며, 미검증 항목을 실행하려면 별도 후속 작업으로 정한다.
-
-[운영 보고서](docs/PROFILE_DASHBOARD_PRODUCTION_2026-11-11.md) · [검증 JSON](docs/PROFILE_DASHBOARD_PRODUCTION_VERIFICATION_2026-11-11.json) · [HANDOFF](HANDOFF.md) · [명세1 보관](docs/collaboration/archive/CA-PROFILE-DASHBOARD-IA-20261110-001/spec1/CURRENT_TASK.md)
+[구현·재설치 안내](docs/PWA_TOP_SAFE_AREA.md) · [검증 JSON](docs/PWA_TOP_SAFE_AREA_VERIFICATION_2026-11-11.json) · [실측 JSON](docs/PWA_TOP_SAFE_AREA_MOBILE_2026-11-11.json) · [HANDOFF](HANDOFF.md) · [이전 CLOSED 작업 보관](docs/collaboration/archive/CA-PROFILE-DASHBOARD-IA-20261110-001/spec2/CURRENT_TASK.md)
