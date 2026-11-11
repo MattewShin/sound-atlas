@@ -59,7 +59,7 @@ export async function verifyMusicSocial(MusicSocial) {
   await flush(send);assert.equal(doc.querySelector('.social-comments textarea').value,'실패해도 보존할 초안')
   failComment=false;await flush(send);assert.equal(doc.querySelector('.social-comments textarea').value,'');assert.ok(doc.querySelector('[aria-label="댓글 1개"]'))
   await click('댓글 삭제');assert.ok(doc.querySelector('[aria-label="댓글 0개"]'))
-  const heart=()=>doc.querySelector('[aria-label^="좋아요"]')
+  const heart=()=>doc.querySelector('.social-post footer button[aria-pressed]')
   await flush(()=>{heart().click();heart().click()});assert.equal(likeCalls,1)
   await flush(rejectLike);assert.equal(heart().textContent,'0');assert.equal(heart().getAttribute('aria-pressed'),'false')
   await flush(()=>heart().click());await flush(resolveLike);assert.equal(heart().textContent,'1')

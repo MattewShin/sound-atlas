@@ -9,9 +9,10 @@ test('한 Supabase client의 여러 화면이 구독을 공유하고 이전 세�
   removeChannel:async()=>{removes++;await new Promise(resolve=>{finishRemoval=()=>{current=undefined;resolve()}})}}
  assert.equal(getSocialApi(db),getSocialApi(db))
  const subscribe=createInvalidationSubscriber(db),a=[],b=[]
- const stopA=subscribe(()=>a.push('event'),s=>a.push(s));await new Promise(r=>setTimeout(r,0))
+ const payloads=[];const stopA=subscribe(payload=>{a.push('event');payloads.push(payload)},s=>a.push(s));await new Promise(r=>setTimeout(r,0))
  const stopB=subscribe(()=>b.push('event'),s=>b.push(s));assert.equal(starts,1)
  callbacks[0]();assert.deepEqual(a,['SUBSCRIBED','event']);assert.deepEqual(b,['SUBSCRIBED','event'])
+ callbacks[0]({payload:{kind:'like'}});assert.deepEqual(payloads,[undefined,{kind:'like'}])
  stopA();assert.equal(removes,0);const stale=notifyOld;stopB()
  const c=[];const stopC=subscribe(()=>{},s=>c.push(s));await new Promise(r=>setTimeout(r,0));assert.equal(removes,1);assert.deepEqual(c,[])
  stale('CLOSED');finishRemoval();await new Promise(r=>setTimeout(r,0));assert.deepEqual(c,['SUBSCRIBED']);assert.equal(starts,2)

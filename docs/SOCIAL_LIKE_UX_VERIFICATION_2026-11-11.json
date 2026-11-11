@@ -1,0 +1,70 @@
+{
+  "task_id": "CA-SOCIAL-LIKE-UX-20261111-001",
+  "state": "IMPLEMENTED",
+  "recorded_kst": "2026-11-11 16:54:09 KST",
+  "base_main": "de4f78d2b00edae6166348194e1a648c8d0e184a",
+  "code_sha": "283decdf99d54ca1969d4983e97a2c9cd189751d",
+  "tests": {
+    "full": 174,
+    "social": 5,
+    "like_ux": 3,
+    "sql_static_and_isolated": 2,
+    "build": "PASS"
+  },
+  "logs": {
+    "full": {
+      "sha256": "cc4ca56fc0a2c6367ef745eebf7e65ba34e0d0a89f0fc83c4b07d2d006113053"
+    },
+    "social": {
+      "sha256": "b84f86630d86ea43f40d949ce19059c24aa1ea3f922e11454ce776a9f5cd1503"
+    },
+    "like": {
+      "sha256": "0c82dc15cfd791363687bfe09f922133db2aed069c1c39e61ef6fec6fa2ee37e"
+    },
+    "build": {
+      "sha256": "06d2fb5481efbb67434f1d388e0139675ed0200f51b0ea1f92dcc3c278900963"
+    }
+  },
+  "mobile": {
+    "result": "PASS",
+    "cases": [
+      {
+        "width": 320,
+        "result": "PASS",
+        "optimistic": true,
+        "per_post_pending": true,
+        "focus_scroll_dom_expansion_draft_preserved": true,
+        "loaded_posts": 60,
+        "failure_rollback": true,
+        "loading_flicker": false,
+        "external_network": false
+      },
+      {
+        "width": 375,
+        "result": "PASS",
+        "optimistic": true,
+        "per_post_pending": true,
+        "focus_scroll_dom_expansion_draft_preserved": true,
+        "loaded_posts": 60,
+        "failure_rollback": true,
+        "loading_flicker": false,
+        "external_network": false
+      },
+      {
+        "width": 390,
+        "result": "PASS",
+        "optimistic": true,
+        "per_post_pending": true,
+        "focus_scroll_dom_expansion_draft_preserved": true,
+        "loaded_posts": 60,
+        "failure_rollback": true,
+        "loading_flicker": false,
+        "external_network": false
+      }
+    ],
+    "real_ios": false,
+    "production": false
+  },
+  "operating_migration_applied": false,
+  "actual_operating_like_verified": false
+}
