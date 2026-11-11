@@ -1,3 +1,7 @@
+# PWA 상단 상태바 보완 준비 — 2026-11-11
+
+CA-PWA-TOP-SAFE-AREA-20261111-001 / 명세1 / IMPLEMENTED. 기준 main 3e4e163fbc77577354dddc783d174ccb2893258a, 기능·검증 b8b15cf25f5c80ac3dd3f36eb4f5971c49303c20, 브랜치 codex/ca-pwa-top-safe-area-20261111-001. iOS status-bar default/불투명 크림색 canvas, 일반 헤더 top 보정 없음·기존 하단/헤더 디자인 보존. 홈 브랜드 hit 영역만 배치 변화 없이44px로 보완. 전체171/정적5/수정모바일78+기준78·build PASS. 일반39/standalone CSS시뮬레이션39는 실 iOS/Safari/Android 설치형이 아니며 실기기 미검증이다. [구현·재설치 안내](docs/PWA_TOP_SAFE_AREA.md)·CURRENT_TASK/HANDOFF가 최신이다. DB·설정·사용자 자료/main 병합/운영 배포 변경0, Draft 검토까지 진행한다. 이전 대시보드 작업은 [명세2 보관](docs/collaboration/archive/CA-PROFILE-DASHBOARD-IA-20261110-001/spec2/CURRENT_TASK.md)했고 PR #27 병합·Ready로 CLOSED가 확정됐다. 아래 조건부 문구는 과거 문서 작성 이력이다.
+
 # 프로필 대시보드 문서 마감·종료 조건 — 2026-11-11
 
 CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세2 문서 마감. 명세1 구현/검토 보완/사용자 ACCEPTED와 PR #26 운영 병합·Vercel Ready는 완료했다. 이 문서 전용 PR이 main에 병합되고, 문서 병합 후 최종 main SHA의 Vercel Production Ready·운영 alias가 확인되면 작업을 CLOSED로 마감한다. 작성 시점에는 문서 PR 병합을 완료했다고 주장하지 않으며, 병합 또는 배포 확인이 실패하면 CLOSED로 처리하지 않는다. 최종 종료 식별자는 **CA-PROFILE-DASHBOARD-IA-20261110-001 / CLOSED**다. 운영 기능 기준 a771252d86df084d382e7d7ad4d3f64d32d0adde와 문서 마감 시작 a48ccbddd83ad91239271064c3a7351df16096ad를 구분한다. 최종 문서/merge SHA는 문서 PR 메타데이터·커밋 이력과 최종 보고를 따른다. 런타임·migration·설정 변경0, 기존 증거 검토만 하며 DB/전체 테스트/운영 스모크를 반복하지 않는다. 로그인 운영/OAuth/인증 PostgREST/다중 창 Realtime/실기기 IME 미검증은 유지한다. [운영 보고서](docs/PROFILE_DASHBOARD_PRODUCTION_2026-11-11.md)·CURRENT_TASK/HANDOFF가 최신이고 아래 문서 미병합 표기는 운영 반영 당시 이력이다.
