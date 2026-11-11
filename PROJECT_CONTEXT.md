@@ -1,3 +1,7 @@
+# 내 프로필 대시보드 준비 — 2026-11-10
+
+CA-PROFILE-DASHBOARD-IA-20261110-001 / 명세1 / IMPLEMENTED. 기준 main fe73abfccd4aafa62dedadbbaed3e1fa4abe099d, 기능·테스트 fda3efa7c750eaed9e9b3793b0fc18f887aceae0, 브랜치 codex/ca-profile-dashboard-ia-20261110-001. 요약 홈과 records/taste/settings 하위 화면, 공개 프로필 편집·미리보기/차단/개인정보 하위 경로를 구현했다. 홈은 최근3개/개수만, 기록 필터는 기존 소유자 메타데이터와 서버 SELECT 조건으로 전체 기준10개씩이다. 기존 private 공유본의 나만 보기 분류와 원본/공유·Auth·권한·추천을 보존한다. 전체170/SNS5/프로필8/모바일69·build PASS, migration 불필요. Draft 검토까지의 작업이며 main 병합/운영 DB/배포 미실행, 실 OAuth/클라우드 PostgREST/Realtime/실기기 미검증이다. PR #26 검토 보완으로 관계 숫자를 비대화형 정보로 바꾸고 관리 하위 화면의 주 복귀를 설정으로 통일했다. 기존 검증 재통과와 모바일 복귀/상단 정렬12건을 확인했다. 최신 [구현 결과](docs/PROFILE_DASHBOARD_IA.md)·CURRENT_TASK/HANDOFF가 이 작업을 설명한다. 아래 운영 완료 기록은 이전 CA-NAV 작업이며 최신 운영 기능은 여전히 그 결과다. 이전 작업 문서는 [명세2 보관](docs/collaboration/archive/CA-NAV-PROFILE-IA-20261110-001/spec2/CURRENT_TASK.md)에서 읽는다.
+
 # 내비게이션·내 프로필 운영 반영 — 2026-11-10
 
 CA-NAV-PROFILE-IA-20261110-001 / 명세2 / IMPLEMENTED. 사용자 승인 후 PR #24 Ready→main 병합·Vercel READY, 운영 기능 기준/당시 배포 SHA `3e588ebc8dacdd5cf3cd648229ff31bd5553a4ef`. 승인 코드/166·5·4·36·build 증거를 확인하고 새 전체 테스트/DB 검증 없이 실제 익명 스모크18/18 PASS. 320/375/390px의 메뉴/제목/보관함/프로필/기존 딥링크를 읽기로 확인했다. DB/설정/자료·계정 전환/로그아웃 변경0. Google chooser·실 OAuth/다중 창 Realtime/실기기 IME는 미검증이다. 문서 마감으로 운영 결과를 main에 반영하며, 문서 병합 SHA는 운영 기능 기준 SHA와 구분한다. 최신 [운영 결과](docs/NAV_PROFILE_IA_PRODUCTION_2026-11-10.md)와 CURRENT_TASK/HANDOFF가 최신이며, 아래 명세1의 미배포 문구는 준비 이력이다.

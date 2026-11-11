@@ -48,7 +48,8 @@ import { verifyMusicSocial } from './musicSocialDomTest.mjs'
 import { verifyMusicJournal } from './musicJournalDomTest.mjs'
 import { verifyMusicSharing } from './musicSharingDomTest.mjs'
 import { verifyReferenceTrackInteractions } from './referenceTrackDomTest.mjs'
-import { verifyProfileIa, verifyProfileSetup, verifySwitchFailure } from './profileIaDomTest.mjs'
+import './profileRecords.test.mjs'
+import { verifyProfileIa, verifyProfileSetup, verifySwitchFailure, verifyDashboardStates, verifyDashboardHistoryAndIsolation } from './profileIaDomTest.mjs'
 import { weeklySelections } from '../src/data/weeklySelections.js'
 import { getWeeklySelectionState } from '../src/data/weeklySelectionHelpers.js'
 
@@ -254,3 +255,6 @@ test('곡 상세와 보관함에서 공연 검색 버튼을 제거하고 보관 
  for(const isSaved of [false,true]){const html=render(components.TrackDetailSheet,{...props,isSaved});assert.ok(!html.includes('이 곡의 공연 찾기'));assert.equal(html.includes('보관함으로 가기'),isSaved)}
  assert.ok(!render(components.LibraryScreen,{savedTracks:tracks}).includes('이 곡의 공연 찾기'))
 })
+
+test('프로필 대시보드의 개수·최근 기록·빈 상태·오류·익명 상태',async()=>verifyDashboardStates(components))
+test('프로필 하위 화면의 history·직접 주소·지연 응답과 계정 격리',async()=>verifyDashboardHistoryAndIsolation(components))
